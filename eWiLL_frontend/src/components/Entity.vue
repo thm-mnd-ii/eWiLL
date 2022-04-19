@@ -1,7 +1,6 @@
 <template>
     <div ref="root" @mouseover="hover = true" @mouseleave="hover = false" class="objectContainer">
 
-        <!-- contenteditable="true" Würde auch damit funktionieren-->
         <span v-if="!isEditable" @dblclick="makeTextEditable" class="text">{{props.entity.text}}</span>
         <textarea v-if="isEditable" @dblclick="makeTextEditable" @keyup.enter="handleEnter" v-model="props.entity.text" class="textedit form-control"  rows="1"></textarea>
 
@@ -10,10 +9,10 @@
         <div v-if="isResizable" @mousedown="resizer($event)" class="resizer sw"></div>
         <div v-if="isResizable" @mousedown="resizer($event)" class="resizer se"></div>
 
-        <div v-if="hover" @mousedown="createLine($event)" class="dockingPoint top"></div>
-        <div v-if="hover" @mousedown="createLine($event)" class="dockingPoint left"></div>
-        <div v-if="hover" @mousedown="createLine($event)" class="dockingPoint right"></div>
-        <div v-if="hover" @mousedown="createLine($event)" class="dockingPoint bottom"></div>
+        <AnkerPoint v-if="hover" position="top" @ankerPosition="handleAnkerPoint"></AnkerPoint>
+        <AnkerPoint v-if="hover" position="left" @ankerPosition="handleAnkerPoint"></AnkerPoint>
+        <AnkerPoint v-if="hover" position="right" @ankerPosition="handleAnkerPoint"></AnkerPoint>
+        <AnkerPoint v-if="hover" position="bottom" @ankerPosition="handleAnkerPoint"></AnkerPoint>
 
         <IconEntity v-if="props.entity.typ == EntityTyp.ENTITY" @dblclick="changeResizable()" @mousedown="mousedown($event)" />
         <IconRelationshiptyp v-if="props.entity.typ == EntityTyp.RELATIONSHIP" @dblclick="changeResizable()" @mousedown="mousedown($event)" />
@@ -26,37 +25,26 @@
     import IconEntity from "../components/icons/IconEntitytyp.vue"
     import IconRelationshiptyp from "../components/icons/IconRelationshiptyp.vue"
     import EntityTyp from "../enums/EntityTyp"
+    import AnkerPoint from "../components/AnkerPoint.vue"
     
     import { ref, onMounted, computed, watch, reactive } from 'vue'
 
-    const emit = defineEmits(['update:entity'])
+    const emit = defineEmits(['update:entity', 'ankerPoint'])
     //const updateEntity = ref(updateCurrentEntity.value)
 
     const props = defineProps(['entity'])
     const root = ref(null)
 
+    const handleAnkerPoint = (ankerPosition) => {
+        // console.log(e)
+        // console.log(props.entity.id)
+        emit('ankerPoint', { 'id': props.entity.id, 'position': ankerPosition})
+    }
+
     const hover = ref(false)
     watch(hover, (e) => {
         //console.log(`Hover: ${e}`)
     })
-
-    const createLine = (e) => {
-        let el = e.target
-        let container = root.value.parentNode
-
-        const rect = el.getBoundingClientRect()
-        const rectParent = container.getBoundingClientRect()
-
-        //calculare position relative to container
-        let relativePos = {}
-        relativePos.top = rect.top - rectParent.top
-        relativePos.right = rect.right - rectParent.right
-        relativePos.bottom = rect.bottom - rectParent.bottom
-        relativePos.left = rect.left - rectParent.left
-
-        // TODO set this position as anker (ankerpunkt)
-        console.log(relativePos)
-    }
 
     const isEditable = ref(false)
     const makeTextEditable = () => {
@@ -66,16 +54,16 @@
     const handleEnter = (e) => {
         if (e.ctrlKey) return props.entity.text += "\n"
 
-        props.entity.text = props.entity.text.slice(0,-2)
+        props.entity.text = props.entity.text.slice(0,-1)
         makeTextEditable()
     }
 
-    watch(isEditable, (e) => {
-        //console.log(props.entity.text == "")
-        if (props.entity.text == ""){
-            props.entity.text == "Placeholder"
-        }
-    })
+    // watch(isEditable, (e) => {
+    //     //console.log(props.entity.text == "")
+    //     if (props.entity.text == ""){
+    //         props.entity.text == "Placeholder"
+    //     }
+    // })
 
     onMounted(() => {
         //console.log(props.entity)
@@ -108,7 +96,7 @@
 
     const mousedown = (e) => {
 
-        console.log(root.value.parentNode.getBoundingClientRect())
+        //console.log(root.value.parentNode.getBoundingClientRect())
 
         console.log('move')
         let el = e.target.parentNode
@@ -242,34 +230,6 @@
     z-index: 5;
     position: absolute;
     cursor: move;
-}
-
-.dockingPoint {
-    position: absolute;
-    width: 8px;
-    height: 8px;
-    border-radius: 4px;
-    background-color: #00abe3;
-    z-index: 10;
-
-    cursor: pointer;
-}
-
-.dockingPoint.top{
-    top: -2px;
-    left: 50%;
-}
-.dockingPoint.left{
-    top: 50%;
-    left: -2px;
-}
-.dockingPoint.right{
-    top: 50%;
-    right: -2px;
-}
-.dockingPoint.bottom{
-    bottom: -2px;
-    left: 50%;
 }
 
 .resizer {
