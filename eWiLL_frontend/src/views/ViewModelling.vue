@@ -20,7 +20,7 @@
     </div>
 
     <div class="modellingContainer">
-        <Entity v-for="entity in entityList" :key="entity.id" :entity="entity" @ankerPoint="handleAnkerPoint"/>
+        <Entity v-for="entity in entityList" :key="entity.id" :entity="entity" @ankerPoint="handleAnkerPoint" @deleteEntity="deleteEntity"/>
 
         <Line v-for="line in lineList" :key="line.id" :line="line" />
     </div>
@@ -43,12 +43,11 @@
     const count = ref(0)
 
     const entityList = ref([
-        { "id": 1, "typ": 1, "top": "100px", "left": "200px", "width": "100px" },
-        { "id": 2, "typ": 1, "top": "100px", "left": "400px", "width": "100px" },
-        // { "id": 2, "typ": 2, "top": "200px", "left": "200px", "width": "100px" },
-        // { "id": 3, "typ": 3, "top": "300px", "left": "200px", "width": "100px" }
+        { "id": 1, "typ": 1, "top": "124px", "left": "81px", "width": "100px", "text": "Kunde" },
+        { "id": 2, "typ": 3, "text": "Rechnung", "top": "122px", "left": "302px", "width": "100px" },
+        { "id": 3, "typ": 1, "text": "Artikel", "top": "207px", "left": "81px", "width": "100px" },
+        { "id": 4, "typ": 2, "text": "Rechnungs\npositionen", "top": "118px", "left": "486px", "width": "100px" }
     ])
-
     
     const lineList = ref([
         //{ "id": 1, "x1": 200, "y1": 100, "x2": 0, "y2": 0},
@@ -58,7 +57,9 @@
 
     const newAnkerPoint = ref({})
     const ankerPoints = ref([
-        { "startEntity": 1, "startEntityPosition": "right", "endEntity": 2, "endEntityPosition": "left" }
+        { "startEntity": 1, "startEntityPosition": "right", "endEntity": 2, "endEntityPosition": "left" },
+        { "startEntity": 3, "startEntityPosition": "right", "endEntity": 2, "endEntityPosition": "left" },
+        { "startEntity": 2, "startEntityPosition": "right", "endEntity": 4, "endEntityPosition": "left" }
     ])
 
     onMounted(() => {
@@ -68,15 +69,23 @@
     watch(entityList.value, () => {
         console.log("watcher: entityList")
         updateLines()
-    })
+    },
+    {deep: true}
+    )
 
     watch(ankerPoints.value, () => {
         console.log("watcher: ankerPoints")
         updateLines()
-    })
+    },
+    {deep: true}
+    )
 
     const updateLines = () => {
         let calculatedLines = []
+
+        console.log('Update Lines')
+        console.log(ankerPoints)
+        
         for (const [index, anker] of ankerPoints.value.entries()) {
 
             let calculatedLine = calculateLine(anker)
@@ -104,6 +113,29 @@
         return line
     }
 
+    const deleteEntity = (entityToDelete) => {
+
+        // delete Entity
+        let entityIndex = entityList.value.indexOf(entityToDelete)
+        entityList.value.splice(entityIndex)
+        
+        // diese Lösung killt den Watcher
+        // entityList.value = entityList.value.filter(entity => entity.id == entityToDelete.id)
+
+        // finde and merge all relations
+        let relationsWithStartEntity = ankerPoints.value.filter(line => line.startEntity == entityToDelete.id)
+        let relationsWithEndEntity = ankerPoints.value.filter(line => line.endEntity == entityToDelete.id)
+        let relationsToDelete = relationsWithStartEntity.concat(relationsWithEndEntity)
+        
+        // delete relations
+        for(const relation of relationsToDelete){
+            let relationIndex = ankerPoints.value.indexOf(relation)
+            ankerPoints.value.splice(relationIndex)
+        }
+
+        //update Lines
+        //updateLines()
+    }
 
     let triggered = false
     const handleAnkerPoint = (ankerPoint) => {
@@ -121,12 +153,21 @@
         }
     }
 
+    //add Element with serial ID
     const addElement = (e, typ) => {
         
-        // console.log(e.clientX)
-        // console.log(e.clientY)
+        if(entityList.value.length == 0) {
+            entityList.value.push({ "id": 1, "typ": typ, "text": "New Entity", "top": e.clientY-25+"px", "left": e.clientX-50+"px", "width": "100px" })
+            return 
+        }
 
-        entityList.value.push({ "id": 4, "typ": typ, "text": "New Entity", "top": e.clientY-25+"px", "left": e.clientX-50+"px", "width": "100px" })
+        const ids = entityList.value.map(entity => {
+            return entity.id
+        })
+        const max = Math.max(...ids)
+        const nextID = max+1
+        
+        entityList.value.push({ "id": nextID, "typ": typ, "text": "New Entity", "top": e.clientY-25+"px", "left": e.clientX-50+"px", "width": "100px" })
     }
     
 </script>

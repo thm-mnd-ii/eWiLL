@@ -9,10 +9,12 @@
         <div v-if="isResizable" @mousedown="resizer($event)" class="resizer sw"></div>
         <div v-if="isResizable" @mousedown="resizer($event)" class="resizer se"></div>
 
-        <AnkerPoint v-if="hover" position="top" @ankerPosition="handleAnkerPoint"></AnkerPoint>
-        <AnkerPoint v-if="hover" position="left" @ankerPosition="handleAnkerPoint"></AnkerPoint>
-        <AnkerPoint v-if="hover" position="right" @ankerPosition="handleAnkerPoint"></AnkerPoint>
-        <AnkerPoint v-if="hover" position="bottom" @ankerPosition="handleAnkerPoint"></AnkerPoint>
+        <AnkerPoint v-if="hover && !isResizable" position="top" @ankerPosition="handleAnkerPoint"></AnkerPoint>
+        <AnkerPoint v-if="hover && !isResizable" position="left" @ankerPosition="handleAnkerPoint"></AnkerPoint>
+        <AnkerPoint v-if="hover && !isResizable" position="right" @ankerPosition="handleAnkerPoint"></AnkerPoint>
+        <AnkerPoint v-if="hover && !isResizable" position="bottom" @ankerPosition="handleAnkerPoint"></AnkerPoint>
+
+        <EditWidget v-if="isResizable" @deleteEntity="deleteEntity"/>
 
         <IconEntity v-if="props.entity.typ == EntityTyp.ENTITY" @dblclick="changeResizable()" @mousedown="mousedown($event)" />
         <IconRelationshiptyp v-if="props.entity.typ == EntityTyp.RELATIONSHIP" @dblclick="changeResizable()" @mousedown="mousedown($event)" />
@@ -26,14 +28,19 @@
     import IconRelationshiptyp from "../components/icons/IconRelationshiptyp.vue"
     import EntityTyp from "../enums/EntityTyp"
     import AnkerPoint from "../components/AnkerPoint.vue"
+    import EditWidget from "../components/EditWidget.vue"
     
     import { ref, onMounted, computed, watch, reactive } from 'vue'
 
-    const emit = defineEmits(['update:entity', 'ankerPoint'])
+    const emit = defineEmits(['update:entity', 'ankerPoint', 'deleteEntity'])
     //const updateEntity = ref(updateCurrentEntity.value)
 
     const props = defineProps(['entity'])
     const root = ref(null)
+
+    const deleteEntity = () => {
+        emit('deleteEntity', props.entity)
+    }
 
     const handleAnkerPoint = (ankerPosition) => {
         // console.log(e)
