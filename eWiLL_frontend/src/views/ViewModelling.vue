@@ -117,7 +117,7 @@
 
         // delete Entity
         let entityIndex = entityList.value.indexOf(entityToDelete)
-        entityList.value.splice(entityIndex)
+        entityList.value.splice(entityIndex, 1)
         
         // diese Lösung killt den Watcher
         // entityList.value = entityList.value.filter(entity => entity.id == entityToDelete.id)
@@ -130,7 +130,7 @@
         // delete relations
         for(const relation of relationsToDelete){
             let relationIndex = ankerPoints.value.indexOf(relation)
-            ankerPoints.value.splice(relationIndex)
+            ankerPoints.value.splice(relationIndex, 1)
         }
 
         //update Lines
