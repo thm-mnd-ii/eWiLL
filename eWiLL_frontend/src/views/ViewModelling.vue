@@ -1,12 +1,16 @@
 <template>
 
-    <div>
+    <!-- <div>
         {{entityList}}
     </div>
 
     <div>
         {{ankerPoints}}
     </div>
+
+    <div>
+        {{lineList}}
+    </div> -->
 
     <!-- <div>
         {{lineList}}
@@ -22,7 +26,17 @@
     <div class="modellingContainer">
         <Entity v-for="entity in entityList" :key="entity.id" :entity="entity" @ankerPoint="handleAnkerPoint" @deleteEntity="deleteEntity"/>
 
-        <Line v-for="line in lineList" :key="line.id" :line="line" />
+        <Line v-for="line in lineList" :key="line.id" :line="line" @deleteLine="deleteLine"/>
+        
+        <!-- Definiert global das aussehen der Pfeile (TODO: In Component auslagern) -->
+        <svg class="svgMarker">
+            <defs>
+                <marker id="arrowhead" markerWidth="20" markerHeight="10" refX="5" refY="2" orient="auto">
+                    <polygon points="0 0, 0 4, 6 2" />
+                </marker>
+            </defs>
+        </svg>
+
     </div>
     
 </template>
@@ -43,10 +57,10 @@
     const count = ref(0)
 
     const entityList = ref([
-        { "id": 1, "typ": 1, "top": "124px", "left": "81px", "width": "100px", "text": "Kunde" },
-        { "id": 2, "typ": 3, "text": "Rechnung", "top": "122px", "left": "302px", "width": "100px" },
-        { "id": 3, "typ": 1, "text": "Artikel", "top": "207px", "left": "81px", "width": "100px" },
-        { "id": 4, "typ": 2, "text": "Rechnungs\npositionen", "top": "118px", "left": "486px", "width": "100px" }
+        // { "id": 1, "typ": 1, "top": "124px", "left": "81px", "width": "100px", "text": "Kunde" },
+        // { "id": 2, "typ": 3, "text": "Rechnung", "top": "122px", "left": "302px", "width": "100px" },
+        // { "id": 3, "typ": 1, "text": "Artikel", "top": "207px", "left": "81px", "width": "100px" },
+        // { "id": 4, "typ": 2, "text": "Rechnungs\npositionen", "top": "118px", "left": "486px", "width": "100px" }
     ])
     
     const lineList = ref([
@@ -57,9 +71,9 @@
 
     const newAnkerPoint = ref({})
     const ankerPoints = ref([
-        { "startEntity": 1, "startEntityPosition": "right", "endEntity": 2, "endEntityPosition": "left" },
-        { "startEntity": 3, "startEntityPosition": "right", "endEntity": 2, "endEntityPosition": "left" },
-        { "startEntity": 2, "startEntityPosition": "right", "endEntity": 4, "endEntityPosition": "left" }
+        // { "startEntity": 1, "startEntityPosition": "right", "endEntity": 2, "endEntityPosition": "left" },
+        // { "startEntity": 3, "startEntityPosition": "right", "endEntity": 2, "endEntityPosition": "left" },
+        // { "startEntity": 2, "startEntityPosition": "right", "endEntity": 4, "endEntityPosition": "left" }
     ])
 
     onMounted(() => {
@@ -84,7 +98,7 @@
         let calculatedLines = []
 
         console.log('Update Lines')
-        console.log(ankerPoints)
+        //console.log(ankerPoints)
         
         for (const [index, anker] of ankerPoints.value.entries()) {
 
@@ -101,16 +115,47 @@
         let line = {}
 
         let startEntity = entityList._rawValue.find(x => x.id == anker.startEntity)
-        //console.log(`startID: ${startEntity}`)
-        line.y1 = parseInt(startEntity.top)
-        line.x1 = parseInt(startEntity.left)
+        let startEntityWidth = parseInt(startEntity.width)
+        let startPositionFactor = getPositionFactor(anker.startEntityPosition, startEntityWidth)
+
+        line.y1 = parseInt(startEntity.top) + startPositionFactor.y
+        line.x1 = parseInt(startEntity.left) + startPositionFactor.x
+
 
         let endEntity = entityList._rawValue.find(x => x.id == anker.endEntity)
-        //console.log(`startID: ${endEntity}`)
-        line.y2 = parseInt(endEntity.top)
-        line.x2 = parseInt(endEntity.left)
+        let endEntityWidth = parseInt(endEntity.width)
+        let endPositionFactor = getPositionFactor(anker.endEntityPosition, endEntityWidth)
+        line.y2 = parseInt(endEntity.top) + endPositionFactor.y
+        line.x2 = parseInt(endEntity.left) + endPositionFactor.x
 
         return line
+    }
+
+    const getPositionFactor = (position, entityWidth) => {
+        let positionFactor = {}
+
+        switch (position) {
+            case 'top':
+                positionFactor.y = 0
+                positionFactor.x = entityWidth / 2
+                break;
+            case 'right':
+                positionFactor.y = entityWidth / 4
+                positionFactor.x = entityWidth
+                break;
+            case 'bottom':
+                positionFactor.y = entityWidth / 2
+                positionFactor.x = entityWidth / 2
+                break;
+            case 'left':
+                positionFactor.y = entityWidth / 4
+                positionFactor.x = 0
+                break;
+            default:
+                throw "Unhandled position from anker.";
+        }
+
+        return positionFactor
     }
 
     const deleteEntity = (entityToDelete) => {
@@ -135,6 +180,13 @@
 
         //update Lines
         //updateLines()
+    }
+
+    const deleteLine = (lineToDelete) => {
+        // aus der Array-Position der Linie lässt sich auch der ankerpunkt bestimmen
+        // damit nicht nur die linie, sondern auch die beziehung gelöscht wird, muss der Ankerpunkt gelöscht werden
+        let lineIndex = lineList.value.indexOf(lineToDelete)
+        ankerPoints.value.splice(lineIndex, 1)
     }
 
     let triggered = false
@@ -198,6 +250,11 @@
 .toolbox>*{
     margin: 10px;
     cursor: copy;
+}
+
+.svgMarker{
+    width: 0px;
+    height: 0px;
 }
 
 </style>

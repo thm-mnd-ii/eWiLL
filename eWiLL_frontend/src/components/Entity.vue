@@ -1,7 +1,7 @@
 <template>
     <div ref="root" @mouseover="hover = true" @mouseleave="hover = false" class="objectContainer">
 
-        <span v-if="!isEditable" @dblclick="makeTextEditable" class="text">{{props.entity.text}}</span>
+        <span v-if="!isEditable" @dblclick="makeTextEditable" class="text unselectable">{{props.entity.text}}</span>
         <textarea v-if="isEditable" @dblclick="makeTextEditable" @keyup.enter="handleEnter" v-model="props.entity.text" class="textedit form-control"  rows="1"></textarea>
 
         <div v-if="isResizable" @mousedown="resizer($event)" class="resizer nw"></div>
@@ -14,7 +14,7 @@
         <AnkerPoint v-if="hover && !isResizable" position="right" @ankerPosition="handleAnkerPoint"></AnkerPoint>
         <AnkerPoint v-if="hover && !isResizable" position="bottom" @ankerPosition="handleAnkerPoint"></AnkerPoint>
 
-        <EditWidget v-if="isResizable" @deleteEntity="deleteEntity"/>
+        <EntityWidget v-if="isResizable" @deleteEntity="deleteEntity"/>
 
         <IconEntity v-if="props.entity.typ == EntityTyp.ENTITY" @dblclick="changeResizable()" @mousedown="mousedown($event)" />
         <IconRelationshiptyp v-if="props.entity.typ == EntityTyp.RELATIONSHIP" @dblclick="changeResizable()" @mousedown="mousedown($event)" />
@@ -28,7 +28,7 @@
     import IconRelationshiptyp from "../components/icons/IconRelationshiptyp.vue"
     import EntityTyp from "../enums/EntityTyp"
     import AnkerPoint from "../components/AnkerPoint.vue"
-    import EditWidget from "../components/EditWidget.vue"
+    import EntityWidget from "../components/EntityWidget.vue"
     
     import { ref, onMounted, computed, watch, reactive } from 'vue'
 
@@ -297,6 +297,15 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+}
+
+.unselectable {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 </style>
