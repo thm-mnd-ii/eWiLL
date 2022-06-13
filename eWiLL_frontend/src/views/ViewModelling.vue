@@ -20,7 +20,6 @@
         <IconEntity id="item" draggable="true" @click="addElement($event, EntityTyp.ENTITY)"/>
         <IconRelationshiptyp @mousedown="addElement($event, EntityTyp.RELATIONSHIP)"/>
         <IconEntityRelationshiptyp @mousedown="addElement($event, EntityTyp.ENTITYRELATIONSHIP)"/>
-        <IconKante />
     </div>
 
     <div class="modellingContainer">

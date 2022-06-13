@@ -9,10 +9,10 @@
         <div v-if="isResizable" @mousedown="resizer($event)" class="resizer sw"></div>
         <div v-if="isResizable" @mousedown="resizer($event)" class="resizer se"></div>
 
-        <AnkerPoint v-if="hover && !isResizable" position="top" @ankerPosition="handleAnkerPoint"></AnkerPoint>
-        <AnkerPoint v-if="hover && !isResizable" position="left" @ankerPosition="handleAnkerPoint"></AnkerPoint>
-        <AnkerPoint v-if="hover && !isResizable" position="right" @ankerPosition="handleAnkerPoint"></AnkerPoint>
-        <AnkerPoint v-if="hover && !isResizable" position="bottom" @ankerPosition="handleAnkerPoint"></AnkerPoint>
+        <AnkerPoint v-if="hover && !isResizable" position="top" :entityWidth="props.entity.width" @ankerPosition="handleAnkerPoint"></AnkerPoint>
+        <AnkerPoint v-if="hover && !isResizable" position="left" :entityWidth="props.entity.width" @ankerPosition="handleAnkerPoint"></AnkerPoint>
+        <AnkerPoint v-if="hover && !isResizable" position="right" :entityWidth="props.entity.width" @ankerPosition="handleAnkerPoint"></AnkerPoint>
+        <AnkerPoint v-if="hover && !isResizable" position="bottom" :entityWidth="props.entity.width" @ankerPosition="handleAnkerPoint"></AnkerPoint>
 
         <EntityWidget v-if="isResizable" @deleteEntity="deleteEntity"/>
 

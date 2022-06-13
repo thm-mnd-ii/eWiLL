@@ -1,5 +1,10 @@
 <template>
-    <div ref="dockingPoint" @mousedown="createLine($event)" class="dockingPoint"></div>
+    <div
+        ref="dockingPoint"
+        @mousedown="createLine($event)"
+        class="dockingPoint"
+        :style="{ left:  (parseInt(props.entityWidth) / 2) - 10 + 'px' }"
+    ></div>
 </template>
 
 <script setup>
@@ -7,12 +12,13 @@
     import { ref, onMounted, computed, watch, reactive } from 'vue'
 
     const emit = defineEmits(['ankerPosition'])
-    const props = defineProps(['position'])
+    const props = defineProps(['position', 'entityWidth'])
     const dockingPoint = ref(null)
 
     onMounted(() => {
         //add position to ankerPoint
         dockingPoint.value.classList.add(props.position)
+        console.log(props.entityWidth)
     })
 
     const createLine = (e) => {
@@ -48,18 +54,20 @@
 <style scoped>
 .dockingPoint {
     position: absolute;
-    width: 8px;
+    /* width: 8px;
     height: 8px;
     border-radius: 4px;
-    background-color: #00abe3;
+    background-color: #00abe3; */
     z-index: 10;
 
     cursor: pointer;
 }
 
 .dockingPoint.top{
-    top: -2px;
-    left: 50%;
+    top: -20px;
+    border-style: solid;
+    border-width: 0 10px 20px 10px;
+    border-color: transparent transparent #00aae3a9 transparent;
 }
 .dockingPoint.left{
     top: 50%;
