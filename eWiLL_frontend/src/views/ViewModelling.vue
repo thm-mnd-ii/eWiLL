@@ -12,9 +12,9 @@
         {{lineList}}
     </div> -->
 
-    <div>
+    <!-- <div>
         {{lineList}}
-    </div>
+    </div> -->
 
     <div class="toolbox">
         <IconEntity id="item" draggable="true" @click="addElement($event, EntityTyp.ENTITY)"/>
@@ -198,6 +198,7 @@
     }
 
     const changeLineStyle = (line) => {
+        //TODO: User Enum -> CardinalityTyp
         let lineIndex = lineList.value.indexOf(line)
         const currentStyle = ankerPoints.value[lineIndex].style
 
