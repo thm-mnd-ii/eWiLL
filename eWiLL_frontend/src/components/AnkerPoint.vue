@@ -3,8 +3,9 @@
         ref="dockingPoint"
         @mousedown="createLine($event)"
         class="dockingPoint"
-        :style="{ left:  (parseInt(props.entityWidth) / 2) - 10 + 'px' }"
+        
     ></div>
+    <!-- :style="{ left:  (parseInt(props.entityWidth) / 2) - 10 + 'px' }" -->
 </template>
 
 <script setup>
@@ -15,10 +16,21 @@
     const props = defineProps(['position', 'entityWidth'])
     const dockingPoint = ref(null)
 
+
     onMounted(() => {
         //add position to ankerPoint
         dockingPoint.value.classList.add(props.position)
-        console.log(props.entityWidth)
+    })
+
+    // berechne Entfernung nach Links um Pfeile mittig zu positionieren
+    const cssVarDistanceLeft = computed(() => {
+        const arrowWidth = 20
+        return (parseInt(props.entityWidth) / 2) - (parseInt(arrowWidth / 2)) + 'px'
+    })
+
+    const cssVarDistanceTop = computed(() => {
+        const arrowWidth = 18
+        return (parseInt(props.entityWidth) / 4) - (parseInt(arrowWidth / 2)) + 'px'
     })
 
     const createLine = (e) => {
@@ -64,21 +76,31 @@
 }
 
 .dockingPoint.top{
-    top: -20px;
+    left: v-bind('cssVarDistanceLeft');
+    top: -30px;
     border-style: solid;
     border-width: 0 10px 20px 10px;
-    border-color: transparent transparent #00aae3a9 transparent;
+    border-color: transparent transparent #00aae374 transparent;
 }
 .dockingPoint.left{
-    top: 50%;
-    left: -2px;
+    top: v-bind('cssVarDistanceTop');
+    left: -30px;
+    border-style: solid;
+    border-width: 10px 20px 10px 0;
+    border-color: transparent #00aae374 transparent transparent;
 }
 .dockingPoint.right{
-    top: 50%;
-    right: -2px;
+    top: v-bind('cssVarDistanceTop');
+    right: -30px;
+    border-style: solid;
+    border-width: 10px 0 10px 20px;
+    border-color: transparent transparent transparent #00aae374;
 }
 .dockingPoint.bottom{
-    bottom: -2px;
-    left: 50%;
+    left: v-bind('cssVarDistanceLeft');
+    bottom: -30px;
+    border-style: solid;
+    border-width: 20px 10px 0 10px;
+    border-color: #00aae374 transparent transparent transparent;
 }
 </style>

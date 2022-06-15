@@ -2,19 +2,19 @@
 
     <!-- <div>
         {{entityList}}
-    </div>
+    </div> -->
 
-    <div>
+    <!-- <div>
         {{ankerPoints}}
-    </div>
-
-    <div>
-        {{lineList}}
     </div> -->
 
     <!-- <div>
         {{lineList}}
     </div> -->
+
+    <div>
+        {{lineList}}
+    </div>
 
     <div class="toolbox">
         <IconEntity id="item" draggable="true" @click="addElement($event, EntityTyp.ENTITY)"/>
@@ -25,7 +25,7 @@
     <div class="modellingContainer">
         <Entity v-for="entity in entityList" :key="entity.id" :entity="entity" @ankerPoint="handleAnkerPoint" @deleteEntity="deleteEntity"/>
 
-        <Line v-for="line in lineList" :key="line.id" :line="line" @deleteLine="deleteLine"/>
+        <Line v-for="line in lineList" :key="line.id" :line="line" @deleteLine="deleteLine" @changeLine="changeLineStyle"/>
         
         <!-- Definiert global das aussehen der Pfeile (TODO: In Component auslagern) -->
         <svg class="svgMarker">
@@ -33,8 +33,15 @@
                 <marker id="arrowhead" markerWidth="20" markerHeight="10" refX="5" refY="2" orient="auto">
                     <polygon points="0 0, 0 4, 6 2" />
                 </marker>
+
+                <filter id="double">
+                    <feMorphology in="SourceGraphic" result="a" operator="dilate" radius="1.2" />
+                    <feComposite in="SourceGraphic" in2="a" result="xx" operator="xor" />
+                </filter>
             </defs>
         </svg>
+
+        
 
     </div>
     
@@ -56,10 +63,10 @@
     const count = ref(0)
 
     const entityList = ref([
-        // { "id": 1, "typ": 1, "top": "124px", "left": "81px", "width": "100px", "text": "Kunde" },
-        // { "id": 2, "typ": 3, "text": "Rechnung", "top": "122px", "left": "302px", "width": "100px" },
-        // { "id": 3, "typ": 1, "text": "Artikel", "top": "207px", "left": "81px", "width": "100px" },
-        // { "id": 4, "typ": 2, "text": "Rechnungs\npositionen", "top": "118px", "left": "486px", "width": "100px" }
+        { "id": 1, "typ": 1, "top": "124px", "left": "81px", "width": "100px", "text": "Kunde" },
+        { "id": 2, "typ": 3, "text": "Rechnung", "top": "122px", "left": "302px", "width": "100px" },
+        { "id": 3, "typ": 1, "text": "Artikel", "top": "207px", "left": "81px", "width": "100px" },
+        { "id": 4, "typ": 2, "text": "Rechnungs\npositionen", "top": "118px", "left": "486px", "width": "100px" }
     ])
     
     const lineList = ref([
@@ -70,9 +77,9 @@
 
     const newAnkerPoint = ref({})
     const ankerPoints = ref([
-        // { "startEntity": 1, "startEntityPosition": "right", "endEntity": 2, "endEntityPosition": "left" },
-        // { "startEntity": 3, "startEntityPosition": "right", "endEntity": 2, "endEntityPosition": "left" },
-        // { "startEntity": 2, "startEntityPosition": "right", "endEntity": 4, "endEntityPosition": "left" }
+        { "startEntity": 1, "startEntityPosition": "right", "endEntity": 2, "endEntityPosition": "left", "style": 0  },
+        { "startEntity": 3, "startEntityPosition": "right", "endEntity": 2, "endEntityPosition": "left", "style": 1  },
+        { "startEntity": 2, "startEntityPosition": "right", "endEntity": 4, "endEntityPosition": "left", "style": 2  }
     ])
 
     onMounted(() => {
@@ -126,6 +133,8 @@
         let endPositionFactor = getPositionFactor(anker.endEntityPosition, endEntityWidth)
         line.y2 = parseInt(endEntity.top) + endPositionFactor.y
         line.x2 = parseInt(endEntity.left) + endPositionFactor.x
+
+        line.style = anker.style
 
         return line
     }
@@ -188,6 +197,17 @@
         ankerPoints.value.splice(lineIndex, 1)
     }
 
+    const changeLineStyle = (line) => {
+        let lineIndex = lineList.value.indexOf(line)
+        const currentStyle = ankerPoints.value[lineIndex].style
+
+        if (currentStyle == 3) {
+            ankerPoints.value[lineIndex].style = 0
+        } else {
+            ankerPoints.value[lineIndex].style = currentStyle + 1
+        }
+    }
+
     let triggered = false
     const handleAnkerPoint = (ankerPoint) => {
         if (!triggered) {
@@ -198,6 +218,9 @@
             triggered = false
             newAnkerPoint.value.endEntity = ankerPoint.id
             newAnkerPoint.value.endEntityPosition = ankerPoint.position
+        
+        //initialize style with 0
+        newAnkerPoint.value.style = 0
 
             ankerPoints.value.push(newAnkerPoint.value)
             newAnkerPoint.value = {}
@@ -230,7 +253,7 @@
     left: 15%;
     top: 10%;
     width: 70%;
-    height: 80%;
+    height: 70%;
     padding-bottom: 10%;
 }
 

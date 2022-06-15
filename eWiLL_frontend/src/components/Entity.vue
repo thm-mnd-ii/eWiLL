@@ -1,5 +1,5 @@
 <template>
-    <div ref="root" @mouseover="hover = true" @mouseleave="hover = false" class="objectContainer">
+    <div ref="root" @mouseover="hover = true" @mouseleave="endHover" class="objectContainer">
 
         <span v-if="!isEditable" @dblclick="makeTextEditable" class="text unselectable">{{props.entity.text}}</span>
         <textarea v-if="isEditable" @dblclick="makeTextEditable" @keyup.enter="handleEnter" v-model="props.entity.text" class="textedit form-control"  rows="1"></textarea>
@@ -31,6 +31,7 @@
     import EntityWidget from "../components/EntityWidget.vue"
     
     import { ref, onMounted, computed, watch, reactive } from 'vue'
+    import { trigger } from "@vue/reactivity"
 
     const emit = defineEmits(['update:entity', 'ankerPoint', 'deleteEntity'])
     //const updateEntity = ref(updateCurrentEntity.value)
@@ -52,6 +53,10 @@
     watch(hover, (e) => {
         //console.log(`Hover: ${e}`)
     })
+
+    const endHover = () => {
+        setTimeout(() => { hover.value = false }, 1000)
+    }
 
     const isEditable = ref(false)
     const makeTextEditable = () => {
