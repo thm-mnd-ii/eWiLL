@@ -64,7 +64,12 @@
     }
 
     const handleEnter = (e) => {
-        if (e.ctrlKey) return props.entity.text += "\n"
+        if (e.ctrlKey){
+            const curPos = e.srcElement.selectionStart
+            const textarea = props.entity.text
+            //use return to exit methode
+            return props.entity.text = textarea.slice(0, curPos) + "\n" + textarea.slice(curPos)
+        }
 
         props.entity.text = props.entity.text.slice(0,-1)
         makeTextEditable()

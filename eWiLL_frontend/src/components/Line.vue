@@ -165,7 +165,7 @@
 .hide {visibility: hidden;}
 .reshow {visibility: visible;}
 
-.dot {
+/* .dot {
     position: absolute;
     height: 8px;
     width: 8px;
@@ -174,6 +174,6 @@
     background-color: #00abe3;
     border-radius: 50%;
     cursor: pointer;
-}
+} */
 
 </style>

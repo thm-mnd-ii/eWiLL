@@ -2,9 +2,8 @@
     <div
         ref="dockingPoint"
         @mousedown="createLine($event)"
-        class="dockingPoint"
-        
-    ></div>
+        class="dockingPoint">
+    </div>
     <!-- :style="{ left:  (parseInt(props.entityWidth) / 2) - 10 + 'px' }" -->
 </template>
 
