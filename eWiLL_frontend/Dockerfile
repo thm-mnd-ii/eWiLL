@@ -13,7 +13,7 @@ RUN npm install
 
 ENTRYPOINT ["/entrypoint.sh"]
 
-CMD ["npm", "run", "build"]
+RUN npm run build
 
 # STEP 2 CREATE NGINX SERVER
 FROM nginx:1.23.0-alpine AS prod-stage
