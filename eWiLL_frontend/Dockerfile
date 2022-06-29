@@ -17,7 +17,12 @@ CMD ["npm", "run", "build"]
 
 # STEP 2 CREATE NGINX SERVER
 FROM nginx:1.23.0-alpine AS prod-stage
-COPY --from=build eWiLL-frontend/app/dist eWiLL-frontend/usr/share/nginx/html
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+
+COPY default.conf.template /etc/nginx/conf.d/default.conf.template
+COPY nginx.conf /etc/nginx/nginx.conf
+
+COPY --from=build /app/dist /usr/share/nginx/html
+
+CMD /bin/bash -c "envsubst '\$PORT' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf" && nginx -g 'daemon off;'
+# CMD ["nginx", "-g", "daemon off;"]
 
