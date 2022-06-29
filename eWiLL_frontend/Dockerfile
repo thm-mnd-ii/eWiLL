@@ -17,7 +17,7 @@ CMD ["npm", "run", "build"]
 
 # STEP 2 CREATE NGINX SERVER
 FROM nginx:1.23.0-alpine AS prod-stage
-COPY --from=build /app/dist /usr/share/nginx/html
+COPY --from=build eWiLL-frontend/app/dist eWiLL-frontend/usr/share/nginx/html
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
 
