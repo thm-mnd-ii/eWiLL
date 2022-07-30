@@ -1,22 +1,22 @@
 <template>
-    <div ref="root" @mouseover="hover = true" @mouseleave="endHover" class="objectContainer">
+    <div ref="root" class="objectContainer" @mouseover="hover = true" @mouseleave="endHover">
 
-        <span v-if="!isEditable" @dblclick="makeTextEditable" class="text unselectable">{{props.entity.entityName}}</span>
-        <textarea v-if="isEditable" @dblclick="makeTextEditable" @keyup.enter="handleEnter" v-model="props.entity.entityName" class="textedit form-control"  rows="1"></textarea>
+        <span v-if="!isEditable" class="text unselectable" @dblclick="makeTextEditable">{{props.entity.entityName}}</span>
+        <textarea v-if="isEditable" v-model="props.entity.entityName" class="textedit form-control"  rows="1" @dblclick="makeTextEditable" @keyup.enter="handleEnter"></textarea>
 
         <span class="attributes" v-html="formattedAttributes"></span>
 
         <!-- <div v-if="isResizable" @mousedown="resizer($event)" class="resizer nw"></div>
         <div v-if="isResizable" @mousedown="resizer($event)" class="resizer ne"></div>
         <div v-if="isResizable" @mousedown="resizer($event)" class="resizer sw"></div> -->
-        <div v-if="isResizable" @mousedown="resizer($event)" class="resizer se"></div>
+        <div v-if="isResizable" class="resizer se" @mousedown="resizer($event)"></div>
 
         <!-- <AnkerPoint v-if="hover && !isResizable" position="top" :entityWidth="props.entity.width" @ankerPosition="handleAnkerPoint"></AnkerPoint> -->
-        <AnkerPoint v-if="hover && !isResizable" position="left" :entityWidth="props.entity.width" @ankerPosition="handleAnkerPoint"></AnkerPoint>
-        <AnkerPoint v-if="hover && !isResizable" position="right" :entityWidth="props.entity.width" @ankerPosition="handleAnkerPoint"></AnkerPoint>
+        <AnkerPoint v-if="hover && !isResizable" position="left" :entity-width="props.entity.width" @anker-position="handleAnkerPoint"></AnkerPoint>
+        <AnkerPoint v-if="hover && !isResizable" position="right" :entity-width="props.entity.width" @anker-position="handleAnkerPoint"></AnkerPoint>
         <!-- <AnkerPoint v-if="hover && !isResizable" position="bottom" :entityWidth="props.entity.width" @ankerPosition="handleAnkerPoint"></AnkerPoint> -->
 
-        <EntityWidget v-if="isResizable" @deleteEntity="deleteEntity" @changeEntityTyp="changeEntityTyp" @manageAttributes="manageAttributes" />
+        <EntityWidget v-if="isResizable" @delete-entity="deleteEntity" @change-entity-typ="changeEntityTyp" @manage-attributes="manageAttributes" />
 
         <IconEntity v-if="props.entity.typ == EntityTyp.ENTITY" @dblclick="changeResizable()" @mousedown="mousedown($event)" />
         <IconRelationshiptyp v-if="props.entity.typ == EntityTyp.RELATIONSHIP" @dblclick="changeResizable()" @mousedown="mousedown($event)" />
@@ -35,10 +35,13 @@
     
     import { ref, onMounted, computed, watch } from 'vue'
 
-    const emit = defineEmits(['update:entity', 'ankerPoint', 'deleteEntity', 'changeEntityTyp', 'manageAttributes'])
+    const emit = defineEmits(['update:entity', 'anker.point', 'delete-entity', 'change-entity-typ', 'manage-attributes'])
     //const updateEntity = ref(updateCurrentEntity.value)
 
-    const props = defineProps(['entity'])
+    const props = defineProps({
+        entity: { type: Object, required: true}
+    })
+
     const root = ref(null)
 
     const cssVarAttributesDistanceTop = computed(() => {
@@ -68,7 +71,6 @@
             
                 default:
                     throw "Not implemented Attribute Typ"
-                    break;
             }
         })
         
@@ -77,21 +79,21 @@
     }
 
     const deleteEntity = () => {
-        emit('deleteEntity', props.entity)
+        emit('delete-entity', props.entity)
     }
 
     const changeEntityTyp = () => {
-        emit('changeEntityTyp', props.entity)
+        emit('change-entity-typ', props.entity)
     }
 
     const manageAttributes = () => {
-        emit('manageAttributes', props.entity)
+        emit('manage-attributes', props.entity)
     }
 
     const handleAnkerPoint = (ankerPosition) => {
         // console.log(e)
         // console.log(props.entity.id)
-        emit('ankerPoint', { 'id': props.entity.id, 'position': ankerPosition})
+        emit('anker-point', { 'id': props.entity.id, 'position': ankerPosition})
     }
 
     const hover = ref(false)

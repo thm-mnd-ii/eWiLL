@@ -21,13 +21,14 @@
     "@vitejs/plugin-vue": "^2.2.2",
     "@vue/eslint-config-prettier": "^7.0.0",
     "@vue/test-utils": "^2.0.0-rc.18",
-    "eslint": "^8.5.0",
+    "eslint": "^8.20.0",
     "eslint-plugin-vue": "^8.2.0",
     "jsdom": "^19.0.0",
     "prettier": "^2.5.1",
     "sass": "^1.54.0",
     "sass-loader": "^13.0.2",
     "vite": "^2.8.4",
-    "vitest": "^0.5.0"
+    "vitest": "^0.5.0",
+    "vue-eslint-parser": "^9.0.3"
   }
 }

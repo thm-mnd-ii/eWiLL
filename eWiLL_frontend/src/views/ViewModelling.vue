@@ -18,7 +18,7 @@
 
     <div>{{selectedEntity}}</div>
 
-    <ModalAddAttributes v-if="showModalAddAttributes" :entity="selectedEntity" @close="showModalAddAttributes = false" @addAttribute=""/>
+    <ModalAddAttributes v-if="showModalAddAttributes" :entity="selectedEntity" @close="showModalAddAttributes = false"/>
 
     <div class="toolbox">
         <IconEntity id="item" draggable="true" @click="addElement($event, EntityTyp.ENTITY)"/>
@@ -56,13 +56,10 @@
     import IconEntityRelationshiptyp from "../components/icons/IconEntityRelationshiptyp.vue"
     import IconEntity from "../components/icons/IconEntitytyp.vue"
     import IconRelationshiptyp from "../components/icons/IconRelationshiptyp.vue"
-    import IconKante from "../components/icons/IconKante01.vue"
 
     import EntityTyp from "../enums/EntityTyp"
 
     import { onMounted, ref, watch } from 'vue'
-
-    const count = ref(0)
 
     const entityList = ref([
         { "id": 1, "typ": 1, "entityName": "Kunde", "top": "124px", "left": "81px", "width": "100px", "attributes": [{ "typ": 1, "name": "KNr" }, { "typ": 3, "name": "Adresse" }, { "typ": 3, "name": "Name" }, { "typ": 3, "name": "Vorname" }] },
@@ -122,7 +119,7 @@
     const calculateLine = (anker) => {
         let line = {}
 
-        let startEntity = entityList._rawValue.find(x => x.id == anker.startEntity)
+        let startEntity = entityList.value.find(x => x.id == anker.startEntity)
         let startEntityWidth = parseInt(startEntity.width)
         let startPositionFactor = getPositionFactor(anker.startEntityPosition, startEntityWidth)
 
@@ -130,7 +127,7 @@
         line.x1 = parseInt(startEntity.left) + startPositionFactor.x
 
 
-        let endEntity = entityList._rawValue.find(x => x.id == anker.endEntity)
+        let endEntity = entityList.value.find(x => x.id == anker.endEntity)
         let endEntityWidth = parseInt(endEntity.width)
         let endPositionFactor = getPositionFactor(anker.endEntityPosition, endEntityWidth)
         line.y2 = parseInt(endEntity.top) + endPositionFactor.y
@@ -253,7 +250,7 @@
     const addElement = (e, typ) => {
         
         if(entityList.value.length == 0) {
-            entityList.value.push({ "id": 1, "typ": typ, "entityName": "New Entity", "top": e.clientY-25+"px", "left": e.clientX-50+"px", "width": "100px" })
+            entityList.value.push({ "id": 1, "typ": typ, "entityName": "New Entity", "attributes": [], "top": e.clientY-25+"px", "left": e.clientX-50+"px", "width": "100px" })
             return 
         }
 
@@ -263,7 +260,7 @@
         const max = Math.max(...ids)
         const nextID = max+1
         
-        entityList.value.push({ "id": nextID, "typ": typ, "entityName": "New Entity", "top": e.clientY-25+"px", "left": e.clientX-50+"px", "width": "100px" })
+        entityList.value.push({ "id": nextID, "typ": typ, "entityName": "New Entity", "attributes": [], "top": e.clientY-25+"px", "left": e.clientX-50+"px", "width": "100px" })
     }
     
 </script>

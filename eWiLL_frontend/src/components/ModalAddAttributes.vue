@@ -46,7 +46,9 @@
   import draggable from 'vuedraggable'
   import IconMoveNorthSouth from "./icons/IconMoveNorthSouth.vue"
 
-  const props = defineProps(['entity'])
+  const props = defineProps({
+    entity: { type:Object, required:true }
+  })
   
   const emit = defineEmits(['close', 'update:entity'])
 

@@ -3,7 +3,7 @@ import App from "./App.vue"
 import router from "./router"
 
 import "bootstrap/dist/css/bootstrap.css"
-import "./style.scss"
+import "./assets/style.scss"
 
 const app = createApp(App)
 

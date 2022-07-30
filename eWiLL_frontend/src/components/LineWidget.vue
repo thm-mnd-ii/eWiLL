@@ -1,8 +1,8 @@
 <template>
 
         <div class="widgetContainer">
-            <IconTrash @click="deleteLine" class="widget" />
-            <IconChange @click="changeLine" class="widget" />
+            <IconTrash class="widget" @click="deleteLine" />
+            <IconChange class="widget" @click="changeLine" />
         </div>
     
 </template>
@@ -10,7 +10,6 @@
 <script setup>
     import IconTrash from './icons/IconTrash.vue'
     import IconChange from './icons/IconChange.vue'
-    import { ref } from 'vue'
 
     const emit = defineEmits(['deleteEntity', 'changeLine'])
 

@@ -1,8 +1,8 @@
 <template>
     <div class="widgetContainer">
-        <IconTrash @click="deleteEntity" class="widget">Edit Widget</IconTrash>
-        <IconChange @click="changeEntityTyp" class="widget" />
-        <IconAdd @click="manageAttributes" class="widget" />
+        <IconTrash class="widget" @click="deleteEntity">Edit Widget</IconTrash>
+        <IconChange class="widget" @click="changeEntityTyp" />
+        <IconAdd class="widget" @click="manageAttributes" />
     </div>
 </template>
 
@@ -11,18 +11,18 @@
     import IconChange from './icons/IconChange.vue'
     import IconAdd from './icons/IconAdd.vue'
 
-    const emit = defineEmits(['deleteEntity', 'changeEntityTyp', 'manageAttributes'])
+    const emit = defineEmits(['delete-entity', 'change-entity-typ', 'manage-attributes'])
 
     const deleteEntity = () => {
-        emit('deleteEntity', true)
+        emit('delete-entity', true)
     }
 
     const changeEntityTyp = () => {
-        emit('changeEntityTyp', true)
+        emit('change-entity-typ', true)
     }
 
     const manageAttributes = () => {
-        emit('manageAttributes', true)
+        emit('manage-attributes', true)
     }
 
 </script>
