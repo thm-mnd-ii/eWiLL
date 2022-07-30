@@ -16,6 +16,10 @@
         {{lineList}}
     </div> -->
 
+    <div>{{selectedEntity}}</div>
+
+    <ModalAddAttributes v-if="showModalAddAttributes" :entity="selectedEntity" @close="showModalAddAttributes = false" @addAttribute=""/>
+
     <div class="toolbox">
         <IconEntity id="item" draggable="true" @click="addElement($event, EntityTyp.ENTITY)"/>
         <IconRelationshiptyp @mousedown="addElement($event, EntityTyp.RELATIONSHIP)"/>
@@ -23,7 +27,7 @@
     </div>
 
     <div class="modellingContainer">
-        <Entity v-for="entity in entityList" :key="entity.id" :entity="entity" @ankerPoint="handleAnkerPoint" @deleteEntity="deleteEntity"/>
+        <Entity v-for="entity in entityList" :key="entity.id" :entity="entity" @ankerPoint="handleAnkerPoint" @deleteEntity="deleteEntity" @changeEntityTyp="changeEntityTyp" @manageAttributes="manageAttributes" />
 
         <Line v-for="line in lineList" :key="line.id" :line="line" @deleteLine="deleteLine" @changeLine="changeLineStyle"/>
         
@@ -40,9 +44,6 @@
                 </filter>
             </defs>
         </svg>
-
-        
-
     </div>
     
 </template>
@@ -50,6 +51,7 @@
 <script setup>
     import Entity from "../components/Entity.vue"
     import Line from "../components/Line.vue"
+    import ModalAddAttributes from "../components/ModalAddAttributes.vue"
 
     import IconEntityRelationshiptyp from "../components/icons/IconEntityRelationshiptyp.vue"
     import IconEntity from "../components/icons/IconEntitytyp.vue"
@@ -63,10 +65,10 @@
     const count = ref(0)
 
     const entityList = ref([
-        { "id": 1, "typ": 1, "top": "124px", "left": "81px", "width": "100px", "text": "Kunde" },
-        { "id": 2, "typ": 3, "text": "Rechnung", "top": "122px", "left": "302px", "width": "100px" },
-        { "id": 3, "typ": 1, "text": "Artikel", "top": "207px", "left": "81px", "width": "100px" },
-        { "id": 4, "typ": 2, "text": "Rechnungs\npositionen", "top": "118px", "left": "486px", "width": "100px" }
+        { "id": 1, "typ": 1, "entityName": "Kunde", "top": "124px", "left": "81px", "width": "100px", "attributes": [{ "typ": 1, "name": "KNr" }, { "typ": 3, "name": "Adresse" }, { "typ": 3, "name": "Name" }, { "typ": 3, "name": "Vorname" }] },
+        { "id": 2, "typ": 2, "entityName": "Rechnung", "top": "122px", "left": "302px", "width": "100px", "attributes": [{ "typ": 1, "name": "RNr" }, { "typ": 2, "name": "KNr" }, { "typ": 3, "name": "Datum" }] },
+        { "id": 3, "typ": 1, "entityName": "Artikel", "top": "207px", "left": "81px", "width": "100px", "attributes": [] },
+        { "id": 4, "typ": 3, "entityName": "Rechnungs\npositionen", "top": "118px", "left": "486px", "width": "100px", "attributes": [] }
     ])
     
     const lineList = ref([
@@ -186,9 +188,28 @@
             ankerPoints.value.splice(relationIndex, 1)
         }
 
-        //update Lines
-        //updateLines()
     }
+
+    const changeEntityTyp = (entity) => {
+        let entityIndex = entityList.value.indexOf(entity)
+        const currentTyp = entityList.value[entityIndex].typ
+        console.log(currentTyp)
+
+        if (currentTyp == 3) {
+            entityList.value[entityIndex].typ = 1
+        } else {
+            entityList.value[entityIndex].typ = currentTyp + 1
+        }
+    }
+
+
+    const showModalAddAttributes = ref(false)
+    const selectedEntity = ref(null)
+    const manageAttributes = (entity) => {
+        selectedEntity.value = entity
+        showModalAddAttributes.value = true
+    }
+
 
     const deleteLine = (lineToDelete) => {
         // aus der Array-Position der Linie lässt sich auch der ankerpunkt bestimmen
@@ -232,7 +253,7 @@
     const addElement = (e, typ) => {
         
         if(entityList.value.length == 0) {
-            entityList.value.push({ "id": 1, "typ": typ, "text": "New Entity", "top": e.clientY-25+"px", "left": e.clientX-50+"px", "width": "100px" })
+            entityList.value.push({ "id": 1, "typ": typ, "entityName": "New Entity", "top": e.clientY-25+"px", "left": e.clientX-50+"px", "width": "100px" })
             return 
         }
 
@@ -242,7 +263,7 @@
         const max = Math.max(...ids)
         const nextID = max+1
         
-        entityList.value.push({ "id": nextID, "typ": typ, "text": "New Entity", "top": e.clientY-25+"px", "left": e.clientX-50+"px", "width": "100px" })
+        entityList.value.push({ "id": nextID, "typ": typ, "entityName": "New Entity", "top": e.clientY-25+"px", "left": e.clientX-50+"px", "width": "100px" })
     }
     
 </script>
@@ -256,6 +277,7 @@
     width: 70%;
     height: 70%;
     padding-bottom: 10%;
+    z-index: 1;
 }
 
 .toolbox{

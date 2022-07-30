@@ -1,11 +1,9 @@
 <template>
 
-    <div>
         <div class="widgetContainer">
             <IconTrash @click="deleteLine" class="widget" />
             <IconChange @click="changeLine" class="widget" />
         </div>
-    </div>
     
 </template>
 

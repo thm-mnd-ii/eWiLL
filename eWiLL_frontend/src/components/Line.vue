@@ -144,7 +144,7 @@
     position: absolute;
     width: 100%;
     height: 100%;
-    z-index: 15;
+    z-index: 2;
 }
 
 .svgContainer > line{
@@ -158,7 +158,7 @@
 
 .lineWidget {
     position: absolute;
-    z-index: 5;
+    z-index: 2;
 }
 
 /* Hide Parent to reshow only svgLine */
