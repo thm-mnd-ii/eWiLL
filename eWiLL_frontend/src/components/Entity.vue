@@ -35,7 +35,7 @@
     
     import { ref, onMounted, computed, watch } from 'vue'
 
-    const emit = defineEmits(['update:entity', 'anker.point', 'delete-entity', 'change-entity-typ', 'manage-attributes'])
+    const emit = defineEmits(['update:entity', 'anker-point', 'delete-entity', 'change-entity-typ', 'manage-attributes'])
     //const updateEntity = ref(updateCurrentEntity.value)
 
     const props = defineProps({

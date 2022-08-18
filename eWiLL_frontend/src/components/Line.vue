@@ -51,7 +51,7 @@
     import { ref, onMounted,  watch} from 'vue'
     import CardinalityTyp from "../enums/CardinalityTyp"
 
-    const emit = defineEmits(['deleteLine', 'changeLine'])
+    const emit = defineEmits(['delete-line', 'change-line'])
 
     const props = defineProps({
         line: { type:Object, required:true }

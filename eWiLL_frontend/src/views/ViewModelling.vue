@@ -1,8 +1,8 @@
 <template>
 
-    <!-- <div>
-        {{entityList}}
-    </div> -->
+    <div>
+        {{calculatedLine}}
+    </div>
 
     <!-- <div>
         {{ankerPoints}}
@@ -16,7 +16,7 @@
         {{lineList}}
     </div> -->
 
-    <div>{{selectedEntity}}</div>
+    <!-- <div>{{selectedEntity}}</div> -->
 
     <ModalAddAttributes v-if="showModalAddAttributes" :entity="selectedEntity" @close="showModalAddAttributes = false"/>
 
@@ -27,9 +27,9 @@
     </div>
 
     <div class="modellingContainer">
-        <Entity v-for="entity in entityList" :key="entity.id" :entity="entity" @ankerPoint="handleAnkerPoint" @deleteEntity="deleteEntity" @changeEntityTyp="changeEntityTyp" @manageAttributes="manageAttributes" />
+        <Entity v-for="entity in entityList" :key="entity.id" :entity="entity" @anker-point="handleAnkerPoint" @delete-entity="deleteEntity" @change-entity-typ="changeEntityTyp" @manage-attributes="manageAttributes" />
 
-        <Line v-for="line in lineList" :key="line.id" :line="line" @deleteLine="deleteLine" @changeLine="changeLineStyle"/>
+        <Line v-for="line in lineList" :key="line.id" :line="line" @delete-line="deleteLine" @change-line="changeLineStyle"/>
         
         <!-- Definiert global das aussehen der Pfeile (TODO: In Component auslagern) -->
         <svg class="svgMarker">
