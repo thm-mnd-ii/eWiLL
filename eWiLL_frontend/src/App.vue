@@ -35,8 +35,9 @@ import IconEWiLL from "./components/icons/IconEWiLL.vue"
   
 
   <footer class="fixed-bottom mt-auto py-3 bg-light">
-    <div class="container">
-      <span class="text-muted">Footer</span>
+    <div class="container d-flex flex-row gap-3">
+      <router-link to="/impressum" class="nav-link text-muted" aria-current="page">Impressum</router-link>
+      <router-link to="/datenschutz" class="nav-link text-muted" aria-current="page">Datenschutzerklärung</router-link>
     </div>
   </footer>
 </template>
