@@ -12,10 +12,16 @@
         <div v-if="isResizable" class="resizer se" @mousedown="resizer($event)"></div>
 
         <!-- <AnkerPoint v-if="hover && !isResizable" position="top" :entityWidth="props.entity.width" @ankerPosition="handleAnkerPoint"></AnkerPoint> -->
-        <AnkerPoint v-if="hover && !isResizable" position="left" :entity-width="props.entity.width" @anker-position="handleAnkerPoint"></AnkerPoint>
-        <AnkerPoint v-if="hover && !isResizable" position="right" :entity-width="props.entity.width" @anker-position="handleAnkerPoint"></AnkerPoint>
+        <!-- <AnkerPoint v-if="hover && !isResizable" position="left" :entity-width="props.entity.width" @anker-position="handleAnkerPoint"></AnkerPoint> -->
+        <!-- <AnkerPoint v-if="hover && !isResizable" position="right" :entity-width="props.entity.width" @anker-position="handleAnkerPoint"></AnkerPoint> -->
         <!-- <AnkerPoint v-if="hover && !isResizable" position="bottom" :entityWidth="props.entity.width" @ankerPosition="handleAnkerPoint"></AnkerPoint> -->
+        <div v-if="hover && !isResizable">
+            <OutgoingAnkerPoint v-for="anker in outgoingAnkerPoint" :key="anker" :position="anker.position" :entity-width="props.entity.width" @anker-position="handleAnkerPoint"/>
+        </div>
 
+        <div v-if="hover && !isResizable">
+            <IncomingAnkerPoint v-for="anker in incomingAnkerPoint" :key="anker" :position="anker.position" :entity-width="props.entity.width" @anker-position="handleAnkerPoint"/>
+        </div>
         <EntityWidget v-if="isResizable" @delete-entity="deleteEntity" @change-entity-typ="changeEntityTyp" @manage-attributes="manageAttributes" />
 
         <IconEntity v-if="props.entity.typ == EntityTyp.ENTITY" @dblclick="changeResizable()" @mousedown="mousedown($event)" />
@@ -30,7 +36,8 @@
     import IconRelationshiptyp from "../components/icons/IconRelationshiptyp.vue"
     import EntityTyp from "../enums/EntityTyp"
     import AttributeTyp from "../enums/AttributeTyp"
-    import AnkerPoint from "../components/AnkerPoint.vue"
+    import OutgoingAnkerPoint from "../components/OutgoingAnkerPoint.vue"
+    import IncomingAnkerPoint from "../components/IncomingAnkerPoint.vue"
     import EntityWidget from "../components/EntityWidget.vue"
     
     import { ref, onMounted, computed, watch } from 'vue'
@@ -131,9 +138,34 @@
 
     onMounted(() => {
         //console.log(props.entity)
+        setAnkerPoints()
         setPosition(root.value, props.entity)
         updateAttributes()
       })
+
+    const outgoingAnkerPoint = ref([])
+    const incomingAnkerPoint = ref([])
+
+    const setAnkerPoints = () => {
+        outgoingAnkerPoint.value = []
+        incomingAnkerPoint.value = []
+
+        switch (props.entity.typ) {
+            case EntityTyp.ENTITY:
+                outgoingAnkerPoint.value.push({"position": "right"})
+                break;
+            case EntityTyp.RELATIONSHIP:
+                incomingAnkerPoint.value.push({"position": "left"})
+                break;
+            case EntityTyp.ENTITYRELATIONSHIP:
+                outgoingAnkerPoint.value.push({"position": "right"})
+                incomingAnkerPoint.value.push({"position": "left"})
+                break;
+        
+            default:
+                throw "EntityTyp not defined";
+        }
+    }
     
     const setPosition = (element, entity) => {
         element.style.top = entity.top

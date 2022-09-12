@@ -17,6 +17,7 @@
     onMounted(() => {
         //add position to ankerPoint
         dockingPoint.value.classList.add(props.position)
+
     })
 
     // berechne Entfernung nach Links um Pfeile mittig zu positionieren
@@ -32,7 +33,7 @@
 
     const createLine = () => {
 
-        emit('ankerPosition', props.position)
+        emit('anker-position', props.position)
             
         //ankerPoint-Line Handler
         //watch ref() NewAnkerPoint
@@ -71,6 +72,7 @@
 
     cursor: pointer;
 }
+
 
 .dockingPoint.top{
     left: v-bind('cssVarDistanceLeft');

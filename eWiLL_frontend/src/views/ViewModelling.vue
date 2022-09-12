@@ -1,8 +1,8 @@
 <template>
 
-    <div>
+    <!-- <div>
         {{calculatedLine}}
-    </div>
+    </div> -->
 
     <!-- <div>
         {{ankerPoints}}
