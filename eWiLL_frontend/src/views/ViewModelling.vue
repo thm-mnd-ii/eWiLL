@@ -15,7 +15,7 @@
     <!-- <div>
         {{lineList}}
     </div> -->
-
+ 
     <!-- <div>{{selectedEntity}}</div> -->
 
     <ModalAddAttributes v-if="showModalAddAttributes" :entity="selectedEntity" @close="showModalAddAttributes = false"/>
