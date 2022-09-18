@@ -27,6 +27,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: cd ./eWiLL_frontend
+        cache-dependency-path: eWiLL_frontend/package-lock.json
+        working-directory: eWiLL_frontend
     - run: npm install
     - run: npm run build
