@@ -5,7 +5,7 @@ name: Node.js CI
 
 on:
   push:
-    branches: [dev, main, v*.x]
+    branches: [development, main, v*.x]
     tags:
       - v**
   pull_request:
