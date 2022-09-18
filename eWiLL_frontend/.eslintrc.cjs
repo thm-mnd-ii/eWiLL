@@ -1,5 +1,5 @@
 /* eslint-env node */
-require("@rushstack/eslint-patch/modern-module-resolution");
+require("@rushstack/eslint-patch/modern-module-resolution")
 
 module.exports = {
   root: true,
@@ -11,4 +11,10 @@ module.exports = {
   env: {
     "vue/setup-compiler-macros": true,
   },
+  'prettier/prettier': [
+    'error',
+    {
+      'endOfLine': 'auto',
+    }
+  ],
 };
