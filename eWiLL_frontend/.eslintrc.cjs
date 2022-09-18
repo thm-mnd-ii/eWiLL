@@ -1,5 +1,5 @@
 /* eslint-env node */
-require("@rushstack/eslint-patch/modern-module-resolution");
+require("@rushstack/eslint-patch/modern-module-resolution")
 
 module.exports = {
   env: {
@@ -14,8 +14,10 @@ module.exports = {
   parserOptions: {
     sourceType: "module"
   },
-  rules: {
-    // override/add rules settings here, such as:
-    // 'vue/no-unused-vars': 'error'
-  }
-}
+  'prettier/prettier': [
+    'error',
+    {
+      'endOfLine': 'auto',
+    }
+  ],
+};
