@@ -1,24 +1,23 @@
 <template>
-    <div
-        ref="dockingPoint"
-        @mousedown="createLine($event)"
-        class="dockingPoint">
-    </div>
-    <!-- :style="{ left:  (parseInt(props.entityWidth) / 2) - 10 + 'px' }" -->
+    <div ref="dockingPoint" class="dockingPoint" @mousedown="createLine($event)"></div>
 </template>
 
 <script setup>
 
-    import { ref, onMounted, computed, watch, reactive } from 'vue'
+    import { ref, onMounted, computed } from 'vue'
 
-    const emit = defineEmits(['ankerPosition'])
-    const props = defineProps(['position', 'entityWidth'])
+    const emit = defineEmits(['anker-position'])
+    const props = defineProps({
+      position: { type: String, required: true },
+      entityWidth: { type: String, required: true },
+    })
+
     const dockingPoint = ref(null)
-
 
     onMounted(() => {
         //add position to ankerPoint
         dockingPoint.value.classList.add(props.position)
+
     })
 
     // berechne Entfernung nach Links um Pfeile mittig zu positionieren
@@ -32,9 +31,9 @@
         return (parseInt(props.entityWidth) / 4) - (parseInt(arrowWidth / 2)) + 'px'
     })
 
-    const createLine = (e) => {
+    const createLine = () => {
 
-        emit('ankerPosition', props.position)
+        emit('anker-position', props.position)
             
         //ankerPoint-Line Handler
         //watch ref() NewAnkerPoint
@@ -73,6 +72,7 @@
 
     cursor: pointer;
 }
+
 
 .dockingPoint.top{
     left: v-bind('cssVarDistanceLeft');

@@ -1,10 +1,10 @@
 <template>
     <LineWidget
         v-if="visible"
-        @deleteEntity="deleteLine"
-        @changeLine="changeLineStyle"
         class="lineWidget"
         :style="{ top: (props.line.y1 + props.line.y2) / 2 + 'px', left: (props.line.x1 + props.line.x2) / 2 + 'px' }"
+        @delete-entity="deleteLine"
+        @change-line="changeLineStyle"
     />
 
     <!-- <span
@@ -15,8 +15,8 @@
     /> -->
 
     <svg ref="root" class="svgContainer hide">
-        <line class="reshow" @dblclick="changeVisibility" stroke-width="2.5px" stroke="#000000"  x1="0" y1="0" x2="0" y2="0" id="svgLine"/>
-        <line class="reshow" @dblclick="changeVisibility" fill="none" stroke-width="2.6px" stroke="none" stroke-opacity="0"  x1="0" y1="0" x2="0" y2="0" marker-end="url(#arrowhead)" id="svgSupportLine"/>
+        <line id="svgLine" class="reshow" stroke-width="2.5px" stroke="#000000"  x1="0" y1="0" x2="0" y2="0" @dblclick="changeVisibility"/>
+        <line id="svgSupportLine" class="reshow" fill="none" stroke-width="2.6px" stroke="none" stroke-opacity="0" x1="0"  y1="0" marker-end="url(#arrowhead)" y2="0" x2="0" @dblclick="changeVisibility"/>
     </svg>
 
     <!-- Hide SVG and show only line, to make line clickable -->
@@ -48,14 +48,15 @@
 <script setup>
 
     import LineWidget from "../components/LineWidget.vue"
-    import { ref, onMounted, computed, watch, reactive } from 'vue'
+    import { ref, onMounted,  watch} from 'vue'
     import CardinalityTyp from "../enums/CardinalityTyp"
 
-    const emit = defineEmits(['deleteLine', 'changeLine'])
+    const emit = defineEmits(['delete-line', 'change-line'])
 
-    const props = defineProps(['line'])
+    const props = defineProps({
+        line: { type:Object, required:true }
+    })
     const root = ref(null)
-    const lineStyle = ref(props.line.style)
 
     let visible = ref(false)
     const changeVisibility = () => {
@@ -117,7 +118,6 @@
         
             default:
                 throw "Line style is not valid."
-                break;
         }
         
     }
@@ -144,7 +144,7 @@
     position: absolute;
     width: 100%;
     height: 100%;
-    z-index: 15;
+    z-index: 2;
 }
 
 .svgContainer > line{
@@ -158,7 +158,7 @@
 
 .lineWidget {
     position: absolute;
-    z-index: 5;
+    z-index: 2;
 }
 
 /* Hide Parent to reshow only svgLine */

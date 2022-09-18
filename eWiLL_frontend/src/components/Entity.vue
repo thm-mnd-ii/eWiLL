@@ -1,20 +1,28 @@
 <template>
-    <div ref="root" @mouseover="hover = true" @mouseleave="endHover" class="objectContainer">
+    <div ref="root" class="objectContainer" @mouseover="hover = true" @mouseleave="endHover">
 
-        <span v-if="!isEditable" @dblclick="makeTextEditable" class="text unselectable">{{props.entity.text}}</span>
-        <textarea v-if="isEditable" @dblclick="makeTextEditable" @keyup.enter="handleEnter" v-model="props.entity.text" class="textedit form-control"  rows="1"></textarea>
+        <span v-if="!isEditable" class="text unselectable" @dblclick="makeTextEditable">{{props.entity.entityName}}</span>
+        <textarea v-if="isEditable" v-model="props.entity.entityName" class="textedit form-control"  rows="1" @dblclick="makeTextEditable" @keyup.enter="handleEnter"></textarea>
 
-        <div v-if="isResizable" @mousedown="resizer($event)" class="resizer nw"></div>
+        <span class="attributes" v-html="formattedAttributes"></span>
+
+        <!-- <div v-if="isResizable" @mousedown="resizer($event)" class="resizer nw"></div>
         <div v-if="isResizable" @mousedown="resizer($event)" class="resizer ne"></div>
-        <div v-if="isResizable" @mousedown="resizer($event)" class="resizer sw"></div>
-        <div v-if="isResizable" @mousedown="resizer($event)" class="resizer se"></div>
+        <div v-if="isResizable" @mousedown="resizer($event)" class="resizer sw"></div> -->
+        <div v-if="isResizable" class="resizer se" @mousedown="resizer($event)"></div>
 
-        <AnkerPoint v-if="hover && !isResizable" position="top" :entityWidth="props.entity.width" @ankerPosition="handleAnkerPoint"></AnkerPoint>
-        <AnkerPoint v-if="hover && !isResizable" position="left" :entityWidth="props.entity.width" @ankerPosition="handleAnkerPoint"></AnkerPoint>
-        <AnkerPoint v-if="hover && !isResizable" position="right" :entityWidth="props.entity.width" @ankerPosition="handleAnkerPoint"></AnkerPoint>
-        <AnkerPoint v-if="hover && !isResizable" position="bottom" :entityWidth="props.entity.width" @ankerPosition="handleAnkerPoint"></AnkerPoint>
+        <!-- <AnkerPoint v-if="hover && !isResizable" position="top" :entityWidth="props.entity.width" @ankerPosition="handleAnkerPoint"></AnkerPoint> -->
+        <!-- <AnkerPoint v-if="hover && !isResizable" position="left" :entity-width="props.entity.width" @anker-position="handleAnkerPoint"></AnkerPoint> -->
+        <!-- <AnkerPoint v-if="hover && !isResizable" position="right" :entity-width="props.entity.width" @anker-position="handleAnkerPoint"></AnkerPoint> -->
+        <!-- <AnkerPoint v-if="hover && !isResizable" position="bottom" :entityWidth="props.entity.width" @ankerPosition="handleAnkerPoint"></AnkerPoint> -->
+        <div v-if="hover && !isResizable">
+            <OutgoingAnkerPoint v-for="anker in outgoingAnkerPoint" :key="anker" :position="anker.position" :entity-width="props.entity.width" @anker-position="handleAnkerPoint"/>
+        </div>
 
-        <EntityWidget v-if="isResizable" @deleteEntity="deleteEntity"/>
+        <div v-if="hover && !isResizable">
+            <IncomingAnkerPoint v-for="anker in incomingAnkerPoint" :key="anker" :position="anker.position" :entity-width="props.entity.width" @anker-position="handleAnkerPoint"/>
+        </div>
+        <EntityWidget v-if="isResizable" @delete-entity="deleteEntity" @change-entity-typ="changeEntityTyp" @manage-attributes="manageAttributes" />
 
         <IconEntity v-if="props.entity.typ == EntityTyp.ENTITY" @dblclick="changeResizable()" @mousedown="mousedown($event)" />
         <IconRelationshiptyp v-if="props.entity.typ == EntityTyp.RELATIONSHIP" @dblclick="changeResizable()" @mousedown="mousedown($event)" />
@@ -27,26 +35,72 @@
     import IconEntity from "../components/icons/IconEntitytyp.vue"
     import IconRelationshiptyp from "../components/icons/IconRelationshiptyp.vue"
     import EntityTyp from "../enums/EntityTyp"
-    import AnkerPoint from "../components/AnkerPoint.vue"
+    import AttributeTyp from "../enums/AttributeTyp"
+    import OutgoingAnkerPoint from "../components/OutgoingAnkerPoint.vue"
+    import IncomingAnkerPoint from "../components/IncomingAnkerPoint.vue"
     import EntityWidget from "../components/EntityWidget.vue"
     
-    import { ref, onMounted, computed, watch, reactive } from 'vue'
-    import { trigger } from "@vue/reactivity"
+    import { ref, onMounted, computed, watch } from 'vue'
 
-    const emit = defineEmits(['update:entity', 'ankerPoint', 'deleteEntity'])
+    const emit = defineEmits(['update:entity', 'anker-point', 'delete-entity', 'change-entity-typ', 'manage-attributes'])
     //const updateEntity = ref(updateCurrentEntity.value)
 
-    const props = defineProps(['entity'])
+    const props = defineProps({
+        entity: { type: Object, required: true}
+    })
+
     const root = ref(null)
 
+    const cssVarAttributesDistanceTop = computed(() => {
+        return (parseInt(props.entity.width) / 2) + 'px'
+    })
+
+    const formattedAttributes = ref("")
+    //const attributes = ref(props.entity.attributes)
+    const updateAttributes = () => {
+        //clear
+        formattedAttributes.value = ""
+
+        props.entity.attributes.forEach(attribute => {
+
+            switch (attribute.typ) {
+                case AttributeTyp.PK:
+                    formattedAttributes.value += "<b>" + attribute.name + "</b>, "
+                    break;
+
+                case AttributeTyp.FK:
+                    formattedAttributes.value += "<u>" + attribute.name + "</u>, "
+                    break;
+
+                case AttributeTyp.ATTRIBUT:
+                    formattedAttributes.value += "<i>" + attribute.name + "</i>, "
+                    break;
+            
+                default:
+                    throw "Not implemented Attribute Typ"
+            }
+        })
+        
+        // cut off ", "
+        formattedAttributes.value = formattedAttributes.value.slice(0, -2)
+    }
+
     const deleteEntity = () => {
-        emit('deleteEntity', props.entity)
+        emit('delete-entity', props.entity)
+    }
+
+    const changeEntityTyp = () => {
+        emit('change-entity-typ', props.entity)
+    }
+
+    const manageAttributes = () => {
+        emit('manage-attributes', props.entity)
     }
 
     const handleAnkerPoint = (ankerPosition) => {
         // console.log(e)
         // console.log(props.entity.id)
-        emit('ankerPoint', { 'id': props.entity.id, 'position': ankerPosition})
+        emit('anker-point', { 'id': props.entity.id, 'position': ankerPosition})
     }
 
     const hover = ref(false)
@@ -84,8 +138,34 @@
 
     onMounted(() => {
         //console.log(props.entity)
+        setAnkerPoints()
         setPosition(root.value, props.entity)
+        updateAttributes()
       })
+
+    const outgoingAnkerPoint = ref([])
+    const incomingAnkerPoint = ref([])
+
+    const setAnkerPoints = () => {
+        outgoingAnkerPoint.value = []
+        incomingAnkerPoint.value = []
+
+        switch (props.entity.typ) {
+            case EntityTyp.ENTITY:
+                outgoingAnkerPoint.value.push({"position": "right"})
+                break;
+            case EntityTyp.RELATIONSHIP:
+                incomingAnkerPoint.value.push({"position": "left"})
+                break;
+            case EntityTyp.ENTITYRELATIONSHIP:
+                outgoingAnkerPoint.value.push({"position": "right"})
+                incomingAnkerPoint.value.push({"position": "left"})
+                break;
+        
+            default:
+                throw "EntityTyp not defined";
+        }
+    }
     
     const setPosition = (element, entity) => {
         element.style.top = entity.top
@@ -103,6 +183,7 @@
     watch(props.entity, (entity) => {
         //console.log(entity)
         emit('update:entity', entity.value)
+        updateAttributes()
     })
 
     let isResizable = ref(false)
@@ -316,6 +397,17 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+
+.attributes {
+    font-size: x-small;
+    text-align: left;
+    vertical-align: text-top;
+
+    position: absolute;
+
+    top: v-bind('cssVarAttributesDistanceTop');
+    cursor: text;
 }
 
 </style>

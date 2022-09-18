@@ -1,6 +1,7 @@
 <script setup>
 import { RouterLink, RouterView } from "vue-router"
 import IconEWiLL from "./components/icons/IconEWiLL.vue"
+
 </script>
 
 <template>
@@ -14,7 +15,7 @@ import IconEWiLL from "./components/icons/IconEWiLL.vue"
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
+        <div id="navbarNav" class="collapse navbar-collapse">
           <ul class="navbar-nav">
             <li class="nav-item">
               <router-link to="/modelling" class="nav-link active" aria-current="page">Modellierung</router-link>
@@ -34,8 +35,9 @@ import IconEWiLL from "./components/icons/IconEWiLL.vue"
   
 
   <footer class="fixed-bottom mt-auto py-3 bg-light">
-    <div class="container">
-      <span class="text-muted">Footer</span>
+    <div class="container d-flex flex-row gap-3">
+      <router-link to="/impressum" class="nav-link text-muted" aria-current="page">Impressum</router-link>
+      <router-link to="/datenschutz" class="nav-link text-muted" aria-current="page">Datenschutzerklärung</router-link>
     </div>
   </footer>
 </template>

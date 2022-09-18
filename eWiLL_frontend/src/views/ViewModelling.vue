@@ -1,7 +1,7 @@
 <template>
 
     <!-- <div>
-        {{entityList}}
+        {{calculatedLine}}
     </div> -->
 
     <!-- <div>
@@ -15,6 +15,10 @@
     <!-- <div>
         {{lineList}}
     </div> -->
+ 
+    <!-- <div>{{selectedEntity}}</div> -->
+
+    <ModalAddAttributes v-if="showModalAddAttributes" :entity="selectedEntity" @close="showModalAddAttributes = false"/>
 
     <div class="toolbox">
         <IconEntity id="item" draggable="true" @click="addElement($event, EntityTyp.ENTITY)"/>
@@ -23,9 +27,9 @@
     </div>
 
     <div class="modellingContainer">
-        <Entity v-for="entity in entityList" :key="entity.id" :entity="entity" @ankerPoint="handleAnkerPoint" @deleteEntity="deleteEntity"/>
+        <Entity v-for="entity in entityList" :key="entity.id" :entity="entity" @anker-point="handleAnkerPoint" @delete-entity="deleteEntity" @change-entity-typ="changeEntityTyp" @manage-attributes="manageAttributes" />
 
-        <Line v-for="line in lineList" :key="line.id" :line="line" @deleteLine="deleteLine" @changeLine="changeLineStyle"/>
+        <Line v-for="line in lineList" :key="line.id" :line="line" @delete-line="deleteLine" @change-line="changeLineStyle"/>
         
         <!-- Definiert global das aussehen der Pfeile (TODO: In Component auslagern) -->
         <svg class="svgMarker">
@@ -40,9 +44,6 @@
                 </filter>
             </defs>
         </svg>
-
-        
-
     </div>
     
 </template>
@@ -50,23 +51,21 @@
 <script setup>
     import Entity from "../components/Entity.vue"
     import Line from "../components/Line.vue"
+    import ModalAddAttributes from "../components/ModalAddAttributes.vue"
 
     import IconEntityRelationshiptyp from "../components/icons/IconEntityRelationshiptyp.vue"
     import IconEntity from "../components/icons/IconEntitytyp.vue"
     import IconRelationshiptyp from "../components/icons/IconRelationshiptyp.vue"
-    import IconKante from "../components/icons/IconKante01.vue"
 
     import EntityTyp from "../enums/EntityTyp"
 
     import { onMounted, ref, watch } from 'vue'
 
-    const count = ref(0)
-
     const entityList = ref([
-        { "id": 1, "typ": 1, "top": "124px", "left": "81px", "width": "100px", "text": "Kunde" },
-        { "id": 2, "typ": 3, "text": "Rechnung", "top": "122px", "left": "302px", "width": "100px" },
-        { "id": 3, "typ": 1, "text": "Artikel", "top": "207px", "left": "81px", "width": "100px" },
-        { "id": 4, "typ": 2, "text": "Rechnungs\npositionen", "top": "118px", "left": "486px", "width": "100px" }
+        { "id": 1, "typ": 1, "entityName": "Kunde", "top": "124px", "left": "81px", "width": "100px", "attributes": [{ "typ": 1, "name": "KNr" }, { "typ": 3, "name": "Adresse" }, { "typ": 3, "name": "Name" }, { "typ": 3, "name": "Vorname" }] },
+        { "id": 2, "typ": 2, "entityName": "Rechnung", "top": "122px", "left": "302px", "width": "100px", "attributes": [{ "typ": 1, "name": "RNr" }, { "typ": 2, "name": "KNr" }, { "typ": 3, "name": "Datum" }] },
+        { "id": 3, "typ": 1, "entityName": "Artikel", "top": "207px", "left": "81px", "width": "100px", "attributes": [] },
+        { "id": 4, "typ": 3, "entityName": "Rechnungs\npositionen", "top": "118px", "left": "486px", "width": "100px", "attributes": [] }
     ])
     
     const lineList = ref([
@@ -120,7 +119,7 @@
     const calculateLine = (anker) => {
         let line = {}
 
-        let startEntity = entityList._rawValue.find(x => x.id == anker.startEntity)
+        let startEntity = entityList.value.find(x => x.id == anker.startEntity)
         let startEntityWidth = parseInt(startEntity.width)
         let startPositionFactor = getPositionFactor(anker.startEntityPosition, startEntityWidth)
 
@@ -128,7 +127,7 @@
         line.x1 = parseInt(startEntity.left) + startPositionFactor.x
 
 
-        let endEntity = entityList._rawValue.find(x => x.id == anker.endEntity)
+        let endEntity = entityList.value.find(x => x.id == anker.endEntity)
         let endEntityWidth = parseInt(endEntity.width)
         let endPositionFactor = getPositionFactor(anker.endEntityPosition, endEntityWidth)
         line.y2 = parseInt(endEntity.top) + endPositionFactor.y
@@ -186,9 +185,28 @@
             ankerPoints.value.splice(relationIndex, 1)
         }
 
-        //update Lines
-        //updateLines()
     }
+
+    const changeEntityTyp = (entity) => {
+        let entityIndex = entityList.value.indexOf(entity)
+        const currentTyp = entityList.value[entityIndex].typ
+        console.log(currentTyp)
+
+        if (currentTyp == 3) {
+            entityList.value[entityIndex].typ = 1
+        } else {
+            entityList.value[entityIndex].typ = currentTyp + 1
+        }
+    }
+
+
+    const showModalAddAttributes = ref(false)
+    const selectedEntity = ref(null)
+    const manageAttributes = (entity) => {
+        selectedEntity.value = entity
+        showModalAddAttributes.value = true
+    }
+
 
     const deleteLine = (lineToDelete) => {
         // aus der Array-Position der Linie lässt sich auch der ankerpunkt bestimmen
@@ -232,7 +250,7 @@
     const addElement = (e, typ) => {
         
         if(entityList.value.length == 0) {
-            entityList.value.push({ "id": 1, "typ": typ, "text": "New Entity", "top": e.clientY-25+"px", "left": e.clientX-50+"px", "width": "100px" })
+            entityList.value.push({ "id": 1, "typ": typ, "entityName": "New Entity", "attributes": [], "top": e.clientY-25+"px", "left": e.clientX-50+"px", "width": "100px" })
             return 
         }
 
@@ -242,7 +260,7 @@
         const max = Math.max(...ids)
         const nextID = max+1
         
-        entityList.value.push({ "id": nextID, "typ": typ, "text": "New Entity", "top": e.clientY-25+"px", "left": e.clientX-50+"px", "width": "100px" })
+        entityList.value.push({ "id": nextID, "typ": typ, "entityName": "New Entity", "attributes": [], "top": e.clientY-25+"px", "left": e.clientX-50+"px", "width": "100px" })
     }
     
 </script>
@@ -256,6 +274,7 @@
     width: 70%;
     height: 70%;
     padding-bottom: 10%;
+    z-index: 1;
 }
 
 .toolbox{

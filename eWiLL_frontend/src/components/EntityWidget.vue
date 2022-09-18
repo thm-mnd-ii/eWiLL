@@ -1,29 +1,47 @@
 <template>
-    <IconTrash @click="deleteEntity" class="widget">Edit Widget</IconTrash>
+    <div class="widgetContainer">
+        <IconTrash class="widget" @click="deleteEntity">Edit Widget</IconTrash>
+        <IconChange class="widget" @click="changeEntityTyp" />
+        <IconAdd class="widget" @click="manageAttributes" />
+    </div>
 </template>
 
 <script setup>
     import IconTrash from './icons/IconTrash.vue'
+    import IconChange from './icons/IconChange.vue'
+    import IconAdd from './icons/IconAdd.vue'
 
-    const emit = defineEmits(['deleteEntity'])
+    const emit = defineEmits(['delete-entity', 'change-entity-typ', 'manage-attributes'])
 
     const deleteEntity = () => {
-        emit('deleteEntity', true)
+        emit('delete-entity', true)
+    }
+
+    const changeEntityTyp = () => {
+        emit('change-entity-typ', true)
+    }
+
+    const manageAttributes = () => {
+        emit('manage-attributes', true)
     }
 
 </script>
 
 <style scoped>
-.widget{
+
+.widgetContainer{
     position: absolute;
     top: -35px;
-    width: 30px;
-    height: 30px;
-    border-radius: 3px;
-    padding: 3px;
-
-    cursor: pointer;
-
-    background-color: #fff;
 }
+.widget{
+    width: 25px;
+    height: 25px;
+    padding: 2px;
+    margin: 2px;
+
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: rgb(255, 255, 255);
+}
+
 </style>

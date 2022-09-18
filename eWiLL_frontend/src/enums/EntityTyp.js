@@ -1,7 +1,7 @@
 const EntityTyp = {
     ENTITY: 1,
-    RELATIONSHIP: 2,
-    ENTITYRELATIONSHIP: 3,
+    ENTITYRELATIONSHIP: 2,
+    RELATIONSHIP: 3,
 }
 
 export default EntityTyp;
