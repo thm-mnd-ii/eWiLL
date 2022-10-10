@@ -2,19 +2,21 @@ name: Backend Test
 
 on:
   push:
+    paths : 'eWiLL_backend/**'
     branches: [development, master, v*.x]
-     tags:
+    tags:
       - v**
   pull_request:
+
   
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Run tests
-      - working-directory: eWiLL_backend
+      - uses: actions/checkout@v2
+      - name: Docker Build
+        working-directory : eWiLL_backend
         run: docker-compose up -d
-
+        
       
