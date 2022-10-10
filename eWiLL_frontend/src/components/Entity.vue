@@ -104,9 +104,9 @@
     }
 
     const hover = ref(false)
-    watch(hover, (e) => {
-        //console.log(`Hover: ${e}`)
-    })
+    // watch(hover, (e) => {
+    //     console.log(`Hover: ${e}`)
+    // })
 
     const endHover = () => {
         setTimeout(() => { hover.value = false }, 1000)
@@ -238,7 +238,7 @@
             prevY = e.clientY
         }
 
-        const mouseup = (e) => {
+        const mouseup = () => {
             window.removeEventListener('mousemove', mousemove)
             window.removeEventListener('mouseup', mouseup)
 
@@ -309,7 +309,7 @@
             prevY = e.clientY
         }
 
-        const mouseup = (e) => {
+        const mouseup = () => {
             window.removeEventListener('mousemove', mousemove)
             window.removeEventListener('mouseup', mouseup)
 

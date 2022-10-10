@@ -2,6 +2,7 @@ import { fileURLToPath, URL } from "url";
 
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
+import eslintPlugin from 'vite-plugin-eslint';
 // import inject from '@rollup/plugin-inject';
 // import jquery from 'jquery'
 
@@ -25,6 +26,7 @@ export default defineConfig({
   },
   plugins: [
     vue(),
+    eslintPlugin(),
     // inject({
     //   $: 'jquery',
     // }),

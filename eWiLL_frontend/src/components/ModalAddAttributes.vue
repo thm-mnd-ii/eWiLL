@@ -17,7 +17,7 @@
                 <button type="submit" class="btn btn-primary" @click="addAttribute">Add</button>
               </div>
 
-              <draggable v-model="props.entity.attributes" class="draggable" group="people" @start="drag=true" @end="drag=false" item-key="id">
+              <draggable v-model="props.entity.attributes" class="draggable" group="people" item-key="id" @start="drag=true" @end="drag=false">
                 <template #item="{element}">
                   <div class="attributes">
                     <IconMoveNorthSouth class="icon-move"/>
