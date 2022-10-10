@@ -63,10 +63,10 @@
         visible.value = !visible.value
     }
 
-    const hover = ref(false)
-    watch(hover, (e) => {
-        //console.log(`Hover: ${e}`)
-    })
+    //const hover = ref(false)
+    // watch(hover, (e) => {
+    //     console.log(`Hover: ${e}`)
+    // })
 
     onMounted(() => {
         updateLine()
@@ -127,12 +127,12 @@
     })
 
     const changeLineStyle = () => {
-        emit('changeLine', props.line)
+        emit('change-line', props.line)
     }
 
     const deleteLine = () => {
         changeVisibility()
-        emit('deleteLine', props.line)
+        emit('change-line', props.line)
     }
 
 </script>
