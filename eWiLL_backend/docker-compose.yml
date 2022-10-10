@@ -1,6 +1,7 @@
 version: '1.0'
 services:
   api:
+    container_name: ewill_backend
     depends_on:
         - db
     build:
