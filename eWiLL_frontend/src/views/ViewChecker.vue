@@ -1,7 +1,5 @@
-<script setup>
-
-</script>
+<script setup></script>
 
 <template>
-    <div>Überprüfung</div>
+  <div>Überprüfung</div>
 </template>

@@ -1,12 +1,11 @@
 <script setup>
-import { RouterLink, RouterView } from "vue-router"
-import IconEWiLL from "./components/icons/IconEWiLL.vue"
-
+import { RouterLink, RouterView } from "vue-router";
+import IconEWiLL from "./components/icons/IconEWiLL.vue";
 </script>
 
 <template>
   <header>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg navbar-light">
       <div class="container-fluid">
         <router-link to="/" class="navbar-brand">
           <!-- eWiLL -->
@@ -32,9 +31,8 @@ import IconEWiLL from "./components/icons/IconEWiLL.vue"
   <main class="contentContainer">
     <RouterView />
   </main>
-  
 
-  <footer class="fixed-bottom mt-auto py-3 bg-light">
+  <footer class="fixed-bottom mt-auto py-3">
     <div class="container d-flex flex-row gap-3">
       <router-link to="/impressum" class="nav-link text-muted" aria-current="page">Impressum</router-link>
       <router-link to="/datenschutz" class="nav-link text-muted" aria-current="page">Datenschutzerklärung</router-link>
@@ -42,15 +40,20 @@ import IconEWiLL from "./components/icons/IconEWiLL.vue"
   </footer>
 </template>
 
-<style scoped>
-  .contentContainer{
-    position: absolute;
-    height: 100%;
-    width: 100%;
-  }
+<style scoped lang="scss">
+.contentContainer {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+}
 
-  .eWiLL-Logo{
-    margin-left: 10px;
-    margin-top: -8px;
-  }
+.eWiLL-Logo {
+  margin-left: 10px;
+  margin-top: -8px;
+}
+
+footer,
+header {
+  background-color: $nav-bg;
+}
 </style>
