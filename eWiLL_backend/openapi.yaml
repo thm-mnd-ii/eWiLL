@@ -1,0 +1,168 @@
+/api/model:
+  get:
+    summary: "GET api/model"
+    operationId: "getAll"
+    responses:
+      "200":
+        description: "OK"
+        content:
+          '*/*':
+            schema:
+              type: "array"
+  post:
+    summary: "POST api/model"
+    operationId: "create"
+    responses:
+      "200":
+        description: "OK"
+        content:
+          '*/*':
+            schema:
+              type: "object"
+---
+/api/model/{id}:
+  get:
+    summary: "GET api/model/{id}"
+    operationId: "getById"
+    parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "integer"
+          format: "int64"
+    responses:
+      "200":
+        description: "OK"
+        content:
+          '*/*':
+            schema:
+              type: "object"
+  put:
+    summary: "PUT api/model/{id}"
+    operationId: "update"
+    parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "integer"
+          format: "int64"
+    responses:
+      "200":
+        description: "OK"
+        content:
+          '*/*':
+            schema:
+              type: "object"
+  delete:
+    summary: "DELETE api/model/{id}"
+    operationId: "delete"
+    parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "integer"
+          format: "int64"
+    responses:
+      "200":
+        description: "OK"
+        content:
+          '*/*':
+            schema:
+              type: "object"
+---
+/api/assignments:
+  get:
+    summary: "GET api/assignments"
+    operationId: "getAll"
+    responses:
+      "200":
+        description: "OK"
+        content:
+          '*/*':
+            schema:
+              type: "array"
+  post:
+    summary: "POST api/assignments"
+    operationId: "create"
+    responses:
+      "200":
+        description: "OK"
+        content:
+          '*/*':
+            schema:
+              type: "boolean"
+---
+/api/assignments/{id}:
+  get:
+    summary: "GET api/assignments/{id}"
+    operationId: "getById"
+    parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "integer"
+          format: "int64"
+    responses:
+      "200":
+        description: "OK"
+        content:
+          '*/*':
+            schema:
+              type: "object"
+  put:
+    summary: "PUT api/assignments/{id}"
+    operationId: "update"
+    parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "integer"
+          format: "int64"
+    responses:
+      "200":
+        description: "OK"
+        content:
+          '*/*':
+            schema:
+              type: "object"
+  delete:
+    summary: "DELETE api/assignments/{id}"
+    operationId: "delete"
+    parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "integer"
+          format: "int64"
+    responses:
+      "200":
+        description: "OK"
+        content:
+          '*/*':
+            schema:
+              type: "object"
+---
+/api/evaluation/v1/{id}:
+  get:
+    summary: "GET api/evaluation/v1/{id}"
+    operationId: "get"
+    parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "integer"
+          format: "int64"
+    responses:
+      "200":
+        description: "OK"
+        content:
+          '*/*':
+            schema:
+              type: "integer"
