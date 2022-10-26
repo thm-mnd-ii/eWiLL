@@ -1,82 +1,81 @@
 <template>
-    <div class="vue-modal">
-        <div class="vue-modal-inner">
-            <div class="vue-modal-content">
-              <h3>{{ props.entity.entityName }}</h3>
-              
-              <div class="newAttributeContainer">
-                <input v-model="newAttributeName" type="text" class="form-control" placeholder="New Attribute">
-                
-                <select v-model="selectedAttributeType" class="form-select" name="attributeType">
-                  <option disabled value="">Select Typ</option>
-                  <option v-for="key, attribute in AttributeTyp" :key="key" :value="key">
-                    {{ attribute }}
-                  </option>
-                </select>
+  <div class="vue-modal">
+    <div class="vue-modal-inner">
+      <div class="vue-modal-content">
+        <h3>{{ props.entity.entityName }}</h3>
 
-                <button type="submit" class="btn btn-primary" @click="addAttribute">Add</button>
-              </div>
+        <div class="newAttributeContainer">
+          <input v-model="newAttributeName" type="text" class="form-control" placeholder="New Attribute" />
 
-              <draggable v-model="props.entity.attributes" class="draggable" group="people" item-key="id" @start="drag=true" @end="drag=false">
-                <template #item="{element}">
-                  <div class="attributes">
-                    <IconMoveNorthSouth class="icon-move"/>
-                    <input v-model="element.name" class="form-control" type="text">
+          <select v-model="selectedAttributeType" class="form-select" name="attributeType">
+            <option disabled value="">Select Typ</option>
+            <option v-for="(key, attribute) in AttributeTyp" :key="key" :value="key">
+              {{ attribute }}
+            </option>
+          </select>
 
-                    <select v-model="element.typ" class="form-select" name="attributeType">
-                      <option v-for="key, attribute in AttributeTyp" :key="key" :value="key" >
-                        {{ attribute }}
-                      </option>
-                    </select>
-                    
-                    <button type="button" class="btn btn-danger" @click="deleteAttribute(element)">Delete</button>
-                  </div>
-                </template>
-              </draggable>
-
-                <button type="button" class="btn btn-success" @click="$emit('close')">Close</button>
-            </div>
+          <button type="submit" class="btn btn-primary" @click="addAttribute">Add</button>
         </div>
+
+        <draggable v-model="props.entity.attributes" class="draggable" group="people" item-key="id" @start="drag = true" @end="drag = false">
+          <template #item="{ element }">
+            <div class="attributes">
+              <IconMoveNorthSouth class="icon-move" />
+              <input v-model="element.name" class="form-control" type="text" />
+
+              <select v-model="element.typ" class="form-select" name="attributeType">
+                <option v-for="(key, attribute) in AttributeTyp" :key="key" :value="key">
+                  {{ attribute }}
+                </option>
+              </select>
+
+              <button type="button" class="btn btn-danger" @click="deleteAttribute(element)">Delete</button>
+            </div>
+          </template>
+        </draggable>
+
+        <button type="button" class="btn btn-success" @click="$emit('close')">Close</button>
+      </div>
     </div>
+  </div>
 </template>
 
 <script setup>
-  import { ref, watch } from 'vue'
-  import AttributeTyp from "../enums/AttributeTyp"
-  import draggable from 'vuedraggable'
-  import IconMoveNorthSouth from "./icons/IconMoveNorthSouth.vue"
+import { ref, watch } from "vue";
+import AttributeTyp from "../enums/AttributeTyp";
+import draggable from "vuedraggable";
+import IconMoveNorthSouth from "./icons/IconMoveNorthSouth.vue";
 
-  const props = defineProps({
-    entity: { type:Object, required:true }
-  })
-  
-  const emit = defineEmits(['close', 'update:entity'])
+const props = defineProps({
+  entity: { type: Object, required: true },
+});
 
-  const newAttributeName = ref("")
-  const selectedAttributeType = ref("")
+const emit = defineEmits(["close", "update:entity"]);
 
-  watch(props.entity, (entity) => {
-        emit('update:entity', entity.value)
-  })
+const newAttributeName = ref("");
+const selectedAttributeType = ref("");
 
-  const deleteAttribute = (attribute) => {
-    //console.log(props.entity.attributes)
-    let index = props.entity.attributes.indexOf(attribute)
-    props.entity.attributes.splice(index, 1)
-  }
+watch(props.entity, (entity) => {
+  emit("update:entity", entity.value);
+});
 
-  const addAttribute = () => {
-    console.log(newAttributeName.value, selectedAttributeType.value)
-    
-    props.entity.attributes.push( { "typ": selectedAttributeType.value, "name": newAttributeName.value} )
+const deleteAttribute = (attribute) => {
+  //console.log(props.entity.attributes)
+  let index = props.entity.attributes.indexOf(attribute);
+  props.entity.attributes.splice(index, 1);
+};
 
-    newAttributeName.value = ""
-    selectedAttributeType.value = ""
-  }
+const addAttribute = () => {
+  console.log(newAttributeName.value, selectedAttributeType.value);
+
+  props.entity.attributes.push({ typ: selectedAttributeType.value, name: newAttributeName.value });
+
+  newAttributeName.value = "";
+  selectedAttributeType.value = "";
+};
 </script>
 
-<style scoped>
-
+<style scoped lang="scss">
 *,
 ::before,
 ::after {
@@ -150,5 +149,4 @@
   width: 70px;
   fill: rgb(51, 51, 51);
 }
-
 </style>

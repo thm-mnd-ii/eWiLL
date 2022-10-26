@@ -2,7 +2,7 @@ import { fileURLToPath, URL } from "url";
 
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
-import eslintPlugin from 'vite-plugin-eslint';
+import eslintPlugin from "vite-plugin-eslint";
 // import inject from '@rollup/plugin-inject';
 // import jquery from 'jquery'
 
@@ -12,27 +12,26 @@ export default defineConfig({
     postcss: {
       plugins: [
         {
-          postcssPlugin: 'internal:charset-removal',
+          postcssPlugin: "internal:charset-removal",
           AtRule: {
             charset: (atRule) => {
-              if (atRule.name === 'charset') {
+              if (atRule.name === "charset") {
                 atRule.remove();
               }
-            }
-          }
-        }
-      ]
-    }
+            },
+          },
+        },
+      ],
+    },
+    preprocessorOptions: {
+      scss: {
+        additionalData: `@import "@/assets/_shared.scss";`,
+      },
+    },
   },
-  plugins: [
-    vue(),
-    eslintPlugin(),
-    // inject({
-    //   $: 'jquery',
-    // }),
-  ],
+  plugins: [vue(), eslintPlugin()],
   configureWebpack: {
-    devtool: 'source-map'
+    devtool: "source-map",
   },
   resolve: {
     alias: {
@@ -41,6 +40,6 @@ export default defineConfig({
   },
   server: {
     host: true,
-    port: 8080
+    port: 8080,
   },
 });
