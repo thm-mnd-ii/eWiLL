@@ -15,4 +15,7 @@ open class Model(entities: String?, ankerPoints: String?, id: Any?) {
 
     @Column(name = "ankerPoints", nullable = false)
     open var ankerPoints: String? = null
+
+    @Column(name = "assignmentId", nullable = false)
+    open var assignmentId: Long? = null
 }

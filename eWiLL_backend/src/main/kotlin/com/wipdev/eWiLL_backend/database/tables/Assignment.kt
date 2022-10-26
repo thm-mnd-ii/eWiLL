@@ -25,4 +25,7 @@ class Assignment(id: Long?, name: String?, description: String?, dueDate: String
     @Column(name = "teacher", nullable = false)
     var teacher: String? = null
 
+    @Column(name="solutionModelId", nullable = true)
+    var solutionModelId:Long?=null
+
 }

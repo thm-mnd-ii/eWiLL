@@ -8,19 +8,17 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-class ModelService (): IModelService{
+class ModelService : IModelService {
 
     @Autowired
     private lateinit var modelRepository: ModelRepository
 
     override fun getAll(): List<Model> {
-        LoggerFactory.getLogger(ModelService::class.java)
+        //LoggerFactory.getLogger(ModelService::class.java)
         return modelRepository.findAll().map { DataclassEntityConverter.convert(it) }
     }
 
     override fun getById(id: Long): Model {
-
-
         return DataclassEntityConverter.convert(modelRepository.findById(id).get())
     }
 
