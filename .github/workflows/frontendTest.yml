@@ -11,7 +11,8 @@ on:
   pull_request:
 
 jobs:
-  build:
+  build_frontend:
+    name: Build Frontend
 
     runs-on: ubuntu-latest
 
