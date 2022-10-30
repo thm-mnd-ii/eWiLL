@@ -1,2 +1,6 @@
-*                             @eWiLL-Organization/ewill-mods
-/.github/                     @eWiLL-Organization/ewill-admins
+*                             @thm-mnd-ii/ewill-mods
+/.github/                     @thm-mnd-ii/ewill-admins
+
+/eWiLL_backend                @thm-mnd-ii/ewill-api
+/eWiLL_frontend               @thm-mnd-ii/ewill-web
+/eWiLL_checker                @thm-mnd-ii/ewill-checker
