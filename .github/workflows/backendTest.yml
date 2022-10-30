@@ -12,7 +12,8 @@ on:
   
 
 jobs:
-  build:
+  build_backend:
+    name: Build Backend
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
