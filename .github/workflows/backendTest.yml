@@ -2,15 +2,11 @@ name: Backend Test
 
 on:
   push:
-    paths : 'eWiLL_backend/**'
     branches: [development, master, v*.x]
     tags:
       - v**
   pull_request:
   
-
-  
-
 jobs:
   build_backend:
     name: Build Backend
