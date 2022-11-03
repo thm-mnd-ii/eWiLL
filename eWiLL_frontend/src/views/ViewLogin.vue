@@ -6,9 +6,9 @@
     <div>
       <Label>or</Label>
     </div>
-    <form id="localLoginForm">
-      <input type="email" name="emailInput" placeholder="E-Mail" /> <br />
-      <input type="password" name="passwordInput" placeholder="Passwort" />
+    <form id="loginForm">
+      <input v-model="emailInput" type="email" name="emailInput" placeholder="E-Mail" /> <br />
+      <input v-model="passwordInput" type="password" name="passwordInput" placeholder="Passwort" />
     </form>
     <button @click="localLogin">Lokaler Login</button>
   </div>
@@ -16,6 +16,10 @@
 
 <script setup>
 import IconEWiLL from "../components/icons/IconEWiLL.vue";
+import { ref } from "vue";
+
+const emailInput = ref(null);
+const passwordInput = ref(null);
 
 const casLogin = () => {
   console.log("CAS Login");
@@ -23,6 +27,8 @@ const casLogin = () => {
 
 const localLogin = () => {
   console.log("Local Login");
+  console.log(emailInput.value);
+  console.log(passwordInput.value);
 };
 </script>
 
