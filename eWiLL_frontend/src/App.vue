@@ -1,6 +1,7 @@
 <script setup>
 import { RouterLink, RouterView } from "vue-router";
 import IconEWiLL from "./components/icons/IconEWiLL.vue";
+import DropdownUserNav from "./components/DropdownUserNav.vue";
 </script>
 
 <template>
@@ -24,6 +25,9 @@ import IconEWiLL from "./components/icons/IconEWiLL.vue";
             </li>
           </ul>
         </div>
+      </div>
+      <div>
+        <DropdownUserNav></DropdownUserNav>
       </div>
     </nav>
   </header>
