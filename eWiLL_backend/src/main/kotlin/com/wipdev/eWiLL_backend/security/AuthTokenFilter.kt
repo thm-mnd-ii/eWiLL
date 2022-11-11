@@ -1,14 +1,10 @@
 package com.wipdev.eWiLL_backend.security
 
 import com.wipdev.eWiLL_backend.security.auth.JwtUtils
-import com.wipdev.eWiLL_backend.security.auth.UserDetailsServiceImpl
+import com.wipdev.eWiLL_backend.services.UserDetailsServiceImpl
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.Bean
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
 import org.springframework.web.filter.OncePerRequestFilter
 import javax.servlet.FilterChain
