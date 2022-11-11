@@ -4,7 +4,7 @@ info:
   description: "eWiLL_backend API"
   version: "1.0.0"
 servers:
-  - url: "https://eWiLL_backend"
+  - url: "http://localhost:8080"
 paths:
   /api/tasks:
     get:

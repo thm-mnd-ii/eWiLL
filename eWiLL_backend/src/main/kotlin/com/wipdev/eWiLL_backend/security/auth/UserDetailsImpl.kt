@@ -15,8 +15,11 @@ private var id:Long = 0
 
     private var authorities:Collection<GrantedAuthority> = ArrayList()
  */
-class UserDetailsImpl(val id:Long,username:String,password:String,val email:String,authorities:Collection<GrantedAuthority>):UserDetails {
+class UserDetailsImpl(val id:Long,username:String,password:String,val email:String,authorities:MutableCollection<GrantedAuthority>):UserDetails {
 
+    private var username:String = username
+    private var password:String = password
+    private var authorities:MutableCollection<GrantedAuthority> = authorities
 
 
 
@@ -33,12 +36,13 @@ class UserDetailsImpl(val id:Long,username:String,password:String,val email:Stri
     }
 
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
-        return authorities as MutableCollection<out GrantedAuthority>
+        return authorities
     }
 
     override fun getPassword(): String {
         return password
     }
+
 
     override fun getUsername(): String {
         return username
