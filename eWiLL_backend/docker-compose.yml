@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.8'
 services:
   api:
     depends_on:
@@ -13,19 +13,26 @@ services:
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/postgres
       - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_DATASOURCE_PASSWORD=postgres
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
   db:
-    image: postgres
-    ports:
-      - "5432:5432"
-       # TODO: Change this to not be exposed to the world
+    container_name: db
+    image: postgres:14.1-alpine
+    restart: always
     environment:
-      POSTGRES_PASSWORD: password
-      POSTGRES_USER: postgres
-      POSTGRES_DB: postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+      - POSTGRES_HOST=db
+    ports:
+      - '5433:5432'
+      # TODO: Change this to not be exposed to the world
+    volumes: 
+      - data:/var/lib/postgresql/data
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 10s
       timeout: 5s
       retries: 5
+volumes:
+  data:
