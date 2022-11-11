@@ -19,6 +19,7 @@ services:
     image: postgres
     ports:
       - "5432:5432"
+       # TODO: Change this to not be exposed to the world
     environment:
       POSTGRES_PASSWORD: password
       POSTGRES_USER: postgres
