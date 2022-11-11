@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
-@RequestMapping("/api/assignments")
+@RequestMapping("/api/tasks")
 @RestController
 class AssignmentController() {
 
