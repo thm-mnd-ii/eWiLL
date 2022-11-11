@@ -16,33 +16,34 @@
     </div> -->
 
   <!-- <div>{{selectedEntity}}</div> -->
+  <div class="container">
+    <ModalAddAttributes v-if="showModalAddAttributes" :entity="selectedEntity" @close="showModalAddAttributes = false" />
 
-  <ModalAddAttributes v-if="showModalAddAttributes" :entity="selectedEntity" @close="showModalAddAttributes = false" />
+    <div class="toolbox">
+      <IconEntity id="item" draggable="true" @click="addElement($event, EntityTyp.ENTITY)" />
+      <IconRelationshiptyp @mousedown="addElement($event, EntityTyp.RELATIONSHIP)" />
+      <IconEntityRelationshiptyp @mousedown="addElement($event, EntityTyp.ENTITYRELATIONSHIP)" />
+    </div>
 
-  <div class="toolbox">
-    <IconEntity id="item" draggable="true" @click="addElement($event, EntityTyp.ENTITY)" />
-    <IconRelationshiptyp @mousedown="addElement($event, EntityTyp.RELATIONSHIP)" />
-    <IconEntityRelationshiptyp @mousedown="addElement($event, EntityTyp.ENTITYRELATIONSHIP)" />
-  </div>
+    <div class="modellingContainer">
+      <Entity v-for="entity in entityList" :key="entity.id" :entity="entity" @anker-point="handleAnkerPoint" @delete-entity="deleteEntity" @change-entity-typ="changeEntityTyp" @manage-attributes="manageAttributes" />
 
-  <div class="modellingContainer">
-    <Entity v-for="entity in entityList" :key="entity.id" :entity="entity" @anker-point="handleAnkerPoint" @delete-entity="deleteEntity" @change-entity-typ="changeEntityTyp" @manage-attributes="manageAttributes" />
+      <Line v-for="line in lineList" :key="line.id" :line="line" @delete-line="deleteLine" @change-line="changeLineStyle" />
 
-    <Line v-for="line in lineList" :key="line.id" :line="line" @delete-line="deleteLine" @change-line="changeLineStyle" />
+      <!-- Definiert global das aussehen der Pfeile (TODO: In Component auslagern) -->
+      <svg class="svgMarker">
+        <defs>
+          <marker id="arrowhead" markerWidth="20" markerHeight="10" refX="5" refY="2" orient="auto">
+            <polygon points="0 0, 0 4, 6 2" />
+          </marker>
 
-    <!-- Definiert global das aussehen der Pfeile (TODO: In Component auslagern) -->
-    <svg class="svgMarker">
-      <defs>
-        <marker id="arrowhead" markerWidth="20" markerHeight="10" refX="5" refY="2" orient="auto">
-          <polygon points="0 0, 0 4, 6 2" />
-        </marker>
-
-        <filter id="double">
-          <feMorphology in="SourceGraphic" result="a" operator="dilate" radius="1.2" />
-          <feComposite in="SourceGraphic" in2="a" result="xx" operator="xor" />
-        </filter>
-      </defs>
-    </svg>
+          <filter id="double">
+            <feMorphology in="SourceGraphic" result="a" operator="dilate" radius="1.2" />
+            <feComposite in="SourceGraphic" in2="a" result="xx" operator="xor" />
+          </filter>
+        </defs>
+      </svg>
+    </div>
   </div>
 </template>
 
@@ -285,20 +286,25 @@ const addElement = (e, typ) => {
 </script>
 
 <style scoped lang="scss">
+.container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
 .modellingContainer {
   position: absolute;
   background-color: lavender;
   left: 15%;
   top: 10%;
   width: 70%;
-  height: 70%;
+  height: 80%;
   padding-bottom: 10%;
   z-index: 1;
 }
 
 .toolbox {
   z-index: 1;
-  position: fixed;
+  position: absolute;
   top: 100px;
   left: 30px;
   padding: 10px;
