@@ -1,5 +1,6 @@
-package com.wipdev.eWiLL_backend.security.auth
+package com.wipdev.eWiLL_backend.database.tables
 
+import com.wipdev.eWiLL_backend.security.auth.ERole
 import javax.persistence.*
 
 @Entity

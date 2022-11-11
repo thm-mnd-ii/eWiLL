@@ -1,14 +1,15 @@
-package com.wipdev.eWiLL_backend.security.auth
+package com.wipdev.eWiLL_backend.endpoints
 
+import com.wipdev.eWiLL_backend.endpoints.dataclasses.JwtResponse
+import com.wipdev.eWiLL_backend.endpoints.dataclasses.LoginRequest
+import com.wipdev.eWiLL_backend.repository.RoleRepository
+import com.wipdev.eWiLL_backend.repository.UserRepository
+import com.wipdev.eWiLL_backend.security.auth.*
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.Bean
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.core.userdetails.UserDetails
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.bind.annotation.*
 

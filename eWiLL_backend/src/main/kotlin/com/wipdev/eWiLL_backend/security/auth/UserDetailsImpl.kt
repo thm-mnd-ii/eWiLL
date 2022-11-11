@@ -1,6 +1,6 @@
 package com.wipdev.eWiLL_backend.security.auth
 
-import net.minidev.json.annotate.JsonIgnore
+import com.wipdev.eWiLL_backend.database.tables.User
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
