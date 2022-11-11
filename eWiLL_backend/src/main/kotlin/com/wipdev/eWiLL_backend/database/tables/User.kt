@@ -1,4 +1,4 @@
-package com.wipdev.eWiLL_backend.security.auth
+package com.wipdev.eWiLL_backend.database.tables
 
 import javax.persistence.*
 
