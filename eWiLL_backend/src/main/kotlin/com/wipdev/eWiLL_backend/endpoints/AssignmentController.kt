@@ -1,9 +1,8 @@
 package com.wipdev.eWiLL_backend.endpoints
 
-import com.wipdev.eWiLL_backend.endpoints.dataclasses.Assignment
-import com.wipdev.eWiLL_backend.services.AssignmentService
+import com.wipdev.eWiLL_backend.endpoints.dataclasses.Task
+import com.wipdev.eWiLL_backend.services.TaskService
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -17,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController
 class AssignmentController() {
 
     @Autowired
-    lateinit var service: AssignmentService
+    lateinit var service: TaskService
 
     @GetMapping
     fun getAll() = service.getAll()
@@ -26,10 +25,10 @@ class AssignmentController() {
     fun getById(@PathVariable id: Long) = service.getById(id)
 
     @PostMapping
-    fun create(assignment: Assignment) = service.create(assignment)
+    fun create(task: Task) = service.create(task)
 
     @PutMapping("/{id}")
-    fun update(@PathVariable id: Long, assignment: Assignment) = service.update(id, assignment)
+    fun update(@PathVariable id: Long, task: Task) = service.update(id, task)
 
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: Long) = service.delete(id)
