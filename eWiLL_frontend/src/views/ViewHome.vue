@@ -1,16 +1,40 @@
 <template>
   <div>RouterView</div>
+  {{ store.state.auth }}
   <button @click="login()">LogIn</button>
+  <button @click="logout()">LogOut</button>
 </template>
 
 <script setup>
-import AuthService from "../services/auth.service";
+import { useStore } from "vuex";
+import { useRouter } from "vue-router";
+const router = useRouter();
+
+const store = useStore();
 
 const login = () => {
-  const user = { username: "test", password: "test" };
-  console.log("login");
-  console.log(user);
+  const user = { username: "user", password: "user" };
 
-  AuthService.login(user);
+  store.dispatch("auth/login", user).then(
+    () => {
+      // router.push("/modelling");
+    },
+    (error) => {
+      this.loading = false;
+      this.message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
+    }
+  );
+};
+
+const logout = () => {
+  store.dispatch("auth/logout").then(
+    () => {
+      router.push("/");
+    },
+    (error) => {
+      this.loading = false;
+      this.message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
+    }
+  );
 };
 </script>
