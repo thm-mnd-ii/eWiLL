@@ -7,6 +7,13 @@ import javax.persistence.*
 @Table(name = "users", uniqueConstraints = [UniqueConstraint(columnNames = ["username"])])
 class User {
 
+    constructor(username: String, password: String, email: String, roles: Set<Role>) {
+        this.username = username
+        this.password = password
+        this.email = email
+        this.roles = roles
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     open var id:Long = 0
