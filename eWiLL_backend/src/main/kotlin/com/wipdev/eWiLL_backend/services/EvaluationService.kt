@@ -2,13 +2,13 @@ package com.wipdev.eWiLL_backend.services
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.wipdev.eWiLL_backend.database.tables.Model
+import com.wipdev.eWiLL_backend.database.tables.Diagram
 import com.wipdev.eWiLL_backend.eval.AnkerPoint
 import com.wipdev.eWiLL_backend.eval.AttributeConnection
 import com.wipdev.eWiLL_backend.eval.ConnectionEvalFlag
 import com.wipdev.eWiLL_backend.eval.Entity
 import com.wipdev.eWiLL_backend.repository.AssignmentRepository
-import com.wipdev.eWiLL_backend.repository.ModelRepository
+import com.wipdev.eWiLL_backend.repository.DiagramRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -17,25 +17,23 @@ import org.springframework.stereotype.Service
 class EvaluationService:IEvaluationService {
 
     @Autowired
-    lateinit var modelRepo: ModelRepository
+    lateinit var diagramRepository: DiagramRepository
     @Autowired
     lateinit var assignmentRepository: AssignmentRepository
 
 
-
+    //TODO Complete Overhaul of the Evaluation Service
     override fun get(id: Long): Int {
         //get model from db
-        var model: Model = modelRepo.getReferenceById(id)
-        var assignment = assignmentRepository.getReferenceById(model.assignmentId!!)
-        var solutionModel = modelRepo.getReferenceById(assignment.solutionModelId!!)
+        var diagram: Diagram = diagramRepository.getReferenceById(id)
+        var assignment = assignmentRepository.getReferenceById(diagram.assignmentId!!)
+        var solutionModel = diagramRepository.getReferenceById(assignment.solutionModelId!!)
         //evaluate this model in comparison to the solution model
 
-        var attributeConnections : MutableList<AttributeConnection> = getAttributeConnections(model)
+        var attributeConnections : MutableList<AttributeConnection> = getAttributeConnections(diagram)
         var solutionAttributeConnections : MutableList<AttributeConnection> = getAttributeConnections(solutionModel)
 
         return getScore(attributeConnections,solutionAttributeConnections, arrayOf(ConnectionEvalFlag.COMPARE_ATTRIBUTES_BY_TYPE,ConnectionEvalFlag.COMPARE_ENTITY_BY_TYPE))
-
-
     }
 
     private fun getScore(attributeConnections: MutableList<AttributeConnection>, solutionAttributeConnections: MutableList<AttributeConnection>,flags:Array<ConnectionEvalFlag>): Int {
@@ -55,13 +53,13 @@ class EvaluationService:IEvaluationService {
         return score * 100/initialSize;
     }
 
-    fun getAttributeConnections(model: Model) : MutableList<AttributeConnection>{
+    fun getAttributeConnections(diagram: Diagram) : MutableList<AttributeConnection>{
         var connections:MutableList<AttributeConnection> = mutableListOf()
-        var ankers : String? = model.ankerPoints
+        var ankers : String? = diagram.ankerPoints
         //parse json string
         val mapper = jacksonObjectMapper()
-        var ankerPoints:Array<AnkerPoint> = mapper.readValue(model.ankerPoints!!)
-        val entities : Array<Entity> = mapper.readValue(model.entities!!)
+        var ankerPoints:Array<AnkerPoint> = mapper.readValue(diagram.ankerPoints!!)
+        val entities : Array<Entity> = mapper.readValue(diagram.entities!!)
 
         for(anker in ankerPoints){
             var startEntityId = if (anker.startEntityPosition == "left") anker.startEntity else anker.endEntity

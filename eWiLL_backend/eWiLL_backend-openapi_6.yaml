@@ -6,184 +6,185 @@ info:
 servers:
   - url: "http://localhost:8080"
 paths:
-  /api/tasks:
-    get:
-      summary: "GET api/tasks"
-      operationId: "getAll"
-      responses:
-        "200":
-          description: "OK"
-          content:
-            '*/*':
-              schema:
-                type: "array"
-    post:
-      summary: "POST api/tasks"
-      operationId: "create"
-      responses:
-        "200":
-          description: "OK"
-          content:
-            '*/*':
-              schema:
-                type: "boolean"
-  /api/tasks/{id}:
-    get:
-      summary: "GET api/tasks/{id}"
-      operationId: "getById"
-      parameters:
-        - name: "id"
-          in: "path"
-          required: true
-          schema:
-            type: "integer"
-            format: "int64"
-      responses:
-        "200":
-          description: "OK"
-          content:
-            '*/*':
-              schema:
-                type: "object"
-    put:
-      summary: "PUT api/tasks/{id}"
-      operationId: "update"
-      parameters:
-        - name: "id"
-          in: "path"
-          required: true
-          schema:
-            type: "integer"
-            format: "int64"
-      responses:
-        "200":
-          description: "OK"
-          content:
-            '*/*':
-              schema:
-                type: "object"
-    delete:
-      summary: "DELETE api/tasks/{id}"
-      operationId: "delete"
-      parameters:
-        - name: "id"
-          in: "path"
-          required: true
-          schema:
-            type: "integer"
-            format: "int64"
-      responses:
-        "200":
-          description: "OK"
-          content:
-            '*/*':
-              schema:
-                type: "object"
-  /api/model:
-    get:
-      summary: "GET api/model"
-      operationId: "getAll"
-      responses:
-        "200":
-          description: "OK"
-          content:
-            '*/*':
-              schema:
-                type: "array"
-    post:
-      summary: "POST api/model"
-      operationId: "create"
-      responses:
-        "200":
-          description: "OK"
-          content:
-            '*/*':
-              schema:
-                type: "object"
-  /api/model/{id}:
-    get:
-      summary: "GET api/model/{id}"
-      operationId: "getById"
-      parameters:
-        - name: "id"
-          in: "path"
-          required: true
-          schema:
-            type: "integer"
-            format: "int64"
-      responses:
-        "200":
-          description: "OK"
-          content:
-            '*/*':
-              schema:
-                type: "object"
-    put:
-      summary: "PUT api/model/{id}"
-      operationId: "update"
-      parameters:
-        - name: "id"
-          in: "path"
-          required: true
-          schema:
-            type: "integer"
-            format: "int64"
-      responses:
-        "200":
-          description: "OK"
-          content:
-            '*/*':
-              schema:
-                type: "object"
-    delete:
-      summary: "DELETE api/model/{id}"
-      operationId: "delete"
-      parameters:
-        - name: "id"
-          in: "path"
-          required: true
-          schema:
-            type: "integer"
-            format: "int64"
-      responses:
-        "200":
-          description: "OK"
-          content:
-            '*/*':
-              schema:
-                type: "object"
-  /api/auth/signin:
-    post:
-      summary: "POST api/auth/signin"
-      operationId: "authenticateUser"
-      requestBody:
-        content:
-          application/json:
+  paths:
+    /api/tasks:
+      get:
+        summary: "GET api/tasks"
+        operationId: "getAll"
+        responses:
+          "200":
+            description: "OK"
+            content:
+              '*/*':
+                schema:
+                  type: "array"
+      post:
+        summary: "POST api/tasks"
+        operationId: "create"
+        responses:
+          "200":
+            description: "OK"
+            content:
+              '*/*':
+                schema:
+                  type: "boolean"
+    /api/tasks/{id}:
+      get:
+        summary: "GET api/tasks/{id}"
+        operationId: "getById"
+        parameters:
+          - name: "id"
+            in: "path"
+            required: true
             schema:
-              type: "object"
-        required: true
-      responses:
-        "200":
-          description: "OK"
+              type: "integer"
+              format: "int64"
+        responses:
+          "200":
+            description: "OK"
+            content:
+              '*/*':
+                schema:
+                  type: "object"
+      put:
+        summary: "PUT api/tasks/{id}"
+        operationId: "update"
+        parameters:
+          - name: "id"
+            in: "path"
+            required: true
+            schema:
+              type: "integer"
+              format: "int64"
+        responses:
+          "200":
+            description: "OK"
+            content:
+              '*/*':
+                schema:
+                  type: "object"
+      delete:
+        summary: "DELETE api/tasks/{id}"
+        operationId: "delete"
+        parameters:
+          - name: "id"
+            in: "path"
+            required: true
+            schema:
+              type: "integer"
+              format: "int64"
+        responses:
+          "200":
+            description: "OK"
+            content:
+              '*/*':
+                schema:
+                  type: "object"
+    /api/diagram:
+      get:
+        summary: "GET api/diagram"
+        operationId: "getAll"
+        responses:
+          "200":
+            description: "OK"
+            content:
+              '*/*':
+                schema:
+                  type: "array"
+      post:
+        summary: "POST api/diagram"
+        operationId: "create"
+        responses:
+          "200":
+            description: "OK"
+            content:
+              '*/*':
+                schema:
+                  type: "object"
+    /api/diagram/{id}:
+      get:
+        summary: "GET api/diagram/{id}"
+        operationId: "getById"
+        parameters:
+          - name: "id"
+            in: "path"
+            required: true
+            schema:
+              type: "integer"
+              format: "int64"
+        responses:
+          "200":
+            description: "OK"
+            content:
+              '*/*':
+                schema:
+                  type: "object"
+      put:
+        summary: "PUT api/diagram/{id}"
+        operationId: "update"
+        parameters:
+          - name: "id"
+            in: "path"
+            required: true
+            schema:
+              type: "integer"
+              format: "int64"
+        responses:
+          "200":
+            description: "OK"
+            content:
+              '*/*':
+                schema:
+                  type: "object"
+      delete:
+        summary: "DELETE api/diagram/{id}"
+        operationId: "delete"
+        parameters:
+          - name: "id"
+            in: "path"
+            required: true
+            schema:
+              type: "integer"
+              format: "int64"
+        responses:
+          "200":
+            description: "OK"
+            content:
+              '*/*':
+                schema:
+                  type: "object"
+    /api/auth/signin:
+      post:
+        summary: "POST api/auth/signin"
+        operationId: "authenticateUser"
+        requestBody:
           content:
-            '*/*':
+            application/json:
               schema:
                 type: "object"
-  /api/evaluation/v1/{id}:
-    get:
-      summary: "GET api/evaluation/v1/{id}"
-      operationId: "get"
-      parameters:
-        - name: "id"
-          in: "path"
           required: true
-          schema:
-            type: "integer"
-            format: "int64"
-      responses:
-        "200":
-          description: "OK"
-          content:
-            '*/*':
-              schema:
-                type: "integer"
+        responses:
+          "200":
+            description: "OK"
+            content:
+              '*/*':
+                schema:
+                  type: "object"
+    /api/evaluation/v1/{id}:
+      get:
+        summary: "GET api/evaluation/v1/{id}"
+        operationId: "get"
+        parameters:
+          - name: "id"
+            in: "path"
+            required: true
+            schema:
+              type: "integer"
+              format: "int64"
+        responses:
+          "200":
+            description: "OK"
+            content:
+              '*/*':
+                schema:
+                  type: "integer"

@@ -1,9 +1,8 @@
 package com.wipdev.eWiLL_backend.endpoints
 
 
-import com.wipdev.eWiLL_backend.endpoints.dataclasses.Model
-import com.wipdev.eWiLL_backend.services.IModelService
-import com.wipdev.eWiLL_backend.services.ModelService
+import com.wipdev.eWiLL_backend.endpoints.dataclasses.Diagram
+import com.wipdev.eWiLL_backend.services.IDiagramService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.DeleteMapping
 
@@ -13,29 +12,29 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-@RequestMapping("/api/model")
+@RequestMapping("/api/diagram")
 @RestController
-class ModelController{
+class DiagramController{
 
     @Autowired
-    lateinit var modelService: IModelService
+    lateinit var iDiagramService: IDiagramService
 
 
 
     @GetMapping
-    fun getAll() = modelService.getAll()
+    fun getAll() = iDiagramService.getAll()
 
     @GetMapping("/{id}")
-    fun getById(@PathVariable id:Long) = modelService.getById(id)
+    fun getById(@PathVariable id:Long) = iDiagramService.getById(id)
 
     @PostMapping
-    fun create(model:Model) = modelService.create(model)
+    fun create(diagram:Diagram) = iDiagramService.create(diagram)
 
     @PutMapping("/{id}")
-    fun update(@PathVariable id:Long,model: Model) = modelService.update(id,model)
+    fun update(@PathVariable id:Long, diagram: Diagram) = iDiagramService.update(id,diagram)
 
     @DeleteMapping("/{id}")
-    fun delete(@PathVariable id:Long) = modelService.delete(id)
+    fun delete(@PathVariable id:Long) = iDiagramService.delete(id)
 
 
 }
