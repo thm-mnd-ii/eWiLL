@@ -27,7 +27,7 @@ const logoutTest = () => {
 };
 </script>
 
-<style>
+<style scoped>
 .anchor {
   display: flex;
   align-items: center;

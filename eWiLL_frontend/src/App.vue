@@ -9,6 +9,9 @@
       </v-toolbar-title>
       <v-spacer />
       <v-btn text color="primary">Log Out</v-btn>
+      <div>
+        <DropdownUserNav></DropdownUserNav>
+      </div>
     </v-app-bar>
 
     <v-navigation-drawer v-model="showSideBar" width="220" expand-on-hover rail>
@@ -32,7 +35,6 @@
           ><strong> &copy; {{ new Date().getFullYear() }} Technische Hochschule Mittelhessen</strong>
         </v-col>
       </v-row>
-
     </v-footer>
   </v-app>
 </template>
@@ -40,7 +42,7 @@
 <script setup>
 import { RouterLink, RouterView } from "vue-router";
 import IconEWiLL from "./components/icons/IconEWiLL.vue";
-
+import DropdownUserNav from "./components/DropdownUserNav.vue";
 import { ref } from "vue";
 
 const showSideBar = ref(true);
@@ -50,48 +52,5 @@ const links = [
   { name: "Datenschutz", url: "/datenschutz" },
 ];
 </script>
-
-import DropdownUserNav from "./components/DropdownUserNav.vue";
-</script>
-
-<template>
-  <header>
-    <nav class="navbar navbar-expand-lg navbar-light">
-      <div class="container-fluid">
-        <router-link to="/" class="navbar-brand">
-          <!-- eWiLL -->
-          <IconEWiLL class="eWiLL-Logo" />
-        </router-link>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div id="navbarNav" class="collapse navbar-collapse">
-          <ul class="navbar-nav">
-            <li class="nav-item">
-              <router-link to="/modelling" class="nav-link active" aria-current="page">Modellierung</router-link>
-            </li>
-            <li class="nav-item">
-              <router-link to="/checker" class="nav-link active" aria-current="page">Überprüfung</router-link>
-            </li>
-          </ul>
-        </div>
-      </div>
-      <div>
-        <DropdownUserNav></DropdownUserNav>
-      </div>
-    </nav>
-  </header>
-
-  <main class="contentContainer">
-    <RouterView />
-  </main>
-
-  <footer class="fixed-bottom mt-auto py-3">
-    <div class="container d-flex flex-row gap-3">
-      <router-link to="/impressum" class="nav-link text-muted" aria-current="page">Impressum</router-link>
-      <router-link to="/datenschutz" class="nav-link text-muted" aria-current="page">Datenschutzerklärung</router-link>
-    </div>
-  </footer>
-</template>
 
 <style scoped lang="scss"></style>
