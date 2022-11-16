@@ -8,6 +8,9 @@
         </router-link>
       </v-toolbar-title>
       <v-spacer />
+      <div>
+        <DropdownUserNav></DropdownUserNav>
+      </div>
       <v-btn text color="primary">Log Out</v-btn>
       <div>
         <DropdownUserNav></DropdownUserNav>
