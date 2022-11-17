@@ -2,9 +2,8 @@
   <div class="text-center">
     <v-menu open-on-hover transition="slide-y-transition">
       <template #activator="{ props }">
-        <v-btn color="primary" v-bind="props"> Dropdown </v-btn>
+        <v-btn color="primary" v-bind="props"> <IconUser width="30px" height="30px" /></v-btn>
       </template>
-
       <v-list>
         <v-list-item>
           <v-label @click="profile">Profil</v-label>
@@ -23,7 +22,7 @@
 <script setup>
 import { useRouter } from "vue-router";
 import { ref } from "vue";
-
+import IconUser from "../components/icons/IconUser.vue";
 const router = useRouter();
 const darkmodeSwitch = ref(false);
 
