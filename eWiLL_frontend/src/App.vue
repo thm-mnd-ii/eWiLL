@@ -11,10 +11,6 @@
       <div>
         <DropdownUserNav></DropdownUserNav>
       </div>
-      <v-btn text color="primary">Log Out</v-btn>
-      <div>
-        <DropdownUserNav></DropdownUserNav>
-      </div>
     </v-app-bar>
 
     <v-navigation-drawer v-model="showSideBar" width="220" expand-on-hover rail>
