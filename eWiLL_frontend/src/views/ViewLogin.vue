@@ -27,6 +27,7 @@ const casLogin = () => {
 };
 
 let emailRules = [(v) => !!v || "E-mail is required", (v) => /.+@.+\..+/.test(v) || "E-mail must be valid"];
+let passwordRules = [(v) => !!v || "Password is required"];
 
 const localLogin = () => {
   console.log("Local Login");
@@ -50,7 +51,7 @@ const localLogin = () => {
 }
 .v-btn {
   margin: 40px;
-  background-color: rgb(255, 198, 124);
+  background-color: rgb(179, 179, 179);
   padding: 5px;
 }
 input {
