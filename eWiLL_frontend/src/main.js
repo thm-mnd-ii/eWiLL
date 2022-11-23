@@ -1,13 +1,19 @@
 import { createApp } from "vue";
+
+// Components
 import App from "./App.vue";
+
+// Composables
 import router from "./router";
 import store from "./store";
 
-import "bootstrap/dist/css/bootstrap.css";
+// Plugins
+import { registerPlugins } from "@/plugins";
+import vuetify from "./plugins/vuetify";
 
 const app = createApp(App);
-app.use(router);
-app.use(store);
-app.mount("#app");
+registerPlugins(app);
 
-import "bootstrap/dist/js/bootstrap.js";
+app.use(router);
+app.use(vuetify);app.use(store);
+app.mount("#app");
