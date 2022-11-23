@@ -13,48 +13,84 @@
           <v-chip variant="elevated" color="info"> or </v-chip>
         </div>
         <v-form ref="form" v-model="valid" lazy-validation>
-          <v-text-field v-model="emailInput" :rules="emailRules" label="E-Mail" required></v-text-field>
-          <v-text-field v-model="passwordInput" :rules="passwordRules" label="Passwort" required></v-text-field>
-          <v-btn :disabled="!valid" @click="localLogin">Lokaler Login</v-btn>
+          <v-text-field v-model="userInput" :rules="userRules" label="Benutzername" required></v-text-field>
+          <v-text-field v-model="passwordInput" :rules="passwordRules" label="Passwort" type="password" required></v-text-field>
+          <v-btn v-if="!loading" :disabled="!valid" @click="localLogin"> Lokaler Login </v-btn>
+          <v-progress-circular v-if="loading" indeterminate></v-progress-circular>
         </v-form>
+        <v-alert v-if="errorMessage.length != 0" icon="mdi-alert" :text="errorMessage" type="error" variant="outlined"></v-alert>
       </v-card-text>
     </v-card>
   </v-parallax>
 </template>
 
 <script setup>
-// import IconEWiLL from "../components/icons/IconEWiLL.vue";
 import { ref } from "vue";
+import { useStore } from "vuex";
+import { useRouter } from "vue-router";
+const router = useRouter();
+const store = useStore();
 
-const emailInput = ref(null);
+const userInput = ref(null);
 const passwordInput = ref(null);
-const valid = ref(true);
+const errorMessage = ref("");
+const valid = ref(false);
+const loading = ref(false);
 
 const casLogin = () => {
   console.log("CAS Login");
 };
 
-let emailRules = [(v) => !!v || "E-mail is required", (v) => /.+@.+\..+/.test(v) || "E-mail must be valid"];
+let userRules = [(v) => !!v || "Benutzername is required"];
 let passwordRules = [(v) => !!v || "Password is required"];
 
 const localLogin = () => {
-  console.log("Local Login");
-  console.log(emailInput.value);
-  console.log(passwordInput.value);
-  if (valid.value) console.log("Login with: " + emailInput.value + " and " + passwordInput.value);
+  errorMessage.value = "";
+  loading.value = true;
+
+  if (valid.value) {
+    const user = {
+      username: userInput.value,
+      password: passwordInput.value,
+    };
+
+    store.dispatch("auth/login", user).then(
+      () => {
+        setTimeout(() => {
+          router.push("/");
+        }, 1000);
+      },
+      (error) => {
+        loading.value = false;
+        console.log(error);
+        if (error.response.status == 401) {
+          errorMessage.value = "Benutzername oder Passwort ist falsch";
+        } else if (error.response.status == 500) {
+          errorMessage.value = "Server Error";
+        } else if (error.response.status == 404) {
+          errorMessage.value = "Server nicht erreichbar";
+        } else {
+          errorMessage.value = "Unbekannter Fehler";
+        }
+      }
+    );
+  } else {
+    loading.value = false;
+    errorMessage.value = "Bitte füllen Sie alle Felder aus";
+  }
 };
 </script>
 
 <style scoped lang="scss">
 .background {
-  height: 80vh;
+  height: 100vh;
   width: 100vw;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 .login-container {
-  width: 400px;
+  width: 430px;
   margin: auto;
   padding: 20px;
   text-align: center;

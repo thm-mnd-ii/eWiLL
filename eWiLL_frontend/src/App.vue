@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-app-bar :elevation="1">
+    <v-app-bar v-if="$router.currentRoute.value.name != 'ViewLogin'" :elevation="1">
       <v-app-bar-nav-icon @click.stop="showSideBar = !showSideBar" />
       <v-toolbar-title>
         <router-link to="/">
@@ -13,7 +13,7 @@
       </div>
     </v-app-bar>
 
-    <v-navigation-drawer v-model="showSideBar" width="220" expand-on-hover rail>
+    <v-navigation-drawer v-if="$router.currentRoute.value.name != 'ViewLogin'" v-model="showSideBar" width="220" expand-on-hover rail>
       <v-list density="compact" active-class="active" nav>
         <v-list-item to="/" active-class="active" prepend-icon="mdi-home-variant" title="Startseite" value="home" />
         <v-list-item to="/modelling" active-class="active" prepend-icon="mdi-pencil-ruler" title="Modellierung" value="modelling" />
@@ -25,7 +25,7 @@
       <RouterView />
     </v-main>
 
-    <v-footer app absolute elevation="3">
+    <v-footer v-if="$router.currentRoute.value.name != 'ViewLogin'" app absolute elevation="3">
       <v-row justify="center" no-gutters class="mt-2">
         <v-btn v-for="link in links" :key="link" :to="link.url" color="gray" variant="text" class="mx-2" rounded="xl">
           {{ link.name }}
