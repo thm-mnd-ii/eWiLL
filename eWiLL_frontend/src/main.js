@@ -15,5 +15,6 @@ const app = createApp(App);
 registerPlugins(app);
 
 app.use(router);
-app.use(vuetify);app.use(store);
+app.use(vuetify);
+app.use(store);
 app.mount("#app");
