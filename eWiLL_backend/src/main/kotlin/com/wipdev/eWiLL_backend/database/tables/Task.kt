@@ -4,7 +4,7 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "Assignment")
-class Assignment(id: Long?, name: String?, description: String?, dueDate: String?, subject: String?, teacher: String?) {
+class Task(id: Long?, name: String?, description: String?, dueDate: String?, subject: String?, teacher: String?) {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)

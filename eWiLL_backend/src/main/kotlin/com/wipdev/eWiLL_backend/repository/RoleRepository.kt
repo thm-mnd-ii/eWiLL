@@ -1,8 +1,12 @@
 package com.wipdev.eWiLL_backend.repository
 
-import com.wipdev.eWiLL_backend.database.tables.Task
+import com.wipdev.eWiLL_backend.database.tables.Role
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface AssignmentRepository : JpaRepository<Task,Long>
+interface RoleRepository: JpaRepository<Role, Long> {
+
+    fun findByName(name: String): Role?
+
+}
