@@ -21,7 +21,7 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-main class="contentContainer">
+    <v-main>
       <RouterView />
     </v-main>
 

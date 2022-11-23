@@ -1,18 +1,12 @@
 <template>
-  <div class="text-center">
-    <v-menu open-on-hover transition="slide-y-transition">
+  <div class="menu">
+    <v-menu>
       <template #activator="{ props }">
-        <v-btn color="primary" v-bind="props"> <IconUser width="30px" height="30px" /></v-btn>
+        <v-btn color="info" icon="mdi-account" v-bind="props" />
       </template>
       <v-list>
-        <v-list-item>
-          <v-label @click="profile">Profil</v-label>
-        </v-list-item>
-        <v-list-item>
-          <v-label @click="logout">Logout</v-label>
-        </v-list-item>
-        <v-list-item>
-          <v-switch v-model="darkmodeSwitch" color="black" label="Dark Mode" hide-details @change="darken"> </v-switch>
+        <v-list-item v-for="(option, index) in options" :key="index" :value="index">
+          <v-list-item-title @click="option.method"><v-icon :icon="option.icon" /> {{ option.title }} </v-list-item-title>
         </v-list-item>
       </v-list>
     </v-menu>
@@ -22,21 +16,26 @@
 <script setup>
 import { useRouter } from "vue-router";
 import { ref } from "vue";
-import IconUser from "../components/icons/IconUser.vue";
 const router = useRouter();
-const darkmodeSwitch = ref(false);
 
+const options = ref([
+  { title: "Profil", icon: "mdi-account", method: "profile" },
+  { title: "Logout", icon: "mdi-logout", method: "logout" },
+]);
+
+// eslint-disable-next-line no-unused-vars
 const profile = () => {
   router.push({ path: "/profile" });
 };
 
+// eslint-disable-next-line no-unused-vars
 const logout = () => {
   console.log("logout");
 };
-
-const darken = () => {
-  console.log(darkmodeSwitch.value);
-};
 </script>
 
-<style scoped></style>
+<style scoped>
+.menu {
+  margin-right: 10px;
+}
+</style>
