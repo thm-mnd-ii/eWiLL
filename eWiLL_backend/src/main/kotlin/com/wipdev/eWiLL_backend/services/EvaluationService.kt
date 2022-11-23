@@ -5,7 +5,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import com.wipdev.eWiLL_backend.database.tables.Diagram
 import com.wipdev.eWiLL_backend.eval.AnkerPoint
 import com.wipdev.eWiLL_backend.eval.AttributeConnection
-import com.wipdev.eWiLL_backend.eval.ConnectionEvalFlag
+import com.wipdev.eWiLL_backend.eval.DiagramEvalConfig
 import com.wipdev.eWiLL_backend.eval.Entity
 import com.wipdev.eWiLL_backend.repository.AssignmentRepository
 import com.wipdev.eWiLL_backend.repository.DiagramRepository
@@ -33,10 +33,10 @@ class EvaluationService:IEvaluationService {
         var attributeConnections : MutableList<AttributeConnection> = getAttributeConnections(diagram)
         var solutionAttributeConnections : MutableList<AttributeConnection> = getAttributeConnections(solutionModel)
 
-        return getScore(attributeConnections,solutionAttributeConnections, arrayOf(ConnectionEvalFlag.COMPARE_ATTRIBUTES_BY_TYPE,ConnectionEvalFlag.COMPARE_ENTITY_BY_TYPE))
+        return getScore(attributeConnections,solutionAttributeConnections, arrayOf(DiagramEvalConfig.COMPARE_ATTRIBUTES_BY_TYPE,DiagramEvalConfig.COMPARE_ENTITY_BY_TYPE))
     }
 
-    private fun getScore(attributeConnections: MutableList<AttributeConnection>, solutionAttributeConnections: MutableList<AttributeConnection>,flags:Array<ConnectionEvalFlag>): Int {
+    private fun getScore(attributeConnections: MutableList<AttributeConnection>, solutionAttributeConnections: MutableList<AttributeConnection>,flags:Array<DiagramEvalConfig>): Int {
         //Check how many connections from solution are in model
         var score = 0
         val initialSize = solutionAttributeConnections.size;
