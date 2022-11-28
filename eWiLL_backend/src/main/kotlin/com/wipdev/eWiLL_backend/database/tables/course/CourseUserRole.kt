@@ -1,5 +1,6 @@
 package com.wipdev.eWiLL_backend.database.tables.course
 
+import com.wipdev.eWiLL_backend.database.tables.User
 import javax.persistence.*
 
 @Entity
@@ -10,5 +11,15 @@ class CourseUserRole {
     @Column(name = "id", nullable = false)
     open var id: Long? = null
 
-//TODO: add fields
+    @ManyToOne
+    @Column(name = "courseId", nullable = false)
+    open var courseId: Course? = null
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    open var role: ECourseRole? = ECourseRole.STUDENT
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    open var user: User? = null
 }

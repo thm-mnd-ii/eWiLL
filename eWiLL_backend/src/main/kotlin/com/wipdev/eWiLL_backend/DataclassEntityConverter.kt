@@ -8,7 +8,7 @@ class DataclassEntityConverter {
 
     companion object{
         fun convert(task: Task): com.wipdev.eWiLL_backend.endpoints.dataclasses.Task {
-            return com.wipdev.eWiLL_backend.endpoints.dataclasses.Task(task.id,task.name,task.description,task.dueDate,task.subject,task.teacher);
+            return com.wipdev.eWiLL_backend.endpoints.dataclasses.Task(task.id,task.name,task.description,task.dueDate,task.subject,task.courseId);
         }
 
 

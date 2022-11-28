@@ -3,15 +3,14 @@ package com.wipdev.eWiLL_backend.database.tables.course
 import javax.persistence.*
 
 @Entity
-@Table(name = "course_role")
-class CourseRole {
+@Table(name = "ruleset")
+class Ruleset {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     open var id: Long? = null
 
-    @Enumerated(EnumType.STRING)
-    @Column(length = 20)
-    open var name: ECourseRole? = ECourseRole.STUDENT
-//TODO: add fields
+    @Column(name = "rules", nullable = false)
+    open var rules: String? = null
+
 }

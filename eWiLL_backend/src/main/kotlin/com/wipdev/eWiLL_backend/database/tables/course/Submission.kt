@@ -11,5 +11,17 @@ class Submission {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     open var id: Long? = null
-//TODO: add fields
+
+    @Column(name = "userId", nullable = false)
+    open var userId: Long? = null
+
+
+    @Column(name = "taskId", nullable = false)
+    open var taskId: Long? = null
+
+    @Column(name = "date", nullable = false)
+    open var date: String? = null
+
+    @Column(name = "diagram",nullable = false)
+    open var diagram: String? = null
 }

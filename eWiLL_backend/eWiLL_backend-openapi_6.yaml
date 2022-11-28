@@ -6,185 +6,277 @@ info:
 servers:
   - url: "http://localhost:8080"
 paths:
-  paths:
-    /api/tasks:
-      get:
-        summary: "GET api/tasks"
-        operationId: "getAll"
-        responses:
-          "200":
-            description: "OK"
-            content:
-              '*/*':
-                schema:
-                  type: "array"
-      post:
-        summary: "POST api/tasks"
-        operationId: "create"
-        responses:
-          "200":
-            description: "OK"
-            content:
-              '*/*':
-                schema:
-                  type: "boolean"
-    /api/tasks/{id}:
-      get:
-        summary: "GET api/tasks/{id}"
-        operationId: "getById"
-        parameters:
-          - name: "id"
-            in: "path"
-            required: true
-            schema:
-              type: "integer"
-              format: "int64"
-        responses:
-          "200":
-            description: "OK"
-            content:
-              '*/*':
-                schema:
-                  type: "object"
-      put:
-        summary: "PUT api/tasks/{id}"
-        operationId: "update"
-        parameters:
-          - name: "id"
-            in: "path"
-            required: true
-            schema:
-              type: "integer"
-              format: "int64"
-        responses:
-          "200":
-            description: "OK"
-            content:
-              '*/*':
-                schema:
-                  type: "object"
-      delete:
-        summary: "DELETE api/tasks/{id}"
-        operationId: "delete"
-        parameters:
-          - name: "id"
-            in: "path"
-            required: true
-            schema:
-              type: "integer"
-              format: "int64"
-        responses:
-          "200":
-            description: "OK"
-            content:
-              '*/*':
-                schema:
-                  type: "object"
-    /api/diagram:
-      get:
-        summary: "GET api/diagram"
-        operationId: "getAll"
-        responses:
-          "200":
-            description: "OK"
-            content:
-              '*/*':
-                schema:
-                  type: "array"
-      post:
-        summary: "POST api/diagram"
-        operationId: "create"
-        responses:
-          "200":
-            description: "OK"
-            content:
-              '*/*':
-                schema:
-                  type: "object"
-    /api/diagram/{id}:
-      get:
-        summary: "GET api/diagram/{id}"
-        operationId: "getById"
-        parameters:
-          - name: "id"
-            in: "path"
-            required: true
-            schema:
-              type: "integer"
-              format: "int64"
-        responses:
-          "200":
-            description: "OK"
-            content:
-              '*/*':
-                schema:
-                  type: "object"
-      put:
-        summary: "PUT api/diagram/{id}"
-        operationId: "update"
-        parameters:
-          - name: "id"
-            in: "path"
-            required: true
-            schema:
-              type: "integer"
-              format: "int64"
-        responses:
-          "200":
-            description: "OK"
-            content:
-              '*/*':
-                schema:
-                  type: "object"
-      delete:
-        summary: "DELETE api/diagram/{id}"
-        operationId: "delete"
-        parameters:
-          - name: "id"
-            in: "path"
-            required: true
-            schema:
-              type: "integer"
-              format: "int64"
-        responses:
-          "200":
-            description: "OK"
-            content:
-              '*/*':
-                schema:
-                  type: "object"
-    /api/auth/signin:
-      post:
-        summary: "POST api/auth/signin"
-        operationId: "authenticateUser"
-        requestBody:
+  /api/tasks/{courseId}:
+    post:
+      summary: "POST api/tasks/{courseId}"
+      operationId: "create"
+      parameters:
+        - name: "courseId"
+          in: "path"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      responses:
+        "200":
+          description: "OK"
           content:
-            application/json:
+            '*/*':
+              schema:
+                type: "boolean"
+
+  /api/tasks/{courseId}/{id}:
+    get:
+      summary: "GET api/tasks/{courseId}/{id}"
+      operationId: "getAll"
+      parameters:
+        - name: "courseId"
+          in: "path"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+
+  /api/tasks/{id}:
+    get:
+      summary: "GET api/tasks/{id}"
+      operationId: "getById"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
               schema:
                 type: "object"
+    put:
+      summary: "PUT api/tasks/{id}"
+      operationId: "update"
+      parameters:
+        - name: "id"
+          in: "path"
           required: true
-        responses:
-          "200":
-            description: "OK"
-            content:
-              '*/*':
-                schema:
-                  type: "object"
-    /api/evaluation/v1/{id}:
-      get:
-        summary: "GET api/evaluation/v1/{id}"
-        operationId: "get"
-        parameters:
-          - name: "id"
-            in: "path"
-            required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+    delete:
+      summary: "DELETE api/tasks/{id}"
+      operationId: "delete"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+
+  /api/auth/signin:
+    post:
+      summary: "POST api/auth/signin"
+      operationId: "authenticateUser"
+      requestBody:
+        content:
+          application/json:
             schema:
-              type: "integer"
-              format: "int64"
-        responses:
-          "200":
-            description: "OK"
-            content:
-              '*/*':
-                schema:
-                  type: "integer"
+              type: "object"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+
+  /api/diagram:
+    get:
+      summary: "GET api/diagram"
+      operationId: "getAll"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+    post:
+      summary: "POST api/diagram"
+      operationId: "create"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+
+  /api/diagram/{id}:
+    get:
+      summary: "GET api/diagram/{id}"
+      operationId: "getById"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+    put:
+      summary: "PUT api/diagram/{id}"
+      operationId: "update"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+    delete:
+      summary: "DELETE api/diagram/{id}"
+      operationId: "delete"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+
+  /api/evaluation/v2/submit:
+    post:
+      summary: "POST api/evaluation/v2/submit"
+      operationId: "submit"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+
+  /course:
+    put:
+      summary: "PUT course"
+      operationId: "create"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+
+  /course/all:
+    get:
+      summary: "GET course/all"
+      operationId: "getAll"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+
+  /course/{id}:
+    get:
+      summary: "GET course/{id}"
+      operationId: "getById"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+    post:
+      summary: "POST course/{id}"
+      operationId: "update"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+    delete:
+      summary: "DELETE course/{id}"
+      operationId: "delete"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      responses:
+        "200":
+          description: "OK"

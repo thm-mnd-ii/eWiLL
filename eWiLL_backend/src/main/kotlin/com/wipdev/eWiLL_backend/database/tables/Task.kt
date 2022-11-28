@@ -4,7 +4,7 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "Assignment")
-class Task(id: Long?, name: String?, description: String?, dueDate: String?, subject: String?, teacher: String?) {
+class Task() {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
@@ -22,8 +22,8 @@ class Task(id: Long?, name: String?, description: String?, dueDate: String?, sub
     @Column(name = "subject", nullable = false)
     var subject: String? = null
 
-    @Column(name = "teacher", nullable = false)
-    var teacher: String? = null
+    @Column(name = "courseId", nullable = false)
+    var courseId: String? = null
 
     @Column(name="solutionModelId", nullable = true)
     var solutionModelId:Long?=null

@@ -1,13 +1,7 @@
 package com.wipdev.eWiLL_backend.services
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
-import com.wipdev.eWiLL_backend.database.tables.Diagram
-import com.wipdev.eWiLL_backend.eval.AnkerPoint
-import com.wipdev.eWiLL_backend.eval.AttributeConnection
-import com.wipdev.eWiLL_backend.eval.DiagramEvalConfig
-import com.wipdev.eWiLL_backend.eval.Entity
-import com.wipdev.eWiLL_backend.repository.AssignmentRepository
+import com.wipdev.eWiLL_backend.endpoints.dataclasses.SubmissionRequest
+import com.wipdev.eWiLL_backend.repository.TaskRepository
 import com.wipdev.eWiLL_backend.repository.DiagramRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -19,11 +13,14 @@ class EvaluationService:IEvaluationService {
     @Autowired
     lateinit var diagramRepository: DiagramRepository
     @Autowired
-    lateinit var assignmentRepository: AssignmentRepository
+    lateinit var taskRepository: TaskRepository
+    override fun eval(submissionRequest:SubmissionRequest): String {
+        TODO("Not yet implemented")
+    }
 
 
-    //TODO Complete Overhaul of the Evaluation Service
-    override fun get(id: Long): Int {
+
+   /* override fun get(id: Long): Int {
         //get model from db
         var diagram: Diagram = diagramRepository.getReferenceById(id)
         var assignment = assignmentRepository.getReferenceById(diagram.assignmentId!!)
@@ -75,4 +72,6 @@ class EvaluationService:IEvaluationService {
 
         return connections
     }
+
+    */
 }

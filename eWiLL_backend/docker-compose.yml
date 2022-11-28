@@ -26,7 +26,6 @@ services:
       - POSTGRES_HOST=db
     ports:
       - '5433:5432'
-      # TODO: Change this to not be exposed to the world
     volumes: 
       - data:/var/lib/postgresql/data
     healthcheck:

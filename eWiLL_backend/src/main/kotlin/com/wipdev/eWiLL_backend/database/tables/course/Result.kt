@@ -19,4 +19,8 @@ class Result {
     @Column(name = "comment", nullable = false)
     open var comment: String? = null
 
+    @ManyToOne()
+    @Column(name = "submissionId", nullable = false)
+    open var submissionId: Submission? = null
+
 }
