@@ -122,7 +122,7 @@ const changeLineStyle = () => {
 
 const deleteLine = () => {
   changeVisibility();
-  emit("change-line", props.line);
+  emit("delete-line", props.line);
 };
 </script>
 
