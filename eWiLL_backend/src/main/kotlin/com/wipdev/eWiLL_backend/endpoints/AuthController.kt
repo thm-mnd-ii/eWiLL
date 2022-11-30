@@ -8,6 +8,7 @@ import com.wipdev.eWiLL_backend.repository.UserRepository
 import com.wipdev.eWiLL_backend.security.auth.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
@@ -44,6 +45,12 @@ class AuthController {
         val userDetails = authentication.principal as UserDetailsImpl
         val roles =  userDetails.authorities.map { it.authority }
         return ResponseEntity.ok(JwtResponse(jwt,userDetails.id, userDetails.username,userDetails.email, roles))
+    }
+
+    @GetMapping("/isValid")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+    fun isValid():Boolean{
+        return true
     }
 
 

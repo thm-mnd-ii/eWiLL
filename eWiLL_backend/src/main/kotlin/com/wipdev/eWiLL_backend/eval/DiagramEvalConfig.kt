@@ -5,7 +5,7 @@ enum class DiagramEvalConfig {
     COMPARE_ATTRIBUTES_BY_NAME,
     COMPARE_ENTITY_BY_NAME,
     COMPARE_ENTITY_BY_TYPE,
-    COMPARE_ATTRIBUTES_BY_TYPE();
+    COMPARE_ATTRIBUTES_BY_TYPE;
 
     val errorLevel:ErrorLevel
         get() {

@@ -120,6 +120,17 @@ paths:
             '*/*':
               schema:
                 type: "object"
+  /api/auth/isValid:
+    get:
+      summary: "GET api/auth/isValid"
+      operationId: "isValid"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "boolean"
 
   /api/diagram:
     get:

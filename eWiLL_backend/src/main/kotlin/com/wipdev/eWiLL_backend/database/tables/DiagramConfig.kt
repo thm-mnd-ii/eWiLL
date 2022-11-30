@@ -9,7 +9,7 @@ class DiagramConfig {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     open var id: Long? = null
-    //
-    @Column(name ="rulesetId", nullable = false)
-    open var rulesetId: Long? = null
+
+    @Column(name = "diagram_type", nullable = false)
+    open var diagramtype: String? = null
 }
