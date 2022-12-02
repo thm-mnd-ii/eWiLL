@@ -9,9 +9,10 @@ import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseBody
+import org.springframework.web.bind.annotation.RestController
 
 @RequestMapping("/api/evaluation/v2")
-@Controller
+@RestController
 @Tag(name = "Evaluation/Checker", description = "Checker API")
 class EvaluationController {
 
