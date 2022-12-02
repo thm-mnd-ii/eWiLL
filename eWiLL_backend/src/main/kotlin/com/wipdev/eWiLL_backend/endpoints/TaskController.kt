@@ -17,9 +17,9 @@ class TaskController {
 
     @Autowired
     lateinit var service: TaskService
-    
-    @GetMapping("/{courseId}", produces = ["application/json"])
-    fun getAll(@Parameter(name = "Course Id to see all tasks off")@PathVariable courseId:Long) = service.getAll(courseId)
+
+    @GetMapping("/{courseId}/tasks", produces = ["application/json"])
+    fun getAll(@PathVariable courseId:Long) = service.getAll(courseId)
 
     @GetMapping("/{id}")
     @ResponseBody
@@ -27,10 +27,11 @@ class TaskController {
 
     @PostMapping("/{courseId}")
     @ResponseBody
-    fun create(@PathVariable courseId: Long, task: Task) = service.create(courseId,task)
+    fun create(@PathVariable courseId: Long,@Parameter task: Task) = service.create(courseId,task)
 
-    @PutMapping("/{id}")
-    fun update(@PathVariable id: Long, task: Task) = service.update(id, task)
+    @PutMapping()
+    @ResponseBody
+    fun update(@Parameter task: Task) = task.id?.let { service.update(it,task) }
 
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: Long) = service.delete(id)

@@ -30,5 +30,9 @@ class CourseService: ICourseService {
         TODO("Not yet implemented")
     }
 
+    override fun getCourseByUserId(id: Long): List<Course> {
+        TODO("Not yet implemented")
+    }
+
 
 }

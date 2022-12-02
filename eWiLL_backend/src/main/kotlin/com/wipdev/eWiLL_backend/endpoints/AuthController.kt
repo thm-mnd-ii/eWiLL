@@ -6,6 +6,7 @@ import com.wipdev.eWiLL_backend.endpoints.payload.LoginRequest
 import com.wipdev.eWiLL_backend.repository.RoleRepository
 import com.wipdev.eWiLL_backend.repository.UserRepository
 import com.wipdev.eWiLL_backend.security.auth.*
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*
 @CrossOrigin(origins = ["*"], maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
+@Tag(name = "Authentication", description = "Auth API")
 class AuthController {
     @Autowired
     lateinit var authentificationManager: AuthenticationManager
@@ -35,7 +37,8 @@ class AuthController {
     lateinit var jwtUtils: JwtUtils
 
     @PostMapping("/signin")
-    fun authenticateUser(@RequestBody loginRequest: LoginRequest): ResponseEntity<*> {
+    @ResponseBody
+    fun authenticateUser(@RequestBody loginRequest: LoginRequest): ResponseEntity<JwtResponse> {
         //TODO: registerIfNonExistent(loginRequest)
         val authentication = authentificationManager.authenticate(
             UsernamePasswordAuthenticationToken(loginRequest.username, loginRequest.password)

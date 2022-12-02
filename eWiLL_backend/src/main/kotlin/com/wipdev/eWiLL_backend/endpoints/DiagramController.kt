@@ -4,6 +4,7 @@ package com.wipdev.eWiLL_backend.endpoints
 import com.wipdev.eWiLL_backend.endpoints.payload.Diagram
 import com.wipdev.eWiLL_backend.services.DiagramService
 import com.wipdev.eWiLL_backend.services.IDiagramService
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.DeleteMapping
 
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/diagram")
 @RestController
+@Tag(name = "Diagram", description = "Diagram API")
 class DiagramController{
 
     @Autowired
@@ -31,8 +33,8 @@ class DiagramController{
     @PostMapping
     fun create(diagram:Diagram) = iDiagramService.create(diagram)
 
-    @PutMapping("/{id}")
-    fun update(@PathVariable id:Long, diagram: Diagram) = iDiagramService.update(id,diagram)
+    @PutMapping()
+    fun update( diagram: Diagram) = diagram.modelId?.let { iDiagramService.update(it,diagram) }
 
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id:Long) = iDiagramService.delete(id)

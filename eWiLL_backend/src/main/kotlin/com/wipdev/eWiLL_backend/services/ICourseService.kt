@@ -8,4 +8,6 @@ interface ICourseService {
     fun create(course: Course): Course
     fun update(id: Long, course: Course): Course
     fun delete(id: Long)
+
+    fun getCourseByUserId(id: Long): List<Course>
 }
