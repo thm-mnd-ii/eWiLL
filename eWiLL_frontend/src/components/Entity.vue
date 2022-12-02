@@ -1,7 +1,7 @@
 <template>
   <div ref="root" class="objectContainer" @mouseover="hover = true" @mouseleave="endHover">
     <span v-if="!isEditable" class="text unselectable" @dblclick="makeTextEditable">{{ props.entity.entityName }}</span>
-    <textarea v-if="isEditable" v-model="props.entity.entityName" class="textedit form-control" rows="1" @dblclick="makeTextEditable" @keyup.enter="handleEnter"></textarea>
+    <textarea v-if="isEditable" v-model="props.entity.entityName" class="textedit" rows="1" @dblclick="makeTextEditable" @keyup.enter="handleEnter"></textarea>
 
     <span class="attributes" v-html="formattedAttributes"></span>
 
@@ -118,14 +118,15 @@ const makeTextEditable = () => {
 };
 
 const handleEnter = (e) => {
-  if (e.ctrlKey) {
-    const curPos = e.srcElement.selectionStart;
-    const textarea = props.entity.text;
-    //use return to exit methode
-    return (props.entity.text = textarea.slice(0, curPos) + "\n" + textarea.slice(curPos));
-  }
+  //console.log(e);
+  const curPos = e.srcElement.selectionStart;
 
-  props.entity.text = props.entity.text.slice(0, -1);
+  if (e.ctrlKey) {
+    const textarea = props.entity.entityName;
+    //use return to exit methode
+    return (props.entity.entityName = textarea.slice(0, curPos) + "\n" + textarea.slice(curPos));
+  }
+  props.entity.entityName = props.entity.entityName.slice(0, curPos - 1) + props.entity.entityName.slice(curPos);
   makeTextEditable();
 };
 
@@ -184,6 +185,7 @@ watch(props.entity, (entity) => {
   //console.log(entity)
   emit("update:entity", entity.value);
   updateAttributes();
+  setAnkerPoints();
 });
 
 let isResizable = ref(false);
@@ -348,7 +350,7 @@ const resizer = (e) => {
 }
 
 .resizer.se {
-  bottom: -2px;
+  bottom: 4px;
   right: -2px;
   cursor: se-resize;
 }
@@ -361,7 +363,7 @@ const resizer = (e) => {
   display: inline-block;
   font-size: smaller;
   position: absolute;
-  top: 50%;
+  top: 45%;
   left: 50%;
   transform: translate(-50%, -50%);
   cursor: text;
@@ -371,13 +373,14 @@ const resizer = (e) => {
   text-align: center;
   resize: none;
   overflow: hidden;
-  width: 95%;
-  height: 90%;
+  width: 94%;
+  height: 80%;
   position: absolute;
   font-size: smaller;
-  top: 50%;
+  top: 44%;
   left: 50%;
   transform: translate(-50%, -50%);
+  background-color: white;
 }
 
 .unselectable {

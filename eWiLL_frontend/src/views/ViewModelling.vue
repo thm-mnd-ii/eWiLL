@@ -15,9 +15,10 @@
         {{entityList}}
     </div> -->
 
-  <!-- <div>{{selectedEntity}}</div> -->
+  <div>{{ selectedEntity }}</div>
+
   <div class="container">
-    <ModalAddAttributes v-if="showModalAddAttributes" :entity="selectedEntity" @close="showModalAddAttributes = false" />
+    <ModalAddAttributes :show="showModalAddAttributes" :entity="selectedEntity" @close="showModalAddAttributes = false" />
 
     <div class="toolbox">
       <IconEntity id="item" draggable="true" @click="addElement($event, EntityTyp.ENTITY)" />
@@ -289,16 +290,16 @@ const addElement = (e, typ) => {
 .container {
   position: relative;
   width: 100%;
-  height: 100%;
+  height: 100vh;
+  margin-bottom: 5%;
 }
 .modellingContainer {
-  position: absolute;
+  position: relative;
   background-color: lavender;
   left: 15%;
   top: 10%;
-  width: 70%;
-  height: 80%;
-  padding-bottom: 10%;
+  width: 1000px;
+  height: 500px;
   z-index: 1;
 }
 
