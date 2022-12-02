@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service
 @Service
 interface ITaskService {
 
-    fun getAll(courseId: Long, id: Long): List<Task>
+    fun getAll(courseId: Long): List<Task>
     fun getById(id: Long): Task
     fun create(courseId: Long, task: Task): Boolean
     fun update(id: Long, task: Task): Task

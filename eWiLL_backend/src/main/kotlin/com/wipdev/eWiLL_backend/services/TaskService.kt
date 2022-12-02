@@ -15,8 +15,8 @@ class TaskService() : ITaskService {
     lateinit var taskRepository: TaskRepository
 
 
-    override fun getAll(courseId: Long, id: Long): List<Task> =
-        taskRepository.findAll().map { DataclassEntityConverter.convert(it) }.filter { it.courseId == courseId && it.id == id }
+    override fun getAll(courseId: Long): List<Task> =
+        taskRepository.findAll().map { DataclassEntityConverter.convert(it) }.filter { it.courseId == courseId }
 
 
     override fun getById(id: Long): Task =
