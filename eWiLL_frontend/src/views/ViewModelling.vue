@@ -15,7 +15,7 @@
         {{entityList}}
     </div> -->
 
-  <div>{{ selectedEntity }}</div>
+  <!-- <div>{{ selectedEntity }}</div> -->
 
   <div class="container">
     <ModalAddAttributes :show="showModalAddAttributes" :entity="selectedEntity" @close="showModalAddAttributes = false" />
