@@ -25,9 +25,10 @@ class TaskController() {
         ApiResponse(responseCode = "401", description = "You are not authorized to view the resource"),
     ])
     @GetMapping("/{courseId}", produces = ["application/json"])
-
     fun getAll(@Parameter(name = "Course Id to see all tasks off")@PathVariable courseId:Long) = service.getAll(courseId)
+
     @GetMapping("/{id}")
+    @ResponseBody
     fun getById(@PathVariable id: Long) = service.getById(id)
 
     @PostMapping("/{courseId}")
