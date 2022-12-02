@@ -169,15 +169,15 @@ const setAnkerPoints = () => {
 };
 
 const setPosition = (element, entity) => {
-  element.style.top = entity.top;
-  element.style.left = entity.left;
-  element.style.width = entity.width;
+  element.style.top = entity.top + "px";
+  element.style.left = entity.left + "px";
+  element.style.width = entity.width + "px";
 };
 
 const updateEntity = () => {
-  props.entity.top = root.value.style.top;
-  props.entity.left = root.value.style.left;
-  props.entity.width = root.value.style.width;
+  props.entity.top = parseInt(root.value.style.top);
+  props.entity.left = parseInt(root.value.style.left);
+  props.entity.width = parseInt(root.value.style.width);
 };
 
 // Emit new entity to parent

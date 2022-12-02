@@ -8,7 +8,7 @@ import { ref, onMounted, computed } from "vue";
 const emit = defineEmits(["anker-position"]);
 const props = defineProps({
   position: { type: String, required: true },
-  entityWidth: { type: String, required: true },
+  entityWidth: { type: Number, required: true },
 });
 
 const dockingPoint = ref(null);
