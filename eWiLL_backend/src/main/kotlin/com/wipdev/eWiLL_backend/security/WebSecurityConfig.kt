@@ -38,6 +38,8 @@ class WebSecurityConfig() {
             .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
             .authorizeRequests()
             .antMatchers("/api/auth/**").permitAll()
+            .antMatchers("/swagger-ui/**").permitAll()
+            .antMatchers("/v3/**").permitAll()
             .antMatchers("/api/test/**").permitAll()
             .anyRequest().authenticated()
         http.authenticationProvider(authenticationProvider())

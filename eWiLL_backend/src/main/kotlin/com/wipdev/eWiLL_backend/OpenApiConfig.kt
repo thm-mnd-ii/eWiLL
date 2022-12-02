@@ -1,6 +1,7 @@
 package com.wipdev.eWiLL_backend
 
 import io.swagger.v3.oas.models.OpenAPI
+import io.swagger.v3.oas.models.info.Info
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -10,6 +11,6 @@ class OpenApiConfig {
     @Bean
     fun customOpenAPI(): OpenAPI? {
         return OpenAPI()
-            .info(io.swagger.v3.oas.models.info.Info().title("eWiLL_backend API").version("v0"))
+            .info(Info().title("eWiLL_backend API").version("v0"))
     }
 }

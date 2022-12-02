@@ -17,12 +17,7 @@ class TaskController {
 
     @Autowired
     lateinit var service: TaskService
-
-    @Operation(summary = "Get all Tasks")
-    @ApiResponses(value = [
-        ApiResponse(responseCode = "200", description = "Found the Tasks"),
-        ApiResponse(responseCode = "401", description = "You are not authorized to view the resource"),
-    ])
+    
     @GetMapping("/{courseId}", produces = ["application/json"])
     fun getAll(@Parameter(name = "Course Id to see all tasks off")@PathVariable courseId:Long) = service.getAll(courseId)
 
