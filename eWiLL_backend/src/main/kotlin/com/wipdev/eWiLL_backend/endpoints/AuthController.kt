@@ -1,8 +1,8 @@
 package com.wipdev.eWiLL_backend.endpoints
 
 import com.wipdev.eWiLL_backend.database.tables.User
-import com.wipdev.eWiLL_backend.endpoints.dataclasses.JwtResponse
-import com.wipdev.eWiLL_backend.endpoints.dataclasses.LoginRequest
+import com.wipdev.eWiLL_backend.endpoints.payload.responses.JwtResponse
+import com.wipdev.eWiLL_backend.endpoints.payload.LoginRequest
 import com.wipdev.eWiLL_backend.repository.RoleRepository
 import com.wipdev.eWiLL_backend.repository.UserRepository
 import com.wipdev.eWiLL_backend.security.auth.*

@@ -1,7 +1,7 @@
 package com.wipdev.eWiLL_backend.services
 
 import com.wipdev.eWiLL_backend.DataclassEntityConverter
-import com.wipdev.eWiLL_backend.endpoints.dataclasses.Diagram
+import com.wipdev.eWiLL_backend.endpoints.payload.Diagram
 import com.wipdev.eWiLL_backend.repository.DiagramRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service

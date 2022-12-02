@@ -1,7 +1,8 @@
 package com.wipdev.eWiLL_backend.endpoints
 
 
-import com.wipdev.eWiLL_backend.endpoints.dataclasses.Diagram
+import com.wipdev.eWiLL_backend.endpoints.payload.Diagram
+import com.wipdev.eWiLL_backend.services.DiagramService
 import com.wipdev.eWiLL_backend.services.IDiagramService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController
 class DiagramController{
 
     @Autowired
-    lateinit var iDiagramService: IDiagramService
+    lateinit var iDiagramService: DiagramService
 
 
 

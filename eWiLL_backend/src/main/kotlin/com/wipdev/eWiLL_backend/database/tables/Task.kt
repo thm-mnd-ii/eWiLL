@@ -4,7 +4,25 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "Assignment")
-class Task() {
+class Task {
+    constructor(
+        id: Long?,
+        name: String?,
+        description: String?,
+        dueDate: String?,
+        subject: String?,
+        courseId: Long?,
+        solutionModelId: Long?
+    ) {
+        this.id = id
+        this.name = name
+        this.description = description
+        this.dueDate = dueDate
+        this.subject = subject
+        this.courseId = courseId
+        this.solutionModelId = solutionModelId
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
@@ -23,7 +41,7 @@ class Task() {
     var subject: String? = null
 
     @Column(name = "courseId", nullable = false)
-    var courseId: String? = null
+    var courseId: Long? = null
 
     @Column(name="solutionModelId", nullable = true)
     var solutionModelId:Long?=null

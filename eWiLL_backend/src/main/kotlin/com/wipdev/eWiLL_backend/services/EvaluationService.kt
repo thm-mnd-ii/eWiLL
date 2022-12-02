@@ -1,6 +1,6 @@
 package com.wipdev.eWiLL_backend.services
 
-import com.wipdev.eWiLL_backend.endpoints.dataclasses.SubmissionRequest
+import com.wipdev.eWiLL_backend.endpoints.payload.SubmissionRequest
 import com.wipdev.eWiLL_backend.repository.TaskRepository
 import com.wipdev.eWiLL_backend.repository.DiagramRepository
 import org.springframework.beans.factory.annotation.Autowired

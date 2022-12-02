@@ -1,6 +1,6 @@
 package com.wipdev.eWiLL_backend.services
 
-import com.wipdev.eWiLL_backend.endpoints.dataclasses.Task
+import com.wipdev.eWiLL_backend.endpoints.payload.Task
 import org.springframework.stereotype.Service
 
 @Service

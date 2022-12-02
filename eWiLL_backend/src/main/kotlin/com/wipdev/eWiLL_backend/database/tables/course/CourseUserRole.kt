@@ -11,9 +11,9 @@ class CourseUserRole {
     @Column(name = "id", nullable = false)
     open var id: Long? = null
 
-    @ManyToOne
+
     @Column(name = "courseId", nullable = false)
-    open var courseId: Course? = null
+    open var courseId: Long? = null
 
     @Enumerated(EnumType.STRING)
     @Column(length = 20)

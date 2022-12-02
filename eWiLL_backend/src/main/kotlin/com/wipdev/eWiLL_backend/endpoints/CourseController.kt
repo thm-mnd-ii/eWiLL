@@ -1,6 +1,7 @@
 package com.wipdev.eWiLL_backend.endpoints
 
 import com.wipdev.eWiLL_backend.database.tables.course.Course
+import com.wipdev.eWiLL_backend.services.CourseService
 import com.wipdev.eWiLL_backend.services.ICourseService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
@@ -12,7 +13,7 @@ class CourseController :ICourseService{
 
 
     @Autowired
-    lateinit var service: ICourseService
+    lateinit var service: CourseService
 
     @GetMapping("/all")
     override fun getAll(): List<Course>  = service.getAll()

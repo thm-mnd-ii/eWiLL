@@ -2,7 +2,7 @@ package com.wipdev.eWiLL_backend.services
 
 
 import com.wipdev.eWiLL_backend.DataclassEntityConverter
-import com.wipdev.eWiLL_backend.endpoints.dataclasses.Task
+import com.wipdev.eWiLL_backend.endpoints.payload.Task
 import com.wipdev.eWiLL_backend.repository.TaskRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service

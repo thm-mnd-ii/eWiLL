@@ -1,20 +1,19 @@
 package com.wipdev.eWiLL_backend.endpoints
 
-import com.wipdev.eWiLL_backend.endpoints.dataclasses.Task
+import com.wipdev.eWiLL_backend.endpoints.payload.Task
 import com.wipdev.eWiLL_backend.services.TaskService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
-import org.intellij.lang.annotations.Pattern
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 
 @RequestMapping("/api/tasks")
 @RestController
 @Tag(name = "Task", description = "Task API")
-class TaskController() {
+class TaskController {
 
     @Autowired
     lateinit var service: TaskService
