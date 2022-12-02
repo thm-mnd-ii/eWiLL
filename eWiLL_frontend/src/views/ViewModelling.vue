@@ -12,7 +12,7 @@
     </div> -->
 
   <!-- <div>
-        {{lineList}}
+        {{entityList}}
     </div> -->
 
   <!-- <div>{{selectedEntity}}</div> -->
@@ -65,9 +65,9 @@ const entityList = ref([
     id: 1,
     typ: 1,
     entityName: "Kunde",
-    top: "124px",
-    left: "81px",
-    width: "100px",
+    top: 124,
+    left: 81,
+    width: 100,
     attributes: [
       { typ: 1, name: "KNr" },
       { typ: 3, name: "Adresse" },
@@ -79,17 +79,17 @@ const entityList = ref([
     id: 2,
     typ: 2,
     entityName: "Rechnung",
-    top: "122px",
-    left: "302px",
-    width: "100px",
+    top: 122,
+    left: 302,
+    width: 100,
     attributes: [
       { typ: 1, name: "RNr" },
       { typ: 2, name: "KNr" },
       { typ: 3, name: "Datum" },
     ],
   },
-  { id: 3, typ: 1, entityName: "Artikel", top: "207px", left: "81px", width: "100px", attributes: [] },
-  { id: 4, typ: 3, entityName: "Rechnungs\npositionen", top: "118px", left: "486px", width: "100px", attributes: [] },
+  { id: 3, typ: 1, entityName: "Artikel", top: 207, left: 81, width: 100, attributes: [] },
+  { id: 4, typ: 3, entityName: "Rechnungs\npositionen", top: 118, left: 486, width: 100, attributes: [] },
 ]);
 
 const lineList = ref([
@@ -271,7 +271,7 @@ const handleAnkerPoint = (ankerPoint) => {
 //add Element with serial ID
 const addElement = (e, typ) => {
   if (entityList.value.length == 0) {
-    entityList.value.push({ id: 1, typ: typ, entityName: "New Entity", attributes: [], top: e.clientY - 25 + "px", left: e.clientX - 50 + "px", width: "100px" });
+    entityList.value.push({ id: 1, typ: typ, entityName: "New Entity", attributes: [], top: e.clientY - 100, left: e.clientX - 50, width: 100 });
     return;
   }
 
@@ -281,7 +281,7 @@ const addElement = (e, typ) => {
   const max = Math.max(...ids);
   const nextID = max + 1;
 
-  entityList.value.push({ id: nextID, typ: typ, entityName: "New Entity", attributes: [], top: e.clientY - 25 + "px", left: e.clientX - 50 + "px", width: "100px" });
+  entityList.value.push({ id: nextID, typ: typ, entityName: "New Entity", attributes: [], top: e.clientY - 100, left: e.clientX - 50, width: 100 });
 };
 </script>
 
