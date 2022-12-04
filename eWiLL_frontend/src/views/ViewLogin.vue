@@ -24,7 +24,7 @@
   </v-parallax>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
@@ -41,8 +41,8 @@ const casLogin = () => {
   console.log("CAS Login");
 };
 
-let userRules = [(v) => !!v || "Benutzername is required"];
-let passwordRules = [(v) => !!v || "Password is required"];
+let userRules = [(v:string) => !!v || "Benutzername is required"];
+let passwordRules = [(v: string) => !!v || "Password is required"];
 
 const localLogin = () => {
   errorMessage.value = "";

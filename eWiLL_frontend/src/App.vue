@@ -27,7 +27,7 @@
 
     <v-footer v-if="$router.currentRoute.value.name != 'ViewLogin'" app absolute elevation="3">
       <v-row justify="center" no-gutters class="mt-2">
-        <v-btn v-for="link in links" :key="link" :to="link.url" color="gray" variant="text" class="mx-2" rounded="xl">
+        <v-btn v-for="link in links" :key="link.name" :to="link.url" color="gray" variant="text" class="mx-2" rounded="xl">
           {{ link.name }}
         </v-btn>
         <v-col class="text-center mt-4" cols="12"
@@ -38,7 +38,7 @@
   </v-app>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { RouterLink, RouterView } from "vue-router";
 import IconEWiLL from "./components/icons/IconEWiLL.vue";
 import DropdownUserNav from "./components/DropdownUserNav.vue";
