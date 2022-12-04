@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from "vue";
-import ConnectorPosition from "../enums/connectorPosition";
+import ConnectorPosition from "../enums/ConnectorPosition";
 
 const emit = defineEmits(["anker-position"]);
 const props = defineProps<{

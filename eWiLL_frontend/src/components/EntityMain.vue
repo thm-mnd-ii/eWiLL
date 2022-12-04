@@ -40,7 +40,7 @@ import IncomingAnkerPoint from "./IncomingAnkerPoint.vue";
 import EntityWidget from "./EntityWidget.vue";
 
 import { ref, onMounted, computed, watch } from "vue";
-import ConnectorPosition from "../enums/connectorPosition";
+import ConnectorPosition from "../enums/ConnectorPosition";
 import Attribute from "../model/diagram/Attribute";
 import Entity from "../model/diagram/Entity";
 

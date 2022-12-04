@@ -1,5 +1,5 @@
 import CardinalityType from "../../enums/CardinalityType";
-import ConnectorPosition from "../../enums/connectorPosition";
+import ConnectorPosition from "../../enums/ConnectorPosition";
 
 interface Connection {
   startEntity?: number;

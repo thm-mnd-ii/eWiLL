@@ -65,7 +65,7 @@ import AttributeType from "../enums/AttributeType";
 import Connection from "../model/diagram/Connection";
 import Line from "../model/diagram/Line";
 import CardinalityType from "../enums/CardinalityType";
-import ConnectorPosition from "../enums/connectorPosition";
+import ConnectorPosition from "../enums/ConnectorPosition";
 
 const entityList: Entity[] = reactive([
   {
