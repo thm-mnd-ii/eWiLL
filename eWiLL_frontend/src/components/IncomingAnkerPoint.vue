@@ -1,8 +1,8 @@
 <template>
-  <div ref="dockingPoint" class="dockingPoint" @mousedown="createLine($event)"></div>
+  <div ref="dockingPoint" class="dockingPoint" @mousedown="createLine()"></div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, computed } from "vue";
 
 const emit = defineEmits(["anker-position"]);
@@ -11,15 +11,17 @@ const props = defineProps({
   entityWidth: { type: Number, required: true },
 });
 
-const dockingPoint = ref(null);
+const dockingPoint = ref<HTMLInputElement | null>(null);
 
 onMounted(() => {
   //add position to ankerPoint
-  dockingPoint.value.classList.add(props.position);
+  if (dockingPoint.value != null) {
+    dockingPoint.value.classList.add(props.position);
+  }
 });
 
 const cssVarEntityHeight = computed(() => {
-  return parseInt(props.entityWidth) / 2 + "px";
+  return props.entityWidth / 2 + "px";
 });
 
 const createLine = () => {

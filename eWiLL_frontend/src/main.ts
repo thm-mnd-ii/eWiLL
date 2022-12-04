@@ -8,11 +8,11 @@ import router from "./router";
 import store from "./store";
 
 // Plugins
-import { registerPlugins } from "@/plugins";
+import { registerPlugins } from "./plugins";
 import vuetify from "./plugins/vuetify";
 
 const app = createApp(App);
-registerPlugins(app);
+registerPlugins();
 
 app.use(router);
 app.use(vuetify);

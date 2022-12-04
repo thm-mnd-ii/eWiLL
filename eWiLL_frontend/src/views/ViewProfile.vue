@@ -1,5 +1,5 @@
 <template>
-  <pre>{{ $store.state.auth }}</pre>
+  <pre>{{ store.state.auth }}</pre>
   <div>
     <h3>Profil</h3>
     <p>LogInStatus: {{ status }}</p>
@@ -9,7 +9,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from "vue";
 import { useStore } from "vuex";
 const store = useStore();

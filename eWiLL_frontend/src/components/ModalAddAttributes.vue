@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" class="container">
+  <v-dialog v-if="props.entity != undefined" v-model="dialog" class="container">
     <v-card>
       <v-card-title> Attribute </v-card-title>
       <v-card-subtitle>
@@ -8,9 +8,9 @@
 
       <v-card-text class="card-text">
         <v-form class="imput-form">
-          <v-text-field v-model="newAttributeName" lable="Attribut Name" variant="solo" required hide-details="true" />
+          <v-text-field v-model="newAttributeName" lable="Attribut Name" variant="solo" required :hide-details="true" />
 
-          <v-select v-model="selectedAttributeType" lable="Typ Auswählen" variant="solo" :items="attributeTypes" item-title="key" item-value="attribute" hide-details="true"></v-select>
+          <v-select v-model="selectedAttributeType" lable="Typ Auswählen" variant="solo" :items="attributeTypes" item-title="key" item-value="attribute" :hide-details="true"></v-select>
 
           <v-btn class="btn" color="secondary" @click="addAttribute">Hinzufügen</v-btn>
         </v-form>
@@ -20,9 +20,9 @@
             <v-card :elevation="2" class="attributes">
               <v-icon size="x-large" icon="mdi-arrow-up-down"></v-icon>
 
-              <v-text-field v-model="element.name" lable="Attribut Name" variant="solo" required hide-details="true" />
+              <v-text-field v-model="element.name" lable="Attribut Name" variant="solo" required :hide-details="true" />
 
-              <v-select v-model="element.typ" lable="Typ Auswählen" variant="solo" :items="attributeTypes" item-title="key" item-value="attribute" hide-details="true"> </v-select>
+              <v-select v-model="element.type" lable="Typ Auswählen" variant="solo" :items="attributeTypes" item-title="key" item-value="attribute" :hide-details="true"> </v-select>
 
               <v-icon size="x-large" icon="mdi-delete" @click="deleteAttribute(element)"></v-icon>
             </v-card>
@@ -37,26 +37,29 @@
   </v-dialog>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, watch, computed } from "vue";
-import AttributeTyp from "../enums/AttributeTyp";
+import AttributeType from "../enums/AttributeType";
 import draggable from "vuedraggable";
+import Entity from "../model/diagram/Entity";
+import Attribute from "../model/diagram/Attribute";
 
-const props = defineProps({
-  entity: { type: Object, required: true },
-  show: { type: Boolean, required: true },
-});
+const props = defineProps<{
+  entity?: Entity;
+  show: boolean;
+}>();
 
 const emit = defineEmits(["close", "update:entity"]);
 
-const dialog = ref(false);
-const newAttributeName = ref("");
-const selectedAttributeType = ref("");
+const drag: any = ref();
+const dialog = ref<boolean>(false);
+const newAttributeName = ref<string>("");
+const selectedAttributeType = ref<AttributeType>(AttributeType.Attribute);
 
 watch(
   () => props.entity,
   (entity) => {
-    emit("update:entity", entity.value);
+    emit("update:entity", entity);
   }
 );
 
@@ -67,27 +70,39 @@ watch(
   }
 );
 
-const attributeTypes = computed({
-  get() {
-    return Object.keys(AttributeTyp).map((key) => {
-      return { attribute: AttributeTyp[key], key: key };
-    });
-  },
+const attributeTypes = computed(() => {
+  const keys = Object.keys(AttributeType).filter((k) => typeof AttributeType[k as any] === "number");
+  const values = keys.map((k) => AttributeType[k as any]);
+  const types: { key?: string; attribute?: number }[] = [];
+  //values in array of objects
+  keys.forEach((key, index) => {
+    types[index] = { key: key, attribute: parseInt(values[index]) };
+  });
+
+  return types;
 });
 
-const deleteAttribute = (attribute) => {
+const deleteAttribute = (attribute: Attribute) => {
   //console.log(props.entity.attributes)
-  let index = props.entity.attributes.indexOf(attribute);
-  props.entity.attributes.splice(index, 1);
+  if (props.entity != undefined) {
+    let index = props.entity.attributes.indexOf(attribute);
+    props.entity.attributes.splice(index, 1);
+  }
 };
 
 const addAttribute = () => {
-  console.log(newAttributeName.value, selectedAttributeType.value);
+  //validate input
+  if (newAttributeName.value == "") {
+    //TODO: show error message
+    return;
+  }
 
-  props.entity.attributes.push({ typ: selectedAttributeType.value, name: newAttributeName.value });
+  if (props.entity != undefined) {
+    props.entity.attributes.push({ type: selectedAttributeType.value, name: newAttributeName.value });
 
-  newAttributeName.value = "";
-  selectedAttributeType.value = "";
+    newAttributeName.value = "";
+    selectedAttributeType.value = AttributeType.Attribute;
+  }
 };
 </script>
 

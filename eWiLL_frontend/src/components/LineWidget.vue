@@ -5,7 +5,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import IconTrash from "./icons/IconTrash.vue";
 import IconChange from "./icons/IconChange.vue";
 

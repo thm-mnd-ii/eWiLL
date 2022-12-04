@@ -35,9 +35,6 @@ export default defineConfig({
       autoImport: true,
     }),
   ],
-  configureWebpack: {
-    devtool: "source-map",
-  },
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),

@@ -38,17 +38,17 @@
     </svg> -->
 </template>
 
-<script setup>
-import LineWidget from "../components/LineWidget.vue";
+<script setup lang="ts">
+import LineWidget from "./LineWidget.vue";
 import { ref, onMounted, watch } from "vue";
-import CardinalityTyp from "../enums/CardinalityTyp";
+import CardinalityTyp from "../enums/CardinalityType";
 
 const emit = defineEmits(["delete-line", "change-line"]);
 
 const props = defineProps({
   line: { type: Object, required: true },
 });
-const root = ref(null);
+const root = ref<SVGElement | null>(null);
 
 let visible = ref(false);
 const changeVisibility = () => {
@@ -65,8 +65,10 @@ onMounted(() => {
 });
 
 const updateLine = () => {
-  let mainLine = root.value.children[0];
-  let supportLine = root.value.children[1];
+  if (root.value == null) return;
+
+  let mainLine: any = root.value.children[0];
+  let supportLine: any = root.value.children[1];
 
   let entity = props.line;
 
@@ -152,6 +154,7 @@ const deleteLine = () => {
 .hide {
   visibility: hidden;
 }
+
 .reshow {
   visibility: visible;
 }
