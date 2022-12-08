@@ -1,6 +1,6 @@
 package com.wipdev.eWiLL_backend.services
 
-import com.wipdev.eWiLL_backend.endpoints.payload.Diagram
+import com.wipdev.eWiLL_backend.endpoints.payload.requests.Diagram
 import org.springframework.stereotype.Service
 
 @Service

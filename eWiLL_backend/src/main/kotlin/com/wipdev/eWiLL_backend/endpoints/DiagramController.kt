@@ -1,9 +1,8 @@
 package com.wipdev.eWiLL_backend.endpoints
 
 
-import com.wipdev.eWiLL_backend.endpoints.payload.Diagram
+import com.wipdev.eWiLL_backend.endpoints.payload.requests.Diagram
 import com.wipdev.eWiLL_backend.services.DiagramService
-import com.wipdev.eWiLL_backend.services.IDiagramService
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -31,7 +30,7 @@ class DiagramController{
     fun getById(@PathVariable id:Long) = iDiagramService.getById(id)
 
     @PostMapping
-    fun create(diagram:Diagram) = iDiagramService.create(diagram)
+    fun create(diagram: Diagram) = iDiagramService.create(diagram)
 
     @PutMapping()
     fun update( diagram: Diagram) = diagram.modelId?.let { iDiagramService.update(it,diagram) }

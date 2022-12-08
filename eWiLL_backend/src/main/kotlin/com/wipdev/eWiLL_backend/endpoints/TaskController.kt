@@ -1,11 +1,9 @@
 package com.wipdev.eWiLL_backend.endpoints
 
-import com.wipdev.eWiLL_backend.endpoints.payload.Task
+import com.wipdev.eWiLL_backend.database.tables.course.Ruleset
+import com.wipdev.eWiLL_backend.endpoints.payload.requests.Task
 import com.wipdev.eWiLL_backend.services.TaskService
-import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
-import io.swagger.v3.oas.annotations.responses.ApiResponse
-import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
@@ -35,6 +33,9 @@ class TaskController {
 
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: Long) = service.delete(id)
+
+    @PostMapping("/ruleset")
+    fun createRuleset(@Parameter ruleset: Ruleset) = service.createRuleset(ruleset)
 
 
 }

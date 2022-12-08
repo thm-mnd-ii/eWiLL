@@ -2,7 +2,9 @@ package com.wipdev.eWiLL_backend.services
 
 
 import com.wipdev.eWiLL_backend.DataclassEntityConverter
-import com.wipdev.eWiLL_backend.endpoints.payload.Task
+import com.wipdev.eWiLL_backend.database.tables.course.Ruleset
+import com.wipdev.eWiLL_backend.endpoints.payload.requests.Task
+import com.wipdev.eWiLL_backend.repository.RulesetRepository
 import com.wipdev.eWiLL_backend.repository.TaskRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -13,6 +15,9 @@ class TaskService() : ITaskService {
 
     @Autowired
     lateinit var taskRepository: TaskRepository
+
+    @Autowired
+    lateinit var ruleSetRepository: RulesetRepository
 
 
     override fun getAll(courseId: Long): List<Task> =
@@ -39,6 +44,11 @@ class TaskService() : ITaskService {
         val assignment = getById(id)
         taskRepository.deleteById(id)
         return assignment
+    }
+
+    override fun createRuleset(ruleset: Ruleset): Long? {
+
+        return ruleSetRepository.save(ruleset).id
     }
 
 

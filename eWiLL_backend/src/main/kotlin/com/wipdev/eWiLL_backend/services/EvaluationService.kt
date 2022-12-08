@@ -1,8 +1,9 @@
 package com.wipdev.eWiLL_backend.services
 
-import com.wipdev.eWiLL_backend.endpoints.payload.SubmissionRequest
+import com.wipdev.eWiLL_backend.endpoints.payload.requests.SubmissionRequest
 import com.wipdev.eWiLL_backend.repository.TaskRepository
 import com.wipdev.eWiLL_backend.repository.DiagramRepository
+import com.wipdev.eWiLL_backend.repository.RulesetRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -14,12 +15,15 @@ class EvaluationService:IEvaluationService {
     lateinit var diagramRepository: DiagramRepository
     @Autowired
     lateinit var taskRepository: TaskRepository
-    override fun eval(submissionRequest:SubmissionRequest): String {
+
+    @Autowired
+    lateinit var rulesetRepository: RulesetRepository
+    override fun eval(submissionRequest: SubmissionRequest): String {
         TODO("Not yet implemented")
     }
 
 
-
+    //IGNORE THIS OLD CODE
    /* override fun get(id: Long): Int {
         //get model from db
         var diagram: Diagram = diagramRepository.getReferenceById(id)
