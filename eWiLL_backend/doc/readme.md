@@ -2,11 +2,12 @@
 
 ## Tools & Installation
 
-- Settings i used for IntelliJ IDEA: [settings.zip](settings.zip) (Not necessary to import, just for reference)    
+- Settings I used for IntelliJ IDEA: [settings.zip](settings.zip) (Not necessary to import, just for reference)    
 - Docker Desktop
 - Git for Version Control
 - Postgres for Database
-- If Springboot does no automatically insert the default data into the database import [this](/src/main/resources/import.sql)
+- Maven for Dependency Management (included in IntelliJ) and will be changed to gradle later on to merge into the "Feedbacksystem"
+- If Springboot does not automatically insert the default data into the database import [this](/src/main/resources/import.sql)
 
 ## How to run the backend
 
