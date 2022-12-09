@@ -31,7 +31,7 @@ class Course {
     @Column(name = "endDate", nullable = false)
     open var endDate: String? = null
 
-    @ManyToOne
+
     @JoinColumn(name = "owner_id")
-    open var owner: User? = null
+    open var owner: Long? = null
 }

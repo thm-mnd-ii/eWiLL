@@ -19,7 +19,6 @@ class CourseUserRole {
     @Column(length = 20)
     open var role: ECourseRole? = ECourseRole.STUDENT
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    open var user: User? = null
+    @Column(name = "user_id", nullable = false)
+    open var userId: Long? = null
 }
