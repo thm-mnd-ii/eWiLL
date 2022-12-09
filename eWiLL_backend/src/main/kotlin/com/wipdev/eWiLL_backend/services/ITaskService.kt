@@ -2,6 +2,7 @@ package com.wipdev.eWiLL_backend.services
 
 import com.wipdev.eWiLL_backend.database.tables.course.Ruleset
 import com.wipdev.eWiLL_backend.endpoints.payload.requests.Task
+
 import org.springframework.stereotype.Service
 
 @Service
@@ -14,5 +15,4 @@ interface ITaskService {
     fun delete(id: Long): Task
     fun createRuleset(ruleset: Ruleset): Long?
 
-}
 }

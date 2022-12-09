@@ -67,8 +67,3 @@ class WebSecurityConfig() {
         return authenticationConfiguration.authenticationManager
     }
 }
-    @Bean
-    fun authenticationManagerBean(authenticationConfiguration: AuthenticationConfiguration): AuthenticationManager {
-        return authenticationConfiguration.authenticationManager
-    }
-}
