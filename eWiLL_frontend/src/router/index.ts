@@ -4,9 +4,11 @@ import ViewModelling from "../views/ViewModelling.vue";
 import ViewChecker from "../views/ViewChecker.vue";
 import ViewImpressum from "../views/ViewImpressum.vue";
 import ViewDatenschutz from "../views/ViewDatenschutz.vue";
+import ViewLogin from "../views/ViewLogin.vue";
+import ViewProfile from "../views/ViewProfile.vue";
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(),
   routes: [
     {
       path: "/",
@@ -33,18 +35,28 @@ const router = createRouter({
       name: "ViewDatenschutz",
       component: ViewDatenschutz,
     },
+    {
+      path: "/login",
+      name: "ViewLogin",
+      component: ViewLogin,
+    },
+    {
+      path: "/profile",
+      name: "ViewProfile",
+      component: ViewProfile,
+    },
   ],
 });
 
 router.beforeEach((to, from, next) => {
-  const publicPages = ["/"];
+  const publicPages = ["/login"];
   const authRequired = !publicPages.includes(to.path);
   const loggedIn = localStorage.getItem("user");
 
   // trying to access a restricted page + not logged in
   // redirect to login page
   if (authRequired && !loggedIn) {
-    next("/");
+    next("/login");
   } else {
     next();
   }

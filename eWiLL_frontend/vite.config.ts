@@ -3,8 +3,7 @@ import { fileURLToPath, URL } from "url";
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import eslintPlugin from "vite-plugin-eslint";
-// import inject from '@rollup/plugin-inject';
-// import jquery from 'jquery'
+import vuetify from "vite-plugin-vuetify";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -25,14 +24,17 @@ export default defineConfig({
     },
     preprocessorOptions: {
       scss: {
-        additionalData: `@import "@/assets/_shared.scss";`,
+        additionalData: `@import "@/assets/settings.scss";`,
       },
     },
   },
-  plugins: [vue(), eslintPlugin()],
-  configureWebpack: {
-    devtool: "source-map",
-  },
+  plugins: [
+    vue(),
+    eslintPlugin(),
+    vuetify({
+      autoImport: true,
+    }),
+  ],
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
@@ -40,6 +42,6 @@ export default defineConfig({
   },
   server: {
     host: true,
-    port: 8080,
+    port: 8085,
   },
 });

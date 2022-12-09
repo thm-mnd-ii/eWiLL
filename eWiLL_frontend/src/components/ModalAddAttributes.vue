@@ -1,152 +1,156 @@
 <template>
-  <div class="vue-modal">
-    <div class="vue-modal-inner">
-      <div class="vue-modal-content">
-        <h3>{{ props.entity.entityName }}</h3>
+  <v-dialog v-if="props.entity != undefined" v-model="dialog" class="container">
+    <v-card>
+      <v-card-title> Attribute </v-card-title>
+      <v-card-subtitle>
+        Entität: <b>{{ props.entity.entityName }}</b>
+      </v-card-subtitle>
 
-        <div class="newAttributeContainer">
-          <input v-model="newAttributeName" type="text" class="form-control" placeholder="New Attribute" />
+      <v-card-text class="card-text">
+        <v-form class="imput-form">
+          <v-text-field v-model="newAttributeName" lable="Attribut Name" variant="solo" required :hide-details="true" />
 
-          <select v-model="selectedAttributeType" class="form-select" name="attributeType">
-            <option disabled value="">Select Typ</option>
-            <option v-for="(key, attribute) in AttributeTyp" :key="key" :value="key">
-              {{ attribute }}
-            </option>
-          </select>
+          <v-select v-model="selectedAttributeType" lable="Typ Auswählen" variant="solo" :items="attributeTypes" item-title="key" item-value="attribute" :hide-details="true"></v-select>
 
-          <button type="submit" class="btn btn-primary" @click="addAttribute">Add</button>
-        </div>
+          <v-btn class="btn" color="secondary" @click="addAttribute">Hinzufügen</v-btn>
+        </v-form>
 
         <draggable v-model="props.entity.attributes" class="draggable" group="people" item-key="id" @start="drag = true" @end="drag = false">
           <template #item="{ element }">
-            <div class="attributes">
-              <IconMoveNorthSouth class="icon-move" />
-              <input v-model="element.name" class="form-control" type="text" />
+            <v-card :elevation="2" class="attributes">
+              <v-icon size="x-large" icon="mdi-arrow-up-down"></v-icon>
 
-              <select v-model="element.typ" class="form-select" name="attributeType">
-                <option v-for="(key, attribute) in AttributeTyp" :key="key" :value="key">
-                  {{ attribute }}
-                </option>
-              </select>
+              <v-text-field v-model="element.name" lable="Attribut Name" variant="solo" required :hide-details="true" />
 
-              <button type="button" class="btn btn-danger" @click="deleteAttribute(element)">Delete</button>
-            </div>
+              <v-select v-model="element.type" lable="Typ Auswählen" variant="solo" :items="attributeTypes" item-title="key" item-value="attribute" :hide-details="true"> </v-select>
+
+              <v-icon size="x-large" icon="mdi-delete" @click="deleteAttribute(element)"></v-icon>
+            </v-card>
           </template>
         </draggable>
+      </v-card-text>
 
-        <button type="button" class="btn btn-success" @click="$emit('close')">Close</button>
-      </div>
-    </div>
-  </div>
+      <v-card-actions>
+        <v-btn color="primary" block @click="$emit('close')">Schließen</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
-<script setup>
-import { ref, watch } from "vue";
-import AttributeTyp from "../enums/AttributeTyp";
+<script setup lang="ts">
+import { ref, watch, computed } from "vue";
+import AttributeType from "../enums/AttributeType";
 import draggable from "vuedraggable";
-import IconMoveNorthSouth from "./icons/IconMoveNorthSouth.vue";
+import Entity from "../model/diagram/Entity";
+import Attribute from "../model/diagram/Attribute";
 
-const props = defineProps({
-  entity: { type: Object, required: true },
-});
+const props = defineProps<{
+  entity?: Entity;
+  show: boolean;
+}>();
 
 const emit = defineEmits(["close", "update:entity"]);
 
-const newAttributeName = ref("");
-const selectedAttributeType = ref("");
+const drag: any = ref();
+const dialog = ref<boolean>(false);
+const newAttributeName = ref<string>("");
+const selectedAttributeType = ref<AttributeType>(AttributeType.Attribute);
 
-watch(props.entity, (entity) => {
-  emit("update:entity", entity.value);
+watch(
+  () => props.entity,
+  (entity) => {
+    emit("update:entity", entity);
+  }
+);
+
+watch(
+  () => props.show,
+  (show) => {
+    dialog.value = show;
+  }
+);
+
+const attributeTypes = computed(() => {
+  const keys = Object.keys(AttributeType).filter((k) => typeof AttributeType[k as any] === "number");
+  const values = keys.map((k) => AttributeType[k as any]);
+  const types: { key?: string; attribute?: number }[] = [];
+  //values in array of objects
+  keys.forEach((key, index) => {
+    types[index] = { key: key, attribute: parseInt(values[index]) };
+  });
+
+  return types;
 });
 
-const deleteAttribute = (attribute) => {
+const deleteAttribute = (attribute: Attribute) => {
   //console.log(props.entity.attributes)
-  let index = props.entity.attributes.indexOf(attribute);
-  props.entity.attributes.splice(index, 1);
+  if (props.entity != undefined) {
+    let index = props.entity.attributes.indexOf(attribute);
+    props.entity.attributes.splice(index, 1);
+  }
 };
 
 const addAttribute = () => {
-  console.log(newAttributeName.value, selectedAttributeType.value);
+  //validate input
+  if (newAttributeName.value == "") {
+    //TODO: show error message
+    return;
+  }
 
-  props.entity.attributes.push({ typ: selectedAttributeType.value, name: newAttributeName.value });
+  if (props.entity != undefined) {
+    props.entity.attributes.push({ type: selectedAttributeType.value, name: newAttributeName.value });
 
-  newAttributeName.value = "";
-  selectedAttributeType.value = "";
+    newAttributeName.value = "";
+    selectedAttributeType.value = AttributeType.Attribute;
+  }
 };
 </script>
 
 <style scoped lang="scss">
-*,
-::before,
-::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-.vue-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.4);
-  z-index: 10;
-}
-
-.vue-modal-inner {
-  overflow-x: hidden;
-  overflow-y: auto;
-  max-width: 600px;
-  max-height: 600px;
-  margin: 2rem auto;
-}
-
-.vue-modal-content {
-  position: relative;
-  background-color: #fff;
-  border: 1px solid rgba(0, 0, 0, 0.3);
-  background-clip: padding-box;
-  border-radius: 0.3rem;
-  padding: 1rem;
-}
-
-.newAttributeContainer {
-  border-radius: 5px;
-  background: rgb(196, 196, 214);
-  padding: 5px 0px 5px 30px;
-  margin: 10px 0px 20px 0px;
-  width: 100%;
-  height: auto;
-
+.container {
+  // center the dialog
   display: flex;
+  justify-content: center;
   align-items: center;
-  justify-content: start;
+  width: 600px;
 }
 
-.newAttributeContainer > * {
-  margin: 0px 5px;
+.card-text {
+  height: 370px;
+  overflow-y: auto;
+}
+
+.imput-form {
+  margin-bottom: 10px;
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  align-items: center;
+  justify-items: center;
+  grid-gap: 10px 20px;
+
+  .btn {
+    grid-column: 1 / 3;
+  }
+
+  * {
+    width: 100%;
+  }
 }
 
 .draggable > .attributes {
-  border-radius: 5px;
-  background: lavender;
   padding: 5px 0px;
-  margin: 5px 0px;
+  margin: 10px 0px;
   width: 100%;
   height: auto;
-
-  display: flex;
+  background-color: lavender;
+  display: grid;
+  grid-template-columns: 1fr 7fr 4fr 1fr;
   align-items: center;
-  justify-content: start;
+  justify-items: center;
 }
 
 .draggable > .attributes > * {
-  margin: 0px 5px;
-}
-
-.icon-move {
-  width: 70px;
-  fill: rgb(51, 51, 51);
+  width: 100%;
+  padding: 0px 5px;
 }
 </style>

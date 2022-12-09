@@ -15,3 +15,4 @@ interface ITaskService {
     fun createRuleset(ruleset: Ruleset): Long?
 
 }
+}

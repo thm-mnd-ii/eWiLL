@@ -35,6 +35,9 @@ jobs:
     - name: npm run lint
       run: npm run lint
       working-directory: eWiLL_frontend
+    - name: npm run type-check
+      run: npm run type-check
+      working-directory: eWiLL_frontend
     - name: npm run build
       run: npm run build
       working-directory: eWiLL_frontend

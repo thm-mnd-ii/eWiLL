@@ -1,32 +1,35 @@
 <template>
-  <div ref="dockingPoint" class="dockingPoint" @mousedown="createLine($event)"></div>
+  <div ref="dockingPoint" class="dockingPoint" @mousedown="createLine()"></div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, computed } from "vue";
+import ConnectorPosition from "../enums/ConnectorPosition";
 
 const emit = defineEmits(["anker-position"]);
-const props = defineProps({
-  position: { type: String, required: true },
-  entityWidth: { type: String, required: true },
-});
+const props = defineProps<{
+  position: ConnectorPosition;
+  entityWidth: number;
+}>();
 
-const dockingPoint = ref(null);
+const dockingPoint = ref<HTMLInputElement | null>(null);
 
 onMounted(() => {
   //add position to ankerPoint
-  dockingPoint.value.classList.add(props.position);
+  if (dockingPoint.value != null) {
+    dockingPoint.value.classList.add(props.position);
+  }
 });
 
 // berechne Entfernung nach Links um Pfeile mittig zu positionieren
 const cssVarDistanceLeft = computed(() => {
   const arrowWidth = 20;
-  return parseInt(props.entityWidth) / 2 - parseInt(arrowWidth / 2) + "px";
+  return props.entityWidth / 2 - arrowWidth / 2 + "px";
 });
 
 const cssVarDistanceTop = computed(() => {
   const arrowWidth = 18;
-  return parseInt(props.entityWidth) / 4 - parseInt(arrowWidth / 2) + "px";
+  return props.entityWidth / 4 - arrowWidth / 2 + "px";
 });
 
 const createLine = () => {

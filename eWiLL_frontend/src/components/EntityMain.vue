@@ -1,7 +1,7 @@
 <template>
   <div ref="root" class="objectContainer" @mouseover="hover = true" @mouseleave="endHover">
     <span v-if="!isEditable" class="text unselectable" @dblclick="makeTextEditable">{{ props.entity.entityName }}</span>
-    <textarea v-if="isEditable" v-model="props.entity.entityName" class="textedit form-control" rows="1" @dblclick="makeTextEditable" @keyup.enter="handleEnter"></textarea>
+    <textarea v-if="isEditable" v-model="props.entity.entityName" class="textedit" rows="1" @dblclick="makeTextEditable" @keyup.enter="handleEnter"></textarea>
 
     <span class="attributes" v-html="formattedAttributes"></span>
 
@@ -15,43 +15,46 @@
     <!-- <AnkerPoint v-if="hover && !isResizable" position="right" :entity-width="props.entity.width" @anker-position="handleAnkerPoint"></AnkerPoint> -->
     <!-- <AnkerPoint v-if="hover && !isResizable" position="bottom" :entityWidth="props.entity.width" @ankerPosition="handleAnkerPoint"></AnkerPoint> -->
     <div v-if="hover && !isResizable">
-      <OutgoingAnkerPoint v-for="anker in outgoingAnkerPoint" :key="anker" :position="anker.position" :entity-width="props.entity.width" @anker-position="handleAnkerPoint" />
+      <OutgoingAnkerPoint v-for="anker in outgoingAnkerPoint" :key="anker" :position="anker" :entity-width="props.entity.width" @anker-position="handleAnkerPoint" />
     </div>
 
     <div v-if="hover && !isResizable">
-      <IncomingAnkerPoint v-for="anker in incomingAnkerPoint" :key="anker" :position="anker.position" :entity-width="props.entity.width" @anker-position="handleAnkerPoint" />
+      <IncomingAnkerPoint v-for="anker in incomingAnkerPoint" :key="anker" :position="anker" :entity-width="props.entity.width" @anker-position="handleAnkerPoint" />
     </div>
     <EntityWidget v-if="isResizable" @delete-entity="deleteEntity" @change-entity-typ="changeEntityTyp" @manage-attributes="manageAttributes" />
 
-    <IconEntity v-if="props.entity.typ == EntityTyp.ENTITY" @dblclick="changeResizable()" @mousedown="mousedown($event)" />
-    <IconRelationshiptyp v-if="props.entity.typ == EntityTyp.RELATIONSHIP" @dblclick="changeResizable()" @mousedown="mousedown($event)" />
-    <IconEntityRelationshiptyp v-if="props.entity.typ == EntityTyp.ENTITYRELATIONSHIP" @dblclick="changeResizable()" @mousedown="mousedown($event)" />
+    <IconEntity v-if="props.entity.type == EntityTyp.ENTITY" @dblclick="changeResizable()" @mousedown="mousedown($event)" />
+    <IconRelationshiptyp v-if="props.entity.type == EntityTyp.RELATIONSHIP" @dblclick="changeResizable()" @mousedown="mousedown($event)" />
+    <IconEntityRelationshiptyp v-if="props.entity.type == EntityTyp.ENTITYRELATIONSHIP" @dblclick="changeResizable()" @mousedown="mousedown($event)" />
   </div>
 </template>
 
-<script setup>
-import IconEntityRelationshiptyp from "../components/icons/IconEntityRelationshiptyp.vue";
-import IconEntity from "../components/icons/IconEntitytyp.vue";
-import IconRelationshiptyp from "../components/icons/IconRelationshiptyp.vue";
-import EntityTyp from "../enums/EntityTyp";
-import AttributeTyp from "../enums/AttributeTyp";
-import OutgoingAnkerPoint from "../components/OutgoingAnkerPoint.vue";
-import IncomingAnkerPoint from "../components/IncomingAnkerPoint.vue";
-import EntityWidget from "../components/EntityWidget.vue";
+<script setup lang="ts">
+import IconEntityRelationshiptyp from "./icons/IconEntityRelationshiptyp.vue";
+import IconEntity from "./icons/IconEntitytyp.vue";
+import IconRelationshiptyp from "./icons/IconRelationshiptyp.vue";
+import EntityTyp from "../enums/EntityType";
+import AttributeTyp from "../enums/AttributeType";
+import OutgoingAnkerPoint from "./OutgoingAnkerPoint.vue";
+import IncomingAnkerPoint from "./IncomingAnkerPoint.vue";
+import EntityWidget from "./EntityWidget.vue";
 
 import { ref, onMounted, computed, watch } from "vue";
+import ConnectorPosition from "../enums/ConnectorPosition";
+import Attribute from "../model/diagram/Attribute";
+import Entity from "../model/diagram/Entity";
 
 const emit = defineEmits(["update:entity", "anker-point", "delete-entity", "change-entity-typ", "manage-attributes"]);
 //const updateEntity = ref(updateCurrentEntity.value)
 
-const props = defineProps({
-  entity: { type: Object, required: true },
-});
+const props = defineProps<{
+  entity: Entity;
+}>();
 
-const root = ref(null);
+const root = ref<HTMLInputElement | null>(null);
 
 const cssVarAttributesDistanceTop = computed(() => {
-  return parseInt(props.entity.width) / 2 + "px";
+  return props.entity.width / 2 + "px";
 });
 
 const formattedAttributes = ref("");
@@ -60,17 +63,17 @@ const updateAttributes = () => {
   //clear
   formattedAttributes.value = "";
 
-  props.entity.attributes.forEach((attribute) => {
-    switch (attribute.typ) {
-      case AttributeTyp.PK:
+  props.entity.attributes.forEach((attribute: Attribute) => {
+    switch (attribute.type) {
+      case AttributeTyp.PrimaryKey:
         formattedAttributes.value += "<b>" + attribute.name + "</b>, ";
         break;
 
-      case AttributeTyp.FK:
+      case AttributeTyp.ForeignKey:
         formattedAttributes.value += "<u>" + attribute.name + "</u>, ";
         break;
 
-      case AttributeTyp.ATTRIBUT:
+      case AttributeTyp.Attribute:
         formattedAttributes.value += "<i>" + attribute.name + "</i>, ";
         break;
 
@@ -95,13 +98,13 @@ const manageAttributes = () => {
   emit("manage-attributes", props.entity);
 };
 
-const handleAnkerPoint = (ankerPosition) => {
+const handleAnkerPoint = (ankerPosition: ConnectorPosition) => {
   // console.log(e)
   // console.log(props.entity.id)
   emit("anker-point", { id: props.entity.id, position: ankerPosition });
 };
 
-const hover = ref(false);
+const hover = ref<boolean>(false);
 // watch(hover, (e) => {
 //     console.log(`Hover: ${e}`)
 // })
@@ -112,20 +115,21 @@ const endHover = () => {
   }, 1000);
 };
 
-const isEditable = ref(false);
+const isEditable = ref<boolean>(false);
 const makeTextEditable = () => {
   isEditable.value = !isEditable.value;
 };
 
-const handleEnter = (e) => {
-  if (e.ctrlKey) {
-    const curPos = e.srcElement.selectionStart;
-    const textarea = props.entity.text;
-    //use return to exit methode
-    return (props.entity.text = textarea.slice(0, curPos) + "\n" + textarea.slice(curPos));
-  }
+const handleEnter = (e: any) => {
+  //console.log(e);
+  const curPos = e.srcElement.selectionStart;
 
-  props.entity.text = props.entity.text.slice(0, -1);
+  if (e.ctrlKey) {
+    const textarea = props.entity.entityName;
+    //use return to exit methode
+    return (props.entity.entityName = textarea.slice(0, curPos) + "\n" + textarea.slice(curPos));
+  }
+  props.entity.entityName = props.entity.entityName.slice(0, curPos - 1) + props.entity.entityName.slice(curPos);
   makeTextEditable();
 };
 
@@ -143,23 +147,23 @@ onMounted(() => {
   updateAttributes();
 });
 
-const outgoingAnkerPoint = ref([]);
-const incomingAnkerPoint = ref([]);
+const outgoingAnkerPoint = ref<ConnectorPosition[]>([]);
+const incomingAnkerPoint = ref<ConnectorPosition[]>([]);
 
 const setAnkerPoints = () => {
   outgoingAnkerPoint.value = [];
   incomingAnkerPoint.value = [];
 
-  switch (props.entity.typ) {
+  switch (props.entity.type) {
     case EntityTyp.ENTITY:
-      outgoingAnkerPoint.value.push({ position: "right" });
+      outgoingAnkerPoint.value.push(ConnectorPosition.Right);
       break;
     case EntityTyp.RELATIONSHIP:
-      incomingAnkerPoint.value.push({ position: "left" });
+      incomingAnkerPoint.value.push(ConnectorPosition.Left);
       break;
     case EntityTyp.ENTITYRELATIONSHIP:
-      outgoingAnkerPoint.value.push({ position: "right" });
-      incomingAnkerPoint.value.push({ position: "left" });
+      outgoingAnkerPoint.value.push(ConnectorPosition.Right);
+      incomingAnkerPoint.value.push(ConnectorPosition.Left);
       break;
 
     default:
@@ -167,23 +171,28 @@ const setAnkerPoints = () => {
   }
 };
 
-const setPosition = (element, entity) => {
-  element.style.top = entity.top;
-  element.style.left = entity.left;
-  element.style.width = entity.width;
+const setPosition = (element: HTMLInputElement | null, entity: Entity) => {
+  if (element != null) {
+    element.style.top = entity.top + "px";
+    element.style.left = entity.left + "px";
+    element.style.width = entity.width + "px";
+  }
 };
 
 const updateEntity = () => {
-  props.entity.top = root.value.style.top;
-  props.entity.left = root.value.style.left;
-  props.entity.width = root.value.style.width;
+  if (root.value != null) {
+    props.entity.top = parseInt(root.value.style.top);
+    props.entity.left = parseInt(root.value.style.left);
+    props.entity.width = parseInt(root.value.style.width);
+  }
 };
 
 // Emit new entity to parent
 watch(props.entity, (entity) => {
   //console.log(entity)
-  emit("update:entity", entity.value);
+  emit("update:entity", entity);
   updateAttributes();
+  setAnkerPoints();
 });
 
 let isResizable = ref(false);
@@ -192,18 +201,20 @@ const changeResizable = () => {
   isResizable.value = !isResizable.value;
 };
 
-const mousedown = (e) => {
+const mousedown = (e: any) => {
   //console.log(root.value.parentNode.getBoundingClientRect())
 
   console.log("move");
   let el = e.target.parentNode;
-  let container = root.value.parentNode;
+
+  if (root.value == null || root.value.parentElement == null) return;
+  let container = root.value.parentElement;
 
   let prevX = e.clientX;
   let prevY = e.clientY;
   //console.log(`Current mouse position: X ${prevX} | Y  ${prevX}`)
 
-  const mousemove = (e) => {
+  const mousemove = (e: any) => {
     let newX = prevX - e.clientX;
     let newY = prevY - e.clientY;
     //console.log(`NEW client position: X ${newX} | Y  ${newY}`)
@@ -212,7 +223,7 @@ const mousedown = (e) => {
     const rectParent = container.getBoundingClientRect();
 
     //calculare position relative to container
-    let relativePos = {};
+    let relativePos: {top?: number, right?: number, bottom?: number, left?: number} = {};
     relativePos.top = rect.top - rectParent.top;
     relativePos.right = rect.right - rectParent.right;
     relativePos.bottom = rect.bottom - rectParent.bottom;
@@ -247,23 +258,25 @@ const mousedown = (e) => {
   window.addEventListener("mouseup", mouseup);
 };
 
-const resizer = (e) => {
+const resizer = (e: any) => {
   console.log("resize");
 
   let currentResizer = e.target;
 
   let el = e.target.parentNode;
-  let container = root.value.parentNode;
+
+  if (root.value == null || root.value.parentElement == null) return;
+  let container = root.value.parentElement;
 
   let prevX = e.clientX;
   let prevY = e.clientY;
 
-  const mousemove = (e) => {
+  const mousemove = (e: { clientX: number; clientY: number }) => {
     const rect = el.getBoundingClientRect();
     const rectParent = container.getBoundingClientRect();
 
     //calculare position relative to container
-    let relativePos = {};
+    let relativePos: {top?: number, right?: number, bottom?: number, left?: number} = {};
     relativePos.top = rect.top - rectParent.top;
     relativePos.right = rect.right - rectParent.right;
     relativePos.bottom = rect.bottom - rectParent.bottom;
@@ -348,7 +361,7 @@ const resizer = (e) => {
 }
 
 .resizer.se {
-  bottom: -2px;
+  bottom: 4px;
   right: -2px;
   cursor: se-resize;
 }
@@ -361,7 +374,7 @@ const resizer = (e) => {
   display: inline-block;
   font-size: smaller;
   position: absolute;
-  top: 50%;
+  top: 45%;
   left: 50%;
   transform: translate(-50%, -50%);
   cursor: text;
@@ -371,13 +384,14 @@ const resizer = (e) => {
   text-align: center;
   resize: none;
   overflow: hidden;
-  width: 95%;
-  height: 90%;
+  width: 94%;
+  height: 80%;
   position: absolute;
   font-size: smaller;
-  top: 50%;
+  top: 44%;
   left: 50%;
   transform: translate(-50%, -50%);
+  background-color: white;
 }
 
 .unselectable {
