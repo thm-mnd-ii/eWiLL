@@ -21,7 +21,7 @@
     <div v-if="hover && !isResizable">
       <IncomingAnkerPoint v-for="anker in incomingAnkerPoint" :key="anker" :position="anker" :entity-width="props.entity.width" @anker-position="handleAnkerPoint" />
     </div>
-    <EntityWidget v-if="isResizable" @delete-entity="deleteEntity" @change-entity-typ="changeEntityTyp" @manage-attributes="manageAttributes" />
+    <EntityWidget v-if="isResizable" :entity="props.entity"/>
 
     <IconEntity v-if="props.entity.type == EntityTyp.ENTITY" @dblclick="changeResizable()" @mousedown="mousedown($event)" />
     <IconRelationshiptyp v-if="props.entity.type == EntityTyp.RELATIONSHIP" @dblclick="changeResizable()" @mousedown="mousedown($event)" />
@@ -44,7 +44,7 @@ import ConnectorPosition from "../enums/ConnectorPosition";
 import Attribute from "../model/diagram/Attribute";
 import Entity from "../model/diagram/Entity";
 
-const emit = defineEmits(["update:entity", "anker-point", "delete-entity", "change-entity-typ", "manage-attributes"]);
+const emit = defineEmits(["update:entity", "anker-point", "manage-attributes"]);
 //const updateEntity = ref(updateCurrentEntity.value)
 
 const props = defineProps<{
@@ -84,18 +84,6 @@ const updateAttributes = () => {
 
   // cut off ", "
   formattedAttributes.value = formattedAttributes.value.slice(0, -2);
-};
-
-const deleteEntity = () => {
-  emit("delete-entity", props.entity);
-};
-
-const changeEntityTyp = () => {
-  emit("change-entity-typ", props.entity);
-};
-
-const manageAttributes = () => {
-  emit("manage-attributes", props.entity);
 };
 
 const handleAnkerPoint = (ankerPosition: ConnectorPosition) => {
