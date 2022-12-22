@@ -1,9 +1,11 @@
 <template>
   <div ref="root" class="objectContainer" @mouseover="hover = true" @mouseleave="endHover">
-    <span v-if="!isEditable" class="text unselectable" @dblclick="makeTextEditable">{{ props.entity.entityName }}</span>
-    <textarea v-if="isEditable" v-model="props.entity.entityName" class="textedit" rows="1" @dblclick="makeTextEditable" @keyup.enter="handleEnter"></textarea>
+    <span v-if="!isEditable" class="text unselectable" @dblclick="makeTextEditable">{{ entity.entityName }}</span>
+    <textarea v-if="isEditable" v-model="entity.entityName" class="textedit" rows="1" @dblclick="makeTextEditable" @keyup.enter="handleEnter"></textarea>
 
+    <!-- eslint-disable vue/no-v-html -->
     <span class="attributes" v-html="formattedAttributes"></span>
+    <!--eslint-enable-->
 
     <!-- <div v-if="isResizable" @mousedown="resizer($event)" class="resizer nw"></div>
         <div v-if="isResizable" @mousedown="resizer($event)" class="resizer ne"></div>
@@ -21,7 +23,7 @@
     <div v-if="hover && !isResizable">
       <IncomingAnkerPoint v-for="anker in incomingAnkerPoint" :key="anker" :position="anker" :entity-width="props.entity.width" @anker-position="handleAnkerPoint" />
     </div>
-    <EntityWidget v-if="isResizable" :entity="props.entity"/>
+    <EntityWidget v-if="isResizable" :entity="props.entity" />
 
     <IconEntity v-if="props.entity.type == EntityTyp.ENTITY" @dblclick="changeResizable()" @mousedown="mousedown($event)" />
     <IconRelationshiptyp v-if="props.entity.type == EntityTyp.RELATIONSHIP" @dblclick="changeResizable()" @mousedown="mousedown($event)" />
@@ -40,16 +42,26 @@ import IncomingAnkerPoint from "./IncomingAnkerPoint.vue";
 import EntityWidget from "./EntityWidget.vue";
 
 import { ref, onMounted, computed, watch } from "vue";
+import { useDiagramStore } from "../stores/diagramStore";
+
 import ConnectorPosition from "../enums/ConnectorPosition";
 import Attribute from "../model/diagram/Attribute";
 import Entity from "../model/diagram/Entity";
 
-const emit = defineEmits(["update:entity", "anker-point", "manage-attributes"]);
+const emit = defineEmits(["anker-point"]);
 //const updateEntity = ref(updateCurrentEntity.value)
 
 const props = defineProps<{
   entity: Entity;
 }>();
+
+const diagramStore = useDiagramStore();
+let entity = diagramStore.diagram.entities.find((entity) => entity.id == props.entity.id);
+
+// const entityName = ref(props.entity.entityName);
+// const top = ref(props.entity.top);
+// const left = ref(props.entity.left);
+// const width = ref(props.entity.width);
 
 const root = ref<HTMLInputElement | null>(null);
 
@@ -109,16 +121,18 @@ const makeTextEditable = () => {
 };
 
 const handleEnter = (e: any) => {
-  //console.log(e);
-  const curPos = e.srcElement.selectionStart;
+  if (entity?.entityName !== undefined) {
+    //console.log(e);
+    const curPos = e.srcElement.selectionStart;
 
-  if (e.ctrlKey) {
-    const textarea = props.entity.entityName;
-    //use return to exit methode
-    return (props.entity.entityName = textarea.slice(0, curPos) + "\n" + textarea.slice(curPos));
+    if (e.ctrlKey) {
+      const textarea = entity?.entityName;
+      //use return to exit methode
+      return (entity.entityName = textarea.slice(0, curPos) + "\n" + textarea.slice(curPos));
+    }
+    entity.entityName = entity?.entityName.slice(0, curPos - 1) + props.entity.entityName.slice(curPos);
+    makeTextEditable();
   }
-  props.entity.entityName = props.entity.entityName.slice(0, curPos - 1) + props.entity.entityName.slice(curPos);
-  makeTextEditable();
 };
 
 // watch(isEditable, (e) => {
@@ -168,17 +182,15 @@ const setPosition = (element: HTMLInputElement | null, entity: Entity) => {
 };
 
 const updateEntity = () => {
-  if (root.value != null) {
-    props.entity.top = parseInt(root.value.style.top);
-    props.entity.left = parseInt(root.value.style.left);
-    props.entity.width = parseInt(root.value.style.width);
+  if (root.value != null && entity != undefined) {
+    entity.top = parseInt(root.value.style.top);
+    entity.left = parseInt(root.value.style.left);
+    entity.width = parseInt(root.value.style.width);
   }
 };
 
 // Emit new entity to parent
-watch(props.entity, (entity) => {
-  //console.log(entity)
-  emit("update:entity", entity);
+watch(props.entity, () => {
   updateAttributes();
   setAnkerPoints();
 });
@@ -211,7 +223,7 @@ const mousedown = (e: any) => {
     const rectParent = container.getBoundingClientRect();
 
     //calculare position relative to container
-    let relativePos: {top?: number, right?: number, bottom?: number, left?: number} = {};
+    let relativePos: { top?: number; right?: number; bottom?: number; left?: number } = {};
     relativePos.top = rect.top - rectParent.top;
     relativePos.right = rect.right - rectParent.right;
     relativePos.bottom = rect.bottom - rectParent.bottom;
@@ -264,7 +276,7 @@ const resizer = (e: any) => {
     const rectParent = container.getBoundingClientRect();
 
     //calculare position relative to container
-    let relativePos: {top?: number, right?: number, bottom?: number, left?: number} = {};
+    let relativePos: { top?: number; right?: number; bottom?: number; left?: number } = {};
     relativePos.top = rect.top - rectParent.top;
     relativePos.right = rect.right - rectParent.right;
     relativePos.bottom = rect.bottom - rectParent.bottom;
