@@ -1,5 +1,5 @@
 <template>
-  <LineWidget v-if="visible" class="lineWidget" :style="{ top: (props.line.y1 + props.line.y2) / 2 + 'px', left: (props.line.x1 + props.line.x2) / 2 + 'px' }" @delete-entity="deleteLine" @change-line="changeLineStyle" />
+  <LineWidget v-if="visible" :line="props.line" class="lineWidget" :style="{ top: (props.line.y1 + props.line.y2) / 2 + 'px', left: (props.line.x1 + props.line.x2) / 2 + 'px' }" />
 
   <!-- <span
         v-if="hover"
@@ -42,8 +42,6 @@
 import LineWidget from "./LineWidget.vue";
 import { ref, onMounted, watch } from "vue";
 import CardinalityTyp from "../enums/CardinalityType";
-
-const emit = defineEmits(["delete-line", "change-line"]);
 
 const props = defineProps({
   line: { type: Object, required: true },
@@ -118,14 +116,14 @@ watch(props, () => {
   updateLine();
 });
 
-const changeLineStyle = () => {
-  emit("change-line", props.line);
-};
+// const changeLineStyle = () => {
+//   emit("change-line", props.line);
+// };
 
-const deleteLine = () => {
-  changeVisibility();
-  emit("delete-line", props.line);
-};
+// const deleteLine = () => {
+//   changeVisibility();
+//   emit("delete-line", props.line);
+// };
 </script>
 
 <style scoped lang="scss">

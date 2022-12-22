@@ -1,9 +1,9 @@
 <template>
-  <v-dialog v-if="props.entity != undefined" v-model="dialog" class="container">
+  <v-dialog v-if="toolManagementStore.selectedEntity != undefined" v-model="dialog" class="container">
     <v-card>
       <v-card-title> Attribute </v-card-title>
       <v-card-subtitle>
-        Entität: <b>{{ props.entity.entityName }}</b>
+        Entität: <b>{{ toolManagementStore.selectedEntity.entityName }}</b>
       </v-card-subtitle>
 
       <v-card-text class="card-text">
@@ -15,7 +15,7 @@
           <v-btn class="btn" color="secondary" @click="addAttribute">Hinzufügen</v-btn>
         </v-form>
 
-        <draggable v-model="props.entity.attributes" class="draggable" group="people" item-key="id" @start="drag = true" @end="drag = false">
+        <draggable v-model="toolManagementStore.selectedEntity.attributes" class="draggable" group="people" item-key="id" @start="drag = true" @end="drag = false">
           <template #item="{ element }">
             <v-card :elevation="2" class="attributes">
               <v-icon size="x-large" icon="mdi-arrow-up-down"></v-icon>
@@ -31,44 +31,32 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-btn color="primary" block @click="$emit('close')">Schließen</v-btn>
+        <v-btn color="primary" block @click="closeModal()">Schließen</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, computed } from "vue";
-import AttributeType from "../enums/AttributeType";
+import { ref, computed } from "vue";
 import draggable from "vuedraggable";
-import Entity from "../model/diagram/Entity";
+import { useToolManagementStore } from "../stores/toolManagementStore";
+
+import AttributeType from "../enums/AttributeType";
 import Attribute from "../model/diagram/Attribute";
 
-const props = defineProps<{
-  entity?: Entity;
-  show: boolean;
-}>();
-
-const emit = defineEmits(["close", "update:entity"]);
+const toolManagementStore = useToolManagementStore();
 
 const drag: any = ref();
 const dialog = ref<boolean>(false);
 const newAttributeName = ref<string>("");
 const selectedAttributeType = ref<AttributeType>(AttributeType.Attribute);
 
-watch(
-  () => props.entity,
-  (entity) => {
-    emit("update:entity", entity);
+toolManagementStore.$subscribe((mutation, state) => {
+  if (state.showModalAddAttributes != undefined) {
+    dialog.value = state.showModalAddAttributes;
   }
-);
-
-watch(
-  () => props.show,
-  (show) => {
-    dialog.value = show;
-  }
-);
+});
 
 const attributeTypes = computed(() => {
   const keys = Object.keys(AttributeType).filter((k) => typeof AttributeType[k as any] === "number");
@@ -84,9 +72,9 @@ const attributeTypes = computed(() => {
 
 const deleteAttribute = (attribute: Attribute) => {
   //console.log(props.entity.attributes)
-  if (props.entity != undefined) {
-    let index = props.entity.attributes.indexOf(attribute);
-    props.entity.attributes.splice(index, 1);
+  if (toolManagementStore.selectedEntity != undefined) {
+    let index = toolManagementStore.selectedEntity.attributes.indexOf(attribute);
+    toolManagementStore.selectedEntity.attributes.splice(index, 1);
   }
 };
 
@@ -97,12 +85,16 @@ const addAttribute = () => {
     return;
   }
 
-  if (props.entity != undefined) {
-    props.entity.attributes.push({ type: selectedAttributeType.value, name: newAttributeName.value });
+  if (toolManagementStore.selectedEntity != undefined) {
+    toolManagementStore.selectedEntity.attributes.push({ type: selectedAttributeType.value, name: newAttributeName.value });
 
     newAttributeName.value = "";
     selectedAttributeType.value = AttributeType.Attribute;
   }
+};
+
+const closeModal = () => {
+  toolManagementStore.showModalAddAttributes = false;
 };
 </script>
 
