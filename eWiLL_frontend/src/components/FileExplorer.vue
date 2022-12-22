@@ -2,6 +2,7 @@
 <template>
   <div class="explorer">
     <v-btn prepend-icon="mdi-home" @click="homeButtonClick">Home</v-btn>
+    <v-btn icon="mdi-content-save" @click="saveButtonClick"></v-btn>
     <v-list v-if="categoryActive">
       <v-list-item v-for="[key] in map" :key="key" class="list-item" :value="key" @click="categoryClicked(key)">
         <template #prepend>
@@ -11,7 +12,7 @@
       </v-list-item>
     </v-list>
     <v-list>
-      <v-list-item v-for="diagram in displayDiagrams" :key="diagram.name" class="list-item" :value="diagram.name">
+      <v-list-item v-for="diagram in displayDiagrams" :key="diagram.name" class="list-item" :value="diagram.name" @click="diagramClicked(diagram)">
         <template #prepend>
           <v-icon :icon="IconFile" size="13px"></v-icon>
         </template>
@@ -26,27 +27,31 @@ import Diagram from "../model/diagram/Diagram";
 import IconFolder from "../components/icons/IconFolder.vue";
 import IconFile from "../components/icons/IconFile.vue";
 
-import { onBeforeMount, reactive, ref } from "vue";
+import { onMounted, onBeforeMount, reactive, ref } from "vue";
 import DiagramType from "../enums/DiagramType";
 import diagramService from "../services/diagram.service";
 import Category from "../model/diagram/Category";
 import { useStore } from "vuex";
 import Entity from "../model/diagram/Entity";
 import Connection from "../model/diagram/Connection";
+import Config from "../model/diagram/Config";
 
 const store = useStore();
-
-const test = ref(false);
 const categoryActive = ref(true);
+const activeCategorie = ref("");
+var activeDiagram = {} as Diagram;
+const userId = ref(0);
+
 var modelID = ref(0);
 var displayDiagrams: Diagram[] = reactive([]);
+var categories: Category[] = reactive([]);
 var map: Map<string, Diagram[]> = reactive(new Map());
 
 const emit = defineEmits(["update:entity", "anker-point", "delete-entity", "change-entity-typ", "manage-attributes"]);
 //const updateEntity = ref(updateCurrentEntity.value)
 
 const props = defineProps<{
-  entitys: Entity[];
+  entities: Entity[];
   ankerpoints: Connection[];
 }>();
 
@@ -60,15 +65,66 @@ const homeButtonClick = () => {
 
 const categoryClicked = (category: string) => {
   categoryActive.value = false;
+  activeCategorie.value = category;
   displayDiagrams.length = 0;
   map.get(category)?.forEach((diagram) => {
     displayDiagrams.push(diagram);
   });
 };
 
+const saveButtonClick = () => {
+  const tmpDiagram = {} as Diagram;
+  tmpDiagram.id = 0;
+  tmpDiagram.ownerId = userId.value;
+  tmpDiagram.name = "Test";
+  tmpDiagram.connections = props.ankerpoints;
+  tmpDiagram.entities = props.entities;
+
+  const category = {} as Category;
+  category.name = "1";
+  category.userId = 1;
+
+  const config = {} as Config;
+  config.id = 1;
+  config.diagramType = DiagramType.SERM;
+
+  tmpDiagram.config = config;
+};
+
+const diagramClicked = (diagram: Diagram) => {
+  activeDiagram = diagram;
+};
+
 onBeforeMount(() => {
   map = diagramService.getDiagramsWithCategory(1);
+  userId.value = store.state.auth.userId;
 });
+
+onMounted(() => {
+  setDefaultDiagram();
+});
+
+const setDefaultDiagram = () => {
+  const tmpDiagram = {} as Diagram;
+  tmpDiagram.id = 0;
+  tmpDiagram.ownerId = userId.value;
+  tmpDiagram.entities = props.entities;
+  tmpDiagram.connections = props.ankerpoints;
+  tmpDiagram.name = "Default Name";
+
+  const tmpConfig = {} as Config;
+  tmpConfig.id = 1;
+  tmpConfig.diagramType = DiagramType.SERM;
+  tmpDiagram.config = tmpConfig;
+
+  const tmpCategory = {} as Category;
+  tmpCategory.id = 1;
+  tmpCategory.name = "Keine Kategorie";
+  tmpCategory.userId = userId.value;
+  tmpDiagram.category = tmpCategory;
+
+  activeDiagram = tmpDiagram;
+};
 </script>
 
 <style scoped>
