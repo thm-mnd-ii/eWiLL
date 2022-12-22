@@ -1,6 +1,7 @@
 import Config from "./Config";
 import Connection from "./Connection";
 import Entity from "./Entity";
+import Category from "./Category";
 
 interface Diagram {
   id: number;
@@ -9,6 +10,7 @@ interface Diagram {
   config: Config;
   entities: Entity[];
   connections: Connection[];
+  category: Category;
 }
 
 export default Diagram;
