@@ -26,10 +26,11 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { useStore } from "vuex";
 import { useRouter } from "vue-router";
+import { useAuthUserStore } from "../stores/authUserStore";
+
 const router = useRouter();
-const store = useStore();
+const authUserStore = useAuthUserStore();
 
 const userInput = ref(null);
 const passwordInput = ref(null);
@@ -41,20 +42,20 @@ const casLogin = () => {
   console.log("CAS Login");
 };
 
-let userRules = [(v:string) => !!v || "Benutzername is required"];
+let userRules = [(v: string) => !!v || "Benutzername is required"];
 let passwordRules = [(v: string) => !!v || "Password is required"];
 
 const localLogin = () => {
   errorMessage.value = "";
   loading.value = true;
 
-  if (valid.value) {
-    const user = {
+  if (valid.value && userInput.value && passwordInput.value) {
+    const user: { username: string; password: string } = {
       username: userInput.value,
       password: passwordInput.value,
     };
 
-    store.dispatch("auth/login", user).then(
+    authUserStore.login(user).then(
       () => {
         setTimeout(() => {
           router.push("/");
