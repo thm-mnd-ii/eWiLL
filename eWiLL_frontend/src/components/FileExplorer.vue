@@ -1,8 +1,37 @@
 <!-- eslint-disable vue/no-v-text-v-html-on-component -->
 <template>
   <div class="explorer">
-    <v-btn prepend-icon="mdi-home" @click="homeButtonClick">Home</v-btn>
-    <v-btn icon="mdi-content-save" @click="saveButtonClick"></v-btn>
+    <v-btn prepend-icon="mdi-home" class="explorerBtn" @click="homeButtonClick">Home</v-btn>
+    <v-btn icon="mdi-content-save" class="explorerBtn" @click="saveButtonClick">
+      <v-dialog v-model="dialog" activator="parent">
+        <v-card>
+          <v-card-title>
+            <span class="text-h5">Save Diagram</span>
+          </v-card-title>
+          <v-card-text>
+            <v-container>
+              <v-row>
+                <v-col cols="12" sm="6" md="4">
+                  <v-text-field label="Name*" required></v-text-field>
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <v-select :items="categorieNames" label="Kategorie*" required></v-select>
+                </v-col>
+                <v-col>
+                  <v-btn cols="12" sm="6" md="4" icon="mdi-home"></v-btn>
+                </v-col>
+              </v-row>
+            </v-container>
+            <small>*indicates required field</small>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn variant="text" @click="dialog = false"> Close </v-btn>
+            <v-btn variant="text" @click="dialog = false"> Save </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-btn>
     <v-list v-if="categoryActive">
       <v-list-item v-for="[key] in map" :key="key" class="list-item" :value="key" @click="categoryClicked(key)">
         <template #prepend>
@@ -38,6 +67,7 @@ import Config from "../model/diagram/Config";
 
 const store = useStore();
 const categoryActive = ref(true);
+const dialog = ref(false);
 const activeCategorie = ref("");
 var activeDiagram = {} as Diagram;
 const userId = ref(0);
@@ -45,6 +75,7 @@ const userId = ref(0);
 var modelID = ref(0);
 var displayDiagrams: Diagram[] = reactive([]);
 var categories: Category[] = reactive([]);
+var categorieNames: String[] = ["test", "test2", "test3"];
 var map: Map<string, Diagram[]> = reactive(new Map());
 
 const emit = defineEmits(["update:entity", "anker-point", "delete-entity", "change-entity-typ", "manage-attributes"]);
@@ -56,11 +87,11 @@ const props = defineProps<{
 }>();
 
 const homeButtonClick = () => {
-  //diagrams.splice(0);
-  //diagrams.push(diagrams2.values);
-  //DiagramService.test();
   categoryActive.value = true;
   displayDiagrams.length = 0;
+  map.get("Keine Kategorie")?.forEach((diagram) => {
+    displayDiagrams.push(diagram);
+  });
 };
 
 const categoryClicked = (category: string) => {
@@ -97,6 +128,7 @@ const diagramClicked = (diagram: Diagram) => {
 
 onBeforeMount(() => {
   map = diagramService.getDiagramsWithCategory(1);
+  categories = diagramService.getCategories(1);
   userId.value = store.state.auth.userId;
 });
 
@@ -159,7 +191,7 @@ const setDefaultDiagram = () => {
   min-height: 0px !important;
 }
 
-.v-btn {
+.explorerBtn {
   margin-bottom: 10px;
   padding: 2px;
   max-height: 25px;
