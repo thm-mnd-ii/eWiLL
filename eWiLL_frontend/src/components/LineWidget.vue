@@ -1,22 +1,36 @@
 <template>
   <div class="widgetContainer">
     <IconTrash class="widget" @click="deleteLine" />
-    <IconChange class="widget" @click="changeLine" />
+    <IconChange class="widget" @click="changeLineStyle" />
   </div>
 </template>
 
 <script setup lang="ts">
+import { useDiagramStore } from "../stores/diagramStore";
+
 import IconTrash from "./icons/IconTrash.vue";
 import IconChange from "./icons/IconChange.vue";
+import CardinalityType from "../enums/CardinalityType";
 
-const emit = defineEmits(["deleteEntity", "changeLine"]);
+const diagramStore = useDiagramStore();
+
+const props = defineProps({
+  line: { type: Object, required: true },
+});
 
 const deleteLine = () => {
-  emit("deleteEntity", true);
+  diagramStore.diagram.connections.splice(props.line.id, 1);
 };
 
-const changeLine = () => {
-  emit("changeLine", true);
+const changeLineStyle = () => {
+  const currentStyle = diagramStore.diagram.connections[props.line.id].style;
+  if (currentStyle != undefined) {
+    if (currentStyle == CardinalityType.ONE_TO_ONE) {
+      diagramStore.diagram.connections[props.line.id].style = 0;
+    } else {
+      diagramStore.diagram.connections[props.line.id].style = currentStyle + 1;
+    }
+  }
 };
 </script>
 

@@ -18,24 +18,22 @@
 
 <script setup lang="ts">
 //import { ref } from "vue";
-import { useStore } from "vuex";
+import { useAuthUserStore } from "../stores/authUserStore";
 import { useRouter } from "vue-router";
 const router = useRouter();
-const store = useStore();
 
 // const options = ref([
 //   { title: "Profil", icon: "mdi-account", method: "profile" },
 //   { title: "Logout", icon: "mdi-logout", method: "logout" },
 // ]);
 
-// eslint-disable-next-line no-unused-vars
 const profile = () => {
   router.push({ path: "/profile" });
 };
 
-// eslint-disable-next-line no-unused-vars
 const logout = () => {
-  store.dispatch("auth/logout").then(
+  const authUserStore = useAuthUserStore();
+  authUserStore.logout().then(
     () => {
       router.push("/login");
     },

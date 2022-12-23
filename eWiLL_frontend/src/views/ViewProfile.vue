@@ -1,5 +1,5 @@
 <template>
-  <pre>{{ store.state.auth }}</pre>
+  <pre>{{ userInformation }}</pre>
   <div>
     <h3>Profil</h3>
     <p>LogInStatus: {{ status }}</p>
@@ -11,12 +11,13 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { useStore } from "vuex";
-const store = useStore();
-const userInformation = ref(store.state.auth);
+import { useAuthUserStore } from "../stores/authUserStore";
 
-const status = ref(userInformation.value.status.loggedIn);
-const firstName = ref(userInformation.value.user.username);
-const email = ref(userInformation.value.user.email);
-const role = ref(userInformation.value.user.role);
+const authUserStore = useAuthUserStore();
+const userInformation = authUserStore.user;
+
+const status = ref(authUserStore.isLoggedIn);
+const firstName = ref(userInformation?.username);
+const email = ref(userInformation?.email);
+const role = ref(userInformation?.roles);
 </script>
