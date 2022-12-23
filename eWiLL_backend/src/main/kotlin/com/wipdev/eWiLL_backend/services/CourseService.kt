@@ -1,9 +1,9 @@
-package com.wipdev.eWiLL_backend.services;
+package com.wipdev.eWiLL_backend.services
 
 import com.wipdev.eWiLL_backend.database.tables.course.Course
 import com.wipdev.eWiLL_backend.repository.CourseRepository
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Service
 
 @Service
 class CourseService: ICourseService {

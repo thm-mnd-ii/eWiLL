@@ -1,6 +1,6 @@
 package com.wipdev.eWiLL_backend.services
 
-import com.wipdev.eWiLL_backend.endpoints.payload.requests.SubmissionRequest
+import com.wipdev.eWiLL_backend.endpoints.payload.requests.SubmissionRequestPL
 import com.wipdev.eWiLL_backend.repository.TaskRepository
 import com.wipdev.eWiLL_backend.repository.DiagramRepository
 import com.wipdev.eWiLL_backend.repository.RulesetRepository
@@ -18,7 +18,7 @@ class EvaluationService:IEvaluationService {
 
     @Autowired
     lateinit var rulesetRepository: RulesetRepository
-    override fun eval(submissionRequest: SubmissionRequest): String {
+    override fun eval(submissionRequestPL: SubmissionRequestPL): String {
         TODO("Not yet implemented")
     }
 

@@ -1,6 +1,6 @@
 package com.wipdev.eWiLL_backend.endpoints
 
-import com.wipdev.eWiLL_backend.endpoints.payload.requests.SubmissionRequest
+import com.wipdev.eWiLL_backend.endpoints.payload.requests.SubmissionRequestPL
 import com.wipdev.eWiLL_backend.services.EvaluationService
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -20,8 +20,8 @@ class EvaluationController {
 
     @PostMapping("/submit")
     @ResponseBody
-    fun submit(@Parameter submissionRequest: SubmissionRequest): String? {
-        return service.eval(submissionRequest)
+    fun submit(@Parameter submissionRequestPL: SubmissionRequestPL): String? {
+        return service.eval(submissionRequestPL)
     }
 
 

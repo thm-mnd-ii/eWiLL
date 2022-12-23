@@ -1,8 +1,8 @@
 package com.wipdev.eWiLL_backend.services
 
-import com.wipdev.eWiLL_backend.DataclassEntityConverter
+import com.wipdev.eWiLL_backend.database.tables.Task
 import com.wipdev.eWiLL_backend.database.tables.course.Ruleset
-import com.wipdev.eWiLL_backend.endpoints.payload.requests.Task
+import com.wipdev.eWiLL_backend.endpoints.payload.requests.TaskPL
 
 import com.wipdev.eWiLL_backend.repository.RulesetRepository
 import com.wipdev.eWiLL_backend.repository.TaskRepository
@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-class TaskService() : ITaskService {
+class TaskService : ITaskService {
 
 
     @Autowired
@@ -20,27 +20,27 @@ class TaskService() : ITaskService {
     lateinit var ruleSetRepository: RulesetRepository
 
 
-    override fun getAll(courseId: Long): List<Task> =
-        taskRepository.findAll().map { DataclassEntityConverter.convert(it) }.filter { it.courseId == courseId }
+    override fun getAll(courseId: Long): List<TaskPL> =
+        taskRepository.findAll().map { convert(it) }.filter { it.courseId == courseId }
 
 
-    override fun getById(id: Long): Task =
-        DataclassEntityConverter.convert(taskRepository.findById(id).get())
+    override fun getById(id: Long): TaskPL =
+        convert(taskRepository.findById(id).get())
 
 
-    override fun create(courseId: Long, task: Task): Boolean {
-        taskRepository.save(DataclassEntityConverter.convert(task))
+    override fun create(courseId: Long, taskPL: TaskPL): Boolean {
+        taskRepository.save(convert(taskPL))
         return true
     }
 
-    override fun update(id: Long, task: Task): Task {
-        val assignmentEntity = DataclassEntityConverter.convert(task)
+    override fun update(id: Long, taskPL: TaskPL): TaskPL {
+        val assignmentEntity = convert(taskPL)
         assignmentEntity.id = id
         taskRepository.save(assignmentEntity)
-        return task
+        return taskPL
     }
 
-    override fun delete(id: Long): Task {
+    override fun delete(id: Long): TaskPL {
         val assignment = getById(id)
         taskRepository.deleteById(id)
         return assignment
@@ -52,4 +52,33 @@ class TaskService() : ITaskService {
     }
 
 
+
+    fun convert(task: Task): TaskPL {
+        return TaskPL(
+            task.id,
+            task.name,
+            task.description,
+            task.dueDate,
+            task.subject,
+            task.courseId,
+            task.solutionModelId,
+            task.rulesetId
+        )
+
+    }
+
+
+    fun convert(taskPL: TaskPL): Task {
+        return Task(
+            taskPL.id,
+            taskPL.name,
+            taskPL.description,
+            taskPL.dueDate,
+            taskPL.subject,
+            taskPL.courseId,
+            taskPL.solutionModelId,
+            taskPL.rulesetId
+        )
+
+    }
 }

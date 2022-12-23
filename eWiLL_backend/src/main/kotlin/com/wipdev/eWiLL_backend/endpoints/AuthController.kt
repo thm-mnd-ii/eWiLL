@@ -2,7 +2,7 @@ package com.wipdev.eWiLL_backend.endpoints
 
 import com.wipdev.eWiLL_backend.database.tables.User
 import com.wipdev.eWiLL_backend.endpoints.payload.responses.JwtResponse
-import com.wipdev.eWiLL_backend.endpoints.payload.requests.LoginRequest
+import com.wipdev.eWiLL_backend.endpoints.payload.requests.LoginRequestPL
 import com.wipdev.eWiLL_backend.repository.RoleRepository
 import com.wipdev.eWiLL_backend.repository.UserRepository
 import com.wipdev.eWiLL_backend.security.auth.*
@@ -38,10 +38,10 @@ class AuthController {
 
     @PostMapping("/signin")
     @ResponseBody
-    fun authenticateUser(@RequestBody loginRequest: LoginRequest): ResponseEntity<JwtResponse> {
+    fun authenticateUser(@RequestBody loginRequestPL: LoginRequestPL): ResponseEntity<JwtResponse> {
         //TODO: registerIfNonExistent(loginRequest)
         val authentication = authentificationManager.authenticate(
-            UsernamePasswordAuthenticationToken(loginRequest.username, loginRequest.password)
+            UsernamePasswordAuthenticationToken(loginRequestPL.username, loginRequestPL.password)
         )
         SecurityContextHolder.getContext().authentication = authentication
         val jwt = jwtUtils.generateJwtToken(authentication)
@@ -57,11 +57,11 @@ class AuthController {
     }
 
 
-    fun registerIfNonExistent(loginRequest: LoginRequest){
-        if(userRepository.existsByUsername(loginRequest.username)){
+    fun registerIfNonExistent(loginRequestPL: LoginRequestPL){
+        if(userRepository.existsByUsername(loginRequestPL.username)){
             return
         }
-        val user = User(loginRequest.username,loginRequest.password,loginRequest.username+"@thm.de", mutableSetOf(roleRepository.findByName(ERole.ROLE_USER.name)!!))
+        val user = User(loginRequestPL.username,loginRequestPL.password,loginRequestPL.username+"@thm.de", mutableSetOf(roleRepository.findByName(ERole.ROLE_USER.name)!!))
         userRepository.save(user)
     }
 
