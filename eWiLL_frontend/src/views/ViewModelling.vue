@@ -26,7 +26,7 @@
       <IconEntityRelationshiptyp @mousedown="addElement($event, EntityType.ENTITYRELATIONSHIP)" />
     </div>
 
-    <div class="modellingContainer">
+    <div class="modellingContainer" @click.self="unselectAll">
       <EntityMain v-for="entity in diagramStore.diagram.entities" :key="entity.id" :entity="entity" @anker-point="handleAnkerPoint" />
 
       <LineMain v-for="line in lineList" :key="line.id" :line="line" />
@@ -59,12 +59,14 @@ import IconRelationshiptyp from "../components/icons/IconRelationshiptyp.vue";
 
 import { onMounted, reactive, ref } from "vue";
 import { useDiagramStore } from "../stores/diagramStore";
+import { useToolManagementStore } from "../stores/toolManagementStore";
 
 import EntityType from "../enums/EntityType";
 import Connection from "../model/diagram/Connection";
 import Line from "../model/diagram/Line";
 
 const diagramStore = useDiagramStore();
+const toolManagementStore = useToolManagementStore();
 
 const lineList: Line[] = reactive([
   //{ "id": 1, "x1": 200, "y1": 100, "x2": 0, "y2": 0},
@@ -77,16 +79,17 @@ onMounted(() => {
   updateLines();
 });
 
-diagramStore.$subscribe((mutation, state) => {
-  console.log(mutation);
-  console.log(state);
+diagramStore.$subscribe(() => {
   updateLines();
 });
 
+const unselectAll = () => {
+  toolManagementStore.selectedEntity = null;
+  toolManagementStore.selectedLine = null;
+};
+
 const updateLines = () => {
   let calculatedLines: Line[] = [];
-
-  console.log("Update Lines");
 
   diagramStore.diagram.connections.forEach((connection: Connection, index) => {
     let calculatedLine = calculateLine(connection);
@@ -170,8 +173,6 @@ const handleAnkerPoint = (ankerPoint: { id: any; position: any }) => {
     diagramStore.diagram.connections.push(newAnkerPoint.value);
     newAnkerPoint.value = {};
   }
-
-  console.log(triggered);
 };
 
 //add Element with serial ID
