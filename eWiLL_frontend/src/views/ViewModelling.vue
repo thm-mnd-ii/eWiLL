@@ -18,15 +18,10 @@
   <!-- <div>{{ selectedEntity }}</div> -->
 
   <div class="container">
-<<<<<<< HEAD
-    <ModalAddAttributes :show="showModalAddAttributes" :entity="selectedEntity" @close="showModalAddAttributes = false" />
+    <ModalAddAttributes />
     <div>
       <FileExplorer :entities="entityList" :ankerpoints="ankerPoints"></FileExplorer>
     </div>
-=======
-    <ModalAddAttributes />
-
->>>>>>> development
     <div class="toolbox">
       <IconEntity id="item" draggable="true" @click="addElement($event, EntityType.ENTITY)" />
       <IconRelationshiptyp @mousedown="addElement($event, EntityType.RELATIONSHIP)" />
