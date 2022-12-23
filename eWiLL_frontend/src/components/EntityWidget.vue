@@ -46,7 +46,6 @@ const deleteEntity = () => {
 const changeEntityType = () => {
   let entityIndex = diagramStore.diagram.entities.indexOf(props.entity);
   const currentTyp = diagramStore.diagram.entities[entityIndex].type;
-  console.log(currentTyp);
 
   if (currentTyp === EntityType.RELATIONSHIP) {
     diagramStore.diagram.entities[entityIndex].type = 0;
