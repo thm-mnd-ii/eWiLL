@@ -19,7 +19,13 @@ class EvaluationService:IEvaluationService {
     @Autowired
     lateinit var rulesetRepository: RulesetRepository
     override fun eval(submissionRequestPL: SubmissionRequestPL): String {
-        TODO("Not yet implemented")
+        val task = taskRepository.findById(submissionRequestPL.taskId.toLong()).get()
+        val ruleset = task.rulesetId?.let { rulesetRepository.findById(it).get() }
+        val diagram = submissionRequestPL.diagramPL;
+
+        val solutionDiagram =diagramRepository.findById(task.solutionModelId!!).get()
+
+        return "test"
     }
 
 
