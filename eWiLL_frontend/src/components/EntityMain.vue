@@ -4,7 +4,7 @@
     <textarea v-if="isEditable" v-model="entity.entityName" class="textedit" rows="1" @dblclick="makeTextEditable" @keyup.enter="handleEnter"></textarea>
 
     <!-- eslint-disable vue/no-v-html -->
-    <span class="attributes" v-html="formattedAttributes"></span>
+    <span class="attributes unselectable" v-html="formattedAttributes"></span>
     <!--eslint-enable-->
 
     <!-- <div v-if="isResizable" @mousedown="resizer($event)" class="resizer nw"></div>
@@ -25,9 +25,9 @@
     </div>
     <EntityWidget v-if="isResizable" :entity="props.entity" />
 
-    <IconEntity v-if="props.entity.type == EntityTyp.ENTITY" @dblclick="changeResizable()" @mousedown="mousedown($event)" />
-    <IconRelationshiptyp v-if="props.entity.type == EntityTyp.RELATIONSHIP" @dblclick="changeResizable()" @mousedown="mousedown($event)" />
-    <IconEntityRelationshiptyp v-if="props.entity.type == EntityTyp.ENTITYRELATIONSHIP" @dblclick="changeResizable()" @mousedown="mousedown($event)" />
+    <IconEntity v-if="props.entity.type == EntityTyp.ENTITY" class="entity" @dblclick="activateEntity()" @mousedown="mousedown($event)" />
+    <IconRelationshiptyp v-if="props.entity.type == EntityTyp.RELATIONSHIP" class="entity" @dblclick="activateEntity()" @mousedown="mousedown($event)" />
+    <IconEntityRelationshiptyp v-if="props.entity.type == EntityTyp.ENTITYRELATIONSHIP" class="entity" @dblclick="activateEntity()" @mousedown="mousedown($event)" />
   </div>
 </template>
 
@@ -43,6 +43,7 @@ import EntityWidget from "./EntityWidget.vue";
 
 import { ref, onMounted, computed, watch } from "vue";
 import { useDiagramStore } from "../stores/diagramStore";
+import { useToolManagementStore } from "../stores/toolManagementStore";
 
 import ConnectorPosition from "../enums/ConnectorPosition";
 import Attribute from "../model/diagram/Attribute";
@@ -55,6 +56,7 @@ const props = defineProps<{
   entity: Entity;
 }>();
 
+const toolManagementStore = useToolManagementStore();
 const diagramStore = useDiagramStore();
 let entity = diagramStore.diagram.entities.find((entity) => entity.id == props.entity.id);
 
@@ -195,11 +197,17 @@ watch(props.entity, () => {
   setAnkerPoints();
 });
 
-let isResizable = ref(false);
-const changeResizable = () => {
-  //console.log(isResizable.value)
-  isResizable.value = !isResizable.value;
+const activateEntity = () => {
+  if (entity != undefined) {
+    if (toolManagementStore.selectedEntity == entity) {
+      toolManagementStore.selectedEntity = null;
+    } else toolManagementStore.selectedEntity = entity;
+  }
 };
+
+const isResizable = computed(() => {
+  return toolManagementStore.selectedEntity === entity;
+});
 
 const mousedown = (e: any) => {
   //console.log(root.value.parentNode.getBoundingClientRect())
@@ -327,6 +335,12 @@ const resizer = (e: any) => {
 </script>
 
 <style scoped lang="scss">
+.entity {
+  pointer-events: all;
+  * {
+    pointer-events: none;
+  }
+}
 .objectContainer {
   z-index: 5;
   position: absolute;
@@ -411,6 +425,6 @@ const resizer = (e: any) => {
   position: absolute;
 
   top: v-bind("cssVarAttributesDistanceTop");
-  cursor: text;
+  cursor: default;
 }
 </style>

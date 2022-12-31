@@ -9,8 +9,8 @@
     /> -->
 
   <svg ref="root" class="svgContainer hide">
-    <line id="svgLine" class="reshow" stroke-width="2.5px" stroke="#000000" x1="0" y1="0" x2="0" y2="0" @dblclick="changeVisibility" />
-    <line id="svgSupportLine" class="reshow" fill="none" stroke-width="2.6px" stroke="none" stroke-opacity="0" x1="0" y1="0" marker-end="url(#arrowhead)" y2="0" x2="0" @dblclick="changeVisibility" />
+    <line id="svgLine" class="reshow" stroke-width="2.5px" stroke="#000000" x1="0" y1="0" x2="0" y2="0" @click="activateLine" />
+    <line id="svgSupportLine" class="reshow" fill="none" stroke-width="2.6px" stroke="none" stroke-opacity="0" x1="0" y1="0" marker-end="url(#arrowhead)" y2="0" x2="0" @click="activateLine" />
   </svg>
 
   <!-- Hide SVG and show only line, to make line clickable -->
@@ -39,19 +39,32 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted, watch, computed } from "vue";
+import { useToolManagementStore } from "../stores/toolManagementStore";
+
 import LineWidget from "./LineWidget.vue";
-import { ref, onMounted, watch } from "vue";
+
 import CardinalityTyp from "../enums/CardinalityType";
 
 const props = defineProps({
   line: { type: Object, required: true },
 });
+
 const root = ref<SVGElement | null>(null);
 
-let visible = ref(false);
-const changeVisibility = () => {
-  visible.value = !visible.value;
+const toolManagementStore = useToolManagementStore();
+
+const activateLine = () => {
+  if (toolManagementStore.selectedLine == props.line) {
+    toolManagementStore.selectedLine = null;
+  } else {
+    toolManagementStore.selectedLine = props.line;
+  }
 };
+
+let visible = computed(() => {
+  return toolManagementStore.selectedLine == props.line;
+});
 
 //const hover = ref(false)
 // watch(hover, (e) => {

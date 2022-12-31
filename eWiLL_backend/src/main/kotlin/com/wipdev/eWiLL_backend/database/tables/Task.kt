@@ -2,9 +2,6 @@ package com.wipdev.eWiLL_backend.database.tables
 
 import javax.persistence.*
 
-import com.wipdev.eWiLL_backend.database.tables.course.Ruleset
-import javax.persistence.*
-
 @Entity
 @Table(name = "Assignment")
 class Task {
