@@ -2,7 +2,8 @@
 <template>
   <div class="explorer">
     <v-btn prepend-icon="mdi-home" class="explorerBtn" @click="homeButtonClick">Home</v-btn>
-    <v-btn icon="mdi-content-save" class="explorerBtn" @click="saveButtonClick">
+    <v-btn id="saveBtn" class="explorerBtn" @click="saveDialogButtonClick">
+      <v-icon>mdi-content-save</v-icon>
       <v-dialog v-model="dialog" activator="parent">
         <v-card>
           <v-card-title>
@@ -12,13 +13,13 @@
             <v-container>
               <v-row>
                 <v-col cols="12" sm="6" md="4">
-                  <v-text-field label="Name*" required></v-text-field>
+                  <v-text-field v-model="saveName" label="Name*" required :disabled="newDiagram == false"></v-text-field>
                 </v-col>
                 <v-col cols="12" sm="6">
-                  <v-select :items="categorieNames" label="Kategorie*" required></v-select>
+                  <v-select v-model="saveCategoryProp" :items="categoryNames" label="Kategorie*" required :disabled="newDiagram == false"></v-select>
                 </v-col>
                 <v-col>
-                  <v-btn cols="12" sm="6" md="4" icon="mdi-home"></v-btn>
+                  <v-btn cols="12" sm="6" md="4" icon="mdi-folder-plus" :disabled="newDiagram == false"></v-btn>
                 </v-col>
               </v-row>
             </v-container>
@@ -27,7 +28,7 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn variant="text" @click="dialog = false"> Close </v-btn>
-            <v-btn variant="text" @click="dialog = false"> Save </v-btn>
+            <v-btn variant="text" @click="saveButtonClick"> Save </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -55,27 +56,32 @@
 import Diagram from "../model/diagram/Diagram";
 import IconFolder from "../components/icons/IconFolder.vue";
 import IconFile from "../components/icons/IconFile.vue";
+import { useDiagramStore } from "../stores/diagramStore";
+import { useAuthUserStore } from "../stores/authUserStore";
 
 import { onMounted, onBeforeMount, reactive, ref } from "vue";
 import DiagramType from "../enums/DiagramType";
 import diagramService from "../services/diagram.service";
 import Category from "../model/diagram/Category";
-import { useStore } from "vuex";
 import Entity from "../model/diagram/Entity";
 import Connection from "../model/diagram/Connection";
 import Config from "../model/diagram/Config";
 
-const store = useStore();
 const categoryActive = ref(true);
 const dialog = ref(false);
 const activeCategorie = ref("");
 var activeDiagram = {} as Diagram;
 const userId = ref(0);
+const diagramStore = useDiagramStore();
+const authUserStore = useAuthUserStore();
+const saveName = ref("");
+const saveCategoryProp = ref("");
+const newDiagram = ref(true);
 
 var modelID = ref(0);
 var displayDiagrams: Diagram[] = reactive([]);
 var categories: Category[] = reactive([]);
-var categorieNames: String[] = ["test", "test2", "test3"];
+var categoryNames: String[] = [];
 var map: Map<string, Diagram[]> = reactive(new Map());
 
 const emit = defineEmits(["update:entity", "anker-point", "delete-entity", "change-entity-typ", "manage-attributes"]);
@@ -89,9 +95,6 @@ const props = defineProps<{
 const homeButtonClick = () => {
   categoryActive.value = true;
   displayDiagrams.length = 0;
-  map.get("Keine Kategorie")?.forEach((diagram) => {
-    displayDiagrams.push(diagram);
-  });
 };
 
 const categoryClicked = (category: string) => {
@@ -103,7 +106,12 @@ const categoryClicked = (category: string) => {
   });
 };
 
-const saveButtonClick = () => {
+const saveDialogButtonClick = () => {
+  categoryNames.length = 0;
+  categories.forEach((category) => {
+    categoryNames.push(category.name);
+  });
+
   const tmpDiagram = {} as Diagram;
   tmpDiagram.id = 0;
   tmpDiagram.ownerId = userId.value;
@@ -124,39 +132,26 @@ const saveButtonClick = () => {
 
 const diagramClicked = (diagram: Diagram) => {
   activeDiagram = diagram;
+  newDiagram.value = false;
+  saveCategoryProp.value = diagram.category.name;
+  saveName.value = diagram.name;
+};
+
+const saveButtonClick = () => {
+  dialog.value = false;
 };
 
 onBeforeMount(() => {
   map = diagramService.getDiagramsWithCategory(1);
   categories = diagramService.getCategories(1);
-  userId.value = store.state.auth.userId;
+  displayDiagrams.length = 0;
+  var tmpUserId = authUserStore.auth.user?.id;
+  if (tmpUserId != null) userId.value = tmpUserId;
 });
 
 onMounted(() => {
-  setDefaultDiagram();
+  activeDiagram = diagramStore.diagram;
 });
-
-const setDefaultDiagram = () => {
-  const tmpDiagram = {} as Diagram;
-  tmpDiagram.id = 0;
-  tmpDiagram.ownerId = userId.value;
-  tmpDiagram.entities = props.entities;
-  tmpDiagram.connections = props.ankerpoints;
-  tmpDiagram.name = "Default Name";
-
-  const tmpConfig = {} as Config;
-  tmpConfig.id = 1;
-  tmpConfig.diagramType = DiagramType.SERM;
-  tmpDiagram.config = tmpConfig;
-
-  const tmpCategory = {} as Category;
-  tmpCategory.id = 1;
-  tmpCategory.name = "Keine Kategorie";
-  tmpCategory.userId = userId.value;
-  tmpDiagram.category = tmpCategory;
-
-  activeDiagram = tmpDiagram;
-};
 </script>
 
 <style scoped>
@@ -195,5 +190,12 @@ const setDefaultDiagram = () => {
   margin-bottom: 10px;
   padding: 2px;
   max-height: 25px;
+  margin: 2px;
+}
+
+#saveBtn {
+  border-radius: 4px;
+  max-width: 30px !important;
+  min-width: 0px;
 }
 </style>

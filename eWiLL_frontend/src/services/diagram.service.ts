@@ -68,7 +68,21 @@ class DiagramService {
             id: 2,
             userId: 1,
             name: "Category2",
-          }}];
+          }},{
+            id: 5,
+            ownerId: 1,
+            name: "Dia ohne Kategorie",
+            config: {
+              id: 1,
+              diagramType: DiagramType.SERM,
+            },
+            entities: [],
+            connections: [],
+            category: {
+              id: 0,
+              userId: 1,
+              name: "Keine Kategorie",
+            }}];
         
         return diagrams;
       };
@@ -76,6 +90,10 @@ class DiagramService {
       getCategories(userId: number):Category[] {
     
         const categories: Category[] = [{
+          id: 0,
+          userId: 1,
+          name: "Keine Kategorie",
+        },{
           id: 1,
           userId: 1,
           name: "Category1",
