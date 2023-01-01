@@ -106,6 +106,14 @@ class DiagramService {
        
         return categories;
       };
+
+      getCategoriesTest(userId: number) {
+      return axios
+      .get("http://localhost:8080/category/user/1") 
+      .then((response) => {
+        console.log(response)
+      });
+      };
   
       getDiagramsWithCategory(userId: number): Map<string, Diagram[]>{
         const map: Map<string, Diagram[]> = new Map();
