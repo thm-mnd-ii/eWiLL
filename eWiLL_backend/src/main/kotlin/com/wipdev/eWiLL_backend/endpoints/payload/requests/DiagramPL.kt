@@ -10,4 +10,4 @@ import com.wipdev.eWiLL_backend.database.tables.DiagramConfig
   entities: Entity[];
   connections: Connection[];
  */
-data class DiagramPL(val id: Long?, val ownerId: Long?, val name: String?, val config: DiagramConfig?, val entities: List<Entity>?, val connections: List<Connection>?)
+data class DiagramPL(val id: Long?, val ownerId: Long?, val name: String?, val config: DiagramConfig?, val entities: List<Entity>?, val connections: List<Connection>?, val categoryId : Long?)

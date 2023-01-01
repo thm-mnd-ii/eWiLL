@@ -24,11 +24,11 @@ class CourseController {
 
     @PutMapping()
     @ResponseBody
-    fun create(course: Course): Course = service.create(course)
+    fun create(@RequestBody course: Course): Course = service.create(course)
 
     @PostMapping("/{id}")
     @ResponseBody
-    fun update(@PathVariable id: Long, course: Course): Course = service.update(id, course)
+    fun update(@PathVariable id: Long, @RequestBody course: Course): Course = service.update(id, course)
 
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: Long) = service.delete(id)
