@@ -30,6 +30,7 @@ class DiagramService : IDiagramService {
         diagram.ownerId = diagramPL.ownerId
         diagram.entities = diagramPL.entities.toString()
         diagram.connections = diagramPL.connections.toString()
+        diagram.categoryId = diagramPL.categoryId
         return convert(diagramRepository.save(diagram))
     }
 

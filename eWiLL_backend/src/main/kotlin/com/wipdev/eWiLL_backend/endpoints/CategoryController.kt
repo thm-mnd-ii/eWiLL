@@ -21,7 +21,7 @@ class CategoryController {
     fun getById(@PathVariable id:Long) = iDiagramService.getByCategoryId(id)
 
     @PostMapping
-    fun createCategory(category: CategoryPL): Category {
+    fun createCategory(@RequestBody category: CategoryPL): Category {
         return iCategoryService.createCategory(category)
     }
 
