@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*
 
 @RequestMapping("/category")
 @RestController
-@CrossOrigin(origins = ["http://127.0.0.1:8085"], allowedHeaders = ["*"])
 class CategoryController {
 
     @Autowired
@@ -18,20 +17,23 @@ class CategoryController {
     @Autowired
     lateinit var iDiagramService: DiagramService
 
+    @CrossOrigin
     @GetMapping("/{id}/diagrams")
     fun getById(@PathVariable id:Long) = iDiagramService.getByCategoryId(id)
 
+    @CrossOrigin
     @PostMapping
     fun createCategory(@RequestBody category: CategoryPL): Category {
         return iCategoryService.createCategory(category)
     }
 
-
+    @CrossOrigin
     @DeleteMapping("/{id}")
     fun deleteCategory(@PathVariable id: Long): Category {
         return iCategoryService.deleteCategory(id)
     }
 
+    @CrossOrigin
     @GetMapping("/user/{user_id}")
     fun getByUserId(@PathVariable user_id: Long): List<Category> {
         return iCategoryService.getByUserId(user_id)

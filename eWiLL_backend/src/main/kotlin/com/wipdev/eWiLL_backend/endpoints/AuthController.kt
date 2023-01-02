@@ -35,6 +35,7 @@ class AuthController {
     @Autowired
     lateinit var jwtUtils: JwtUtils
 
+    @CrossOrigin
     @PostMapping("/signin")
     @ResponseBody
     fun authenticateUser(@RequestBody loginRequestPL: LoginRequestPL): ResponseEntity<JwtResponse> {
