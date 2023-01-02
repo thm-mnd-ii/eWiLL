@@ -3,9 +3,15 @@ package com.wipdev.eWiLL_backend.security
 import com.wipdev.eWiLL_backend.security.auth.JwtUtils
 import com.wipdev.eWiLL_backend.services.UserDetailsServiceImpl
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.web.servlet.FilterRegistrationBean
+import org.springframework.context.annotation.Bean
+import org.springframework.core.Ordered
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
+import org.springframework.web.filter.CorsFilter
 import org.springframework.web.filter.OncePerRequestFilter
 import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
@@ -39,6 +45,25 @@ class AuthTokenFilter : OncePerRequestFilter() {
         filterChain.doFilter(request, response)
     }
 
+    @Bean
+    fun corsFilter(): FilterRegistrationBean<*> {
+        val source = UrlBasedCorsConfigurationSource()
+        val config = CorsConfiguration()
+        config.allowCredentials = true
+        config.addAllowedOrigin("*")
+        config.addAllowedHeader("*")
+        config.addAllowedMethod("OPTIONS")
+        config.addAllowedMethod("HEAD")
+        config.addAllowedMethod("GET")
+        config.addAllowedMethod("PUT")
+        config.addAllowedMethod("POST")
+        config.addAllowedMethod("DELETE")
+        config.addAllowedMethod("PATCH")
+        source.registerCorsConfiguration("/**", config)
+        val bean = FilterRegistrationBean(CorsFilter(source))
+        bean.order = Ordered.HIGHEST_PRECEDENCE
+        return bean
+    }
 
     private fun parseJwt(request: HttpServletRequest): String? {
         val headerAuth = request.getHeader("Authorization")
