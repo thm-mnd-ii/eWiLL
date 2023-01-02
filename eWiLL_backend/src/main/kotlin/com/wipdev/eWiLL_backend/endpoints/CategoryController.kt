@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*
 
 @RequestMapping("/category")
 @RestController
+@CrossOrigin(origins = ["*"], allowedHeaders = ["*"])
 class CategoryController {
 
     @Autowired
