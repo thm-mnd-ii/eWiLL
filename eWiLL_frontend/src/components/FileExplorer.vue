@@ -95,6 +95,8 @@ const props = defineProps<{
 const homeButtonClick = () => {
   categoryActive.value = true;
   displayDiagrams.length = 0;
+
+  diagramService.getCategoriesTest(1);
 };
 
 const categoryClicked = (category: string) => {
@@ -138,7 +140,9 @@ const diagramClicked = (diagram: Diagram) => {
 };
 
 const saveButtonClick = () => {
+  activeDiagram.name = saveName.value;
   dialog.value = false;
+  //TODO: Saving diagram
 };
 
 onBeforeMount(() => {

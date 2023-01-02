@@ -2,6 +2,7 @@ import axios from "axios";
 import Diagram from "../model/diagram/Diagram";
 import Category from "../model/diagram/Category";
 import DiagramType from "../enums/DiagramType";
+import authHeader from "./auth-header";
 
 const API_URL = "http://localhost:8080/api/diagram/";
 
@@ -87,6 +88,12 @@ class DiagramService {
         return diagrams;
       };
 
+      getDiagramsTest(userId: number): Diagram[] {
+        //TODO: API CALL
+        const diagrams: Diagram[] = [];
+        return diagrams;
+      }
+
       getCategories(userId: number):Category[] {
     
         const categories: Category[] = [{
@@ -108,13 +115,14 @@ class DiagramService {
       };
 
       getCategoriesTest(userId: number) {
+      //TODO: FIX API CALL
       return axios
-      .get("http://localhost:8080/category/user/1") 
+      .get("http://localhost:8080/category/user/" + userId, { headers: authHeader()}) 
       .then((response) => {
         console.log(response)
       });
       };
-  
+  //{ headers: authHeader() } {withCredentials: true}
       getDiagramsWithCategory(userId: number): Map<string, Diagram[]>{
         const map: Map<string, Diagram[]> = new Map();
         const allCategories = this.getCategories(1);
@@ -130,10 +138,6 @@ class DiagramService {
         }) 
         return map;
       }
-
-  test(){
-    console.log("Test erfolgreich")
-  }
 }
 
 export default new DiagramService();
