@@ -1,7 +1,9 @@
 package com.wipdev.eWiLL_backend.services
 
 import com.wipdev.eWiLL_backend.database.tables.Diagram
+import com.wipdev.eWiLL_backend.endpoints.payload.requests.Connection
 import com.wipdev.eWiLL_backend.endpoints.payload.requests.DiagramPL
+import com.wipdev.eWiLL_backend.endpoints.payload.requests.Entity
 import com.wipdev.eWiLL_backend.repository.DiagramRepository
 import io.swagger.v3.core.util.Json
 import org.springframework.beans.factory.annotation.Autowired
@@ -21,17 +23,13 @@ class DiagramService : IDiagramService {
     }
 
     override fun create(diagramPL: DiagramPL): DiagramPL {
-        return convert(diagramRepository.save(convert(diagramPL)))
+        diagramRepository.save(convert(diagramPL))
+        return diagramPL
     }
 
     override fun update(id: Long, diagramPL: DiagramPL): DiagramPL {
-        val diagram = diagramRepository.findById(id).get()
-        diagram.name = diagramPL.name
-        diagram.ownerId = diagramPL.ownerId
-        diagram.entities = diagramPL.entities.toString()
-        diagram.connections = diagramPL.connections.toString()
-        diagram.categoryId = diagramPL.categoryId
-        return convert(diagramRepository.save(diagram))
+        diagramRepository.save(convert(diagramPL))
+        return diagramPL
     }
 
     override fun delete(id: Long): DiagramPL {
@@ -46,11 +44,25 @@ class DiagramService : IDiagramService {
 
 
     fun convert(diagram : Diagram) : DiagramPL{
-        return Json.mapper().convertValue(diagram, DiagramPL::class.java)
+        return DiagramPL(diagram.id,diagram.ownerId,diagram.name,null,parseEntities(diagram.entities),parseConnections(diagram.connections),diagram.categoryId)
+    }
+
+    fun parseConnections(connections : String?) : List<Connection>{
+        return Json.mapper().readValue(connections,Array<Connection>::class.java).toList()
+    }
+
+    fun parseEntities(entities : String?) : List<Entity>{
+        return Json.mapper().readValue(entities,Array<Entity>::class.java).toList()
     }
 
     fun convert(diagramPL : DiagramPL) : Diagram{
-        return Json.mapper().convertValue(diagramPL, Diagram::class.java)
+        val diagram = Diagram()
+        diagram.id = diagramPL.id
+        diagram.name = diagramPL.name
+        diagram.ownerId = diagramPL.ownerId
+        diagram.entities = diagramPL.entities.toString()
+        diagram.connections = diagramPL.connections.toString()
+        return diagram
     }
 
 }
