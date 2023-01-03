@@ -42,6 +42,10 @@ class DiagramService : IDiagramService {
         return diagramRepository.findAllByCategoryId(id).map { convert(it) }
     }
 
+    override fun getByUserId(userId: Long): List<DiagramPL> {
+        return diagramRepository.findAllByUserId(userId).map { convert(it) }
+    }
+
 
     fun convert(diagram : Diagram) : DiagramPL{
         return DiagramPL(diagram.id,diagram.ownerId,diagram.name,null,parseEntities(diagram.entities),parseConnections(diagram.connections),diagram.categoryId)

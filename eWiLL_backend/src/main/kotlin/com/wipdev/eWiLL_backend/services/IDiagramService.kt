@@ -11,5 +11,6 @@ interface IDiagramService {
     fun update(id: Long, diagramPL: DiagramPL): DiagramPL
     fun delete(id: Long): DiagramPL
     fun getAllByCategoryId(id: Long): List<DiagramPL>
+    fun getByUserId(userId: Long): List<DiagramPL>
 
 }

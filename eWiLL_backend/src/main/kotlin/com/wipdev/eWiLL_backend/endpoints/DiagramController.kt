@@ -34,5 +34,9 @@ class DiagramController {
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: Long) = iDiagramService.delete(id)
 
+    //getall by user id
+    @CrossOrigin
+    @GetMapping("/user/{user_id}")
+    fun getByUserId(@PathVariable user_id: Long) = iDiagramService.getByUserId(user_id)
 
 }
