@@ -63,7 +63,6 @@ class DiagramService : IDiagramService {
         diagram.entities = Json.mapper().writeValueAsString(diagramPL.entities)
         diagram.connections = Json.mapper().writeValueAsString(diagramPL.connections)
         diagram.categoryId = diagramPL.categoryId
-
         return diagram
     }
 
