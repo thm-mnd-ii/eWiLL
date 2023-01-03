@@ -43,7 +43,7 @@ class DiagramService : IDiagramService {
     }
 
     override fun getByUserId(userId: Long): List<DiagramPL> {
-        return diagramRepository.findAllByUserId(userId).map { convert(it) }
+        return diagramRepository.findAllByOwnerId(userId).map { convert(it) }
     }
 
 

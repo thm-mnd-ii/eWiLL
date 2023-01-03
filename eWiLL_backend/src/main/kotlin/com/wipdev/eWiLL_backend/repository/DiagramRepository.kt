@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository
 interface DiagramRepository: JpaRepository<Diagram, Long>{
     fun findAllByCategoryId(id: Long): List<Diagram>
 
-    fun findAllByUserId(id: Long): List<Diagram>
+    fun findAllByOwnerId(id: Long): List<Diagram>
 }
