@@ -95,7 +95,6 @@ const props = defineProps<{
 const homeButtonClick = () => {
   categoryActive.value = true;
   displayDiagrams.length = 0;
-  diagramService.postCategory();
 };
 
 const categoryClicked = (category: string) => {
@@ -143,14 +142,14 @@ const saveButtonClick = () => {
   dialog.value = false;
   //TODO: Saving diagram
   console.log(activeDiagram);
-  diagramService.saveDiagram(activeDiagram);
+  diagramService.saveDiagram2(activeDiagram);
 };
 
 onBeforeMount(() => {
   displayDiagrams.length = 0;
   var tmpUserId = authUserStore.auth.user?.id;
   if (tmpUserId != null) userId.value = tmpUserId;
-  categories = diagramService.getCategoriesTest(userId.value);
+  categories = diagramService.getCategories(userId.value);
   map = diagramService.getDiagramsWithCategory(userId.value);
   //TODO
 });

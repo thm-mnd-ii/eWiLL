@@ -95,35 +95,22 @@ class DiagramService {
       }
 
       saveDiagram(diagram: Diagram){
-        axios.post(API_URL, { headers: authHeader() })
+        axios.post(API_URL, { diagram })
         .then((response) => {
           console.log(response)
         }
         )
       }
 
-      getCategories(userId: number):Category[] {
-    
-        const categories: Category[] = [{
-          id: 0,
-          userId: 1,
-          name: "Keine Kategorie",
-        },{
-          id: 1,
-          userId: 1,
-          name: "Category1",
-        },
-        {
-          id: 2,
-          userId: 2,
-          name: "Category2",
-        }];
-       
-        return categories;
-      };
+      saveDiagram2(diagram: Diagram){
+        axios.post(API_URL, { id:0, ownerId:1, name:"FirstTry", config: diagram.config, entities: diagram.entities, connections: diagram.connections, categoryId: 1 })
+        .then((response) => {
+          console.log(response)
+        }
+        )
+      }
 
-      getCategoriesTest(userId: number):Category[]{
-      //TODO: FIX API CALL
+      getCategories(userId: number):Category[]{
       const categories:Category[] = [];
       axios
       .get("http://localhost:8080/category/user/" + userId, { headers: authHeader()}) 
@@ -139,10 +126,10 @@ class DiagramService {
       return categories;
       };
 
-      postCategory(){
-        axios.post("http://localhost:8080/category")
+      postCategory(name: string, userid: number){
+        axios.post("http://localhost:8080/category", { name:name, userid: userid }) 
       }
-  //{ headers: authHeader() } {withCredentials: true}
+
       getDiagramsWithCategory(userId: number): Map<string, Diagram[]>{
         const map: Map<string, Diagram[]> = new Map();
         const allCategories = this.getCategories(1);
