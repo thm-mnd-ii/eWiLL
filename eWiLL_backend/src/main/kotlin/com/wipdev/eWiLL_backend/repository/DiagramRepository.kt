@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface DiagramRepository: JpaRepository<Diagram, Long>{
-    fun findByCategoryId(id: Long): Diagram
+    fun findAllByCategoryId(id: Long): List<Diagram>
 }

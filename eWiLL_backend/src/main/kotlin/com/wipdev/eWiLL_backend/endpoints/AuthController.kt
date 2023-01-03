@@ -39,7 +39,7 @@ class AuthController {
     @PostMapping("/signin")
     @ResponseBody
     fun authenticateUser(@RequestBody loginRequestPL: LoginRequestPL): ResponseEntity<JwtResponse> {
-        //TODO: registerIfNonExistent(loginRequest)
+        
         val authentication = authentificationManager.authenticate(
             UsernamePasswordAuthenticationToken(loginRequestPL.username, loginRequestPL.password)
         )
@@ -50,6 +50,7 @@ class AuthController {
         return ResponseEntity.ok(JwtResponse(jwt,userDetails.id, userDetails.username,userDetails.email, roles))
     }
 
+    @CrossOrigin
     @GetMapping("/isValid")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     fun isValid():Boolean{
@@ -57,13 +58,7 @@ class AuthController {
     }
 
 
-    fun registerIfNonExistent(loginRequestPL: LoginRequestPL){
-        if(userRepository.existsByUsername(loginRequestPL.username)){
-            return
-        }
-        val user = User(loginRequestPL.username,loginRequestPL.password,loginRequestPL.username+"@thm.de", mutableSetOf(roleRepository.findByName(ERole.ROLE_USER.name)!!))
-        userRepository.save(user)
-    }
+
 
 
 

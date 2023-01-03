@@ -10,4 +10,5 @@ interface ICategoryService {
     fun createCategory(category: CategoryPL):Category
     fun deleteCategory(id:Long):Category
     fun getByUserId(user_id:Long):List<Category>
+    fun updateCategory(id: Long, category: CategoryPL): Category
 }

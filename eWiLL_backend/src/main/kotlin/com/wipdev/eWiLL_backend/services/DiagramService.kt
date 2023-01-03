@@ -38,8 +38,8 @@ class DiagramService : IDiagramService {
         return convert(diagram)
     }
 
-    override fun getByCategoryId(id: Long): Any {
-        return diagramRepository.findByCategoryId(id)
+    override fun getAllByCategoryId(id: Long): List<DiagramPL> {
+        return diagramRepository.findAllByCategoryId(id).map { convert(it) }
     }
 
 

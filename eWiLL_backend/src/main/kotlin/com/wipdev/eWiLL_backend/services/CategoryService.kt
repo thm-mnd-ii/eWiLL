@@ -27,4 +27,11 @@ class CategoryService : ICategoryService{
         return categoryRepository.findAllByUserId(user_id)
     }
 
+    override fun updateCategory(id: Long, categorypl: CategoryPL): Category {
+        val category = categoryRepository.findById(id).get()
+        category.name = categorypl.name
+        category.userId = categorypl.userid
+        return categoryRepository.save(category)
+    }
+
 }

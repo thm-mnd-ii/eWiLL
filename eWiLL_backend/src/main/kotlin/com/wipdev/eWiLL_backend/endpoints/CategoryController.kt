@@ -19,7 +19,7 @@ class CategoryController {
 
     @CrossOrigin
     @GetMapping("/{id}/diagrams")
-    fun getById(@PathVariable id:Long) = iDiagramService.getByCategoryId(id)
+    fun getById(@PathVariable id:Long) = iDiagramService.getAllByCategoryId(id)
 
     @CrossOrigin
     @PostMapping
@@ -40,4 +40,9 @@ class CategoryController {
     }
 
 
+    @CrossOrigin
+    @PutMapping("/{id}")
+    fun updateCategory(@PathVariable id: Long, @RequestBody category: CategoryPL): Category {
+        return iCategoryService.updateCategory(id, category)
+    }
 }

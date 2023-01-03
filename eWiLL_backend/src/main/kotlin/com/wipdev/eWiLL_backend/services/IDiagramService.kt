@@ -10,5 +10,6 @@ interface IDiagramService {
     fun create(diagramPL: DiagramPL): DiagramPL
     fun update(id: Long, diagramPL: DiagramPL): DiagramPL
     fun delete(id: Long): DiagramPL
-    fun getByCategoryId(id: Long): Any
+    fun getAllByCategoryId(id: Long): List<DiagramPL>
+
 }
