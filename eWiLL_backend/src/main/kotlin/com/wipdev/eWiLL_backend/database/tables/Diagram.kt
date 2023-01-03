@@ -19,10 +19,10 @@ open class Diagram {
     @Column(name = "ownerId", nullable = false)
     open var ownerId: Long? = null
 
-    @Column(name = "entities", nullable = false)
+    @Column(name = "entities", nullable = false, length = 100000)
     open var entities: String? = null
 
-    @Column(name = "connections", nullable = false)
+    @Column(name = "connections", nullable = false,length = 100000)
     open var connections: String? = null
 
 }
