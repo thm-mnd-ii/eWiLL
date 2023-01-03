@@ -20,6 +20,7 @@ class DiagramController{
     @GetMapping("/{id}")
     fun getById(@PathVariable id:Long) = iDiagramService.getById(id)
 
+    @CrossOrigin
     @PostMapping
     fun create(@RequestBody diagramPL: DiagramPL) = iDiagramService.create(diagramPL)
 

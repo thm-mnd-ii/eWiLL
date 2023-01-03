@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { responseEncoding } from "axios";
 import Diagram from "../model/diagram/Diagram";
 import Category from "../model/diagram/Category";
 import DiagramType from "../enums/DiagramType";
@@ -94,6 +94,15 @@ class DiagramService {
         return diagrams;
       }
 
+      saveDiagram(diagram: Diagram){
+        axios.post(API_URL, {
+          diagram
+        }).then((response) => {
+          console.log(response)
+        }
+        )
+      }
+
       getCategories(userId: number):Category[] {
     
         const categories: Category[] = [{
@@ -114,13 +123,21 @@ class DiagramService {
         return categories;
       };
 
-      getCategoriesTest(userId: number) {
+      getCategoriesTest(userId: number):Category[]{
       //TODO: FIX API CALL
-      return axios
+      const categories:Category[] = [];
+      axios
       .get("http://localhost:8080/category/user/" + userId, { headers: authHeader()}) 
-      .then((response) => {
-        console.log(response)
+      .then((response) => {      
+        for(const entry of response.data){
+          const tmpCategory = {} as Category
+          tmpCategory.id = entry.id;
+          tmpCategory.userId = entry.userId
+          tmpCategory.name = entry.name;
+          categories.push(tmpCategory)
+        }  
       });
+      return categories;
       };
   //{ headers: authHeader() } {withCredentials: true}
       getDiagramsWithCategory(userId: number): Map<string, Diagram[]>{

@@ -80,7 +80,7 @@ const newDiagram = ref(true);
 
 var modelID = ref(0);
 var displayDiagrams: Diagram[] = reactive([]);
-var categories: Category[] = reactive([]);
+var categories: Category[] = [];
 var categoryNames: String[] = [];
 var map: Map<string, Diagram[]> = reactive(new Map());
 
@@ -95,8 +95,6 @@ const props = defineProps<{
 const homeButtonClick = () => {
   categoryActive.value = true;
   displayDiagrams.length = 0;
-
-  diagramService.getCategoriesTest(1);
 };
 
 const categoryClicked = (category: string) => {
@@ -143,14 +141,17 @@ const saveButtonClick = () => {
   activeDiagram.name = saveName.value;
   dialog.value = false;
   //TODO: Saving diagram
+  console.log(activeDiagram);
+  diagramService.saveDiagram(activeDiagram);
 };
 
 onBeforeMount(() => {
-  map = diagramService.getDiagramsWithCategory(1);
-  categories = diagramService.getCategories(1);
   displayDiagrams.length = 0;
   var tmpUserId = authUserStore.auth.user?.id;
   if (tmpUserId != null) userId.value = tmpUserId;
+  categories = diagramService.getCategoriesTest(userId.value);
+  map = diagramService.getDiagramsWithCategory(userId.value);
+  //TODO
 });
 
 onMounted(() => {
