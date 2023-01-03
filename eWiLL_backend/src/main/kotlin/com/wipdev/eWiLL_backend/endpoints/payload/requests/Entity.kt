@@ -2,7 +2,7 @@ package com.wipdev.eWiLL_backend.endpoints.payload.requests
 
 
 data class Entity (val id: Long?,
-                   val type: EntityType?,
+                   val type: String?,
                    val entityName: String?,
                    val top: Int?,
                    val left: Int?,

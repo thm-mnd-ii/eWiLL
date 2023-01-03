@@ -60,8 +60,8 @@ class DiagramService : IDiagramService {
         diagram.id = diagramPL.id
         diagram.name = diagramPL.name
         diagram.ownerId = diagramPL.ownerId
-        diagram.entities = diagramPL.entities.toString()
-        diagram.connections = diagramPL.connections.toString()
+        diagram.entities = Json.mapper().writeValueAsString(diagramPL.entities)
+        diagram.connections = Json.mapper().writeValueAsString(diagramPL.connections)
         return diagram
     }
 
