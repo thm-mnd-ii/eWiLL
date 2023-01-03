@@ -95,6 +95,7 @@ const props = defineProps<{
 const homeButtonClick = () => {
   categoryActive.value = true;
   displayDiagrams.length = 0;
+  diagramService.postCategory();
 };
 
 const categoryClicked = (category: string) => {

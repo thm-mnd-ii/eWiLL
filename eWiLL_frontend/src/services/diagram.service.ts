@@ -95,9 +95,8 @@ class DiagramService {
       }
 
       saveDiagram(diagram: Diagram){
-        axios.post(API_URL, {
-          diagram
-        }).then((response) => {
+        axios.post(API_URL, { headers: authHeader() })
+        .then((response) => {
           console.log(response)
         }
         )
@@ -139,6 +138,10 @@ class DiagramService {
       });
       return categories;
       };
+
+      postCategory(){
+        axios.post("http://localhost:8080/category")
+      }
   //{ headers: authHeader() } {withCredentials: true}
       getDiagramsWithCategory(userId: number): Map<string, Diagram[]>{
         const map: Map<string, Diagram[]> = new Map();

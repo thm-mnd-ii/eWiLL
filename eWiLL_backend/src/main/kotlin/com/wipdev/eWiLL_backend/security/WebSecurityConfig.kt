@@ -34,16 +34,10 @@ class WebSecurityConfig {
     @Bean
     @Throws(Exception::class)
     fun filterChain( http: HttpSecurity): SecurityFilterChain? {
-        http.cors().and().csrf().disable()
-            .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-            .authorizeRequests()
-            .antMatchers("/api/auth/**").permitAll()
-            .antMatchers("/swagger-ui/**").permitAll()
-            .antMatchers("/v3/**").permitAll()
-            .antMatchers("/api/test/**").permitAll()
-            .anyRequest().authenticated()
-        http.authenticationProvider(authenticationProvider())
-        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter::class.java)
+        http.cors()
+            .and().authorizeRequests()
+            .anyRequest().permitAll()
+            .and().csrf().disable();
         return http.build()
     }
 
