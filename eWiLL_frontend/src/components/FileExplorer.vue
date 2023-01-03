@@ -19,7 +19,28 @@
                   <v-select v-model="saveCategoryProp" :items="categoryNames" label="Kategorie*" required :disabled="newDiagram == false"></v-select>
                 </v-col>
                 <v-col>
-                  <v-btn cols="12" sm="6" md="4" icon="mdi-folder-plus" :disabled="newDiagram == false"></v-btn>
+                  <v-btn cols="12" sm="6" md="4" icon="mdi-folder-plus" :disabled="newDiagram == false">
+                    <v-icon>mdi-folder-plus</v-icon>
+                    <v-dialog v-model="dialogCreateCategory" activator="parent" width="500px">
+                      <v-card>
+                        <v-card-title>
+                          <span class="text-h5">Create Category</span>
+                        </v-card-title>
+                        <v-card-text>
+                          <v-container>
+                            <v-row>
+                              <v-text-field v-model="createCategoryName" label="Name*" required></v-text-field>
+                            </v-row>
+                          </v-container>
+                        </v-card-text>
+                        <v-card-actions>
+                          <v-spacer></v-spacer>
+                          <v-btn variant="text" @click="dialogCreateCategory = false"> Close </v-btn>
+                          <v-btn variant="text" @click="createCategoryClick"> Erstellen </v-btn>
+                        </v-card-actions>
+                      </v-card>
+                    </v-dialog>
+                  </v-btn>
                 </v-col>
               </v-row>
             </v-container>
@@ -60,15 +81,12 @@ import { useDiagramStore } from "../stores/diagramStore";
 import { useAuthUserStore } from "../stores/authUserStore";
 
 import { onMounted, onBeforeMount, reactive, ref } from "vue";
-import DiagramType from "../enums/DiagramType";
 import diagramService from "../services/diagram.service";
 import Category from "../model/diagram/Category";
-import Entity from "../model/diagram/Entity";
-import Connection from "../model/diagram/Connection";
-import Config from "../model/diagram/Config";
 
 const categoryActive = ref(true);
 const dialog = ref(false);
+const dialogCreateCategory = ref(false);
 const activeCategorie = ref("");
 var activeDiagram = {} as Diagram;
 const userId = ref(0);
@@ -76,21 +94,13 @@ const diagramStore = useDiagramStore();
 const authUserStore = useAuthUserStore();
 const saveName = ref("");
 const saveCategoryProp = ref("");
+const createCategoryName = ref("");
 const newDiagram = ref(true);
 
-var modelID = ref(0);
 var displayDiagrams: Diagram[] = reactive([]);
 var categories: Category[] = [];
-var categoryNames: String[] = [];
+var categoryNames: String[] = reactive([]);
 var map: Map<string, Diagram[]> = reactive(new Map());
-
-const emit = defineEmits(["update:entity", "anker-point", "delete-entity", "change-entity-typ", "manage-attributes"]);
-//const updateEntity = ref(updateCurrentEntity.value)
-
-const props = defineProps<{
-  entities: Entity[];
-  ankerpoints: Connection[];
-}>();
 
 const homeButtonClick = () => {
   categoryActive.value = true;
@@ -111,23 +121,23 @@ const saveDialogButtonClick = () => {
   categories.forEach((category) => {
     categoryNames.push(category.name);
   });
+};
 
-  const tmpDiagram = {} as Diagram;
-  tmpDiagram.id = 0;
-  tmpDiagram.ownerId = userId.value;
-  tmpDiagram.name = "Test";
-  tmpDiagram.connections = props.ankerpoints;
-  tmpDiagram.entities = props.entities;
-
-  const category = {} as Category;
-  category.name = "1";
-  category.userId = 1;
-
-  const config = {} as Config;
-  config.id = 1;
-  config.diagramType = DiagramType.SERM;
-
-  tmpDiagram.config = config;
+const saveButtonClick = () => {
+  activeDiagram.name = saveName.value;
+  categories.forEach((category) => {
+    if (category.name == saveCategoryProp.value) {
+      activeDiagram.category.id = category.id;
+      activeDiagram.category.name = category.name;
+      activeDiagram.category.userId = category.userId;
+    }
+  });
+  dialog.value = false;
+  if (newDiagram.value == true) {
+    diagramService.postDiagram(activeDiagram);
+  } else {
+    diagramService.putDiagram(activeDiagram);
+  }
 };
 
 const diagramClicked = (diagram: Diagram) => {
@@ -137,26 +147,32 @@ const diagramClicked = (diagram: Diagram) => {
   saveName.value = diagram.name;
 };
 
-const saveButtonClick = () => {
-  activeDiagram.name = saveName.value;
-  dialog.value = false;
-  //TODO: Saving diagram
-  console.log(activeDiagram);
-  diagramService.saveDiagram2(activeDiagram);
-};
-
 onBeforeMount(() => {
   displayDiagrams.length = 0;
   var tmpUserId = authUserStore.auth.user?.id;
   if (tmpUserId != null) userId.value = tmpUserId;
-  categories = diagramService.getCategories(userId.value);
+  categories = diagramService.getCategoriesTest(userId.value);
   map = diagramService.getDiagramsWithCategory(userId.value);
   //TODO
 });
 
 onMounted(() => {
   activeDiagram = diagramStore.diagram;
+  const category = {} as Category;
+  activeDiagram.category = category;
 });
+
+const createCategoryClick = () => {
+  diagramService.postCategory(createCategoryName.value, userId.value);
+  const tmpCategory = {} as Category;
+  //TODO ID setzen
+  tmpCategory.id = 0;
+  tmpCategory.name = createCategoryName.value;
+  tmpCategory.userId = userId.value;
+  categories.push(tmpCategory);
+  categoryNames.push(createCategoryName.value);
+  dialogCreateCategory.value = false;
+};
 </script>
 
 <style scoped>
