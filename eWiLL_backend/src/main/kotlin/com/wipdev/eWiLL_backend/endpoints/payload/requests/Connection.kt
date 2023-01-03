@@ -1,3 +1,10 @@
 package com.wipdev.eWiLL_backend.endpoints.payload.requests
 
-data class Connection(val startEntity: Long?, val startEntityPosition: String?, val endEntity: Long?, val endEntityPosition: String?, val style: String?)
+class Connection(){
+    val startEntity: Long? = null
+    val endEntity: Long? = null
+    val style: String? = null
+    val startEntityPosition: String? = null
+    val endEntityPosition: String? = null
+
+}

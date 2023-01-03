@@ -2,4 +2,7 @@ package com.wipdev.eWiLL_backend.endpoints.payload.requests
 
 
 //type : AttributeType, name : String
-data class Attribute(val type: String?, val name: String?)
+class Attribute{
+    var type: String? = null
+    var name: String? = null
+}

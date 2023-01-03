@@ -43,7 +43,7 @@ class DiagramService : IDiagramService {
     }
 
     override fun getByUserId(userId: Long): List<DiagramPL> {
-        return diagramRepository.findAllByUserId(userId).map { convert(it) }
+        return diagramRepository.findAllByOwnerId(userId).map { convert(it) }
     }
 
 
@@ -53,6 +53,7 @@ class DiagramService : IDiagramService {
 
     fun parseConnections(connections : String?) : List<Connection>{
         return Json.mapper().readValue(connections,Array<Connection>::class.java).toList()
+
     }
 
     fun parseEntities(entities : String?) : List<Entity>{

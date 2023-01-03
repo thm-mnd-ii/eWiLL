@@ -1,13 +1,25 @@
 package com.wipdev.eWiLL_backend.endpoints.payload.requests
-
-
-data class Entity (val id: Long?,
+/*
+val id: Long?,
                    val type: String?,
                    val entityName: String?,
                    val top: Int?,
                    val left: Int?,
                    val width: Int?,
-                   val attributes: Array<Attribute>?) {
+                   val attributes: Array<Attribute>?
+ */
+
+class Entity () {
+
+    var id: Long? = null
+    var type: String? = null
+    var entityName: String? = null
+    var top: Int? = null
+    var left: Int? = null
+    var width: Int? = null
+    var attributes: Array<Attribute>? = null
+
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
