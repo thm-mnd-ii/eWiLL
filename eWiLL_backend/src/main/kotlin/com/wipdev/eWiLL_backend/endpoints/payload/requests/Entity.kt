@@ -12,7 +12,7 @@ val id: Long?,
 class Entity () {
 
     var id: Long? = null
-    var type: String? = null
+    var type: Int? = null
     var entityName: String? = null
     var top: Int? = null
     var left: Int? = null
@@ -42,7 +42,7 @@ class Entity () {
 
     override fun hashCode(): Int {
         var result = id?.hashCode() ?: 0
-        result = 31 * result + (type?.hashCode() ?: 0)
+        result = 31 * result + (type ?: 0)
         result = 31 * result + (entityName?.hashCode() ?: 0)
         result = 31 * result + (top ?: 0)
         result = 31 * result + (left ?: 0)

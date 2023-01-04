@@ -44,29 +44,48 @@ class DiagramService {
         return diagrams;
       };
 
-      getDiagramsTest(userId: number): Diagram[] {
-        //TODO: API CALL
-        const diagrams: Diagram[] = [];
-        axios
-        .get(API_URL + "User/" + userId, { headers: authHeader()})
-        .then((response) => {
-
-        })
-        return diagrams;
+      getDiagramsTest(userId: number): Promise<Diagram[]> {
+        return new Promise((resolve, reject) => {
+          const diagrams:Diagram[] = [];
+          axios
+          .get(API_URL + "user/" + userId, { headers: authHeader()})
+          .then((response) => {
+            for(const entry of response.data){
+              const tmpDiagram = {} as Diagram
+              tmpDiagram.id = entry.id;
+              tmpDiagram.ownerId = entry.ownerId;
+              tmpDiagram.name = entry.name;
+              tmpDiagram.config = entry.conig;
+              tmpDiagram.connections = entry.connections;
+              tmpDiagram.entities = entry.entities;
+              const tmpCategory = {} as Category;
+              tmpCategory.id = entry.categoryId
+              tmpCategory.userId = entry.ownerId;
+              tmpDiagram.category = tmpCategory;
+              diagrams.push(tmpDiagram) 
+            } 
+            resolve(diagrams)
+        }).catch((error) => {
+          reject(error)
+        });
+        });
       }
 
       postDiagram(diagram: Diagram){
         axios.post(API_URL, { id:0, ownerId: diagram.ownerId, name: diagram.name, config: diagram.config, entities: diagram.entities, connections: diagram.connections, categoryId: diagram.category.id })
         .then((response) => {
           console.log(response)
-        }
-        )
+        }).catch((error) => {
+          console.log(error)
+        });          
       }
 
       putDiagram(diagram: Diagram){
         axios.put(API_URL, {id:diagram.id, ownerId: diagram.ownerId, name: diagram.name, config: diagram.config, entities: diagram.entities, connections: diagram.connections, categoryId: diagram.category.id})
         .then((response) => {
           console.log(response)
+        }).catch((error) => {
+          console.log(error)
         })
       }
 
@@ -80,34 +99,39 @@ class DiagramService {
         return categories;
       }
 
-      getCategories(userId: number):Category[]{
-      const categories:Category[] = [];
-      axios.get("http://localhost:8080/category/user/" + userId, { headers: authHeader()})
-      .then((response) => {
-        for(const entry of response.data){
-          const tmpCategory = {} as Category
-          tmpCategory.id = entry.id;
-          tmpCategory.userId = entry.userId
-          tmpCategory.name = entry.name;
-          categories.push(tmpCategory)
-        } 
-      }) 
-      return categories;
-      };
+      async getCategories(userId: number):Promise<Category[]>{   
+      return new Promise((resolve, reject) => {
+        const categories:Category[] = [];
+        axios.get("http://localhost:8080/category/user/" + userId, { headers: authHeader()})
+        .then((response) => {
+          for(const entry of response.data){
+            const tmpCategory = {} as Category
+            tmpCategory.id = entry.id;
+            tmpCategory.userId = entry.userId
+            tmpCategory.name = entry.name;
+            categories.push(tmpCategory)
+
+          } 
+          resolve(categories)       
+        }).catch((error) => {
+          reject(error)
+        })    
+      })
+    };
+     
 
       postCategory(name: string, userid: number){
-        axios.post("http://localhost:8080/category", { name:name, userid: userid }) 
+        return axios.post("http://localhost:8080/category", { name:name, userid: userid }) 
       }
 
-      getDiagramsWithCategory(userId: number): Map<string, Diagram[]>{
+      getDiagramsWithCategory(categories:Category[], diagrams:Diagram[]): Map<string, Diagram[]>{
         const map: Map<string, Diagram[]> = new Map();
-        const allCategories = this.getCategoriesTest(userId);
-        const allDiagrams = this.getDiagrams(userId);
 
-        allCategories.forEach(category => {
+        categories.forEach(category => {
           const diagramsSameCategory: Diagram[] = []; 
-          allDiagrams.forEach(diagram => {
-            if(category.name == diagram.category.name){
+          diagrams.forEach(diagram => {
+            if(category.id == diagram.category.id){
+              diagram.category.name = category.name;
               diagramsSameCategory.push(diagram);
             }
           })

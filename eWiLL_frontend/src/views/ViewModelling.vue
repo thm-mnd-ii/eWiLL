@@ -20,7 +20,7 @@
   <div class="container">
     <ModalAddAttributes />
     <div>
-      <FileExplorer :entities="entityList" :ankerpoints="ankerPoints"></FileExplorer>
+      <FileExplorer></FileExplorer>
     </div>
     <div class="toolbox">
       <IconEntity id="item" draggable="true" @click="addElement($event, EntityType.ENTITY)" />
