@@ -1,19 +1,24 @@
 <!-- eslint-disable vue/no-v-text-v-html-on-component -->
 <template>
   <div class="explorer">
-    <v-btn prepend-icon="mdi-home" class="explorerBtn" @click="homeButtonClick">Home</v-btn>
-    <v-btn id="saveBtn" class="explorerBtn" @click="saveDialogButtonClick">
+    <v-btn prepend-icon="mdi-home" class="explorerBtn" :disabled="deleteActive" @click="homeButtonClick">Home</v-btn>
+    <v-btn id="saveBtn" :disabled="deleteActive" class="explorerBtn" @click="saveDialogButtonClick">
       <v-icon>mdi-content-save</v-icon>
-      <v-dialog v-model="dialog" activator="parent">
+      <v-dialog v-model="saveDialog" activator="parent">
         <v-card>
           <v-card-title>
             <span class="text-h5">Save Diagram</span>
+            <br />
+            <span v-if="!newDiagram" class="text-subtitle-1"
+              >{{ saveNameProp }} will be overwritten!
+              <v-btn id="saveAsNewBtn" @click="(newDiagram = true), (changedHisMind = true)">Save as new Diagram</v-btn>
+            </span>
           </v-card-title>
           <v-card-text>
             <v-container>
               <v-row>
                 <v-col cols="12" sm="6" md="4">
-                  <v-text-field v-model="saveName" label="Name*" required :disabled="newDiagram == false"></v-text-field>
+                  <v-text-field v-model="saveNameProp" label="Name*" required :disabled="newDiagram == false"></v-text-field>
                 </v-col>
                 <v-col cols="12" sm="6">
                   <v-select v-model="saveCategoryProp" :items="categoryNames" label="Kategorie*" required :disabled="newDiagram == false"></v-select>
@@ -21,7 +26,7 @@
                 <v-col>
                   <v-btn cols="12" sm="6" md="4" icon="mdi-folder-plus" :disabled="newDiagram == false">
                     <v-icon>mdi-folder-plus</v-icon>
-                    <v-dialog v-model="dialogCreateCategory" activator="parent" width="500px">
+                    <v-dialog v-model="createCategoryDialog" activator="parent" width="500px">
                       <v-card>
                         <v-card-title>
                           <span class="text-h5">Create Category</span>
@@ -35,7 +40,7 @@
                         </v-card-text>
                         <v-card-actions>
                           <v-spacer></v-spacer>
-                          <v-btn variant="text" @click="dialogCreateCategory = false"> Close </v-btn>
+                          <v-btn variant="text" @click="createCategoryDialog = false"> Close </v-btn>
                           <v-btn variant="text" @click="createCategoryClick"> Erstellen </v-btn>
                         </v-card-actions>
                       </v-card>
@@ -48,8 +53,25 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn variant="text" @click="dialog = false"> Close </v-btn>
-            <v-btn variant="text" @click="saveButtonClick"> Save </v-btn>
+            <v-btn variant="text" @click="closeSaveDialog"> Close </v-btn>
+            <v-btn variant="text" @click="finalSaveClick"> Save </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-btn>
+    <v-btn :class="deleteActive ? 'deleteBtnActive' : 'deleteBtnInactive'" @click="deleteActive = !deleteActive">
+      <v-icon>mdi-delete</v-icon>
+      <v-dialog v-model="deleteDialog" width="500px">
+        <v-card>
+          <v-card-title>
+            <span class="text-h5">Delete: {{ deleteProp }}</span
+            ><br />
+            <span v-if="categoryActive" class="text-subtitle-1">Category and all containing diagrams will be deleted</span>
+          </v-card-title>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn variant="text" @click="deleteDialog = false"> Close </v-btn>
+            <v-btn variant="text" @click="finalDeleteClick"> Delete </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -63,7 +85,7 @@
       </v-list-item>
     </v-list>
     <v-list>
-      <v-list-item v-for="diagram in displayDiagrams" :key="diagram.name" class="list-item" :value="diagram.name" @dblclick="diagramClicked(diagram)">
+      <v-list-item v-for="diagram in displayDiagrams" :key="diagram.name" class="list-item" :value="diagram.name" @dblclick="diagramDoubleClick(diagram)" @click="diagramSingleClick(diagram)">
         <template #prepend>
           <v-icon size="15px">mdi-file-document</v-icon>
         </template>
@@ -75,25 +97,37 @@
 
 <script setup lang="ts">
 import Diagram from "../model/diagram/Diagram";
+import Category from "../model/diagram/Category";
+import diagramService from "../services/diagram.service";
 import { useDiagramStore } from "../stores/diagramStore";
 import { useAuthUserStore } from "../stores/authUserStore";
-import { onMounted, reactive, ref } from "vue";
-import diagramService from "../services/diagram.service";
-import Category from "../model/diagram/Category";
+import { onMounted, ref } from "vue";
 
 const categoryActive = ref(true);
-const dialog = ref(false);
-const dialogCreateCategory = ref(false);
+const saveDialog = ref(false);
+const changedHisMind = ref(false);
+const saveNameProp = ref("");
+const saveCategoryProp = ref("");
+// Constants for delete
+const deleteDialog = ref(false);
+const deleteActive = ref(false);
+const deleteProp = ref("");
+const deleteItemCategory = ref();
+const deleteItemDiagram = ref();
+
+const createCategoryDialog = ref(false);
+
 const activeCategorie = ref("");
 var activeDiagram = {} as Diagram;
 const userId = ref(0);
 const diagramStore = useDiagramStore();
 const authUserStore = useAuthUserStore();
-const saveName = ref("");
-const saveCategoryProp = ref("");
+
 const createCategoryName = ref("");
 const newDiagram = ref(true);
+
 const ALERT_UPS = "Ups, something went wrong";
+const ALERT_SAVE = "Diagramm konnte nicht gespeichert werden";
 
 const displayDiagrams = ref<Diagram[]>([]);
 var categories: Category[] = [];
@@ -106,12 +140,36 @@ const homeButtonClick = () => {
 };
 
 const categoryClicked = (category: string) => {
-  categoryActive.value = false;
-  activeCategorie.value = category;
-  displayDiagrams.value.length = 0;
-  map.value.get(category)?.forEach((diagram) => {
-    displayDiagrams.value.push(diagram);
-  });
+  if (deleteActive.value) {
+    deleteDialog.value = true;
+    deleteProp.value = category;
+    deleteItemDiagram.value = null;
+    deleteItemCategory.value = category;
+  } else {
+    categoryActive.value = false;
+    activeCategorie.value = category;
+    displayDiagrams.value.length = 0;
+    map.value.get(category)?.forEach((diagram) => {
+      displayDiagrams.value.push(diagram);
+    });
+  }
+};
+
+const diagramDoubleClick = (diagram: Diagram) => {
+  activeDiagram = diagram;
+  newDiagram.value = false;
+  saveCategoryProp.value = diagram.category.name;
+  saveNameProp.value = diagram.name;
+  diagramStore.diagram = diagram;
+};
+
+const diagramSingleClick = (diagram: Diagram) => {
+  if (deleteActive.value) {
+    deleteDialog.value = true;
+    deleteProp.value = diagram.name;
+    deleteItemDiagram.value = diagram;
+    deleteItemCategory.value = null;
+  }
 };
 
 const saveDialogButtonClick = () => {
@@ -121,8 +179,16 @@ const saveDialogButtonClick = () => {
   });
 };
 
-const saveButtonClick = () => {
-  activeDiagram.name = saveName.value;
+const closeSaveDialog = () => {
+  saveDialog.value = false;
+  if (changedHisMind.value == true) {
+    newDiagram.value = false;
+    changedHisMind.value = false;
+  }
+};
+
+const finalSaveClick = () => {
+  activeDiagram.name = saveNameProp.value;
   activeDiagram.ownerId = userId.value;
   categories.forEach((category) => {
     if (category.name == saveCategoryProp.value) {
@@ -131,22 +197,57 @@ const saveButtonClick = () => {
       activeDiagram.category.userId = category.userId;
     }
   });
-  dialog.value = false;
-  console.log(activeDiagram);
+  saveDialog.value = false;
   if (newDiagram.value == true) {
-    diagramService.postDiagram(activeDiagram);
+    diagramService
+      .postDiagram(activeDiagram)
+      .then((response) => {
+        activeDiagram.id = response.data;
+        newDiagram.value = false;
+        reload();
+      })
+      .catch(() => {
+        alert(ALERT_SAVE);
+      });
   } else {
-    diagramService.putDiagram(activeDiagram);
+    diagramService
+      .putDiagram(activeDiagram)
+      .then(() => {
+        reload();
+      })
+      .catch(() => {
+        alert(ALERT_SAVE);
+      });
   }
 };
 
-const diagramClicked = (diagram: Diagram) => {
-  activeDiagram = diagram;
-  newDiagram.value = false;
-  saveCategoryProp.value = diagram.category.name;
-  saveName.value = diagram.name;
-  console.log(diagram);
-  diagramStore.diagram = diagram;
+const finalDeleteClick = () => {
+  if (deleteItemDiagram.value != null) {
+    diagramService
+      .deleteDiagram(deleteItemDiagram.value)
+      .then(() => {
+        reload();
+        deleteDialog.value = false;
+      })
+      .catch(() => {
+        alert(ALERT_UPS);
+      });
+  } else if (deleteItemCategory.value != null) {
+    const categoryToDelete = searchForCategory(deleteItemCategory.value);
+    if (categoryToDelete.id == null) {
+      alert(ALERT_UPS);
+    } else {
+      diagramService
+        .deleteCategory(categoryToDelete)
+        .then(() => {
+          reload();
+          deleteDialog.value = false;
+        })
+        .catch(() => {
+          alert(ALERT_UPS);
+        });
+    }
+  }
 };
 
 onMounted(() => {
@@ -165,7 +266,7 @@ const createCategoryClick = () => {
     .then((response) => {
       if (response.status == 200) {
         categoryNames.value.push(createCategoryName.value);
-        dialogCreateCategory.value = false;
+        createCategoryDialog.value = false;
         reload();
       }
     })
@@ -181,15 +282,32 @@ const reload = () => {
     .then((response) => {
       categories = response;
       diagramService
-        .getDiagramsTest(userId.value)
+        .getDiagramsByUserId(userId.value)
         .then((response) => {
           map.value = diagramService.getDiagramsWithCategory(categories, response);
+          displayDiagrams.value.length = 0;
+          map.value.get(activeCategorie.value)?.forEach((diagram) => {
+            displayDiagrams.value.push(diagram);
+          });
         })
         .catch((error) => console.log(error));
     })
     .catch((error) => {
       console.log(error);
     });
+};
+
+const searchForCategory = (categoryName: string): Category => {
+  const tmpCategory = {} as Category;
+  categories.forEach((category) => {
+    if (category.name == categoryName) {
+      tmpCategory.id = category.id;
+      tmpCategory.name = category.name;
+      tmpCategory.userId = category.userId;
+      return tmpCategory;
+    }
+  });
+  return tmpCategory;
 };
 </script>
 
@@ -236,5 +354,31 @@ const reload = () => {
   border-radius: 4px;
   max-width: 30px !important;
   min-width: 0px;
+}
+
+.deleteBtnInactive {
+  margin-bottom: 10px;
+  padding: 2px;
+  max-height: 25px;
+  margin: 2px;
+  border-radius: 4px;
+  max-width: 30px !important;
+  min-width: 0px;
+}
+
+.deleteBtnActive {
+  margin-bottom: 10px;
+  padding: 2px;
+  max-height: 25px;
+  margin: 2px;
+  border-radius: 4px;
+  max-width: 30px !important;
+  min-width: 0px;
+  background-color: red;
+}
+
+#saveAsNewBtn {
+  padding: 2px;
+  margin-left: 10px;
 }
 </style>
