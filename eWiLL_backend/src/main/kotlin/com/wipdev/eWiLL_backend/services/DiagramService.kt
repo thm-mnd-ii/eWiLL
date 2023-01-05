@@ -48,7 +48,7 @@ class DiagramService : IDiagramService {
 
 
     fun convert(diagram : Diagram) : DiagramPL{
-        return DiagramPL(diagram.id,diagram.ownerId,diagram.name,null,parseEntities(diagram.entities),parseConnections(diagram.connections),diagram.categoryId)
+        return DiagramPL(diagram.id,diagram.ownerId,diagram.name,null,parseEntities(diagram.entities),parseConnections(diagram.connections),diagram.categoryId?:0)
     }
 
     fun parseConnections(connections : String?) : List<Connection>{
@@ -67,7 +67,7 @@ class DiagramService : IDiagramService {
         diagram.ownerId = diagramPL.ownerId
         diagram.entities = Json.mapper().writeValueAsString(diagramPL.entities)
         diagram.connections = Json.mapper().writeValueAsString(diagramPL.connections)
-        diagram.categoryId = diagramPL.categoryId
+        diagram.categoryId = diagramPL.categoryId?:0
         return diagram
     }
 
