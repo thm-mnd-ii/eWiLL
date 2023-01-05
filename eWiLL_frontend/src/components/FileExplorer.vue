@@ -11,7 +11,7 @@
             <br />
             <span v-if="!newDiagram" class="text-subtitle-1"
               >{{ saveNameProp }} will be overwritten!
-              <v-btn id="saveAsNewBtn" @click="(newDiagram = true), (changedHisMind = true)">Save as new Diagram</v-btn>
+              <v-btn id="saveAsNewBtn" @click="(newDiagram = true), (putChangedToPost = true)">Save as new Diagram</v-btn>
             </span>
           </v-card-title>
           <v-card-text>
@@ -66,7 +66,7 @@
           <v-card-title>
             <span class="text-h5">Delete: {{ deleteProp }}</span
             ><br />
-            <span v-if="categoryActive" class="text-subtitle-1">Category and all containing diagrams will be deleted</span>
+            <span v-if="categoriesViewActive" class="text-subtitle-1">Category and all containing diagrams will be deleted</span>
           </v-card-title>
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -76,7 +76,7 @@
         </v-card>
       </v-dialog>
     </v-btn>
-    <v-list v-if="categoryActive">
+    <v-list v-if="categoriesViewActive">
       <v-list-item v-for="[key] in map" :key="key" class="list-item" @click="categoryClicked(key)">
         <template #prepend>
           <v-icon size="15px">mdi-folder</v-icon>
@@ -103,39 +103,38 @@ import { useDiagramStore } from "../stores/diagramStore";
 import { useAuthUserStore } from "../stores/authUserStore";
 import { onMounted, ref } from "vue";
 
-const categoryActive = ref(true);
+const categoriesViewActive = ref(true);
+const activeCategorie = ref("");
+var activeDiagram = {} as Diagram;
+const userId = ref(0);
+// Constants holding diagrams and categories
+var categories: Category[] = [];
+const categoryNames = ref<string[]>([]);
+const map = ref<Map<string, Diagram[]>>(new Map<string, Diagram[]>());
+const displayDiagrams = ref<Diagram[]>([]);
+//Constants for saving dialog
 const saveDialog = ref(false);
-const changedHisMind = ref(false);
+const putChangedToPost = ref(false);
 const saveNameProp = ref("");
 const saveCategoryProp = ref("");
-// Constants for delete
+const newDiagram = ref(true);
+// Constants for delete dialog
 const deleteDialog = ref(false);
 const deleteActive = ref(false);
 const deleteProp = ref("");
 const deleteItemCategory = ref();
 const deleteItemDiagram = ref();
-
+// Constants for category dialog
 const createCategoryDialog = ref(false);
+const createCategoryName = ref("");
 
-const activeCategorie = ref("");
-var activeDiagram = {} as Diagram;
-const userId = ref(0);
 const diagramStore = useDiagramStore();
 const authUserStore = useAuthUserStore();
-
-const createCategoryName = ref("");
-const newDiagram = ref(true);
-
 const ALERT_UPS = "Ups, something went wrong";
 const ALERT_SAVE = "Diagramm konnte nicht gespeichert werden";
 
-const displayDiagrams = ref<Diagram[]>([]);
-var categories: Category[] = [];
-const categoryNames = ref<string[]>([]);
-const map = ref<Map<string, Diagram[]>>(new Map<string, Diagram[]>());
-
 const homeButtonClick = () => {
-  categoryActive.value = true;
+  categoriesViewActive.value = true;
   displayDiagrams.value.length = 0;
 };
 
@@ -146,7 +145,7 @@ const categoryClicked = (category: string) => {
     deleteItemDiagram.value = null;
     deleteItemCategory.value = category;
   } else {
-    categoryActive.value = false;
+    categoriesViewActive.value = false;
     activeCategorie.value = category;
     displayDiagrams.value.length = 0;
     map.value.get(category)?.forEach((diagram) => {
@@ -181,9 +180,9 @@ const saveDialogButtonClick = () => {
 
 const closeSaveDialog = () => {
   saveDialog.value = false;
-  if (changedHisMind.value == true) {
+  if (putChangedToPost.value == true) {
     newDiagram.value = false;
-    changedHisMind.value = false;
+    putChangedToPost.value = false;
   }
 };
 
