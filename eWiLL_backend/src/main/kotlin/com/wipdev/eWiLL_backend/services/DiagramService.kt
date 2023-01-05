@@ -22,9 +22,9 @@ class DiagramService : IDiagramService {
         return convert(diagramRepository.findById(id).get())
     }
 
-    override fun create(diagramPL: DiagramPL): DiagramPL {
-        diagramRepository.save(convert(diagramPL))
-        return diagramPL
+    override fun create(diagramPL: DiagramPL): Long? {
+        val diagram =diagramRepository.save(convert(diagramPL))
+        return diagram.id
     }
 
     override fun update(id: Long, diagramPL: DiagramPL): DiagramPL {

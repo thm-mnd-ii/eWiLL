@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service
 interface IDiagramService {
     fun getAll(): List<DiagramPL>
     fun getById(id: Long): DiagramPL
-    fun create(diagramPL: DiagramPL): DiagramPL
+    fun create(diagramPL: DiagramPL): Long?
     fun update(id: Long, diagramPL: DiagramPL): DiagramPL
     fun delete(id: Long): DiagramPL
     fun getAllByCategoryId(id: Long): List<DiagramPL>
