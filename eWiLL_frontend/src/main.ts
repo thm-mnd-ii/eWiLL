@@ -12,6 +12,7 @@ import router from "./router";
 import { registerPlugins } from "./plugins";
 import vuetify from "./plugins/vuetify";
 
+axios.defaults.baseURL = "http://localhost:8080";
 axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
 axios.defaults.headers.common['Access-Control-Allow-Methods'] = 'GET, POST, PATCH, PUT, DELETE, OPTIONS';
 axios.defaults.headers.common['Access-Control-Allow-Headers'] = '*';

@@ -5,15 +5,13 @@ import DiagramType from "../enums/DiagramType";
 import authHeader from "./auth-header";
 import { DiagnosticCategory } from "typescript";
 
-const API_URL = "http://localhost:8080/api/diagram/";
-
 class DiagramService {
   
   getDiagramsByUserId(userId: number): Promise<Diagram[]> {
     return new Promise((resolve, reject) => {
       const diagrams:Diagram[] = [];
       axios
-      .get(API_URL + "user/" + userId, { headers: authHeader()})
+      .get("/api/diagram/user/" + userId, { headers: authHeader()})
       .then((response) => {
         for(const entry of response.data){
           const tmpDiagram = {} as Diagram
@@ -37,11 +35,11 @@ class DiagramService {
   }
 
   postDiagram(diagram: Diagram){
-    return axios.post(API_URL, { id:0, ownerId: diagram.ownerId, name: diagram.name, config: diagram.config, entities: diagram.entities, connections: diagram.connections, categoryId: diagram.category.id })        
+    return axios.post("/api/diagram/", { id:0, ownerId: diagram.ownerId, name: diagram.name, config: diagram.config, entities: diagram.entities, connections: diagram.connections, categoryId: diagram.category.id })        
   }
 
   putDiagram(diagram: Diagram){
-    return axios.put(API_URL, {id:diagram.id, ownerId: diagram.ownerId, name: diagram.name, config: diagram.config, entities: diagram.entities, connections: diagram.connections, categoryId: diagram.category.id})
+    return axios.put("/api/diagram/", {id:diagram.id, ownerId: diagram.ownerId, name: diagram.name, config: diagram.config, entities: diagram.entities, connections: diagram.connections, categoryId: diagram.category.id})
     .then((response) => {
       console.log(response)
     }).catch((error) => {
@@ -50,13 +48,13 @@ class DiagramService {
   }
 
   deleteDiagram(diagram: Diagram){
-    return axios.delete(API_URL + diagram.id, { headers: authHeader()})
+    return axios.delete("/api/diagram/" + diagram.id, { headers: authHeader()})
   }
 
   async getCategories(userId: number):Promise<Category[]>{   
     return new Promise((resolve, reject) => {
       const categories:Category[] = [];
-      axios.get("http://localhost:8080/category/user/" + userId, { headers: authHeader()})
+      axios.get("/category/user/" + userId, { headers: authHeader()})
       .then((response) => {
         for(const entry of response.data){
           const tmpCategory = {} as Category
@@ -74,11 +72,11 @@ class DiagramService {
      
 
   postCategory(name: string, userid: number){
-    return axios.post("http://localhost:8080/category", { name:name, userid: userid }) 
+    return axios.post("/category", { name:name, userid: userid }) 
   }
 
   deleteCategory(category: Category) {
-    return axios.delete("http://localhost:8080/category/" + category.id, { headers: authHeader()})
+    return axios.delete("/category/" + category.id, { headers: authHeader()})
   }
 
   getDiagramsWithCategory(categories:Category[], diagrams:Diagram[]): Map<string, Diagram[]>{
