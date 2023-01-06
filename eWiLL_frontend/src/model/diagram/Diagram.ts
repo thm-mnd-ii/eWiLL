@@ -10,7 +10,8 @@ interface Diagram {
   config: Config;
   entities: Entity[];
   connections: Connection[];
-  category: Category;
+  // category: Category;
+  categoryId: number;
 }
 
 export default Diagram;

@@ -95,8 +95,8 @@ export const useDiagramStore = defineStore("diagram", {
     return {
       diagram: {
         id: 0,
-        ownerId: 1,
-        name: "Mein Diagramm",
+        ownerId: 0,
+        name: "",
         config: config,
         entities: [] as Entity[],
         connections: [] as Connection[],

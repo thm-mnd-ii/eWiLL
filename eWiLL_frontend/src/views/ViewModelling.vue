@@ -53,7 +53,7 @@
 <script setup lang="ts">
 import EntityMain from "../components/EntityMain.vue";
 import LineMain from "../components/LineMain.vue";
-import ModalAddAttributes from "../components/ModalAddAttributes.vue";
+import ModalAddAttributes from "../dialog/DialogAddAttributes.vue";
 import FileExplorer from "../components/FileExplorer.vue";
 
 import IconEntityRelationshiptyp from "../components/icons/IconEntityRelationshiptyp.vue";
@@ -67,6 +67,7 @@ import { useToolManagementStore } from "../stores/toolManagementStore";
 import EntityType from "../enums/EntityType";
 import Connection from "../model/diagram/Connection";
 import Line from "../model/diagram/Line";
+import Diagram from "../model/diagram/Diagram";
 
 const diagramStore = useDiagramStore();
 const toolManagementStore = useToolManagementStore();
