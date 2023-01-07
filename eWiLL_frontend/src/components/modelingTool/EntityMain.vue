@@ -322,12 +322,6 @@ const resizer = (e: any) => {
 </script>
 
 <style scoped lang="scss">
-.entity {
-  pointer-events: all;
-  * {
-    pointer-events: none;
-  }
-}
 .objectContainer {
   z-index: 5;
   position: absolute;
