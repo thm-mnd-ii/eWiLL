@@ -117,6 +117,8 @@ const categoryClicked = (category: string) => {
 const diagramDoubleClick = (diagram: Diagram) => {
   console.log(diagram);
   activeDiagramId.value = diagram.id;
+
+  diagramStore.reset();
   diagramStore.diagram = diagram;
 };
 

@@ -56,15 +56,22 @@ const props = defineProps<{
   entity: Entity;
 }>();
 
+onMounted(() => {
+  setAnkerPoints();
+  setPosition(root.value, props.entity);
+  updateAttributes();
+});
+
+// Emit new entity to parent
+watch(props.entity, () => {
+  setAnkerPoints();
+  setPosition(root.value, props.entity);
+  updateAttributes();
+});
+
 const toolManagementStore = useToolManagementStore();
 const diagramStore = useDiagramStore();
 let entity = diagramStore.diagram.entities.find((entity) => entity.id == props.entity.id);
-
-// const entityName = ref(props.entity.entityName);
-// const top = ref(props.entity.top);
-// const left = ref(props.entity.left);
-// const width = ref(props.entity.width);
-
 const root = ref<HTMLInputElement | null>(null);
 
 const cssVarAttributesDistanceTop = computed(() => {
@@ -137,20 +144,6 @@ const handleEnter = (e: any) => {
   }
 };
 
-// watch(isEditable, (e) => {
-//     //console.log(props.entity.text == "")
-//     if (props.entity.text == ""){
-//         props.entity.text == "Placeholder"
-//     }
-// })
-
-onMounted(() => {
-  //console.log(props.entity)
-  setAnkerPoints();
-  setPosition(root.value, props.entity);
-  updateAttributes();
-});
-
 const outgoingAnkerPoint = ref<ConnectorPosition[]>([]);
 const incomingAnkerPoint = ref<ConnectorPosition[]>([]);
 
@@ -190,12 +183,6 @@ const updateEntity = () => {
     entity.width = parseInt(root.value.style.width);
   }
 };
-
-// Emit new entity to parent
-watch(props.entity, () => {
-  updateAttributes();
-  setAnkerPoints();
-});
 
 const activateEntity = () => {
   if (entity != undefined) {

@@ -106,5 +106,17 @@ export const useDiagramStore = defineStore("diagram", {
   getters: {
     getDiagram: (state: State) => state.diagram,
   },
-  actions: {},
+  actions: {
+    // reset diagram state
+    reset() {
+      this.diagram = {
+        id: 0,
+        ownerId: 0,
+        name: "",
+        config: config,
+        entities: [] as Entity[],
+        connections: [] as Connection[],
+      } as Diagram;
+    }
+  },
 });
