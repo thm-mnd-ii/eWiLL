@@ -40,11 +40,11 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch, computed } from "vue";
-import { useToolManagementStore } from "../stores/toolManagementStore";
+import { useToolManagementStore } from "../../stores/toolManagementStore";
 
 import LineWidget from "./LineWidget.vue";
 
-import CardinalityTyp from "../enums/CardinalityType";
+import CardinalityTyp from "../../enums/CardinalityType";
 
 const props = defineProps({
   line: { type: Object, required: true },

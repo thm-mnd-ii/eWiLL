@@ -32,22 +32,22 @@
 </template>
 
 <script setup lang="ts">
-import IconEntityRelationshiptyp from "./icons/IconEntityRelationshiptyp.vue";
-import IconEntity from "./icons/IconEntitytyp.vue";
-import IconRelationshiptyp from "./icons/IconRelationshiptyp.vue";
-import EntityTyp from "../enums/EntityType";
-import AttributeTyp from "../enums/AttributeType";
+import IconEntityRelationshiptyp from "../icons/IconEntityRelationshiptyp.vue";
+import IconEntity from "../icons/IconEntitytyp.vue";
+import IconRelationshiptyp from "../icons/IconRelationshiptyp.vue";
+import EntityTyp from "../../enums/EntityType";
+import AttributeTyp from "../../enums/AttributeType";
 import OutgoingAnkerPoint from "./OutgoingAnkerPoint.vue";
 import IncomingAnkerPoint from "./IncomingAnkerPoint.vue";
 import EntityWidget from "./EntityWidget.vue";
 
 import { ref, onMounted, computed, watch } from "vue";
-import { useDiagramStore } from "../stores/diagramStore";
-import { useToolManagementStore } from "../stores/toolManagementStore";
+import { useDiagramStore } from "../../stores/diagramStore";
+import { useToolManagementStore } from "../../stores/toolManagementStore";
 
-import ConnectorPosition from "../enums/ConnectorPosition";
-import Attribute from "../model/diagram/Attribute";
-import Entity from "../model/diagram/Entity";
+import ConnectorPosition from "../../enums/ConnectorPosition";
+import Attribute from "../../model/diagram/Attribute";
+import Entity from "../../model/diagram/Entity";
 
 const emit = defineEmits(["anker-point"]);
 //const updateEntity = ref(updateCurrentEntity.value)
