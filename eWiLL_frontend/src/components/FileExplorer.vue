@@ -1,31 +1,40 @@
 <!-- eslint-disable vue/no-v-text-v-html-on-component -->
 <template>
-  <DialogSaveDiagramVue :open-dialog="saveDialog" :selected-diagram-id="activeDiagramId" @close-dialog="saveDialog = false"></DialogSaveDiagramVue>
+  <div>
+    <DialogSaveDiagramVue :open-dialog="saveDialog" :selected-diagram-id="activeDiagramId" @close-dialog="saveDialog = false"></DialogSaveDiagramVue>
+    <DialogDeleteDiagramVue :open-dialog="deleteDialog"></DialogDeleteDiagramVue>
 
-  <DialogDeleteDiagramVue :open-dialog="deleteDialog"></DialogDeleteDiagramVue>
+    <v-card :elevation="3" class="explorer">
+      <v-card-actions>
+        <v-btn icon="mdi-home" class="explorerBtn" :disabled="deleteActive" @click="homeButtonClick"></v-btn>
+        <v-btn icon="mdi-content-save" class="explorerBtn" :disabled="deleteActive" @click="saveDialogButtonClick"></v-btn>
+        <v-btn icon="mdi-delete" class="explorerBtn" :class="{ deleteBtnActive: deleteActive }" @click="deleteActive = !deleteActive"></v-btn>
+      </v-card-actions>
+      <!-- Breaking line -->
+      <v-divider></v-divider>
+      <v-card-text>
+        <!-- TODO: Implement Search -->
+        <!-- <v-text-field v-model="search" label="Search" class="search" @input="searchInput"></v-text-field> -->
 
-  <div class="explorer">
-    <v-btn icon="mdi-home" class="explorerBtn" :disabled="deleteActive" @click="homeButtonClick"></v-btn>
-    <v-btn icon="mdi-content-save" class="explorerBtn" :disabled="deleteActive" @click="saveDialogButtonClick"></v-btn>
-    <v-btn icon="mdi-delete" class="explorerBtn" :class="{ deleteBtnActive: deleteActive }" @click="deleteActive = !deleteActive"></v-btn>
+        <v-list v-if="categoriesViewActive">
+          <v-list-item v-for="[key] in map" :key="key" class="list-item" @click="categoryClicked(key)">
+            <template #prepend>
+              <v-icon size="15px">mdi-folder</v-icon>
+            </template>
+            <v-list-item-title v-text="key"></v-list-item-title>
+          </v-list-item>
+        </v-list>
 
-    <v-list v-if="categoriesViewActive">
-      <v-list-item v-for="[key] in map" :key="key" class="list-item" @click="categoryClicked(key)">
-        <template #prepend>
-          <v-icon size="15px">mdi-folder</v-icon>
-        </template>
-        <v-list-item-title v-text="key"></v-list-item-title>
-      </v-list-item>
-    </v-list>
-
-    <v-list v-if="!categoriesViewActive">
-      <v-list-item v-for="diagram in displayDiagrams" :key="diagram.name" class="list-item" :value="diagram.name" @dblclick="diagramDoubleClick(diagram)" @click="diagramSingleClick(diagram)">
-        <template #prepend>
-          <v-icon size="15px">mdi-file-document</v-icon>
-        </template>
-        <v-list-item-title v-text="diagram.name"></v-list-item-title>
-      </v-list-item>
-    </v-list>
+        <v-list v-if="!categoriesViewActive">
+          <v-list-item v-for="diagram in displayDiagrams" :key="diagram.name" class="list-item" :value="diagram.name" @dblclick="loadDiagramIntoStore(diagram)" @click="diagramSingleClick(diagram)">
+            <template #prepend>
+              <v-icon size="15px">mdi-file-document</v-icon>
+            </template>
+            <v-list-item-title v-text="diagram.name"></v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-card-text>
+    </v-card>
   </div>
 </template>
 
@@ -114,12 +123,11 @@ const categoryClicked = (category: string) => {
   }
 };
 
-const diagramDoubleClick = (diagram: Diagram) => {
+const loadDiagramIntoStore = (diagram: Diagram) => {
   console.log(diagram);
   activeDiagramId.value = diagram.id;
 
-  diagramStore.reset();
-  diagramStore.diagram = diagram;
+  diagramStore.loadDiagram(diagram);
 };
 
 const diagramSingleClick = (diagram: Diagram) => {
@@ -136,18 +144,24 @@ const saveDialogButtonClick = () => {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .explorer {
-  background-color: rgb(255, 255, 255);
   z-index: 1;
   position: absolute;
-  top: 50px;
-  left: 5px;
   padding: 10px;
-  width: 200px;
-  height: 300px;
-  border-radius: 5px;
-  box-shadow: 4px 4px 10px 0px rgba(15, 33, 47, 0.421);
+  max-width: 200px;
+  min-height: 200px;
+}
+
+.explorerBtn {
+  height: 30px;
+  border-radius: 3px;
+
+  &:hover {
+    margin-bottom: 5px;
+    * {
+    }
+  }
 }
 
 .v-list {
@@ -166,12 +180,6 @@ const saveDialogButtonClick = () => {
   max-height: 30px !important;
   height: 20px !important;
   min-height: 0px !important;
-}
-
-.explorerBtn {
-  margin: 3px;
-  border-radius: 3px !important;
-  height: 35px;
 }
 
 .deleteBtnActive {

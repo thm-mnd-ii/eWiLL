@@ -114,17 +114,23 @@ const saveDiagram = () => {
       .postDiagram(diagramStore.diagram)
       .then((response) => {
         diagramStore.diagram = response.data;
+        closeSaveDialog();
       })
       .catch((error) => {
         console.log(error);
         alert("Diagramm konnte nicht gespeichert werden");
       });
   } else {
-    diagramService.putDiagram(diagramStore.diagram).catch(() => {
-      alert("Diagramm konnte nicht gespeichert werden");
-    });
+    diagramService
+      .putDiagram(diagramStore.diagram)
+      .then(() => {
+        closeSaveDialog();
+      })
+      .catch(() => {
+        alert("Diagramm konnte nicht gespeichert werden");
+      });
   }
 };
 </script>
 
-<style scoped></style>
+<style scoped lang="scss"></style>

@@ -11,6 +11,8 @@ import Entity from "../model/diagram/Entity";
 
 interface State {
   diagram: Diagram;
+  // increment this key to reload the diagram component
+  key: number;
 }
 
 const config: Config = {
@@ -101,6 +103,8 @@ export const useDiagramStore = defineStore("diagram", {
         entities: [] as Entity[],
         connections: [] as Connection[],
       } as Diagram,
+      // increment this key to reload the diagram component
+      key: 0,
     };
   },
   getters: {
@@ -108,15 +112,11 @@ export const useDiagramStore = defineStore("diagram", {
   },
   actions: {
     // reset diagram state
-    reset() {
-      this.diagram = {
-        id: 0,
-        ownerId: 0,
-        name: "",
-        config: config,
-        entities: [] as Entity[],
-        connections: [] as Connection[],
-      } as Diagram;
-    }
+    loadDiagram(diagram: Diagram) {
+      Object.assign(this, useDiagramStore);
+      this.diagram = diagram;
+      // reload diagram component
+      this.key++;
+    },
   },
 });

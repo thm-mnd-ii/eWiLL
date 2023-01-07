@@ -19,9 +19,7 @@
 
   <div class="container">
     <ModalAddAttributes v-if="toolManagementStore.mode == Mode.EDIT" />
-    <div>
-      <FileExplorer></FileExplorer>
-    </div>
+
     <div v-if="toolManagementStore.mode == Mode.EDIT" class="toolbox">
       <IconEntity id="item" draggable="true" @click="addElement($event, EntityType.ENTITY)" />
       <IconRelationshiptyp @mousedown="addElement($event, EntityType.RELATIONSHIP)" />
@@ -44,7 +42,6 @@ import EntityMain from "./modelingTool/EntityMain.vue";
 import LineMain from "./modelingTool/LineMain.vue";
 import ModalAddAttributes from "../dialog/DialogAddAttributes.vue";
 import ArrowDefinitionVue from "./modelingTool/ArrowDefinition.vue";
-import FileExplorer from "./FileExplorer.vue";
 
 import IconEntityRelationshiptyp from "./icons/IconEntityRelationshiptyp.vue";
 import IconEntity from "./icons/IconEntitytyp.vue";
@@ -209,8 +206,8 @@ const addElement = (e: { clientY: number; clientX: number }, type: EntityType) =
 .toolbox {
   z-index: 1;
   position: absolute;
-  top: 400px;
-  left: 30px;
+  top: 260px;
+  left: 10px;
   padding: 10px;
   width: 140px;
   height: auto;
