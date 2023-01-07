@@ -18,7 +18,7 @@
       </v-list-item>
     </v-list>
 
-    <v-list>
+    <v-list v-if="!categoriesViewActive">
       <v-list-item v-for="diagram in displayDiagrams" :key="diagram.name" class="list-item" :value="diagram.name" @dblclick="diagramDoubleClick(diagram)" @click="diagramSingleClick(diagram)">
         <template #prepend>
           <v-icon size="15px">mdi-file-document</v-icon>
@@ -81,7 +81,7 @@ const updateFiles = (uId: number) => {
           let userDiagrams = response.data as Diagram[];
 
           map.value = diagramService.getDiagramsWithCategory(categories, userDiagrams);
-          displayDiagrams.value.length = 0;
+          displayDiagrams.value = [];
           map.value.get(activeCategorie.value)?.forEach((diagram) => {
             displayDiagrams.value.push(diagram);
           });
@@ -95,7 +95,6 @@ const updateFiles = (uId: number) => {
 
 const homeButtonClick = () => {
   categoriesViewActive.value = true;
-  displayDiagrams.value.length = 0;
 };
 
 const categoryClicked = (category: string) => {
@@ -119,8 +118,6 @@ const diagramDoubleClick = (diagram: Diagram) => {
   console.log(diagram);
   activeDiagramId.value = diagram.id;
   diagramStore.diagram = diagram;
-
-  console.log(activeDiagramId);
 };
 
 const diagramSingleClick = (diagram: Diagram) => {

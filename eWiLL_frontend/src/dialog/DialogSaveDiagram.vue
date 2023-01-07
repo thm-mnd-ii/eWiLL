@@ -1,5 +1,5 @@
 <template>
-  <DialogAddCategoriesVue :open-dialog="saveDialog"></DialogAddCategoriesVue>
+  <DialogAddCategoryVue :open-dialog="addCategoriesDialog" @close-dialog="addCategoriesDialog = false"></DialogAddCategoryVue>
 
   <v-dialog v-model="saveDialog">
     <v-card>
@@ -21,7 +21,7 @@
               <v-select v-model="diagramStore.diagram.categoryId" :items="categoryNames" item-title="name" item-value="id" label="Kategorie*" required :disabled="isNewDiagram == false"></v-select>
             </v-col>
             <v-col>
-              <v-btn cols="12" sm="6" md="4" icon="mdi-folder-plus" :disabled="isNewDiagram == false"></v-btn>
+              <v-btn cols="12" sm="6" md="4" icon="mdi-folder-plus" :disabled="isNewDiagram == false" @click="addCategoriesDialog = true"></v-btn>
             </v-col>
           </v-row>
         </v-container>
@@ -42,12 +42,13 @@ import Category from "../model/diagram/Category";
 import diagramService from "../services/diagram.service";
 import { useDiagramStore } from "../stores/diagramStore";
 import { useAuthUserStore } from "../stores/authUserStore";
-import DialogAddCategoriesVue from "./DialogAddCategories.vue";
+import DialogAddCategoryVue from "./DialogAddCategory.vue";
 
 const diagramStore = useDiagramStore();
 const authUserStore = useAuthUserStore();
 
 const categoryNames = ref<Category[]>([]);
+const addCategoriesDialog = ref<boolean>(false);
 
 // define props with ts
 const props = defineProps<{

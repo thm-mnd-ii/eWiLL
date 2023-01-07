@@ -67,7 +67,6 @@ import { useToolManagementStore } from "../stores/toolManagementStore";
 import EntityType from "../enums/EntityType";
 import Connection from "../model/diagram/Connection";
 import Line from "../model/diagram/Line";
-import Diagram from "../model/diagram/Diagram";
 
 const diagramStore = useDiagramStore();
 const toolManagementStore = useToolManagementStore();
