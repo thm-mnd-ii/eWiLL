@@ -37,7 +37,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref, defineEmits, watch, onMounted } from "vue";
+import { ref, defineEmits, watch, onMounted } from "vue";
 import Category from "../model/diagram/Category";
 import diagramService from "../services/diagram.service";
 import { useDiagramStore } from "../stores/diagramStore";
@@ -120,7 +120,7 @@ const saveDiagram = () => {
     diagramService
       .postDiagram(diagramStore.diagram)
       .then((response) => {
-        diagramStore.diagram = response.data;
+        diagramStore.loadDiagram(response.data);
         closeSaveDialog();
       })
       .catch((error) => {

@@ -1,6 +1,7 @@
 <!-- eslint-disable vue/no-v-text-v-html-on-component -->
 <template>
   <div>
+    <!-- TODO: refactor DialogSaveDiagramVue like DialogConfirmVue to handle the dialog with promises -->
     <DialogSaveDiagramVue :open-dialog="saveDialog" :selected-diagram-id="activeDiagramId" @close-dialog="saveDialog = false"></DialogSaveDiagramVue>
     <DialogConfirmVue ref="dialog"></DialogConfirmVue>
 
@@ -79,36 +80,40 @@ onMounted(() => {
 });
 
 const updateFiles = (uId: number) => {
-  diagramService
-    .getCategories(uId)
-    .then((categories) => {
-      diagramService
-        .getDiagramsByUserId(uId)
-        .then((userDiagrams) => {
-          console.log(userDiagrams);
-
-          map.value = diagramService.getDiagramsWithCategory(categories.data, userDiagrams.data);
-          displayDiagrams.value = [];
-          if (activeCategorie.value != null) {
-            map.value.get(activeCategorie.value)?.forEach((diagram) => {
-              displayDiagrams.value.push(diagram);
-            });
-          }
-        })
-        .catch((error) => console.log(error));
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+  return new Promise<void>((resolve, reject) => {
+    diagramService
+      .getCategories(uId)
+      .then((categories) => {
+        diagramService
+          .getDiagramsByUserId(uId)
+          .then((userDiagrams) => {
+            map.value = diagramService.getDiagramsWithCategory(categories.data, userDiagrams.data);
+            displayDiagrams.value = [];
+            if (activeCategorie.value != null) {
+              map.value.get(activeCategorie.value)?.forEach((diagram) => {
+                displayDiagrams.value.push(diagram);
+              });
+            }
+            resolve();
+          })
+          .catch((error) => {
+            console.log(error);
+            reject();
+          });
+      })
+      .catch((error) => {
+        console.log(error);
+        reject();
+      });
+  });
 };
 
 const homeButtonClick = () => {
   categoriesViewActive.value = true;
+  updateFiles(authUserStore.auth.user?.id as number);
 };
 
 const categoryClicked = (category: Category) => {
-  console.log(category);
-
   if (deleteActive.value) {
     if (dialog.value) {
       dialog.value.openDialog(`Lösche: ${category.name}`, "Willst du die Kategorie wirklich löschen? Wenn du sie löscht, werden auch alle Diagramme gelöscht, die in dieser Kategorie sind.").then((result: boolean) => {
@@ -120,18 +125,20 @@ const categoryClicked = (category: Category) => {
       });
     }
   } else {
-    // TODO: refactor this to a function
-    categoriesViewActive.value = false;
-    activeCategorie.value = category;
-    displayDiagrams.value = [];
-    map.value.get(category)?.forEach((diagram) => {
-      displayDiagrams.value.push(diagram);
-    });
+    selectCategory(category);
   }
 };
 
+const selectCategory = (category: Category) => {
+  categoriesViewActive.value = false;
+  activeCategorie.value = category;
+  displayDiagrams.value = [];
+  map.value.get(category)?.forEach((diagram) => {
+    displayDiagrams.value.push(diagram);
+  });
+};
+
 const loadDiagramIntoStore = (diagram: Diagram) => {
-  console.log(diagram);
   if (!deleteActive.value) {
     activeDiagramId.value = diagram.id;
     diagramStore.loadDiagram(diagram);
@@ -144,7 +151,12 @@ const diagramSingleClick = (diagram: Diagram) => {
       dialog.value.openDialog(`Lösche: ${diagram.name}`, "Willst du das Diagramm wirklich löschen?").then((result: boolean) => {
         if (result) {
           diagramService.deleteDiagram(diagram).then(() => {
-            updateFiles(authUserStore.auth.user?.id as number);
+            console.log("Diagram deleted");
+            console.log(activeCategorie.value);
+            // TODO: Reload doesnt work
+            updateFiles(authUserStore.auth.user?.id as number).then(() => {
+              selectCategory(activeCategorie.value as Category);
+            });
           });
         }
       });

@@ -46,7 +46,6 @@ class DiagramService {
     diagrams: Diagram[]
   ): Map<Category, Diagram[]> {
     const map: Map<Category, Diagram[]> = new Map();
-    console.log(categories);
 
     // map diagram to category
     diagrams.forEach((diagram) => {
