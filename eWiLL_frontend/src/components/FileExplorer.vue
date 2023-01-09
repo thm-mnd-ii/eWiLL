@@ -2,7 +2,7 @@
 <template>
   <div>
     <DialogSaveDiagramVue :open-dialog="saveDialog" :selected-diagram-id="activeDiagramId" @close-dialog="saveDialog = false"></DialogSaveDiagramVue>
-    <DialogDeleteDiagramVue :open-dialog="deleteDialog"></DialogDeleteDiagramVue>
+    <DialogConfirmVue ref="dialog"></DialogConfirmVue>
 
     <v-card :elevation="3" class="explorer">
       <v-card-actions>
@@ -17,18 +17,20 @@
         <!-- <v-text-field v-model="search" label="Search" class="search" @input="searchInput"></v-text-field> -->
 
         <v-list v-if="categoriesViewActive">
-          <v-list-item v-for="[key] in map" :key="key" class="list-item" @click="categoryClicked(key)">
+          <v-list-item v-for="[key] in map" :key="key.id" class="list-item" @click="categoryClicked(key)">
             <template #prepend>
-              <v-icon size="15px">mdi-folder</v-icon>
+              <v-icon v-if="deleteActive" size="15px" color="error">mdi-delete</v-icon>
+              <v-icon v-if="!deleteActive" size="15px">mdi-folder</v-icon>
             </template>
-            <v-list-item-title v-text="key"></v-list-item-title>
+            <v-list-item-title v-text="key.name"></v-list-item-title>
           </v-list-item>
         </v-list>
 
         <v-list v-if="!categoriesViewActive">
           <v-list-item v-for="diagram in displayDiagrams" :key="diagram.name" class="list-item" :value="diagram.name" @dblclick="loadDiagramIntoStore(diagram)" @click="diagramSingleClick(diagram)">
             <template #prepend>
-              <v-icon size="15px">mdi-file-document</v-icon>
+              <v-icon v-if="deleteActive" size="15px" color="error">mdi-delete</v-icon>
+              <v-icon v-if="!deleteActive" size="15px">mdi-file-document</v-icon>
             </template>
             <v-list-item-title v-text="diagram.name"></v-list-item-title>
           </v-list-item>
@@ -42,28 +44,25 @@
 import Diagram from "../model/diagram/Diagram";
 import Category from "../model/diagram/Category";
 import DialogSaveDiagramVue from "../dialog/DialogSaveDiagram.vue";
-import DialogDeleteDiagramVue from "../dialog/DialogDeleteDiagram.vue";
+import DialogConfirmVue from "../dialog/DialogConfirm.vue";
 import diagramService from "../services/diagram.service";
 import { useDiagramStore } from "../stores/diagramStore";
 import { useAuthUserStore } from "../stores/authUserStore";
 import { onMounted, ref } from "vue";
 
-const deleteDialog = ref<boolean>(false);
+const dialog = ref<typeof DialogConfirmVue>();
 
 const categoriesViewActive = ref(true);
-const activeCategorie = ref("");
+const activeCategorie = ref<Category | null>(null);
 const activeDiagramId = ref<number | null>(null);
 
 const categoryNames = ref<string[]>([]);
-const map = ref<Map<string, Diagram[]>>(new Map<string, Diagram[]>());
+const map = ref<Map<Category, Diagram[]>>(new Map());
 const displayDiagrams = ref<Diagram[]>([]);
+
 //Constants for saving dialog
 const saveDialog = ref(false);
-
 const deleteActive = ref(false);
-const deleteProp = ref("");
-const deleteItemCategory = ref();
-const deleteItemDiagram = ref();
 
 const diagramStore = useDiagramStore();
 const authUserStore = useAuthUserStore();
@@ -82,18 +81,19 @@ onMounted(() => {
 const updateFiles = (uId: number) => {
   diagramService
     .getCategories(uId)
-    .then((response) => {
-      let categories = response.data as Category[];
+    .then((categories) => {
       diagramService
         .getDiagramsByUserId(uId)
-        .then((response) => {
-          let userDiagrams = response.data as Diagram[];
+        .then((userDiagrams) => {
+          console.log(userDiagrams);
 
-          map.value = diagramService.getDiagramsWithCategory(categories, userDiagrams);
+          map.value = diagramService.getDiagramsWithCategory(categories.data, userDiagrams.data);
           displayDiagrams.value = [];
-          map.value.get(activeCategorie.value)?.forEach((diagram) => {
-            displayDiagrams.value.push(diagram);
-          });
+          if (activeCategorie.value != null) {
+            map.value.get(activeCategorie.value)?.forEach((diagram) => {
+              displayDiagrams.value.push(diagram);
+            });
+          }
         })
         .catch((error) => console.log(error));
     })
@@ -106,17 +106,24 @@ const homeButtonClick = () => {
   categoriesViewActive.value = true;
 };
 
-const categoryClicked = (category: string) => {
+const categoryClicked = (category: Category) => {
   console.log(category);
 
   if (deleteActive.value) {
-    deleteProp.value = category;
-    deleteItemDiagram.value = null;
-    deleteItemCategory.value = category;
+    if (dialog.value) {
+      dialog.value.openDialog(`Lösche: ${category.name}`, "Willst du die Kategorie wirklich löschen? Wenn du sie löscht, werden auch alle Diagramme gelöscht, die in dieser Kategorie sind.").then((result: boolean) => {
+        if (result) {
+          diagramService.deleteCategory(category).then(() => {
+            updateFiles(authUserStore.auth.user?.id as number);
+          });
+        }
+      });
+    }
   } else {
+    // TODO: refactor this to a function
     categoriesViewActive.value = false;
     activeCategorie.value = category;
-    displayDiagrams.value.length = 0;
+    displayDiagrams.value = [];
     map.value.get(category)?.forEach((diagram) => {
       displayDiagrams.value.push(diagram);
     });
@@ -125,16 +132,23 @@ const categoryClicked = (category: string) => {
 
 const loadDiagramIntoStore = (diagram: Diagram) => {
   console.log(diagram);
-  activeDiagramId.value = diagram.id;
-
-  diagramStore.loadDiagram(diagram);
+  if (!deleteActive.value) {
+    activeDiagramId.value = diagram.id;
+    diagramStore.loadDiagram(diagram);
+  }
 };
 
 const diagramSingleClick = (diagram: Diagram) => {
   if (deleteActive.value) {
-    deleteProp.value = diagram.name;
-    deleteItemDiagram.value = diagram;
-    deleteItemCategory.value = null;
+    if (dialog.value) {
+      dialog.value.openDialog(`Lösche: ${diagram.name}`, "Willst du das Diagramm wirklich löschen?").then((result: boolean) => {
+        if (result) {
+          diagramService.deleteDiagram(diagram).then(() => {
+            updateFiles(authUserStore.auth.user?.id as number);
+          });
+        }
+      });
+    }
   }
 };
 

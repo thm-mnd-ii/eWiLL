@@ -109,6 +109,13 @@ const closeSaveDialog = () => {
 };
 
 const saveDiagram = () => {
+  // set user id of diagram owner
+  if (authUserStore.auth.user != null) {
+    diagramStore.diagram.ownerId = authUserStore.auth.user?.id;
+  } else {
+    throw new Error("User is not logged in");
+  }
+
   if (isNewDiagram.value) {
     diagramService
       .postDiagram(diagramStore.diagram)

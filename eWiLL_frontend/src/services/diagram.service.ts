@@ -1,12 +1,10 @@
-import axios, { responseEncoding } from "axios";
+import axios, { AxiosResponse } from "axios";
 import Diagram from "../model/diagram/Diagram";
 import Category from "../model/diagram/Category";
-import DiagramType from "../enums/DiagramType";
 import authHeader from "./auth-header";
-import { DiagnosticCategory } from "typescript";
 
 class DiagramService {
-  getDiagramsByUserId(userId: number) {
+  getDiagramsByUserId(userId: number): Promise<AxiosResponse<Diagram[]>> {
     return axios.get("/api/diagram/user/" + userId, { headers: authHeader() });
   }
 
@@ -31,7 +29,7 @@ class DiagramService {
     });
   }
 
-  getCategories(userId: number) {
+  getCategories(userId: number): Promise<AxiosResponse<Category[]>> {
     return axios.get("/category/user/" + userId, { headers: authHeader() });
   }
 
@@ -46,17 +44,18 @@ class DiagramService {
   getDiagramsWithCategory(
     categories: Category[],
     diagrams: Diagram[]
-  ): Map<string, Diagram[]> {
-    const map: Map<string, Diagram[]> = new Map();
+  ): Map<Category, Diagram[]> {
+    const map: Map<Category, Diagram[]> = new Map();
+    console.log(categories);
 
     // map diagram to category
     diagrams.forEach((diagram) => {
       categories.forEach((category) => {
         if (diagram.categoryId === category.id) {
-          if (map.has(category.name)) {
-            map.get(category.name)?.push(diagram);
+          if (map.has(category)) {
+            map.get(category)?.push(diagram);
           } else {
-            map.set(category.name, [diagram]);
+            map.set(category, [diagram]);
           }
         }
       });

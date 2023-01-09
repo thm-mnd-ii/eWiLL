@@ -83,6 +83,9 @@ const unselectAll = () => {
 };
 
 const updateLines = () => {
+  // TODO: find a better way to check if connections is undefined
+  if (diagramStore.diagram.connections === undefined) return;
+
   let calculatedLines: Line[] = [];
 
   diagramStore.diagram.connections.forEach((connection: Connection, index) => {
