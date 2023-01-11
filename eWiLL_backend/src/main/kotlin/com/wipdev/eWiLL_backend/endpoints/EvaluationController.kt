@@ -34,7 +34,7 @@ class EvaluationController {
         val model = submissionRequestPL.diagramPL
 
 
-        return service.eval(submissionRequestPL)
+        return service.eval(submissionRequestPL).toString()
     }
 
 

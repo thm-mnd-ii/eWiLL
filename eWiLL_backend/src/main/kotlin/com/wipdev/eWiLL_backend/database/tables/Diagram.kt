@@ -25,7 +25,7 @@ open class Diagram {
     @Column(name = "connections", nullable = false,length = 100000)
     open var connections: String? = null
 
-    @Column(name = "configId", nullable = false,length = 100000)
+    @Column(name = "configId", nullable = false)
     open var configId: Long? = null
 
 
