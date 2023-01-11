@@ -6,7 +6,7 @@ import javax.persistence.*
 @Table(name = "Diagram")
 open class Diagram {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     open var id: Long? = null
 
@@ -24,5 +24,9 @@ open class Diagram {
 
     @Column(name = "connections", nullable = false,length = 100000)
     open var connections: String? = null
+
+    @Column(name = "configId", nullable = false,length = 100000)
+    open var configId: Long? = null
+
 
 }
