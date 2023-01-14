@@ -4,6 +4,8 @@ import com.wipdev.eWiLL_backend.endpoints.payload.requests.DiagramPL
 
 class DiagramData {
 
+    var id:Long? = null
+
     var nodes: List<DiagramNode> = emptyList()
     var connections : List<DiagramConnection> = emptyList()
 
@@ -11,6 +13,7 @@ class DiagramData {
 
 
     constructor(diagram: DiagramPL) {
+        this.id = diagram.id
         nodes = diagram.entities!!.map { DiagramNode(it) }
         connections = diagram.connections?.map { e->DiagramConnection(getNodeById(e.startEntity!!)!!,getNodeById(e.endEntity!!)!!,e.style!!) } ?: emptyList()
 
