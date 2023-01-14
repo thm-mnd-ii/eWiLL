@@ -29,11 +29,6 @@ class EvaluationController {
     @PostMapping("/submit")
     @ResponseBody
     fun submit(@Parameter submissionRequestPL: SubmissionRequestPL): String? {
-        var task = taskRepository.findById(submissionRequestPL.taskId).get()
-        var solutionModel = task.solutionModelId?.let { diagramRepository.findById(it).get() }
-        val model = submissionRequestPL.diagramPL
-
-
         return service.eval(submissionRequestPL).toString()
     }
 

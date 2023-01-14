@@ -7,5 +7,5 @@ import org.springframework.stereotype.Service
 @Service
 interface IEvaluationService {
 
-    fun eval(submissionRequestPL: SubmissionRequestPL): Set<DiagramEvalResult>
+    fun eval(submissionRequestPL: SubmissionRequestPL): DiagramEvalResult
 }

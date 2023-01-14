@@ -22,7 +22,7 @@ class EvaluationService:IEvaluationService {
 
     @Autowired
     lateinit var rulesetRepository: RulesetRepository
-    override fun eval(submissionRequestPL: SubmissionRequestPL): Set<DiagramEvalResult> {
+    override fun eval(submissionRequestPL: SubmissionRequestPL): DiagramEvalResult {
         //Collect Data for evaluation
         val task = taskRepository.findById(submissionRequestPL.taskId.toLong()).get()
         val ruleset = task.rulesetId?.let { rulesetRepository.findById(it).get() }
