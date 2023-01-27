@@ -1,6 +1,5 @@
 package com.wipdev.eWiLL_backend.database.tables.course
 
-import com.wipdev.eWiLL_backend.database.tables.User
 import javax.persistence.*
 
 @Entity

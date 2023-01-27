@@ -1,7 +1,7 @@
 package com.wipdev.eWiLL_backend.endpoints
 
 import com.wipdev.eWiLL_backend.database.tables.course.Ruleset
-import com.wipdev.eWiLL_backend.endpoints.payload.requests.Task
+import com.wipdev.eWiLL_backend.endpoints.payload.requests.TaskPL
 import com.wipdev.eWiLL_backend.services.TaskService
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -25,11 +25,11 @@ class TaskController {
 
     @PostMapping("/{courseId}")
     @ResponseBody
-    fun create(@PathVariable courseId: Long,@Parameter task: Task) = service.create(courseId,task)
+    fun create(@PathVariable courseId: Long,@Parameter taskPL: TaskPL) = service.create(courseId,taskPL)
 
     @PutMapping()
     @ResponseBody
-    fun update(@Parameter task: Task) = task.id?.let { service.update(it,task) }
+    fun update(@Parameter taskPL: TaskPL) = taskPL.id?.let { service.update(it,taskPL) }
 
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: Long) = service.delete(id)

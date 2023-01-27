@@ -1,0 +1,48 @@
+package com.wipdev.eWiLL_backend.endpoints
+
+import com.wipdev.eWiLL_backend.database.tables.Category
+import com.wipdev.eWiLL_backend.endpoints.payload.requests.CategoryPL
+import com.wipdev.eWiLL_backend.services.CategoryService
+import com.wipdev.eWiLL_backend.services.DiagramService
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.web.bind.annotation.*
+
+@RequestMapping("/category")
+@RestController
+class CategoryController {
+
+    @Autowired
+    lateinit var iCategoryService: CategoryService
+
+    @Autowired
+    lateinit var iDiagramService: DiagramService
+
+    @CrossOrigin
+    @GetMapping("/{id}/diagrams")
+    fun getById(@PathVariable id:Long) = iDiagramService.getAllByCategoryId(id)
+
+    @CrossOrigin
+    @PostMapping
+    fun createCategory(@RequestBody category: CategoryPL): Category {
+        return iCategoryService.createCategory(category)
+    }
+
+    @CrossOrigin
+    @DeleteMapping("/{id}")
+    fun deleteCategory(@PathVariable id: Long): Category {
+        return iCategoryService.deleteCategory(id)
+    }
+
+    @CrossOrigin
+    @GetMapping("/user/{user_id}")
+    fun getByUserId(@PathVariable user_id: Long): List<Category> {
+        return iCategoryService.getByUserId(user_id)
+    }
+
+
+    @CrossOrigin
+    @PutMapping("/{id}")
+    fun updateCategory(@PathVariable id: Long, @RequestBody category: CategoryPL): Category {
+        return iCategoryService.updateCategory(id, category)
+    }
+}

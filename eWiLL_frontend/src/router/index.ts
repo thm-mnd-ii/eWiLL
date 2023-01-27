@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/ViewHome.vue";
-import ViewModelling from "../views/ViewModelling.vue";
+import ViewModeling from "../views/ViewModeling.vue";
 import ViewChecker from "../views/ViewChecker.vue";
 import ViewImpressum from "../views/ViewImpressum.vue";
 import ViewDatenschutz from "../views/ViewDatenschutz.vue";
@@ -16,9 +16,9 @@ const router = createRouter({
       component: HomeView,
     },
     {
-      path: "/modelling",
-      name: "modelling",
-      component: ViewModelling,
+      path: "/modeling",
+      name: "modeling",
+      component: ViewModeling,
     },
     {
       path: "/checker",

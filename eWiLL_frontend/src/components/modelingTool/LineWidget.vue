@@ -6,11 +6,11 @@
 </template>
 
 <script setup lang="ts">
-import { useDiagramStore } from "../stores/diagramStore";
+import { useDiagramStore } from "../../stores/diagramStore";
 
-import IconTrash from "./icons/IconTrash.vue";
-import IconChange from "./icons/IconChange.vue";
-import CardinalityType from "../enums/CardinalityType";
+import IconTrash from "../icons/IconTrash.vue";
+import IconChange from "../icons/IconChange.vue";
+import CardinalityType from "../../enums/CardinalityType";
 
 const diagramStore = useDiagramStore();
 

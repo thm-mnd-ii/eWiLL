@@ -3,9 +3,15 @@ package com.wipdev.eWiLL_backend.security
 import com.wipdev.eWiLL_backend.security.auth.JwtUtils
 import com.wipdev.eWiLL_backend.services.UserDetailsServiceImpl
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.web.servlet.FilterRegistrationBean
+import org.springframework.context.annotation.Bean
+import org.springframework.core.Ordered
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
+import org.springframework.web.filter.CorsFilter
 import org.springframework.web.filter.OncePerRequestFilter
 import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
@@ -38,6 +44,7 @@ class AuthTokenFilter : OncePerRequestFilter() {
         }
         filterChain.doFilter(request, response)
     }
+
 
 
     private fun parseJwt(request: HttpServletRequest): String? {

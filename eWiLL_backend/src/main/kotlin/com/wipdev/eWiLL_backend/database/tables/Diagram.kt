@@ -4,18 +4,25 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "Diagram")
-open class Diagram(entities: String?, ankerPoints: String?, id: Any?) {
+open class Diagram {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     open var id: Long? = null
 
-    @Column(name = "entities", nullable = false)
+    @Column(name = "name", nullable = false)
+    open var name: String? = null
+
+    @Column(name = "category_id", nullable = false)
+    open var categoryId: Long? = null
+
+    @Column(name = "ownerId", nullable = false)
+    open var ownerId: Long? = null
+
+    @Column(name = "entities", nullable = false, length = 100000)
     open var entities: String? = null
 
-    @Column(name = "ankerPoints", nullable = false)
-    open var ankerPoints: String? = null
+    @Column(name = "connections", nullable = false,length = 100000)
+    open var connections: String? = null
 
-    @Column(name = "assignmentId", nullable = false)
-    open var assignmentId: Long? = null
 }

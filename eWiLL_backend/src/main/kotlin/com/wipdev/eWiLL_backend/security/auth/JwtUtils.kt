@@ -1,6 +1,5 @@
 package com.wipdev.eWiLL_backend.security.auth
 
-import com.sun.security.auth.UserPrincipal
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import org.springframework.beans.factory.annotation.Value

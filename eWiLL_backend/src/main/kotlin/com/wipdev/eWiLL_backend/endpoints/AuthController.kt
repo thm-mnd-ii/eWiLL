@@ -2,7 +2,7 @@ package com.wipdev.eWiLL_backend.endpoints
 
 import com.wipdev.eWiLL_backend.database.tables.User
 import com.wipdev.eWiLL_backend.endpoints.payload.responses.JwtResponse
-import com.wipdev.eWiLL_backend.endpoints.payload.requests.LoginRequest
+import com.wipdev.eWiLL_backend.endpoints.payload.requests.LoginRequestPL
 import com.wipdev.eWiLL_backend.repository.RoleRepository
 import com.wipdev.eWiLL_backend.repository.UserRepository
 import com.wipdev.eWiLL_backend.security.auth.*
@@ -16,7 +16,6 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.bind.annotation.*
 
-@CrossOrigin(origins = ["*"], maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
 @Tag(name = "Authentication", description = "Auth API")
@@ -36,12 +35,13 @@ class AuthController {
     @Autowired
     lateinit var jwtUtils: JwtUtils
 
+    @CrossOrigin
     @PostMapping("/signin")
     @ResponseBody
-    fun authenticateUser(@RequestBody loginRequest: LoginRequest): ResponseEntity<JwtResponse> {
-        //TODO: registerIfNonExistent(loginRequest)
+    fun authenticateUser(@RequestBody loginRequestPL: LoginRequestPL): ResponseEntity<JwtResponse> {
+        
         val authentication = authentificationManager.authenticate(
-            UsernamePasswordAuthenticationToken(loginRequest.username, loginRequest.password)
+            UsernamePasswordAuthenticationToken(loginRequestPL.username, loginRequestPL.password)
         )
         SecurityContextHolder.getContext().authentication = authentication
         val jwt = jwtUtils.generateJwtToken(authentication)
@@ -50,6 +50,7 @@ class AuthController {
         return ResponseEntity.ok(JwtResponse(jwt,userDetails.id, userDetails.username,userDetails.email, roles))
     }
 
+    @CrossOrigin
     @GetMapping("/isValid")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     fun isValid():Boolean{
@@ -57,13 +58,7 @@ class AuthController {
     }
 
 
-    fun registerIfNonExistent(loginRequest: LoginRequest){
-        if(userRepository.existsByUsername(loginRequest.username)){
-            return
-        }
-        val user = User(loginRequest.username,loginRequest.password,loginRequest.username+"@thm.de", mutableSetOf(roleRepository.findByName(ERole.ROLE_USER.name)!!))
-        userRepository.save(user)
-    }
+
 
 
 

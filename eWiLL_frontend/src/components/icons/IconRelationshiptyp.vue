@@ -6,3 +6,12 @@
     />
   </svg>
 </template>
+
+<style lang="scss" scoped>
+svg {
+  pointer-events: all;
+  * {
+    pointer-events: none !important;
+  }
+}
+</style>

@@ -1,6 +1,8 @@
 package com.wipdev.eWiLL_backend.endpoints
 
-import com.wipdev.eWiLL_backend.endpoints.payload.requests.SubmissionRequest
+import com.wipdev.eWiLL_backend.endpoints.payload.requests.SubmissionRequestPL
+import com.wipdev.eWiLL_backend.repository.DiagramRepository
+import com.wipdev.eWiLL_backend.repository.TaskRepository
 import com.wipdev.eWiLL_backend.services.EvaluationService
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -18,10 +20,21 @@ class EvaluationController {
     @Autowired
     lateinit var service: EvaluationService
 
+    @Autowired
+    lateinit var taskRepository: TaskRepository
+
+    @Autowired
+    lateinit var diagramRepository: DiagramRepository
+
     @PostMapping("/submit")
     @ResponseBody
-    fun submit(@Parameter submissionRequest: SubmissionRequest): String? {
-        return service.eval(submissionRequest)
+    fun submit(@Parameter submissionRequestPL: SubmissionRequestPL): String? {
+        var task = taskRepository.findById(submissionRequestPL.taskId).get()
+        var solutionModel = task.solutionModelId?.let { diagramRepository.findById(it).get() }
+        val model = submissionRequestPL.diagramPL
+
+
+        return service.eval(submissionRequestPL)
     }
 
 

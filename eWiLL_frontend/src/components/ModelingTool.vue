@@ -18,52 +18,44 @@
   <!-- <div>{{ selectedEntity }}</div> -->
 
   <div class="container">
-    <ModalAddAttributes />
+    <ModalAddAttributes v-if="toolManagementStore.mode == Mode.EDIT" />
 
-    <div class="toolbox">
+    <div v-if="toolManagementStore.mode == Mode.EDIT" class="toolbox">
       <IconEntity id="item" draggable="true" @click="addElement($event, EntityType.ENTITY)" />
       <IconRelationshiptyp @mousedown="addElement($event, EntityType.RELATIONSHIP)" />
       <IconEntityRelationshiptyp @mousedown="addElement($event, EntityType.ENTITYRELATIONSHIP)" />
     </div>
 
-    <div class="modellingContainer" @click.self="unselectAll">
-      <EntityMain v-for="entity in diagramStore.diagram.entities" :key="entity.id" :entity="entity" @anker-point="handleAnkerPoint" />
+    <div class="modelingContainer" @click.self="unselectAll">
+      <EntityMain v-for="entity in entities.diagram.value.entities" :key="entity.id" :entity="entity" @anker-point="handleAnkerPoint" />
 
       <LineMain v-for="line in lineList" :key="line.id" :line="line" />
 
-      <!-- Definiert global das aussehen der Pfeile (TODO: In Component auslagern) -->
-      <svg class="svgMarker">
-        <defs>
-          <marker id="arrowhead" markerWidth="20" markerHeight="10" refX="5" refY="2" orient="auto">
-            <polygon points="0 0, 0 4, 6 2" />
-          </marker>
-
-          <filter id="double">
-            <feMorphology in="SourceGraphic" result="a" operator="dilate" radius="1.2" />
-            <feComposite in="SourceGraphic" in2="a" result="xx" operator="xor" />
-          </filter>
-        </defs>
-      </svg>
+      <!-- Definiert global das aussehen der Pfeile -->
+      <ArrowDefinitionVue class="svgMarker"></ArrowDefinitionVue>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import EntityMain from "../components/EntityMain.vue";
-import LineMain from "../components/LineMain.vue";
-import ModalAddAttributes from "../components/ModalAddAttributes.vue";
+import EntityMain from "./modelingTool/EntityMain.vue";
+import LineMain from "./modelingTool/LineMain.vue";
+import ModalAddAttributes from "../dialog/DialogAddAttributes.vue";
+import ArrowDefinitionVue from "./modelingTool/ArrowDefinition.vue";
 
-import IconEntityRelationshiptyp from "../components/icons/IconEntityRelationshiptyp.vue";
-import IconEntity from "../components/icons/IconEntitytyp.vue";
-import IconRelationshiptyp from "../components/icons/IconRelationshiptyp.vue";
+import IconEntityRelationshiptyp from "./icons/IconEntityRelationshiptyp.vue";
+import IconEntity from "./icons/IconEntitytyp.vue";
+import IconRelationshiptyp from "./icons/IconRelationshiptyp.vue";
 
 import { onMounted, reactive, ref } from "vue";
 import { useDiagramStore } from "../stores/diagramStore";
 import { useToolManagementStore } from "../stores/toolManagementStore";
+import { storeToRefs } from "pinia";
 
 import EntityType from "../enums/EntityType";
 import Connection from "../model/diagram/Connection";
 import Line from "../model/diagram/Line";
+import Mode from "../enums/Mode";
 
 const diagramStore = useDiagramStore();
 const toolManagementStore = useToolManagementStore();
@@ -72,6 +64,8 @@ const lineList: Line[] = reactive([
   //{ "id": 1, "x1": 200, "y1": 100, "x2": 0, "y2": 0},
   //{ "id": 2, "x1": 200, "y1": 100, "x2": 0, "y2": 200},
 ]);
+
+const entities = storeToRefs(diagramStore);
 
 const newAnkerPoint = ref<Connection>({});
 
@@ -89,6 +83,9 @@ const unselectAll = () => {
 };
 
 const updateLines = () => {
+  // TODO: find a better way to check if connections is undefined
+  if (diagramStore.diagram.connections === undefined) return;
+
   let calculatedLines: Line[] = [];
 
   diagramStore.diagram.connections.forEach((connection: Connection, index) => {
@@ -199,7 +196,7 @@ const addElement = (e: { clientY: number; clientX: number }, type: EntityType) =
   height: 100vh;
   margin-bottom: 5%;
 }
-.modellingContainer {
+.modelingContainer {
   position: relative;
   background-color: lavender;
   left: 15%;
@@ -212,8 +209,8 @@ const addElement = (e: { clientY: number; clientX: number }, type: EntityType) =
 .toolbox {
   z-index: 1;
   position: absolute;
-  top: 100px;
-  left: 30px;
+  top: 260px;
+  left: 10px;
   padding: 10px;
   width: 140px;
   height: auto;
