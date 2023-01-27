@@ -2,8 +2,8 @@
 <template>
   <div>
     <!-- TODO: refactor DialogSaveDiagramVue like DialogConfirmVue to handle the dialog with promises -->
-    <DialogSaveDiagramVue :open-dialog="saveDialog" :selected-diagram-id="activeDiagramId" @close-dialog="saveDialog = false"></DialogSaveDiagramVue>
-    <DialogConfirmVue ref="dialog"></DialogConfirmVue>
+    <DialogSaveDiagramVue ref="dialogSave"></DialogSaveDiagramVue>
+    <DialogConfirmVue ref="dialogConfirm"></DialogConfirmVue>
 
     <v-card :elevation="3" class="explorer">
       <v-card-actions>
@@ -51,7 +51,8 @@ import { useDiagramStore } from "../stores/diagramStore";
 import { useAuthUserStore } from "../stores/authUserStore";
 import { onMounted, ref } from "vue";
 
-const dialog = ref<typeof DialogConfirmVue>();
+const dialogConfirm = ref<typeof DialogConfirmVue>();
+const dialogSave = ref<typeof DialogSaveDiagramVue>();
 
 const categoriesViewActive = ref(true);
 const activeCategorie = ref<Category | null>(null);
@@ -61,8 +62,6 @@ const categoryNames = ref<string[]>([]);
 const map = ref<Map<Category, Diagram[]>>(new Map());
 const displayDiagrams = ref<Diagram[]>([]);
 
-//Constants for saving dialog
-const saveDialog = ref(false);
 const deleteActive = ref(false);
 
 const diagramStore = useDiagramStore();
@@ -115,8 +114,8 @@ const homeButtonClick = () => {
 
 const categoryClicked = (category: Category) => {
   if (deleteActive.value) {
-    if (dialog.value) {
-      dialog.value.openDialog(`Lösche: ${category.name}`, "Willst du die Kategorie wirklich löschen? Wenn du sie löscht, werden auch alle Diagramme gelöscht, die in dieser Kategorie sind.").then((result: boolean) => {
+    if (dialogConfirm.value) {
+      dialogConfirm.value.openDialog(`Lösche: ${category.name}`, "Willst du die Kategorie wirklich löschen? Wenn du sie löscht, werden auch alle Diagramme gelöscht, die in dieser Kategorie sind.").then((result: boolean) => {
         if (result) {
           diagramService.deleteCategory(category).then(() => {
             updateFiles(authUserStore.auth.user?.id as number);
@@ -147,8 +146,8 @@ const loadDiagramIntoStore = (diagram: Diagram) => {
 
 const diagramSingleClick = (diagram: Diagram) => {
   if (deleteActive.value) {
-    if (dialog.value) {
-      dialog.value.openDialog(`Lösche: ${diagram.name}`, "Willst du das Diagramm wirklich löschen?").then((result: boolean) => {
+    if (dialogConfirm.value) {
+      dialogConfirm.value.openDialog(`Lösche: ${diagram.name}`, "Willst du das Diagramm wirklich löschen?").then((result: boolean) => {
         if (result) {
           diagramService.deleteDiagram(diagram).then(() => {
             console.log("Diagram deleted");
@@ -165,7 +164,11 @@ const diagramSingleClick = (diagram: Diagram) => {
 };
 
 const saveDialogButtonClick = () => {
-  saveDialog.value = true;
+  dialogSave.value?.openDialog(activeDiagramId.value).then((result: boolean) => {
+    if (result) {
+      updateFiles(authUserStore.auth.user?.id as number);
+    }
+  });
   categoryNames.value.length = 0;
 };
 </script>
