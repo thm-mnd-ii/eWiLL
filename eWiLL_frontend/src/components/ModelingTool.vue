@@ -191,7 +191,7 @@ const spreadDuplicateLines = (calculatedLines: Line[]) => {
   });
 
   // calculate offset for each duplicate 10px
-  groupedDuplicateStartEntitys.forEach((group: Connection[], index) => {
+  groupedDuplicateStartEntitys.forEach((group: Connection[]) => {
     group.forEach((connection: Connection, index2) => {
       const sumOfLines = group.length;
 
@@ -206,7 +206,7 @@ const spreadDuplicateLines = (calculatedLines: Line[]) => {
   });
 
   // calculate offset for each duplicate 10px
-  groupedDuplicateEndEntitys.forEach((group: Connection[], index) => {
+  groupedDuplicateEndEntitys.forEach((group: Connection[]) => {
     group.forEach((connection: Connection, index2) => {
       const sumOfLines = group.length;
 
