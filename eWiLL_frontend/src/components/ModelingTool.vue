@@ -144,9 +144,10 @@ const getPositionFactor = (position: any, entityWidth: number) => {
 };
 
 const spreadDuplicateLines = (calculatedLines: Line[]) => {
+  // TODO: refactor for better readability. Combine duplicateStartEntitys and duplicateEndEntitys and use a function to check if the entity is a start or end entity
 
-    // show duplicate start entitys which start at the same position
-    let duplicateStartEntitys = diagramStore.diagram.connections.filter((connection: Connection) => {
+  // show duplicate start entitys which start at the same position
+  let duplicateStartEntitys = diagramStore.diagram.connections.filter((connection: Connection) => {
     return (
       diagramStore.diagram.connections.filter((connection2: Connection) => {
         return connection.startEntity == connection2.startEntity && connection.startEntityPosition == connection2.startEntityPosition;
@@ -193,7 +194,7 @@ const spreadDuplicateLines = (calculatedLines: Line[]) => {
   groupedDuplicateStartEntitys.forEach((group: Connection[], index) => {
     group.forEach((connection: Connection, index2) => {
       const sumOfLines = group.length;
-      
+
       let calculatedLine = calculatedLines.find((line: Line) => {
         return line.id == diagramStore.diagram.connections.indexOf(connection);
       });
@@ -208,7 +209,7 @@ const spreadDuplicateLines = (calculatedLines: Line[]) => {
   groupedDuplicateEndEntitys.forEach((group: Connection[], index) => {
     group.forEach((connection: Connection, index2) => {
       const sumOfLines = group.length;
-      
+
       let calculatedLine = calculatedLines.find((line: Line) => {
         return line.id == diagramStore.diagram.connections.indexOf(connection);
       });
@@ -220,7 +221,7 @@ const spreadDuplicateLines = (calculatedLines: Line[]) => {
   });
 
   return calculatedLines;
-}
+};
 
 // let triggered = false;
 // const handleAnkerPoint = (ankerPoint: { id: any; position: any }) => {
