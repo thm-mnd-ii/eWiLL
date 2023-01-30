@@ -1,9 +1,5 @@
 import { defineStore } from "pinia";
-import AttributeType from "../enums/AttributeType";
-import CardinalityType from "../enums/CardinalityType";
-import ConnectorPosition from "../enums/ConnectorPosition";
 import DiagramType from "../enums/DiagramType";
-import EntityType from "../enums/EntityType";
 import Config from "../model/diagram/Config";
 import Connection from "../model/diagram/Connection";
 import Diagram from "../model/diagram/Diagram";

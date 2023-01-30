@@ -3,13 +3,17 @@
 </template>
 
 <script setup lang="ts">
+import ConnectorPosition from "@/enums/ConnectorPosition";
+import Entity from "@/model/diagram/Entity";
 import { ref, onMounted, computed } from "vue";
+import { useToolManagementStore } from "../../stores/toolManagementStore";
 
-const emit = defineEmits(["anker-position"]);
-const props = defineProps({
-  position: { type: String, required: true },
-  entityWidth: { type: Number, required: true },
-});
+const toolManagementStore = useToolManagementStore();
+
+const props = defineProps<{
+  position: ConnectorPosition;
+  entity: Entity;
+}>();
 
 const dockingPoint = ref<HTMLInputElement | null>(null);
 
@@ -21,31 +25,28 @@ onMounted(() => {
 });
 
 const cssVarEntityHeight = computed(() => {
-  return props.entityWidth / 2 + "px";
+  return props.entity.width / 2 + "px";
 });
 
 const createLine = () => {
-  emit("anker-position", props.position);
+  toolManagementStore.endConnection(props.entity.id, props.position);
 
+  // emit("anker-position", props.position);
   //ankerPoint-Line Handler
   //watch ref() NewAnkerPoint
   //if trigger once makr as start point
   //if triggered twice mark as end point
   //watch ref() if NewAnkerPont is complete add to ankerPoints and draw line
-
   // let el = e.target
   // let container = el.parentNode.parentNode
-
   // const rect = el.getBoundingClientRect()
   // const rectParent = container.getBoundingClientRect()
-
   // //calculare position relative to container
   // let relativePos = {}
   // relativePos.top = rect.top - rectParent.top
   // relativePos.right = rect.right - rectParent.right
   // relativePos.bottom = rect.bottom - rectParent.bottom
   // relativePos.left = rect.left - rectParent.left
-
   // // TODO set this position as anker (ankerpunkt)
   // console.log(relativePos)
 };

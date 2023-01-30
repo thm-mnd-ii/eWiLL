@@ -3,16 +3,19 @@
 </template>
 
 <script setup lang="ts">
+import Entity from "@/model/diagram/Entity";
 import { ref, onMounted, computed } from "vue";
 import ConnectorPosition from "../../enums/ConnectorPosition";
+import { useToolManagementStore } from "../../stores/toolManagementStore";
 
-const emit = defineEmits(["anker-position"]);
-const props = defineProps<{
-  position: ConnectorPosition;
-  entityWidth: number;
-}>();
+const toolManagementStore = useToolManagementStore();
 
 const dockingPoint = ref<HTMLInputElement | null>(null);
+
+const props = defineProps<{
+  position: ConnectorPosition;
+  entity: Entity;
+}>();
 
 onMounted(() => {
   //add position to ankerPoint
@@ -24,16 +27,17 @@ onMounted(() => {
 // berechne Entfernung nach Links um Pfeile mittig zu positionieren
 const cssVarDistanceLeft = computed(() => {
   const arrowWidth = 20;
-  return props.entityWidth / 2 - arrowWidth / 2 + "px";
+  return props.entity.width / 2 - arrowWidth / 2 + "px";
 });
 
 const cssVarDistanceTop = computed(() => {
   const arrowWidth = 18;
-  return props.entityWidth / 4 - arrowWidth / 2 + "px";
+  return props.entity.width / 4 - arrowWidth / 2 + "px";
 });
 
 const createLine = () => {
-  emit("anker-position", props.position);
+  toolManagementStore.startConnection(props.entity.id, props.position);
+  // emit("anker-position", props.position);
 
   //ankerPoint-Line Handler
   //watch ref() NewAnkerPoint
