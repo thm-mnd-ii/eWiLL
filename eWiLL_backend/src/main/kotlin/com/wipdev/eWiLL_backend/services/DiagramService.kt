@@ -71,7 +71,7 @@ class DiagramService : IDiagramService {
                 diagram.id,
                 diagram.ownerId,
                 diagram.name,
-                diagram.configId?.let { configRepository.getReferenceById(it) } ?: DiagramConfig(),//TODO: diagram.config
+                diagram.configId?.let { configRepository.getReferenceById(it) } ?: DiagramConfig(),
                 parseEntities(diagram.entities),
                 parseConnections(diagram.connections),
                 diagram.categoryId ?: 0//Default Category is 0

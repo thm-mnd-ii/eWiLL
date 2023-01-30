@@ -1,8 +1,10 @@
 package com.wipdev.eWiLL_backend.eval.rules
 
+import com.wipdev.eWiLL_backend.endpoints.payload.requests.Entity
 import com.wipdev.eWiLL_backend.eval.compile.DiagramData
 import com.wipdev.eWiLL_backend.eval.compile.DiagramEvalPL
 import com.wipdev.eWiLL_backend.eval.utils.Dictionary
+import com.wipdev.eWiLL_backend.utils.stringsimmilarity.StringFinderUtils
 
 class EntityCheckNameRuleEvaluator : IRuleEvaluator {
 
@@ -11,25 +13,21 @@ class EntityCheckNameRuleEvaluator : IRuleEvaluator {
     override fun eval(diagramEvalPL: DiagramEvalPL, rule: Rule,ruleConfig: RuleConfig): RuleEvalResult {
         var diagramData = diagramEvalPL.diagramData
         var solutionDiagramData = diagramEvalPL.solutionDiagramData
-        //TODO: implement
-        var topScore = 0
-        var topModel: DiagramData? = null
-        for(solutionDiagram in solutionDiagramData!!) {
-            var score = 0
-            for(entity in solutionDiagram.nodes) {
-                if(diagramData!!.nodes.any { Dictionary.getPossibleNames(it.entity!!.entityName!!).contains(entity.entity!!.entityName) }) {
-                    score++
-                }
-            }
-            if(score > topScore) {
-                topScore = score
-                topModel = solutionDiagram
-            }
 
+        diagramEvalPL.bestSolutionDiagram =  solutionDiagramData!![0] //TODO get best solution diagram not just the first one
+        var stringBuilder = StringBuilder()
+        var errors = 0
+        for(node in diagramEvalPL.bestSolutionDiagram.nodes){
+            val entityName = node.entity?.entityName
+            val possibleNames = Dictionary.getPossibleNames(entityName!!)
+            if(!StringFinderUtils.isPresent(entityName,possibleNames)){
+                stringBuilder.append("Entity name $entityName is not correct. Possible names are: ${possibleNames.joinToString()}")//TODO Not expose every possible name
+                errors++
+            }
         }
+        return RuleEvalResult(RuleEvalScore(errors,ScoreType.ERROR_COUNT),stringBuilder.toString(),rule.ruleType,rule.id)
 
 
-        return RuleEvalResult(topScore.toFloat()/topModel!!.nodes.size.toFloat(), "Best SolutionModel with id:"+topModel.id+" has "+topScore +"/"+topModel!!.nodes.size+" right entities with id",rule.ruleType,rule.ordinal)
     }
 
 }

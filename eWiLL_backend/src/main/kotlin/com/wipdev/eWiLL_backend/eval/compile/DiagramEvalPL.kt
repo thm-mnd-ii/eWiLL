@@ -9,4 +9,7 @@ class DiagramEvalPL (
     var solutionDiagramData: List<DiagramData>?
 
 
-)
+
+){
+    lateinit var bestSolutionDiagram : DiagramData
+}
