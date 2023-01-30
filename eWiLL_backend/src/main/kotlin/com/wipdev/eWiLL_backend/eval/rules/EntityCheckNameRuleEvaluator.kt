@@ -25,6 +25,7 @@ class EntityCheckNameRuleEvaluator : IRuleEvaluator {
                 errors++
             }
         }
+        //TODO Create a new class to apply matchings from the solution to the diagram for further evaluation
         return RuleEvalResult(RuleEvalScore(errors,ScoreType.ERROR_COUNT),stringBuilder.toString(),rule.ruleType,rule.id)
 
 
