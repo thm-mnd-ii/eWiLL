@@ -1,4 +1,4 @@
-package com.wipdev.eWiLL_backend.translate
+package com.wipdev.eWiLL_backend.utils.translate
 
 class TranslateResponse {
     //[{"detectedLanguage":{"language":"en","score":1.0},"translations":[{"text":"Hallo Welt","to":"de"}]}]

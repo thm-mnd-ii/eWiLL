@@ -1,4 +1,4 @@
-package com.wipdev.eWiLL_backend.translate
+package com.wipdev.eWiLL_backend.utils.translate
 //[{"language":"en","score":1.0,"isTranslationSupported":true,"isTransliterationSupported":false}]
 class DetectLanguageResponse {
     var language: String? = null

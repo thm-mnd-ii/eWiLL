@@ -1,4 +1,4 @@
-package com.wipdev.eWiLL_backend.translate
+package com.wipdev.eWiLL_backend.utils.translate
 
 import org.springframework.http.MediaType
 import org.springframework.web.reactive.function.client.WebClient

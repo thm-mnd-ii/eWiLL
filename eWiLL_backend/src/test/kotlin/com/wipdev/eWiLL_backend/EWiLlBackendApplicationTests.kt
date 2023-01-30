@@ -1,7 +1,7 @@
 package com.wipdev.eWiLL_backend
 
-import com.wipdev.eWiLL_backend.translate.Language
-import com.wipdev.eWiLL_backend.translate.Translator
+import com.wipdev.eWiLL_backend.utils.translate.Language
+import com.wipdev.eWiLL_backend.utils.translate.Translator
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 

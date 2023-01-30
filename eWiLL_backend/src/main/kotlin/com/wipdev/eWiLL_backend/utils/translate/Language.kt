@@ -1,4 +1,4 @@
-package com.wipdev.eWiLL_backend.translate
+package com.wipdev.eWiLL_backend.utils.translate
 
 import java.util.*
 
