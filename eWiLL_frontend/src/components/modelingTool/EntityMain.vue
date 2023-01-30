@@ -13,10 +13,6 @@
         <div v-if="isResizable" @mousedown="resizer($event)" class="resizer sw"></div> -->
     <div v-if="isResizable" class="resizer se" @mousedown="resizer($event)"></div>
 
-    <!-- <AnkerPoint v-if="hover && !isResizable" position="top" :entityWidth="props.entity.width" @ankerPosition="handleAnkerPoint"></AnkerPoint> -->
-    <!-- <AnkerPoint v-if="hover && !isResizable" position="left" :entity-width="props.entity.width" @anker-position="handleAnkerPoint"></AnkerPoint> -->
-    <!-- <AnkerPoint v-if="hover && !isResizable" position="right" :entity-width="props.entity.width" @anker-position="handleAnkerPoint"></AnkerPoint> -->
-    <!-- <AnkerPoint v-if="hover && !isResizable" position="bottom" :entityWidth="props.entity.width" @ankerPosition="handleAnkerPoint"></AnkerPoint> -->
     <div v-if="hover && !isResizable && !toolManagementStore.showIncomingAnkerPoints">
       <OutgoingAnkerPoint v-for="anker in outgoingAnkerPoint" :key="anker" :position="anker" :entity="props.entity" />
     </div>
@@ -110,15 +106,6 @@ const updateAttributes = () => {
 };
 
 const hover = ref<boolean>(false);
-// watch(hover, (e) => {
-//     console.log(`Hover: ${e}`)
-// })
-
-// const endHover = () => {
-//   setTimeout(() => {
-//     hover.value = false;
-//   }, 1000);
-// };
 
 const isEditable = ref<boolean>(false);
 const makeTextEditable = () => {
