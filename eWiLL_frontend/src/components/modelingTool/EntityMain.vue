@@ -1,5 +1,6 @@
 <template>
-  <div ref="root" class="objectContainer" @mouseover="hover = true" @mouseleave="endHover">
+  <div ref="root" class="objectContainer" :class="{ active: isActive }" @mouseover="hover = true" @mouseleave="hover = false">
+    <div v-if="hover" class="click-area"></div>
     <span v-if="!isEditable" class="text unselectable" @dblclick="makeTextEditable">{{ entity.entityName }}</span>
     <textarea v-if="isEditable" v-model="entity.entityName" class="textedit" rows="1" @dblclick="makeTextEditable" @keyup.enter="handleEnter"></textarea>
 
@@ -16,12 +17,12 @@
     <!-- <AnkerPoint v-if="hover && !isResizable" position="left" :entity-width="props.entity.width" @anker-position="handleAnkerPoint"></AnkerPoint> -->
     <!-- <AnkerPoint v-if="hover && !isResizable" position="right" :entity-width="props.entity.width" @anker-position="handleAnkerPoint"></AnkerPoint> -->
     <!-- <AnkerPoint v-if="hover && !isResizable" position="bottom" :entityWidth="props.entity.width" @ankerPosition="handleAnkerPoint"></AnkerPoint> -->
-    <div v-if="hover && !isResizable">
-      <OutgoingAnkerPoint v-for="anker in outgoingAnkerPoint" :key="anker" :position="anker" :entity-width="props.entity.width" @anker-position="handleAnkerPoint" />
+    <div v-if="hover && !isResizable && !toolManagementStore.showIncomingAnkerPoints">
+      <OutgoingAnkerPoint v-for="anker in outgoingAnkerPoint" :key="anker" :position="anker" :entity="props.entity" />
     </div>
 
-    <div v-if="hover && !isResizable">
-      <IncomingAnkerPoint v-for="anker in incomingAnkerPoint" :key="anker" :position="anker" :entity-width="props.entity.width" @anker-position="handleAnkerPoint" />
+    <div v-if="toolManagementStore.showIncomingAnkerPoints && toolManagementStore.newConnection.startEntity != props.entity.id">
+      <IncomingAnkerPoint v-for="anker in incomingAnkerPoint" :key="anker" :position="anker" :entity="props.entity" />
     </div>
     <EntityWidget v-if="isResizable" :entity="props.entity" />
 
@@ -49,9 +50,6 @@ import ConnectorPosition from "../../enums/ConnectorPosition";
 import Attribute from "../../model/diagram/Attribute";
 import Entity from "../../model/diagram/Entity";
 
-const emit = defineEmits(["anker-point"]);
-//const updateEntity = ref(updateCurrentEntity.value)
-
 const props = defineProps<{
   entity: Entity;
 }>();
@@ -73,6 +71,10 @@ const toolManagementStore = useToolManagementStore();
 const diagramStore = useDiagramStore();
 let entity = diagramStore.diagram.entities.find((entity) => entity.id == props.entity.id);
 const root = ref<HTMLInputElement | null>(null);
+
+const isActive = computed(() => {
+  return toolManagementStore.newConnection.startEntity == props.entity.id;
+});
 
 const cssVarAttributesDistanceTop = computed(() => {
   return props.entity.width / 2 + "px";
@@ -107,22 +109,16 @@ const updateAttributes = () => {
   formattedAttributes.value = formattedAttributes.value.slice(0, -2);
 };
 
-const handleAnkerPoint = (ankerPosition: ConnectorPosition) => {
-  // console.log(e)
-  // console.log(props.entity.id)
-  emit("anker-point", { id: props.entity.id, position: ankerPosition });
-};
-
 const hover = ref<boolean>(false);
 // watch(hover, (e) => {
 //     console.log(`Hover: ${e}`)
 // })
 
-const endHover = () => {
-  setTimeout(() => {
-    hover.value = false;
-  }, 1000);
-};
+// const endHover = () => {
+//   setTimeout(() => {
+//     hover.value = false;
+//   }, 1000);
+// };
 
 const isEditable = ref<boolean>(false);
 const makeTextEditable = () => {
@@ -322,10 +318,23 @@ const resizer = (e: any) => {
 </script>
 
 <style scoped lang="scss">
+.click-area {
+  position: absolute;
+  width: 160%;
+  height: 160%;
+  top: -30%;
+  left: -30%;
+  z-index: -10;
+  cursor: default;
+}
 .objectContainer {
   z-index: 5;
   position: absolute;
   cursor: move;
+}
+
+.active {
+  outline: 4px solid #00abe3;
 }
 
 .resizer {

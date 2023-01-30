@@ -1,21 +1,7 @@
 <template>
   <!-- <div>
-        {{calculatedLine}}
-    </div> -->
-
-  <!-- <div>
-    {{ newAnkerPoint }}
+    {{ diagramStore.diagram.connections }}
   </div> -->
-
-  <!-- <div>
-    {{ lineList }}
-  </div> -->
-
-  <!-- <div>
-        {{entityList}}
-    </div> -->
-
-  <!-- <div>{{ selectedEntity }}</div> -->
 
   <div class="container">
     <ModalAddAttributes v-if="toolManagementStore.mode == Mode.EDIT" />
@@ -27,7 +13,7 @@
     </div>
 
     <div class="modelingContainer" @click.self="unselectAll">
-      <EntityMain v-for="entity in entities.diagram.value.entities" :key="entity.id" :entity="entity" @anker-point="handleAnkerPoint" />
+      <EntityMain v-for="entity in entities.diagram.value.entities" :key="entity.id" class="entity" :entity="entity" />
 
       <LineMain v-for="line in lineList" :key="line.id" :line="line" />
 
@@ -47,7 +33,7 @@ import IconEntityRelationshiptyp from "./icons/IconEntityRelationshiptyp.vue";
 import IconEntity from "./icons/IconEntitytyp.vue";
 import IconRelationshiptyp from "./icons/IconRelationshiptyp.vue";
 
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, reactive } from "vue";
 import { useDiagramStore } from "../stores/diagramStore";
 import { useToolManagementStore } from "../stores/toolManagementStore";
 import { storeToRefs } from "pinia";
@@ -67,7 +53,7 @@ const lineList: Line[] = reactive([
 
 const entities = storeToRefs(diagramStore);
 
-const newAnkerPoint = ref<Connection>({});
+// const newAnkerPoint = ref<Connection>({});
 
 onMounted(() => {
   updateLines();
@@ -80,6 +66,7 @@ diagramStore.$subscribe(() => {
 const unselectAll = () => {
   toolManagementStore.selectedEntity = null;
   toolManagementStore.selectedLine = null;
+  toolManagementStore.resetConnection();
 };
 
 const updateLines = () => {
@@ -153,24 +140,24 @@ const getPositionFactor = (position: any, entityWidth: number) => {
   return positionFactor;
 };
 
-let triggered = false;
-const handleAnkerPoint = (ankerPoint: { id: any; position: any }) => {
-  if (!triggered) {
-    triggered = true;
-    newAnkerPoint.value.startEntity = ankerPoint.id;
-    newAnkerPoint.value.startEntityPosition = ankerPoint.position;
-  } else if (triggered) {
-    triggered = false;
-    newAnkerPoint.value.endEntity = ankerPoint.id;
-    newAnkerPoint.value.endEntityPosition = ankerPoint.position;
+// let triggered = false;
+// const handleAnkerPoint = (ankerPoint: { id: any; position: any }) => {
+//   if (!triggered) {
+//     triggered = true;
+//     newAnkerPoint.value.startEntity = ankerPoint.id;
+//     newAnkerPoint.value.startEntityPosition = ankerPoint.position;
+//   } else if (triggered) {
+//     triggered = false;
+//     newAnkerPoint.value.endEntity = ankerPoint.id;
+//     newAnkerPoint.value.endEntityPosition = ankerPoint.position;
 
-    //initialize style with 0
-    newAnkerPoint.value.style = 0;
+//     //initialize style with 0
+//     newAnkerPoint.value.style = 0;
 
-    diagramStore.diagram.connections.push(newAnkerPoint.value);
-    newAnkerPoint.value = {};
-  }
-};
+//     diagramStore.diagram.connections.push(newAnkerPoint.value);
+//     newAnkerPoint.value = {};
+//   }
+// };
 
 //add Element with serial ID
 const addElement = (e: { clientY: number; clientX: number }, type: EntityType) => {
@@ -204,6 +191,10 @@ const addElement = (e: { clientY: number; clientX: number }, type: EntityType) =
   width: 1000px;
   height: 500px;
   z-index: 1;
+}
+
+.entity {
+  // extend clickable area withouth changing the size of the entity
 }
 
 .toolbox {
