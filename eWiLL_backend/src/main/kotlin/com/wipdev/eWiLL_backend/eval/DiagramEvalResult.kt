@@ -1,28 +1,41 @@
 package com.wipdev.eWiLL_backend.eval
 
 import com.wipdev.eWiLL_backend.eval.rules.RuleEvalResult
+import com.wipdev.eWiLL_backend.eval.rules.RuleEvalScore
+import com.wipdev.eWiLL_backend.eval.rules.ScoreType
 
 class DiagramEvalResult(var ruleEvalResults: List<RuleEvalResult>) {
 
-    var ruleScoreResults: Map<Int, Float> = HashMap()
-    var score: Float? = null
+    var score = 0f
 
     fun addToRuleEvalResults(ruleEvalResult: RuleEvalResult) {
         ruleEvalResults += ruleEvalResult
-        ruleScoreResults += ruleEvalResult.ruleId to ruleEvalResult.score
     }
 
     //In percentage
     fun calculateScore(): DiagramEvalResult {
         var score = 0f
-        ruleScoreResults.forEach { (_, value) ->
-            score += value
+        var percentageSum = 0f
+        var percentageCount = 0
+        ruleEvalResults.forEach {
+            if (it.score.scoreType == ScoreType.PERCENTAGE) {
+                percentageSum += it.score.score.toFloat()
+                percentageCount++
+            }
         }
-        this.score = score / ruleScoreResults.size.toFloat()
-        return this
+
+        if (percentageCount != 0) {
+            score += percentageSum / percentageCount
+        }
+        ruleEvalResults.forEach {
+            if (it.score.scoreType == ScoreType.ERROR_COUNT) {
+                score -= it.score.score.toInt()
+            }
+        }
+        this.score = score
+
+        return this;
     }
-
-
 }
 
 
