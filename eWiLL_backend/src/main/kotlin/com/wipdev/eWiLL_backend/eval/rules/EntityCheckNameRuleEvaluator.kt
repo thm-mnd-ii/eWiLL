@@ -23,9 +23,13 @@ class EntityCheckNameRuleEvaluator : IRuleEvaluator {
             if(!StringFinderUtils.isPresent(entityName,possibleNames)){
                 stringBuilder.append("Entity name $entityName is not correct. Possible names are: ${possibleNames.joinToString()}")//TODO Not expose every possible name
                 errors++
+            }else{
+                node.otherModelNode = diagramData!!.getNodeByName(StringFinderUtils.getPresent(entityName,possibleNames)!!)!!
+                node.otherModelNode.otherModelNode = node
             }
         }
-        //TODO Create a new class to apply matchings from the solution to the diagram for further evaluation
+        stringBuilder.append(diagramEvalPL.bestSolutionDiagram.nodes-errors+"/"+diagramEvalPL.bestSolutionDiagram.nodes+" entities have correct names")
+
         return RuleEvalResult(RuleEvalScore(errors,ScoreType.ERROR_COUNT),stringBuilder.toString(),rule.ruleType,rule.id)
 
 

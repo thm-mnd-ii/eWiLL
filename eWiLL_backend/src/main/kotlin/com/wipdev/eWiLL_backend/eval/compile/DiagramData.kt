@@ -14,7 +14,7 @@ class DiagramData {
 
     constructor(diagram: DiagramPL) {
         this.id = diagram.id
-        nodes = diagram.entities!!.map { DiagramNode(it) }
+        nodes = diagram.entities!!.map { DiagramNode(it,this) }
         connections = diagram.connections?.map { e->DiagramConnection(getNodeById(e.startEntity!!)!!,getNodeById(e.endEntity!!)!!,e.style!!) } ?: emptyList()
 
         rootNodes = nodes.filter { e->e.getPreviousNodes().isEmpty() }
