@@ -44,7 +44,7 @@ class DiagramService : IDiagramService {
 
         diagramRepository.save(diagram)
 
-        return diagramPL
+        return convert(diagram)
     }
 
     override fun delete(id: Long): DiagramPL {
