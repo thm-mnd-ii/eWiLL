@@ -5,22 +5,23 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 
-//https://rapidapi.com/microsoft-azure-org-microsoft-cognitive-services/api/microsoft-translator-text
+//https://rapidapi.com/gatzuma/api/deep-translate1
 class Translator {
 
     companion object {
         private const val apiKey = "63b461c3c9msh9a6f64559704f0cp19464ejsn29c559948421"
         val host = "deep-translate1.p.rapidapi.com"
+        val uri  = "https://deep-translate1.p.rapidapi.com/language/translate/v2"
 
         fun translate(message: String, language: Language):TranslateResponse? {
 
 
             val client = WebClient.create()
             var body = "{\"q\": \"$message\",\"target\": \"${language.getLanguageCode().lowercase()}\"}"
-            println(body)
+
             return client.post()
                 .uri(
-                    "https://deep-translate1.p.rapidapi.com/language/translate/v2"
+                    uri
                 )
                 .header("content-type", "application/json")
                 .header("x-rapidapi-key", apiKey)

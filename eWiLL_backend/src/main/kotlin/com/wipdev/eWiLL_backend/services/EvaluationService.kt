@@ -5,6 +5,7 @@ import com.wipdev.eWiLL_backend.eval.DiagramEvalEntry
 import com.wipdev.eWiLL_backend.eval.DiagramEvalResult
 import com.wipdev.eWiLL_backend.eval.IDiagramEvaluator
 import com.wipdev.eWiLL_backend.eval.SERMDiagramEvaluator
+import com.wipdev.eWiLL_backend.repository.DiagramConfigRepository
 import com.wipdev.eWiLL_backend.repository.TaskRepository
 import com.wipdev.eWiLL_backend.repository.DiagramRepository
 import com.wipdev.eWiLL_backend.repository.RulesetRepository
@@ -21,13 +22,15 @@ class EvaluationService:IEvaluationService {
     lateinit var taskRepository: TaskRepository
 
     @Autowired
+    lateinit var configRepository: DiagramConfigRepository
+    @Autowired
     lateinit var rulesetRepository: RulesetRepository
     override fun eval(submissionRequestPL: SubmissionRequestPL): DiagramEvalResult {
         //Collect Data for evaluation
         val task = taskRepository.findById(submissionRequestPL.taskId.toLong()).get()
         val ruleset = task.rulesetId?.let { rulesetRepository.findById(it).get() }
         val diagram = submissionRequestPL.diagramPL;
-        val solutionDiagram = DiagramService.convert(diagramRepository.findById(task.solutionModelId!!).get())
+        val solutionDiagram = DiagramService.convert(diagramRepository.findById(task.solutionModelId!!).get(), configRepository)
 
         //Prepare evaluation
         val diagramEvalEntry = DiagramEvalEntry(task, ruleset, diagram, listOf(solutionDiagram))
