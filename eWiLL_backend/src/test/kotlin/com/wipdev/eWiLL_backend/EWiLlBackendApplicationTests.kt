@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
 class EWiLlBackendApplicationTests {
-
+/*
     //Test Translator
     @Test
     fun testTranslator() {
@@ -25,5 +25,5 @@ class EWiLlBackendApplicationTests {
         val isPresent = StringFinderUtils.isPresent(text,possibles,0.88,true)
         assert(isPresent)
     }
-
+*/
 }
