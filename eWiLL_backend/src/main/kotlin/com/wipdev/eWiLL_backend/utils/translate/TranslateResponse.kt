@@ -1,22 +1,35 @@
 package com.wipdev.eWiLL_backend.utils.translate
 
 class TranslateResponse {
-    //[{"detectedLanguage":{"language":"en","score":1.0},"translations":[{"text":"Hallo Welt","to":"de"}]}]
-    var detectedLanguage: DetectedLanguage? = null
+/*
+{
+  "data": {
+    "translations": {
+      "translatedText": "¡Hola Mundo!"
+    }
+  }
+}
+ */
 
-    class DetectedLanguage {
-        var language: String? = null
-        var score: Float = 0.toFloat()
+    var data : Data? = null
+
+    class Data {
+        var translations : Translations? = null
+
+        class Translations {
+            var translatedText : String? = null
+            override fun toString(): String {
+                return "Translations(translated_text=$translatedText)"
+            }
+        }
+
+        override fun toString(): String {
+            return "Data(translations=$translations)"
+        }
     }
 
-    var translations: Array<Translation>? = null
-
-    class Translation {
-        var text: String? = null
-        var to: String? = null
+    override fun toString(): String {
+        return "TranslateResponse(data=$data)"
     }
 
-    fun getTranslatedText(): String? {
-        return translations?.get(0)?.text
-    }
 }

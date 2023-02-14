@@ -14,7 +14,8 @@ class EWiLlBackendApplicationTests {
     fun testTranslator() {
         val text = "Customer"
         val translations = Translator.translate(text, Language.German)
-        assert(translations?.get(0)?.translations?.get(0)?.text == "Kunde")
+        println(translations)
+        assert(translations?.data!!.translations!!.translatedText == "Kunde")
     }
 
     @Test

@@ -11,16 +11,8 @@ class Dictionary {
         fun getPossibleNames(name: String): Array<String> {
             var list = mutableListOf<String>()
             list.add(name)
-            Translator.translate(name, defaultLanguage)?.forEach { translation ->
-                translation.translations?.forEach { translation ->
-                    translation.text?.let {
-                        list.add(it)
-                        list.add(getPlural(it))
-                        list.add(getSingular(it))
-                    }
+            Translator.translate(name, defaultLanguage)?.data!!.translations!!.translatedText?.let { list.add(it);list.add(getPlural(it));list.add(getSingular(it)) }
 
-                }
-            }
             //Add plurals and signulars
             list.add(getPlural(name))
             list.add(getSingular(name))
