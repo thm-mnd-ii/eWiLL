@@ -11,6 +11,7 @@ class Ruleset {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
+
     open var id: Long? = 0
 
     @Column(name = "name", nullable = false)
@@ -38,3 +39,4 @@ class Ruleset {
         return Json.mapper().readerForArrayOf(RuleConfig::class.java).readValue(ruleConfigs)
     }
 }
+

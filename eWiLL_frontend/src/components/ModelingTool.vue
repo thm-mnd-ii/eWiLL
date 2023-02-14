@@ -1,21 +1,7 @@
 <template>
   <!-- <div>
-        {{calculatedLine}}
-    </div> -->
-
-  <!-- <div>
-    {{ newAnkerPoint }}
+    {{ diagramStore.diagram.connections }}
   </div> -->
-
-  <!-- <div>
-    {{ lineList }}
-  </div> -->
-
-  <!-- <div>
-        {{entityList}}
-    </div> -->
-
-  <!-- <div>{{ selectedEntity }}</div> -->
 
   <div class="container">
     <ModalAddAttributes v-if="toolManagementStore.mode == Mode.EDIT" />
@@ -27,7 +13,7 @@
     </div>
 
     <div class="modelingContainer" @click.self="unselectAll">
-      <EntityMain v-for="entity in entities.diagram.value.entities" :key="entity.id" :entity="entity" @anker-point="handleAnkerPoint" />
+      <EntityMain v-for="entity in entities.diagram.value.entities" :key="entity.id" class="entity" :entity="entity" />
 
       <LineMain v-for="line in lineList" :key="line.id" :line="line" />
 
@@ -47,7 +33,7 @@ import IconEntityRelationshiptyp from "./icons/IconEntityRelationshiptyp.vue";
 import IconEntity from "./icons/IconEntitytyp.vue";
 import IconRelationshiptyp from "./icons/IconRelationshiptyp.vue";
 
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, reactive } from "vue";
 import { useDiagramStore } from "../stores/diagramStore";
 import { useToolManagementStore } from "../stores/toolManagementStore";
 import { storeToRefs } from "pinia";
@@ -67,7 +53,7 @@ const lineList: Line[] = reactive([
 
 const entities = storeToRefs(diagramStore);
 
-const newAnkerPoint = ref<Connection>({});
+// const newAnkerPoint = ref<Connection>({});
 
 onMounted(() => {
   updateLines();
@@ -80,6 +66,7 @@ diagramStore.$subscribe(() => {
 const unselectAll = () => {
   toolManagementStore.selectedEntity = null;
   toolManagementStore.selectedLine = null;
+  toolManagementStore.resetConnection();
 };
 
 const updateLines = () => {
@@ -96,6 +83,9 @@ const updateLines = () => {
     }
   });
 
+  //spread duplicate lines
+  calculatedLines = spreadDuplicateLines(calculatedLines);
+
   //replace lineList with new calculatedLines
   lineList.splice(0, lineList.length);
   lineList.push(...calculatedLines);
@@ -110,7 +100,7 @@ const calculateLine = (connection: Connection): Line | undefined => {
   // if startEntity or endEntity is undefined, return empty line
   if (startEntity === undefined || endEntity === undefined) return;
 
-  let startEntityWidth: number = startEntity.width;
+  let startEntityWidth = startEntity.width;
   let startPositionFactor = getPositionFactor(connection.startEntityPosition, startEntityWidth);
 
   line.y1 = startEntity.top + startPositionFactor.y;
@@ -153,24 +143,104 @@ const getPositionFactor = (position: any, entityWidth: number) => {
   return positionFactor;
 };
 
-let triggered = false;
-const handleAnkerPoint = (ankerPoint: { id: any; position: any }) => {
-  if (!triggered) {
-    triggered = true;
-    newAnkerPoint.value.startEntity = ankerPoint.id;
-    newAnkerPoint.value.startEntityPosition = ankerPoint.position;
-  } else if (triggered) {
-    triggered = false;
-    newAnkerPoint.value.endEntity = ankerPoint.id;
-    newAnkerPoint.value.endEntityPosition = ankerPoint.position;
+const spreadDuplicateLines = (calculatedLines: Line[]) => {
+  // TODO: refactor for better readability. Combine duplicateStartEntitys and duplicateEndEntitys and use a function to check if the entity is a start or end entity
 
-    //initialize style with 0
-    newAnkerPoint.value.style = 0;
+  // show duplicate start entitys which start at the same position
+  let duplicateStartEntitys = diagramStore.diagram.connections.filter((connection: Connection) => {
+    return (
+      diagramStore.diagram.connections.filter((connection2: Connection) => {
+        return connection.startEntity == connection2.startEntity && connection.startEntityPosition == connection2.startEntityPosition;
+      }).length > 1
+    );
+  });
 
-    diagramStore.diagram.connections.push(newAnkerPoint.value);
-    newAnkerPoint.value = {};
-  }
+  // show duplicate end entitys which end at the same position
+  let duplicateEndEntitys = diagramStore.diagram.connections.filter((connection: Connection) => {
+    return (
+      diagramStore.diagram.connections.filter((connection2: Connection) => {
+        return connection.endEntity == connection2.endEntity && connection.endEntityPosition == connection2.endEntityPosition;
+      }).length > 1
+    );
+  });
+
+  //group duplicate start entitys by startEntity and startEntityPosition without using reduce
+  let groupedDuplicateStartEntitys = [] as Connection[][];
+  duplicateStartEntitys.forEach((connection: Connection) => {
+    let group = groupedDuplicateStartEntitys.find((group: Connection[]) => {
+      return group[0].startEntity == connection.startEntity && group[0].startEntityPosition == connection.startEntityPosition;
+    });
+    if (group != undefined) {
+      group.push(connection);
+    } else {
+      groupedDuplicateStartEntitys.push([connection]);
+    }
+  });
+
+  //group duplicate end entitys by endEntity and endEntityPosition without using reduce
+  let groupedDuplicateEndEntitys = [] as Connection[][];
+  duplicateEndEntitys.forEach((connection: Connection) => {
+    let group = groupedDuplicateEndEntitys.find((group: Connection[]) => {
+      return group[0].endEntity == connection.endEntity && group[0].endEntityPosition == connection.endEntityPosition;
+    });
+    if (group != undefined) {
+      group.push(connection);
+    } else {
+      groupedDuplicateEndEntitys.push([connection]);
+    }
+  });
+
+  // calculate offset for each duplicate 10px
+  groupedDuplicateStartEntitys.forEach((group: Connection[]) => {
+    group.forEach((connection: Connection, index2) => {
+      const sumOfLines = group.length;
+
+      let calculatedLine = calculatedLines.find((line: Line) => {
+        return line.id == diagramStore.diagram.connections.indexOf(connection);
+      });
+      if (calculatedLine != undefined && calculatedLine.y1 != undefined) {
+        // spread arround y1
+        calculatedLine.y1 = calculatedLine.y1 + (index2 - (sumOfLines - 1) / 2) * 10;
+      }
+    });
+  });
+
+  // calculate offset for each duplicate 10px
+  groupedDuplicateEndEntitys.forEach((group: Connection[]) => {
+    group.forEach((connection: Connection, index2) => {
+      const sumOfLines = group.length;
+
+      let calculatedLine = calculatedLines.find((line: Line) => {
+        return line.id == diagramStore.diagram.connections.indexOf(connection);
+      });
+      if (calculatedLine != undefined && calculatedLine.y2 != undefined) {
+        // spread arround y2
+        calculatedLine.y2 = calculatedLine.y2 + (index2 - (sumOfLines - 1) / 2) * 10;
+      }
+    });
+  });
+
+  return calculatedLines;
 };
+
+// let triggered = false;
+// const handleAnkerPoint = (ankerPoint: { id: any; position: any }) => {
+//   if (!triggered) {
+//     triggered = true;
+//     newAnkerPoint.value.startEntity = ankerPoint.id;
+//     newAnkerPoint.value.startEntityPosition = ankerPoint.position;
+//   } else if (triggered) {
+//     triggered = false;
+//     newAnkerPoint.value.endEntity = ankerPoint.id;
+//     newAnkerPoint.value.endEntityPosition = ankerPoint.position;
+
+//     //initialize style with 0
+//     newAnkerPoint.value.style = 0;
+
+//     diagramStore.diagram.connections.push(newAnkerPoint.value);
+//     newAnkerPoint.value = {};
+//   }
+// };
 
 //add Element with serial ID
 const addElement = (e: { clientY: number; clientX: number }, type: EntityType) => {
@@ -204,6 +274,10 @@ const addElement = (e: { clientY: number; clientX: number }, type: EntityType) =
   width: 1000px;
   height: 500px;
   z-index: 1;
+}
+
+.entity {
+  // extend clickable area withouth changing the size of the entity
 }
 
 .toolbox {

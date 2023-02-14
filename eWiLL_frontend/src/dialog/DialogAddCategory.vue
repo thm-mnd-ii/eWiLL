@@ -5,15 +5,13 @@
         <span class="text-h5">Create Category</span>
       </v-card-title>
       <v-card-text>
-        <v-container>
-          <v-row>
-            <v-text-field v-model="newCategoryName" label="Name*" required></v-text-field>
-          </v-row>
-        </v-container>
+        <v-form ref="form" v-model="valid">
+          <v-text-field v-model="newCategoryName" label="Name*" :rules="[(v) => !!v || 'Item is required']" required></v-text-field>
+        </v-form>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn variant="text" @click="closeDialog"> Close </v-btn>
+        <v-btn variant="text" @click="_close"> Close </v-btn>
         <v-btn variant="text" @click="createCategory"> Erstellen </v-btn>
       </v-card-actions>
     </v-card>
@@ -21,37 +19,38 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref, defineEmits, watch } from "vue";
+import { ref } from "vue";
 import diagramService from "../services/diagram.service";
 import { useAuthUserStore } from "../stores/authUserStore";
 
 const authUserStore = useAuthUserStore();
-
-// define props with ts
-const props = defineProps<{
-  openDialog: boolean;
-}>();
-
-// define emit with ts
-const emit = defineEmits<{
-  (event: "closeDialog"): void;
-}>();
-
-// watch props for changes
-watch(
-  () => props.openDialog,
-  (value) => {
-    createCategoryDialog.value = value;
-    console.log(value);
-  }
-);
-
-const createCategoryDialog = ref<boolean>(props.openDialog);
+const createCategoryDialog = ref(false);
 const newCategoryName = ref<string>("");
 
-const closeDialog = () => {
+const form = ref<any>();
+const valid = ref(false);
+
+// Promis
+const resolvePromise: any = ref(undefined);
+const rejectPromise: any = ref(undefined);
+
+const openDialog = () => {
+  createCategoryDialog.value = true;
+
+  return new Promise((resolve, reject) => {
+    resolvePromise.value = resolve;
+    rejectPromise.value = reject;
+  });
+};
+
+const _confirm = () => {
   createCategoryDialog.value = false;
-  emit("closeDialog");
+  resolvePromise.value(true);
+};
+
+const _close = () => {
+  createCategoryDialog.value = false;
+  resolvePromise.value(false);
 };
 
 const createCategory = () => {
@@ -61,15 +60,26 @@ const createCategory = () => {
     return;
   }
 
-  diagramService.postCategory(newCategoryName.value, userId)
-  .then(() => {
-    closeDialog();
-  })
-  .catch((error) => {
-    console.log(error);
-    alert("Kategorie konnte nicht gespeichert werden");
+  //validate form
+  form.value.validate().then(() => {
+    if (valid.value) {
+      diagramService
+        .postCategory(newCategoryName.value, authUserStore.auth.user?.id as number)
+        .then(() => {
+          newCategoryName.value = "";
+          _confirm();
+        })
+        .catch((error) => {
+          console.log(error);
+          alert("Kategorie konnte nicht gespeichert werden");
+        });
+    }
   });
 };
+
+defineExpose({
+  openDialog,
+});
 </script>
 
 <style scoped></style>
