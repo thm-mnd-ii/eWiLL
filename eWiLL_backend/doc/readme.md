@@ -9,7 +9,7 @@
 - Git for Version Control
 - Postgres for Database
 - Maven for Dependency Management (included in IntelliJ) and will be changed to gradle later on to merge into the "Feedbacksystem"
-- If Springboot does not automatically insert the default data into the database import [this](/src/main/resources/import.sql)
+- If Springboot does not automatically insert the default data into the database import [this](/src/main/resources/data.sql)
 
 ## How to run the backend
 

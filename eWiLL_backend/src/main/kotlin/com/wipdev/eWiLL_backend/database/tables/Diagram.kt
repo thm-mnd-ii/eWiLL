@@ -6,8 +6,8 @@ import javax.persistence.*
 @Table(name = "Diagram")
 open class Diagram {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "id", nullable = true)
     open var id: Long? = null
 
     @Column(name = "name", nullable = false)
@@ -24,5 +24,13 @@ open class Diagram {
 
     @Column(name = "connections", nullable = false,length = 100000)
     open var connections: String? = null
+
+    @Column(name = "config_id", nullable = true)
+    open var configId: Long? = 0
+
+
+    override fun toString(): String {
+        return "Diagram(id=$id, name=$name, categoryId=$categoryId, ownerId=$ownerId, entities=$entities, connections=$connections, configId=$configId)"
+    }
 
 }

@@ -5,4 +5,5 @@ package com.wipdev.eWiLL_backend.endpoints.payload.requests
 class Attribute{
     var type: Int? = null
     var name: String? = null
+
 }

@@ -1,6 +1,11 @@
 package com.wipdev.eWiLL_backend.services
 
 import com.wipdev.eWiLL_backend.endpoints.payload.requests.SubmissionRequestPL
+import com.wipdev.eWiLL_backend.eval.DiagramEvalEntry
+import com.wipdev.eWiLL_backend.eval.DiagramEvalResult
+import com.wipdev.eWiLL_backend.eval.IDiagramEvaluator
+import com.wipdev.eWiLL_backend.eval.SERMDiagramEvaluator
+import com.wipdev.eWiLL_backend.repository.DiagramConfigRepository
 import com.wipdev.eWiLL_backend.repository.TaskRepository
 import com.wipdev.eWiLL_backend.repository.DiagramRepository
 import com.wipdev.eWiLL_backend.repository.RulesetRepository
@@ -17,15 +22,23 @@ class EvaluationService:IEvaluationService {
     lateinit var taskRepository: TaskRepository
 
     @Autowired
+    lateinit var configRepository: DiagramConfigRepository
+    @Autowired
     lateinit var rulesetRepository: RulesetRepository
-    override fun eval(submissionRequestPL: SubmissionRequestPL): String {
+    override fun eval(submissionRequestPL: SubmissionRequestPL): DiagramEvalResult {
+        //Collect Data for evaluation
         val task = taskRepository.findById(submissionRequestPL.taskId.toLong()).get()
         val ruleset = task.rulesetId?.let { rulesetRepository.findById(it).get() }
         val diagram = submissionRequestPL.diagramPL;
+        val solutionDiagram = DiagramService.convert(diagramRepository.findById(task.solutionModelId!!).get(), configRepository)
 
-        val solutionDiagram =diagramRepository.findById(task.solutionModelId!!).get()
+        //Prepare evaluation
+        val diagramEvalEntry = DiagramEvalEntry(task, ruleset, diagram, listOf(solutionDiagram))
+        val evaluator: IDiagramEvaluator =
+            SERMDiagramEvaluator()//TODO: Change to diffrent Controller when using other models
 
-        return "test"
+
+        return evaluator.eval(diagramEvalEntry)
     }
 
 

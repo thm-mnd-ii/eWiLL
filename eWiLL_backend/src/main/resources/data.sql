@@ -7,3 +7,6 @@ INSERT INTO users(id,email,password,username) VALUES (2,'user@user','user','user
 INSERT INTO user_roles(user_id,role_id) VALUES (1,0);
 INSERT INTO user_roles(user_id,role_id) VALUES (1,1);
 INSERT INTO user_roles(user_id,role_id) VALUES (2,1);
+
+INSERT INTO public.diagram_config (id, diagram_type) VALUES (0, 'serm');
+
