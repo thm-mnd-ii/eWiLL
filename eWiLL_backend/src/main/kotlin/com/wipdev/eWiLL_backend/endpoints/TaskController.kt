@@ -6,6 +6,7 @@ import com.wipdev.eWiLL_backend.services.TaskService
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Description
 import org.springframework.web.bind.annotation.*
 
 @RequestMapping("/api/tasks")
@@ -33,7 +34,7 @@ class TaskController {
     @CrossOrigin
     @PutMapping()
     @ResponseBody
-    fun update(@Parameter taskPL: TaskPL) = taskPL.id?.let { service.update(it, taskPL) }
+    fun update(@Parameter taskPL: TaskPL,taskId :Long?) = taskId?.let { service.update(it, taskPL) }
 
     @CrossOrigin
     @DeleteMapping("/{id}")
@@ -41,6 +42,7 @@ class TaskController {
 
     @CrossOrigin
     @PostMapping("/ruleset")
+    @Description("Creates a new ruleset, check eval/rules/Rule.kt for more information")
     fun createRuleset(@Parameter ruleset: Ruleset) = service.createRuleset(ruleset)
 
 

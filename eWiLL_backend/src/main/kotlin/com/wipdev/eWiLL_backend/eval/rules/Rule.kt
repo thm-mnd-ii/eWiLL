@@ -7,9 +7,9 @@ import com.wipdev.eWiLL_backend.eval.rules.entityequivalence.EntityCheckNameRule
 
 enum class Rule(var ruleEvaluator: IRuleEvaluator,var ruleType: RuleType) {
 
-    ENTITY_EQUIVALENCE( EntityCheckNameRuleEvaluator(),RuleType.SEMANTIC),
-    CONNECTION_EQUIVALENCE(ConnectionEquivalenceEvaluator(),RuleType.SEMANTIC),
-    ATTRIBUTE_EQUIVALENCE(AttributeEquivalenceEvaluator(),RuleType.SEMANTIC);
+    ENTITY_EQUIVALENCE( EntityCheckNameRuleEvaluator(),RuleType.SEMANTIC),//0
+    CONNECTION_EQUIVALENCE(ConnectionEquivalenceEvaluator(),RuleType.SEMANTIC),//1
+    ATTRIBUTE_EQUIVALENCE(AttributeEquivalenceEvaluator(),RuleType.SEMANTIC);//2
 
 
     val id : Int
