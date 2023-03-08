@@ -3,20 +3,8 @@ package com.wipdev.eWiLL_backend.database.tables
 import javax.persistence.*
 
 @Entity
-@Table(name = "Assignment")
+@Table(name = "Task")
 class Task {
-    constructor(id: Long?, name: String?, description: String?, dueDate: String?, subject: String?, courseId: Long?, solutionModelId: Long?, rulesetId: Long?)
-    {
-        this.id = id
-        this.name = name
-        this.description = description
-        this.dueDate = dueDate
-        this.subject = subject
-        this.courseId = courseId
-        this.solutionModelId = solutionModelId
-        this.rulesetId = rulesetId
-    }
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -26,14 +14,14 @@ class Task {
     @Column(name = "name", nullable = false)
     var name: String? = null
 
-    @Column(name = "description", nullable = false)
+    @Column(name = "description", nullable = false, length = 100000)
     var description: String? = null
 
     @Column(name = "dueDate", nullable = false)
     var dueDate: String? = null
 
-    @Column(name = "subject", nullable = false)
-    var subject: String? = null
+    @Column(name="mediatype", nullable = false)
+    var mediaType: String? = null
 
     @Column(name = "courseId", nullable = false)
     var courseId: Long? = null

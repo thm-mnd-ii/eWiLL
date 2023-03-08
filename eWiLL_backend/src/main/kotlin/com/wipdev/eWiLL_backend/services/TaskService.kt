@@ -54,12 +54,12 @@ class TaskService : ITaskService {
 
 
     fun convert(task: Task): TaskPL {
+
         return TaskPL(
-            task.id,
             task.name,
             task.description,
             task.dueDate,
-            task.subject,
+            task.mediaType,
             task.courseId,
             task.solutionModelId,
             task.rulesetId
@@ -69,16 +69,16 @@ class TaskService : ITaskService {
 
 
     fun convert(taskPL: TaskPL): Task {
-        return Task(
-            taskPL.id,
-            taskPL.name,
-            taskPL.description,
-            taskPL.dueDate,
-            taskPL.subject,
-            taskPL.courseId,
-            taskPL.solutionModelId,
-            taskPL.rulesetId
-        )
+        var task = Task()
+        task.name = taskPL.name
+        task.description = taskPL.description
+        task.dueDate = taskPL.dueDate
+        task.mediaType = taskPL.mediaType
+        task.solutionModelId = taskPL.solutionModelId
+        task.rulesetId = taskPL.rulesetId
+        task.courseId = taskPL.courseId
+
+        return task
 
     }
 }

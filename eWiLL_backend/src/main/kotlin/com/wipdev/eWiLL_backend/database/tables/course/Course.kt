@@ -13,7 +13,7 @@ class Course {
     @Column(name = "name", nullable = false)
     open var name: String? = null
 
-    @Column(name = "description", nullable = false)
+    @Column(name = "description", nullable = false, length = 1000000)
     open var description: String? = null
 
     @Column(name = "active", nullable = false)
@@ -31,6 +31,14 @@ class Course {
     open var endDate: String? = null
 
 
-    @JoinColumn(name = "owner_id")
+    @Column(name = "owner_id")
     open var owner: Long? = null
+
+    @Column(name="keyPassword",nullable = false)
+    open var keyPassword:String? = null
+
+    @Column(name="location",nullable = false)
+    open var location:String? = null
+
+
 }
