@@ -4,6 +4,7 @@ import com.wipdev.eWiLL_backend.database.tables.User
 import com.wipdev.eWiLL_backend.database.tables.course.Course
 import com.wipdev.eWiLL_backend.database.tables.course.CourseUserRole
 import com.wipdev.eWiLL_backend.database.tables.course.ECourseRole
+import com.wipdev.eWiLL_backend.endpoints.payload.CourseEntry
 import com.wipdev.eWiLL_backend.services.CourseService
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.beans.factory.annotation.Autowired
@@ -21,8 +22,8 @@ class CourseController {
     @Autowired
     lateinit var service: CourseService
 
-    @GetMapping("/all")
-    fun getAll(): List<Course>  = service.getAll()
+    @GetMapping("/all/{userId}")
+    fun getAll(@PathVariable userId: Long): List<CourseEntry>  = service.getAll(userId)
 
     @GetMapping("/{id}")
     fun getById(@PathVariable id: Long): Course = service.getById(id)

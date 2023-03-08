@@ -4,9 +4,10 @@ import com.wipdev.eWiLL_backend.database.tables.User
 import com.wipdev.eWiLL_backend.database.tables.course.Course
 import com.wipdev.eWiLL_backend.database.tables.course.CourseUserRole
 import com.wipdev.eWiLL_backend.database.tables.course.ECourseRole
+import com.wipdev.eWiLL_backend.endpoints.payload.CourseEntry
 
 interface ICourseService {
-    fun getAll(): List<Course>
+    fun getAll(userId:Long): List<CourseEntry>
     fun getById(id: Long): Course
     fun create(course: Course): Course
     fun update(id: Long, course: Course): Course
