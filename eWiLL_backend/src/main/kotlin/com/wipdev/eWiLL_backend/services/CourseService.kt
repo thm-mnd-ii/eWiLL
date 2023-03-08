@@ -4,6 +4,7 @@ import com.wipdev.eWiLL_backend.database.tables.User
 import com.wipdev.eWiLL_backend.database.tables.course.Course
 import com.wipdev.eWiLL_backend.database.tables.course.CourseUserRole
 import com.wipdev.eWiLL_backend.database.tables.course.ECourseRole
+import com.wipdev.eWiLL_backend.endpoints.payload.CourseEntry
 import com.wipdev.eWiLL_backend.repository.CourseRepository
 import com.wipdev.eWiLL_backend.repository.CourseRoleRepository
 import com.wipdev.eWiLL_backend.repository.UserRepository
@@ -22,9 +23,9 @@ class CourseService: ICourseService {
     @Autowired
     lateinit var userRepository: UserRepository
 
-    override fun getAll(): List<Course> {
-        val list : MutableList<Course> = mutableListOf()
-        repository.findAll().forEach { list.add(it) }
+    override fun getAll(userId:Long): List<CourseEntry> {
+        val list : MutableList<CourseEntry> = mutableListOf()
+        repository.findAll().forEach { list.add(CourseEntry(it,courseRoleRepository.existsByCourseIdAndUserId(it.id!!,userId))) }
         return list
     }
 
