@@ -6,6 +6,7 @@ import ViewImpressum from "../views/ViewImpressum.vue";
 import ViewDatenschutz from "../views/ViewDatenschutz.vue";
 import ViewLogin from "../views/ViewLogin.vue";
 import ViewProfile from "../views/ViewProfile.vue";
+import ViewCourses from "../views/ViewCourses.vue"
 import ViewTestTask from "../views/ViewTestTask.vue";
 
 const router = createRouter({
@@ -47,6 +48,10 @@ const router = createRouter({
       component: ViewProfile,
     },
     {
+      path: "/courses",
+      name: "ViewCourses",
+      component: ViewCourses,
+    },
       path: "/testTask",
       name: "testTask",
       component: ViewTestTask,
