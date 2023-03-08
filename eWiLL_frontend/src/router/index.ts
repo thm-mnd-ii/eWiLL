@@ -7,6 +7,7 @@ import ViewDatenschutz from "../views/ViewDatenschutz.vue";
 import ViewLogin from "../views/ViewLogin.vue";
 import ViewProfile from "../views/ViewProfile.vue";
 import ViewCourses from "../views/ViewCourses.vue"
+import ViewTestTask from "../views/ViewTestTask.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -51,6 +52,10 @@ const router = createRouter({
       name: "ViewCourses",
       component: ViewCourses,
     },
+      path: "/testTask",
+      name: "testTask",
+      component: ViewTestTask,
+    }
   ],
 });
 
