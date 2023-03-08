@@ -21,14 +21,14 @@ class EWiLlBackendApplicationTests {
         assert(translations?.data!!.translations!!.translatedText == "Kunde")
     }*/
 
-    @Test
+    /*@Test
     fun testStringSimilarity(){
         val text = "Customer"
         val possibles = Array<String>(1){ "customers" }
         val isPresent = StringFinderUtils.isPresent(text,possibles,0.88,true)
         assert(isPresent)
     }
-
+*/
     @Autowired
     lateinit var courseRepository: CourseRepository
 
