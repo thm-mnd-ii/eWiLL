@@ -63,6 +63,38 @@ class CourseService{
               location: "Gießen",
               participation: 0,
             },
+            {
+              id: 7,
+              semester: "SS23",
+              active: 1,
+              name: "SQL for Fortgeschrittene",
+              location: "Gießen",
+              participation: 0,
+            },
+            {
+              id: 8,
+              semester: "SS23",
+              active: 1,
+              name: "SQL for Fortgeschrittene",
+              location: "Gießen",
+              participation: 1,
+            },
+            {
+              id: 9,
+              semester: "SS23",
+              active: 0,
+              name: "SQL for Fortgeschrittene",
+              location: "Friedberg",
+              participation: 0,
+            },
+            {
+              id: 9,
+              semester: "SS23",
+              active: 0,
+              name: "SQL for Fortgeschrittene",
+              location: "Friedberg",
+              participation: 1,
+            },
           ];
           return courses;
     }
