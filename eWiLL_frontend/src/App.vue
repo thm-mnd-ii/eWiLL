@@ -18,6 +18,7 @@
         <v-list-item to="/" active-class="active" prepend-icon="mdi-home-variant" title="Startseite" value="home" />
         <v-list-item to="/modeling" active-class="active" prepend-icon="mdi-pencil-ruler" title="Modellierung" value="modeling" />
         <v-list-item to="/checker" active-class="active" prepend-icon="mdi-code-greater-than" title="Überprüfung" value="checker" />
+        <v-list-item to="/testTask" active-class="active" prepend-icon="mdi-file-document-edit" title="Testaufgabe" value="testTask" />
       </v-list>
     </v-navigation-drawer>
 
