@@ -16,24 +16,30 @@ class TaskController {
     @Autowired
     lateinit var service: TaskService
 
+    @CrossOrigin
     @GetMapping("/{courseId}/tasks", produces = ["application/json"])
-    fun getAll(@PathVariable courseId:Long) = service.getAll(courseId)
+    fun getAll(@PathVariable courseId: Long) = service.getAll(courseId)
 
+    @CrossOrigin
     @GetMapping("/{id}")
     @ResponseBody
     fun getById(@PathVariable id: Long) = service.getById(id)
 
+    @CrossOrigin
     @PostMapping("/{courseId}")
     @ResponseBody
-    fun create(@PathVariable courseId: Long,@Parameter taskPL: TaskPL) = service.create(courseId,taskPL)
+    fun create(@PathVariable courseId: Long, @Parameter taskPL: TaskPL) = service.create(courseId, taskPL)
 
+    @CrossOrigin
     @PutMapping()
     @ResponseBody
-    fun update(@Parameter taskPL: TaskPL) = taskPL.id?.let { service.update(it,taskPL) }
+    fun update(@Parameter taskPL: TaskPL) = taskPL.id?.let { service.update(it, taskPL) }
 
+    @CrossOrigin
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: Long) = service.delete(id)
 
+    @CrossOrigin
     @PostMapping("/ruleset")
     fun createRuleset(@Parameter ruleset: Ruleset) = service.createRuleset(ruleset)
 
