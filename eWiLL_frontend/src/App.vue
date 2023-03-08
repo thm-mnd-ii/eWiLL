@@ -16,8 +16,10 @@
     <v-navigation-drawer v-if="$router.currentRoute.value.name != 'ViewLogin'" v-model="showSideBar" width="220" expand-on-hover rail>
       <v-list density="compact" active-class="active" nav>
         <v-list-item to="/" active-class="active" prepend-icon="mdi-home-variant" title="Startseite" value="home" />
+        <v-list-item to="/courses" active-class="active" prepend-icon="mdi-file-multiple" title="Alle Kurse" value="courses" />
         <v-list-item to="/modeling" active-class="active" prepend-icon="mdi-pencil-ruler" title="Modellierung" value="modeling" />
         <v-list-item to="/checker" active-class="active" prepend-icon="mdi-code-greater-than" title="Überprüfung" value="checker" />
+        <v-list-item to="/testTask" active-class="active" prepend-icon="mdi-file-document-edit" title="Testaufgabe" value="testTask" />
       </v-list>
     </v-navigation-drawer>
 
