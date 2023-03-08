@@ -23,9 +23,11 @@ class CourseController {
     lateinit var service: CourseService
 
     @GetMapping("/all/{userId}")
+    @ResponseBody
     fun getAll(@PathVariable userId: Long): List<CourseEntry>  = service.getAll(userId)
 
     @GetMapping("/{id}")
+    @ResponseBody
     fun getById(@PathVariable id: Long): Course = service.getById(id)
 
     @PutMapping()
