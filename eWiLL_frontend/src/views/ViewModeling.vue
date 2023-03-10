@@ -1,9 +1,20 @@
 <template>
   <div class="container">
     <div class="navigation">
-      <v-system-bar color="white" window>
-        <v-icon icon="mdi-content-save-alert" class="me-2"></v-icon>
-        <span> Denk immer daran dein Modell zu speichern</span>
+      <v-system-bar color="white" elevation="1" window>
+        <span v-if="diagramStore.diagram.name != ''">
+          Ausgewähltes Modell:
+          <b>{{ diagramStore.diagram.name }}</b>
+        </span>
+
+        <span v-if="diagramStore.diagram.name == ''">
+          <v-icon icon="mdi-content-save-alert" class="me-1"></v-icon>
+          <span> Denk immer daran dein Modell zu speichern</span>
+        </span>
+
+        <v-spacer></v-spacer>
+
+        <span>Info Bar</span>
 
         <v-spacer></v-spacer>
 

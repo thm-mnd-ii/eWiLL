@@ -1,4 +1,6 @@
 <template>
+  <DialogShowFullDiagram ref="dialogShowFullDiagram" />
+
   <div class="task">
     <v-card>
       <v-card-title class="task-header-title">
@@ -21,17 +23,17 @@
           <v-select v-model="selectedCategoryId" label="Kategorie" variant="underlined" :items="categories" item-title="name" item-value="id" @update:model-value="updateDiagrams"></v-select>
           <v-select v-model="selectedDiagramId" label="Diagram" variant="underlined" :items="diagrams" item-title="name" item-value="id" @update:model-value="showSelectedDiagram"></v-select>
         </v-form>
-        <v-card>
+
+        <v-card class="preview-container">
           <v-card-title class="task-header-title">
             <h3 class="headline mb-0">Preview</h3>
             <v-spacer></v-spacer>
-            <v-btn icon variant="text" color="dark-gray">
+            <v-btn icon variant="text" color="dark-gray" @click="openFullDiagram">
               <v-icon icon="mdi-fullscreen" size="x-large"></v-icon>
             </v-btn>
           </v-card-title>
-          <v-card-text>
-            <p>Diagramm</p>
-            
+          <v-card-text class="modeling-container">
+            <ModelingTool :key="modelingToolKey" class="modelPreview"></ModelingTool>
           </v-card-text>
         </v-card>
       </div>
@@ -69,12 +71,23 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import CourseTask from "@/model/CourseTask";
+import { storeToRefs } from "pinia";
+
+import ModelingTool from "@/components/ModelingTool.vue";
+import DialogShowFullDiagram from "@/dialog/DialogShowFullDiagram.vue";
+
 import diagramService from "@/services/diagram.service";
-import { useAuthUserStore } from "@/stores/authUserStore";
+
+import CourseTask from "@/model/CourseTask";
 import Category from "@/model/diagram/Category";
 import Diagram from "@/model/diagram/Diagram";
 
+import { useAuthUserStore } from "@/stores/authUserStore";
+import { useDiagramStore } from "@/stores/diagramStore";
+
+const diagramStore = useDiagramStore();
+
+const modelingToolKey = storeToRefs(diagramStore).key;
 const authUserStore = useAuthUserStore();
 
 const courseTask: CourseTask = {
@@ -101,12 +114,20 @@ const selectedCategoryId = ref<number>();
 const selectedDiagramId = ref<number>();
 const selectedResultTab = ref<any>();
 
+const dialogShowFullDiagram = ref<typeof DialogShowFullDiagram>();
+
 onMounted(() => {
   let userId = authUserStore.auth.user?.id;
   if (userId != undefined) {
     getCategories(userId);
   }
+
+  diagramStore.createNewDiagram();
 });
+
+const openFullDiagram = () => {
+  dialogShowFullDiagram.value?.openDialog();
+};
 
 const getCategories = (uId: number) => {
   diagramService.getCategories(uId).then((response) => {
@@ -122,7 +143,8 @@ const updateDiagrams = (categoryId: number) => {
 };
 
 const showSelectedDiagram = (diagramId: number) => {
-  console.log(diagrams.value.find((d) => d.id == diagramId));
+  // console.log(diagrams.value.find((d) => d.id == diagramId));
+  diagramStore.loadDiagram(diagrams.value.find((d) => d.id == diagramId) as Diagram);
 };
 
 const submitDiagram = () => {
@@ -177,5 +199,16 @@ const submitDiagram = () => {
 
 .task-trials-text {
   min-height: 100px;
+}
+
+.modeling-container {
+  width: 100%;
+  height: 350px;
+}
+
+.modelPreview {
+  position: relative;
+  width: 100%;
+  height: 100%;
 }
 </style>

@@ -50,7 +50,7 @@ export const useDiagramStore = defineStore("diagram", {
     },
     getMinWidth() {
       let minWidth = 0;
-      if (this.diagram.entities.length !== 0) {
+      if (this.diagram.entities.length != 0) {
         this.diagram.entities.forEach((entity) => {
           minWidth = Math.max(minWidth, entity.left + entity.width);
           return minWidth;
@@ -60,7 +60,7 @@ export const useDiagramStore = defineStore("diagram", {
     },
     getMinHeight() {
       let minHeight = 0;
-      if (this.diagram.entities.length !== 0) {
+      if (this.diagram.entities.length != 0) {
         this.diagram.entities.forEach((entity) => {
           minHeight = Math.max(minHeight, entity.top + entity.width / 2);
           return minHeight;

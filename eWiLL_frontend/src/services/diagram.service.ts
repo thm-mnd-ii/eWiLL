@@ -13,14 +13,7 @@ class DiagramService {
   }
 
   putDiagram(diagram: Diagram) {
-    return axios
-      .put("/api/diagram/", diagram)
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    return axios.put("/api/diagram/", diagram);
   }
 
   deleteDiagram(diagram: Diagram) {

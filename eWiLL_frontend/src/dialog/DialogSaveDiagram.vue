@@ -91,8 +91,7 @@ const saveDiagram = () => {
         // save diagram
         diagramService
           .postDiagram(diagramStore.diagram)
-          .then((response) => {
-            diagramStore.loadDiagram(response.data);
+          .then(() => {
             _promiseNewDiagram();
           })
           .catch((error) => {
