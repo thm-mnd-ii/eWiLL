@@ -14,7 +14,12 @@
 
         <v-spacer></v-spacer>
 
-        <span>Info Bar</span>
+        <!-- <span v-if="diagramStore.saved">
+          <v-icon icon="mdi-content-save" color="success"></v-icon>
+        </span>
+        <span v-if="!diagramStore.saved">
+          <v-icon icon="mdi-content-save-alert" color="error" class="me-1"></v-icon>
+        </span> -->
 
         <v-spacer></v-spacer>
 

@@ -52,6 +52,9 @@ onMounted(() => {
 diagramStore.$subscribe(() => {
   updateLines();
   updateArea();
+  setTimeout(() => {
+    diagramStore.saved = false;
+  }, 2000);
 });
 
 const unselectAll = () => {

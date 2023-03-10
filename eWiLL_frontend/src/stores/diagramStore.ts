@@ -11,6 +11,7 @@ interface State {
   key: number;
   history: Diagram[];
   historyIndex: number;
+  saved: boolean;
 }
 
 const config: Config = {
@@ -33,6 +34,7 @@ export const useDiagramStore = defineStore("diagram", {
       key: 0,
       history: [],
       historyIndex: 0,
+      saved: false,
     };
   },
   getters: {
