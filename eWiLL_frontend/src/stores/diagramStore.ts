@@ -9,84 +9,14 @@ interface State {
   diagram: Diagram;
   // increment this key to reload the diagram component
   key: number;
+  history: Diagram[];
+  historyIndex: number;
 }
 
 const config: Config = {
   id: 0,
   diagramType: DiagramType.SERM,
 };
-
-// const entityList: Entity[] = [
-//   {
-//     id: 1,
-//     type: EntityType.ENTITY,
-//     entityName: "Kunde",
-//     top: 124,
-//     left: 81,
-//     width: 100,
-//     attributes: [
-//       { name: "KNr", type: AttributeType.PrimaryKey },
-//       { name: "Adresse", type: AttributeType.Attribute },
-//       { name: "Name", type: AttributeType.Attribute },
-//       { name: "Vorname", type: AttributeType.Attribute },
-//     ],
-//   },
-//   {
-//     id: 2,
-//     type: EntityType.ENTITYRELATIONSHIP,
-//     entityName: "Rechnung",
-//     top: 122,
-//     left: 302,
-//     width: 100,
-//     attributes: [
-//       { name: "RNr", type: AttributeType.PrimaryKey },
-//       { name: "KNr", type: AttributeType.ForeignKey },
-//       { name: "Datum", type: AttributeType.Attribute },
-//     ],
-//   },
-//   {
-//     id: 3,
-//     type: EntityType.ENTITY,
-//     entityName: "Artikel",
-//     top: 207,
-//     left: 81,
-//     width: 100,
-//     attributes: [],
-//   },
-//   {
-//     id: 4,
-//     type: EntityType.RELATIONSHIP,
-//     entityName: "Rechnungs\npositionen",
-//     top: 118,
-//     left: 486,
-//     width: 100,
-//     attributes: [],
-//   },
-// ];
-
-// const ankerPoints: Connection[] = [
-//   {
-//     startEntity: 1,
-//     startEntityPosition: ConnectorPosition.Right,
-//     endEntity: 2,
-//     endEntityPosition: ConnectorPosition.Left,
-//     style: CardinalityType.ONE_TO_MANY,
-//   },
-//   {
-//     startEntity: 3,
-//     startEntityPosition: ConnectorPosition.Right,
-//     endEntity: 2,
-//     endEntityPosition: ConnectorPosition.Left,
-//     style: CardinalityType.ZERO_TO_MANY,
-//   },
-//   {
-//     startEntity: 2,
-//     startEntityPosition: ConnectorPosition.Right,
-//     endEntity: 4,
-//     endEntityPosition: ConnectorPosition.Left,
-//     style: CardinalityType.ZERO_TO_ONE,
-//   },
-// ];
 
 export const useDiagramStore = defineStore("diagram", {
   state: (): State => {
@@ -101,6 +31,8 @@ export const useDiagramStore = defineStore("diagram", {
       } as Diagram,
       // increment this key to reload the diagram component
       key: 0,
+      history: [],
+      historyIndex: 0,
     };
   },
   getters: {
@@ -113,6 +45,94 @@ export const useDiagramStore = defineStore("diagram", {
       this.diagram = diagram;
       // reload diagram component
       this.key++;
+      // reset history
+      this.history = [];
     },
+    getMinWidth() {
+      let minWidth = 0;
+      if (this.diagram.entities.length !== 0) {
+        this.diagram.entities.forEach((entity) => {
+          minWidth = Math.max(minWidth, entity.left + entity.width);
+          return minWidth;
+        });
+      }
+      return minWidth;
+    },
+    getMinHeight() {
+      let minHeight = 0;
+      if (this.diagram.entities.length !== 0) {
+        this.diagram.entities.forEach((entity) => {
+          minHeight = Math.max(minHeight, entity.top + entity.width / 2);
+          return minHeight;
+        });
+      }
+      return minHeight;
+    },
+    createNewDiagram() {
+      this.diagram = {
+        id: 0,
+        ownerId: 0,
+        name: "",
+        config: config,
+        entities: [] as Entity[],
+        connections: [] as Connection[],
+      } as Diagram;
+      // reload diagram component
+      this.key++;
+      // reset history
+      this.history = [];
+    },
+    // saveHistory() {
+    //   // if state doesnt change, dont save history
+
+    //   const currentState = JSON.stringify(this.diagram);
+    //   const previousState = JSON.stringify(this.history[this.historyIndex - 1]);
+
+    //   // if initial state, save history
+    //   if (previousState == undefined) {
+    //     this.history.push(JSON.parse(JSON.stringify(this.diagram)));
+    //     this.historyIndex = this.history.length - 1;
+    //     return;
+    //   }
+
+    //   // if state doesnt change, dont save history
+    //   if (currentState == previousState) {
+    //     console.log("dont save history");
+    //     return;
+    //   }
+
+    //   console.log("save history");
+
+    //   console.log(this.historyIndex);
+    //   console.log(this.history.length);
+
+    //   console.log(previousState);
+    //   console.log(currentState);
+    //   console.log(currentState == previousState);
+
+    //   // remove all history after current index
+    //   // this.history = this.history.slice(this.historyIndex, this.history.length - 1);
+
+    //   // save copy of current state
+    //   this.history.push(JSON.parse(JSON.stringify(this.diagram)));
+
+    //   this.historyIndex = this.history.length;
+    // },
+    // undo() {
+    //   if (this.historyIndex > 0) {
+    //     console.log("undo");
+    //     this.historyIndex--;
+    //     this.diagram = this.history[this.historyIndex];
+    //     this.key++;
+    //   }
+    // },
+    // redo() {
+    //   if (this.historyIndex < this.history.length - 1) {
+    //     console.log("redo");
+    //     this.historyIndex++;
+    //     this.diagram = this.history[this.historyIndex];
+    //     this.key++;
+    //   }
+    // },
   },
 });

@@ -5,11 +5,33 @@
     <DialogSaveDiagramVue ref="dialogSave"></DialogSaveDiagramVue>
     <DialogConfirmVue ref="dialogConfirm"></DialogConfirmVue>
 
-    <v-card :elevation="3" class="explorer">
-      <v-card-actions>
-        <v-btn icon="mdi-home" class="explorerBtn" :disabled="deleteActive" @click="homeButtonClick"></v-btn>
-        <v-btn icon="mdi-content-save" class="explorerBtn" :disabled="deleteActive" @click="saveDialogButtonClick"></v-btn>
-        <v-btn icon="mdi-delete" class="explorerBtn" :class="{ deleteBtnActive: deleteActive }" @click="deleteActive = !deleteActive"></v-btn>
+    <v-card :elevation="0" class="explorer">
+      <v-divider></v-divider>
+      <v-card-actions class="btn-menue">
+        <div>
+          <v-btn icon="mdi-new-box" class="explorerBtn" :disabled="deleteActive" @click="createNewDiagram"></v-btn>
+        </div>
+        <div>
+          <v-btn icon="mdi-content-save" class="explorerBtn" :disabled="deleteActive" @click="saveDialogButtonClick"></v-btn>
+        </div>
+        <div>
+          <v-btn icon="mdi-delete" class="explorerBtn" :class="{ deleteBtnActive: deleteActive }" @click="deleteActive = !deleteActive"></v-btn>
+        </div>
+
+        <div>
+          <v-btn icon="mdi-arrow-left" class="explorerBtn" :disabled="deleteActive || categoriesViewActive" @click="moveToOverview"></v-btn>
+        </div>
+        <!-- reload -->
+        <div>
+          <v-btn icon="mdi-refresh" class="explorerBtn" :disabled="deleteActive" @click="updateFiles"></v-btn>
+        </div>
+        <!-- <div></div>
+        <div>
+          <v-btn icon="mdi-undo" class="explorerBtn" :disabled="deleteActive" @click="diagramStore.undo"></v-btn>
+        </div>
+        <div>
+          <v-btn icon="mdi-redo" class="explorerBtn" :disabled="deleteActive" @click="diagramStore.redo"></v-btn>
+        </div> -->
       </v-card-actions>
       <!-- Breaking line -->
       <v-divider></v-divider>
@@ -68,17 +90,16 @@ const diagramStore = useDiagramStore();
 const authUserStore = useAuthUserStore();
 
 onMounted(() => {
-  //displayDiagrams.value.length = 0;
-
-  let userId = authUserStore.auth.user?.id;
-  if (userId != undefined) {
-    updateFiles(userId);
-  } else {
-    console.log("userId is undefined");
-  }
+  updateFiles();
 });
 
-const updateFiles = (uId: number) => {
+const updateFiles = () => {
+  const uId = authUserStore.auth.user?.id as number;
+  if (uId == undefined) {
+    console.log("userId is undefined");
+    return;
+  }
+
   return new Promise<void>((resolve, reject) => {
     diagramService
       .getCategories(uId)
@@ -87,10 +108,12 @@ const updateFiles = (uId: number) => {
           .getDiagramsByUserId(uId)
           .then((userDiagrams) => {
             map.value = diagramService.getDiagramsWithCategory(categories.data, userDiagrams.data);
-            displayDiagrams.value = [];
             if (activeCategorie.value != null) {
-              map.value.get(activeCategorie.value)?.forEach((diagram) => {
-                displayDiagrams.value.push(diagram);
+              displayDiagrams.value = [] as Diagram[];
+              map.value.forEach((value, key) => {
+                if (key.id == activeCategorie.value?.id) {
+                  displayDiagrams.value = value;
+                }
               });
             }
             resolve();
@@ -107,9 +130,10 @@ const updateFiles = (uId: number) => {
   });
 };
 
-const homeButtonClick = () => {
+const moveToOverview = () => {
   categoriesViewActive.value = true;
-  updateFiles(authUserStore.auth.user?.id as number);
+  activeCategorie.value = null;
+  updateFiles();
 };
 
 const categoryClicked = (category: Category) => {
@@ -118,7 +142,7 @@ const categoryClicked = (category: Category) => {
       dialogConfirm.value.openDialog(`Lösche: ${category.name}`, "Willst du die Kategorie wirklich löschen? Wenn du sie löscht, werden auch alle Diagramme gelöscht, die in dieser Kategorie sind.").then((result: boolean) => {
         if (result) {
           diagramService.deleteCategory(category).then(() => {
-            updateFiles(authUserStore.auth.user?.id as number);
+            updateFiles();
           });
         }
       });
@@ -152,10 +176,7 @@ const diagramSingleClick = (diagram: Diagram) => {
           diagramService.deleteDiagram(diagram).then(() => {
             console.log("Diagram deleted");
             console.log(activeCategorie.value);
-            // TODO: Reload doesnt work
-            updateFiles(authUserStore.auth.user?.id as number).then(() => {
-              selectCategory(activeCategorie.value as Category);
-            });
+            updateFiles();
           });
         }
       });
@@ -166,29 +187,54 @@ const diagramSingleClick = (diagram: Diagram) => {
 const saveDialogButtonClick = () => {
   dialogSave.value?.openDialog(activeDiagramId.value).then((result: boolean) => {
     if (result) {
-      updateFiles(authUserStore.auth.user?.id as number);
+      updateFiles();
     }
   });
   categoryNames.value.length = 0;
+};
+
+const createNewDiagram = () => {
+  dialogConfirm.value?.openDialog("Neues Diagramm", 'Willst du ein neues Diagramm erstellen? Wenn du auf "Erstellen" klickst wird möglicherweise der aktuelle Stand deines Diagrams gelöscht.', "Erstellen").then((result: boolean) => {
+    if (result) {
+      diagramStore.createNewDiagram();
+    }
+  });
 };
 </script>
 
 <style scoped lang="scss">
 .explorer {
   z-index: 1;
-  position: absolute;
-  padding: 10px;
-  max-width: 200px;
-  min-height: 200px;
+  position: relative;
+  width: 100%;
 }
 
-.explorerBtn {
-  height: 30px;
-  border-radius: 3px;
+// grid
+.btn-menue {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  grid-template-areas: "btn1 btn2 btn3" "btn4 btn5 btn6";
+  grid-gap: 15px;
+  padding: 5px;
+  margin-top: 5px;
 
-  &:hover {
-    margin-bottom: 5px;
-    * {
+  div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 30px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+
+    .explorerBtn {
+      height: 30px;
+      border-radius: 3px;
+
+      &:hover {
+        margin-bottom: 5px;
+      }
     }
   }
 }

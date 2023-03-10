@@ -80,15 +80,15 @@ const saveDiagram = () => {
     throw new Error("User is not logged in");
   }
 
-  //validate form
-  form.value.validate().then(() => {
-    if (valid.value) {
-      // set diagram name & category
-      diagramStore.diagram.name = diagramName.value;
-      diagramStore.diagram.categoryId = diagramCategory.value as number;
+  if (isNewDiagram.value) {
+    //validate form
+    form.value.validate().then(() => {
+      if (valid.value) {
+        // set diagram name & category
+        diagramStore.diagram.name = diagramName.value;
+        diagramStore.diagram.categoryId = diagramCategory.value as number;
 
-      // save diagram
-      if (isNewDiagram.value) {
+        // save diagram
         diagramService
           .postDiagram(diagramStore.diagram)
           .then((response) => {
@@ -100,19 +100,19 @@ const saveDiagram = () => {
             alert("Diagramm konnte nicht gespeichert werden");
           });
       } else {
-        diagramService
-          .putDiagram(diagramStore.diagram)
-          .then(() => {
-            _promiseNewDiagram();
-          })
-          .catch(() => {
-            alert("Diagramm konnte nicht gespeichert werden");
-          });
+        alert("Form is not valid");
       }
-    } else {
-      alert("Form is not valid");
-    }
-  });
+    });
+  } else {
+    diagramService
+      .putDiagram(diagramStore.diagram)
+      .then(() => {
+        _promiseNewDiagram();
+      })
+      .catch(() => {
+        alert("Diagramm konnte nicht gespeichert werden");
+      });
+  }
 };
 
 const openCategoryDialog = () => {

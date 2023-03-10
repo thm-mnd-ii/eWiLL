@@ -1,18 +1,7 @@
 <template>
-  <!-- <div>
-    {{ diagramStore.diagram.connections }}
-  </div> -->
-
   <div class="container">
-    <ModalAddAttributes v-if="toolManagementStore.mode == Mode.EDIT" />
-
-    <div v-if="toolManagementStore.mode == Mode.EDIT" class="toolbox">
-      <IconEntity id="item" draggable="true" @click="addElement($event, EntityType.ENTITY)" />
-      <IconRelationshiptyp @mousedown="addElement($event, EntityType.RELATIONSHIP)" />
-      <IconEntityRelationshiptyp @mousedown="addElement($event, EntityType.ENTITYRELATIONSHIP)" />
-    </div>
-
-    <div class="modelingContainer" @click.self="unselectAll">
+    <ModalAddAttributes />
+    <div ref="modelingContainer" class="modelingContainer" @click.self="unselectAll">
       <EntityMain v-for="entity in entities.diagram.value.entities" :key="entity.id" class="entity" :entity="entity" />
 
       <LineMain v-for="line in lineList" :key="line.id" :line="line" />
@@ -26,25 +15,22 @@
 <script setup lang="ts">
 import EntityMain from "./modelingTool/EntityMain.vue";
 import LineMain from "./modelingTool/LineMain.vue";
-import ModalAddAttributes from "../dialog/DialogAddAttributes.vue";
+
 import ArrowDefinitionVue from "./modelingTool/ArrowDefinition.vue";
+import ModalAddAttributes from "../dialog/DialogAddAttributes.vue";
 
-import IconEntityRelationshiptyp from "./icons/IconEntityRelationshiptyp.vue";
-import IconEntity from "./icons/IconEntitytyp.vue";
-import IconRelationshiptyp from "./icons/IconRelationshiptyp.vue";
-
-import { onMounted, reactive } from "vue";
+import { onMounted, reactive, computed, ref } from "vue";
 import { useDiagramStore } from "../stores/diagramStore";
 import { useToolManagementStore } from "../stores/toolManagementStore";
 import { storeToRefs } from "pinia";
 
-import EntityType from "../enums/EntityType";
 import Connection from "../model/diagram/Connection";
 import Line from "../model/diagram/Line";
-import Mode from "../enums/Mode";
 
 const diagramStore = useDiagramStore();
 const toolManagementStore = useToolManagementStore();
+
+const modelingContainer = ref<HTMLElement | null>(null);
 
 const lineList: Line[] = reactive([
   //{ "id": 1, "x1": 200, "y1": 100, "x2": 0, "y2": 0},
@@ -53,20 +39,32 @@ const lineList: Line[] = reactive([
 
 const entities = storeToRefs(diagramStore);
 
+const minWidth = computed(() => diagramStore.getMinWidth() + 200);
+const minHeight = computed(() => diagramStore.getMinHeight() + 200);
+
 // const newAnkerPoint = ref<Connection>({});
 
 onMounted(() => {
   updateLines();
+  updateArea();
 });
 
 diagramStore.$subscribe(() => {
   updateLines();
+  updateArea();
 });
 
 const unselectAll = () => {
   toolManagementStore.selectedEntity = null;
   toolManagementStore.selectedLine = null;
   toolManagementStore.resetConnection();
+};
+
+const updateArea = () => {
+  if (modelingContainer.value == null) return;
+
+  modelingContainer.value.style.width = minWidth.value + "px";
+  modelingContainer.value.style.height = minHeight.value + "px";
 };
 
 const updateLines = () => {
@@ -222,74 +220,26 @@ const spreadDuplicateLines = (calculatedLines: Line[]) => {
 
   return calculatedLines;
 };
-
-// let triggered = false;
-// const handleAnkerPoint = (ankerPoint: { id: any; position: any }) => {
-//   if (!triggered) {
-//     triggered = true;
-//     newAnkerPoint.value.startEntity = ankerPoint.id;
-//     newAnkerPoint.value.startEntityPosition = ankerPoint.position;
-//   } else if (triggered) {
-//     triggered = false;
-//     newAnkerPoint.value.endEntity = ankerPoint.id;
-//     newAnkerPoint.value.endEntityPosition = ankerPoint.position;
-
-//     //initialize style with 0
-//     newAnkerPoint.value.style = 0;
-
-//     diagramStore.diagram.connections.push(newAnkerPoint.value);
-//     newAnkerPoint.value = {};
-//   }
-// };
-
-//add Element with serial ID
-const addElement = (e: { clientY: number; clientX: number }, type: EntityType) => {
-  if (diagramStore.diagram.entities.length == 0) {
-    diagramStore.diagram.entities.push({ id: 1, type: type, entityName: "New Entity", attributes: [], top: e.clientY - 100, left: e.clientX - 50, width: 100 });
-    return;
-  }
-
-  const ids = diagramStore.diagram.entities.map((entity: { id: any }) => {
-    return entity.id;
-  });
-  const max = Math.max(...ids);
-  const nextID = max + 1;
-
-  diagramStore.diagram.entities.push({ id: nextID, type: type, entityName: "New Entity", attributes: [], top: e.clientY - 100, left: e.clientX - 50, width: 100 });
-};
 </script>
 
 <style scoped lang="scss">
+// center the modeling container
 .container {
-  position: relative;
-  width: 100%;
-  height: 100vh;
-  margin-bottom: 5%;
+  width: 100px;
+  height: 100px;
+  background-color: rgb(206, 206, 225);
+  z-index: 0;
+  overflow: auto;
 }
+
 .modelingContainer {
   position: relative;
+  min-width: 500px;
+  min-height: 500px;
+  max-width: 1300px;
+  max-height: 800px;
   background-color: lavender;
-  left: 15%;
-  top: 10%;
-  width: 1000px;
-  height: 500px;
   z-index: 1;
-}
-
-.entity {
-  // extend clickable area withouth changing the size of the entity
-}
-
-.toolbox {
-  z-index: 1;
-  position: absolute;
-  top: 260px;
-  left: 10px;
-  padding: 10px;
-  width: 140px;
-  height: auto;
-  border-radius: 5px;
-  box-shadow: 4px 4px 10px 0px rgba(15, 33, 47, 0.421);
 }
 
 .toolbox > * {
