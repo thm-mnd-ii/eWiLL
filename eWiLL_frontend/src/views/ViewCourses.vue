@@ -8,7 +8,7 @@
       <v-checkbox v-model="checkboxGießen" label="Gießen" @change="onCheckboxChange"></v-checkbox>
       <v-checkbox v-model="checkboxParticipation" label="Teilnahme" @change="onCheckboxChange"></v-checkbox>
     </v-row>
-    <v-data-table :headers="headers" :items="displayedCourses" item-value="name" class="elevation-1" :search="search" density="default" height="480px">
+    <v-data-table :headers="headers" :items="displayedCourses" item-value="name" class="elevation-1" :search="search" density="default" height="480px" @click:row="openCourseOrSignUpView">
       <template #item.active="{ item }">
         <v-icon v-if="item.raw.active == 0" icon="mdi-close-circle" color="#DD0000"></v-icon>
         <v-icon v-if="item.raw.active == 1" icon="mdi-check-circle" color="#81BA24"></v-icon>
@@ -84,6 +84,10 @@ const onCheckboxChange = () => {
 
 const createCourse = () => {
   console.log("create course");
+};
+
+const openCourseOrSignUpView = (row: any, item: any) => {
+  console.log(item.item.raw.id);
 };
 </script>
 
