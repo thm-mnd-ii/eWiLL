@@ -10,11 +10,11 @@
     </v-row>
     <v-data-table :headers="headers" :items="displayedCourses" item-value="name" class="elevation-1" :search="search" density="default" height="480px" @click:row="openCourseOrSignUpView">
       <template #item.active="{ item }">
-        <v-icon v-if="item.raw.active == 0" icon="mdi-close-circle" color="#DD0000"></v-icon>
-        <v-icon v-if="item.raw.active == 1" icon="mdi-check-circle" color="#81BA24"></v-icon>
+        <v-icon v-if="item.raw.active == false" icon="mdi-close-circle" color="#DD0000"></v-icon>
+        <v-icon v-if="item.raw.active == true" icon="mdi-check-circle" color="#81BA24"></v-icon>
       </template>
       <template #item.participation="{ item }">
-        <v-icon v-if="item.raw.participation == 1" icon="mdi-check-bold" color="#81BA24"></v-icon>
+        <v-icon v-if="item.raw.participation == true" icon="mdi-check-bold" color="#81BA24"></v-icon>
       </template>
     </v-data-table>
     <v-btn id="createCourseBtn" @click="createCourse">Kurs erstellen</v-btn>
@@ -66,8 +66,8 @@ const buildSubCourseLists = () => {
   let tmpCoursesGießen: Course[] = [];
 
   allCourses.value.forEach((course) => {
-    if (course.active == 1) tmpCoursesActive.push(course);
-    if (course.participation == 1) tmpCoursesParticipation.push(course);
+    if (course.active == true) tmpCoursesActive.push(course);
+    if (course.participation == true) tmpCoursesParticipation.push(course);
     if (course.location == "Friedberg") tmpCoursesFriedberg.push(course);
     if (course.location == "Gießen") tmpCoursesGießen.push(course);
   });
@@ -75,10 +75,10 @@ const buildSubCourseLists = () => {
 
 const onCheckboxChange = () => {
   let filteredList: Course[] = allCourses.value;
-  if (checkboxActive.value) filteredList = filteredList.filter((course) => course.active == 1);
+  if (checkboxActive.value) filteredList = filteredList.filter((course) => course.active == true);
   if (checkboxFriedberg.value) filteredList = filteredList.filter((course) => course.location == "Friedberg");
   if (checkboxGießen.value) filteredList = filteredList.filter((course) => course.location == "Gießen");
-  if (checkboxParticipation.value) filteredList = filteredList.filter((course) => course.participation == 1);
+  if (checkboxParticipation.value) filteredList = filteredList.filter((course) => course.participation == true);
   displayedCourses.value = filteredList;
 };
 
