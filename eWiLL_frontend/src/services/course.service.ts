@@ -97,6 +97,17 @@ class CourseService{
         ];
         return courses;
   }
+
+  getAllCoursesTest(userId: number){
+    const courses: Course[] = [];
+    axios.get("/api/course/all/" + userId, { headers: authHeader() })
+    .then((response) => {
+      console.log(response);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  }
 }
 
 export default new CourseService();

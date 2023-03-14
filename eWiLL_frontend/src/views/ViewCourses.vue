@@ -57,6 +57,7 @@ onMounted(() => {
   } else {
     console.log("userId is undefined");
   }
+  courseService.getAllCoursesTest(1);
 });
 
 const buildSubCourseLists = () => {
