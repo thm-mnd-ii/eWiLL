@@ -58,7 +58,7 @@ class CourseService: ICourseService {
 
     override fun getStudentsByCourseId(id: Long): List<User> {
         val list : MutableList<User> = mutableListOf()
-        courseRoleRepository.findAll().forEach { if(it.courseId == id && it.role == ECourseRole.STUDENT) list.add(userRepository.findById(it.userId!!).get()) }
+        courseRoleRepository.findAll().forEach { if(it.courseId == id) list.add(userRepository.findById(it.userId!!).get()) }
         return list
     }
 
@@ -72,9 +72,14 @@ class CourseService: ICourseService {
                 courseUserRole.userId = userId
                 courseUserRole.role = ECourseRole.STUDENT
                 courseRoleRepository.save(courseUserRole)
+                return courseRoleRepository.findAll().first { it.courseId == id && it.userId == userId }
+            }else{
+                throw Exception("User already in Course")
             }
+        }else{
+            throw Exception("Wrong KeyPass")
         }
-        return courseRoleRepository.findAll().first { it.courseId == id && it.userId == userId }
+        return CourseUserRole();
 
     }
 

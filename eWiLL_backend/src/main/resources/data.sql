@@ -10,8 +10,8 @@ INSERT INTO user_roles(user_id,role_id) VALUES (2,1);
 
 
 INSERT INTO public.course (id, active, creation_date, description, end_date, name, owner, start_date, key_password, location, owner_id) VALUES (0, true, '2023-04-01', 'Test Kurs 1', '2023-09-30', 'Test Kurs 1', null, '2023-04-01', '1234', 'Gießen', 1);
-INSERT INTO course_user_role(id, course_id, role,user_id) VALUES (0,0,0,1);
-INSERT INTO course_user_role(id, course_id, role,user_id) VALUES (1,0,1,2);
+INSERT INTO course_user_role(id, course_id, role,user_id) VALUES (0,0,'STUDENT',1);
+INSERT INTO course_user_role(id, course_id, role,user_id) VALUES (1,0,'STUDENT',2);
 
 INSERT INTO public.diagram_config (id, diagram_type) VALUES (0, 'serm');
 INSERT INTO ruleset(id,name,course_id,rules) VALUES (0,'SERM Ruleset?!',0,'[0,1,2]');

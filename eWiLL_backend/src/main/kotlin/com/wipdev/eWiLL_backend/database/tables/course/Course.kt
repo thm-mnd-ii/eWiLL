@@ -31,7 +31,7 @@ class Course {
     open var endDate: String? = null
 
 
-    @Column(name = "owner_id")
+    @Column(name = "owner_id", nullable = false)
     open var owner: Long? = null
 
     @Column(name="keyPassword",nullable = false)
