@@ -25,13 +25,13 @@
         <div>
           <v-btn icon="mdi-refresh" class="explorerBtn" :disabled="deleteActive" @click="updateFiles"></v-btn>
         </div>
-        <!-- <div></div>
+        <div></div>
         <div>
-          <v-btn icon="mdi-undo" class="explorerBtn" :disabled="deleteActive" @click="diagramStore.undo"></v-btn>
+          <v-btn icon="mdi-undo" class="explorerBtn" :disabled="deleteActive || diagramStore.historyIndex <= 1" @click="diagramStore.undo"></v-btn>
         </div>
         <div>
-          <v-btn icon="mdi-redo" class="explorerBtn" :disabled="deleteActive" @click="diagramStore.redo"></v-btn>
-        </div> -->
+          <v-btn icon="mdi-redo" class="explorerBtn" :disabled="deleteActive || diagramStore.historyIndex >= (diagramStore.history.length - 1)" @click="diagramStore.redo"></v-btn>
+        </div>
       </v-card-actions>
       <!-- Breaking line -->
       <v-divider></v-divider>

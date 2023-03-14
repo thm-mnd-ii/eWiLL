@@ -222,6 +222,8 @@ const mousedown = (e: any) => {
 
     prevX = e.clientX;
     prevY = e.clientY;
+
+    updateEntity();
   };
 
   const mouseup = () => {
@@ -230,6 +232,9 @@ const mousedown = (e: any) => {
 
     //Update Entity to Send new coordinates to parent component
     updateEntity();
+
+    //Save History
+    diagramStore.saveHistory();
   };
 
   window.addEventListener("mousemove", mousemove);

@@ -84,57 +84,41 @@ export const useDiagramStore = defineStore("diagram", {
       // reset history
       this.history = [];
     },
-    // saveHistory() {
-    //   // if state doesnt change, dont save history
+    saveHistory() {
+      console.log("save history");
+      console.log("last Index", this.historyIndex);
+      console.log("history length", this.history.length);
+      console.log("history", this.history);
 
-    //   const currentState = JSON.stringify(this.diagram);
-    //   const previousState = JSON.stringify(this.history[this.historyIndex - 1]);
+      // remove all history after current index
+      this.history.splice(this.historyIndex, this.history.length);
 
-    //   // if initial state, save history
-    //   if (previousState == undefined) {
-    //     this.history.push(JSON.parse(JSON.stringify(this.diagram)));
-    //     this.historyIndex = this.history.length - 1;
-    //     return;
-    //   }
+      // save copy of current state
+      this.history.push(JSON.parse(JSON.stringify(this.diagram)));
 
-    //   // if state doesnt change, dont save history
-    //   if (currentState == previousState) {
-    //     console.log("dont save history");
-    //     return;
-    //   }
+      this.historyIndex = this.history.length;
 
-    //   console.log("save history");
+      console.log("current Index", this.historyIndex);
+    },
+    undo() {
+      if (this.historyIndex > 1) {
+        console.log("undo");
+        console.log("last Index", this.historyIndex);
+        this.historyIndex--;
+        console.log("current Index", this.historyIndex);
 
-    //   console.log(this.historyIndex);
-    //   console.log(this.history.length);
-
-    //   console.log(previousState);
-    //   console.log(currentState);
-    //   console.log(currentState == previousState);
-
-    //   // remove all history after current index
-    //   // this.history = this.history.slice(this.historyIndex, this.history.length - 1);
-
-    //   // save copy of current state
-    //   this.history.push(JSON.parse(JSON.stringify(this.diagram)));
-
-    //   this.historyIndex = this.history.length;
-    // },
-    // undo() {
-    //   if (this.historyIndex > 0) {
-    //     console.log("undo");
-    //     this.historyIndex--;
-    //     this.diagram = this.history[this.historyIndex];
-    //     this.key++;
-    //   }
-    // },
-    // redo() {
-    //   if (this.historyIndex < this.history.length - 1) {
-    //     console.log("redo");
-    //     this.historyIndex++;
-    //     this.diagram = this.history[this.historyIndex];
-    //     this.key++;
-    //   }
-    // },
+        this.diagram = this.history[this.historyIndex - 1];
+        this.key++;
+      }
+    },
+    redo() {
+      if (this.historyIndex < this.history.length - 1) {
+        console.log("redo");
+        console.log(this.historyIndex);
+        this.historyIndex++;
+        this.diagram = this.history[this.historyIndex];
+        this.key++;
+      }
+    },
   },
 });
