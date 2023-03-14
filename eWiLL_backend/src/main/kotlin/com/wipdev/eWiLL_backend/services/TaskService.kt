@@ -28,9 +28,8 @@ class TaskService : ITaskService {
         convert(taskRepository.findById(id).get())
 
 
-    override fun create(courseId: Long, taskPL: TaskPL): Boolean {
-        taskRepository.save(convert(taskPL))
-        return true
+    override fun create(courseId: Long, taskPL: TaskPL): Task {
+        return  taskRepository.save(convert(taskPL))
     }
 
     override fun update(id: Long, taskPL: TaskPL): TaskPL {

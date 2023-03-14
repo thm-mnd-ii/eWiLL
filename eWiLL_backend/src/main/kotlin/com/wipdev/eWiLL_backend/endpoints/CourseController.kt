@@ -13,8 +13,8 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
 
-@Controller
-@RequestMapping("/course")
+@RestController
+@RequestMapping("/api/course")
 @Tag(name = "Course", description = "Course API")
 class CourseController {
 
@@ -22,7 +22,7 @@ class CourseController {
     @Autowired
     lateinit var service: CourseService
 
-    @CrossOrigin
+
     @GetMapping("/all/{userId}")
     @ResponseBody
     fun getAll(@PathVariable userId: Long): List<CourseEntry>  = service.getAll(userId)

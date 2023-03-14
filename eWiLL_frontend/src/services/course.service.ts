@@ -100,7 +100,7 @@ class CourseService{
 
   getAllCoursesTest(userId: number){
     const courses: Course[] = [];
-    axios.get("/api/course/all/" + userId, { headers: authHeader() })
+    axios.get("/api/course/all/" + userId)
     .then((response) => {
       console.log(response);
     })
