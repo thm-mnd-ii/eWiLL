@@ -1,12 +1,13 @@
 <template>
   <DialogShowFullDiagram ref="dialogShowFullDiagram" />
+  <DialogEditTask ref="dialogEditTask" />
 
   <div class="task">
     <v-card>
       <v-card-title class="task-header-title">
-        <h3 class="headline mb-0">{{ courseTask.title }}</h3>
+        <h3 class="headline mb-0">{{ courseTask.name }}</h3>
         <v-spacer></v-spacer>
-        <v-btn variant="text" icon="mdi-cog" color="dark-gray"></v-btn>
+        <v-btn variant="text" icon="mdi-cog" color="dark-gray" @click="openSettings"></v-btn>
       </v-card-title>
       <v-card-text>
         <p>{{ courseTask.description }}</p>
@@ -75,6 +76,7 @@ import { storeToRefs } from "pinia";
 
 import ModelingTool from "@/components/ModelingTool.vue";
 import DialogShowFullDiagram from "@/dialog/DialogShowFullDiagram.vue";
+import DialogEditTask from "@/dialog/DialogEditTask.vue";
 
 import diagramService from "@/services/diagram.service";
 
@@ -92,14 +94,13 @@ const authUserStore = useAuthUserStore();
 
 const courseTask: CourseTask = {
   id: 1,
-  title: "Test Task",
-  description: "This is a test task",
-  course: {
-    id: 1,
-    title: "Test Course",
-    description: "This is a test course",
-    tasks: [],
-  },
+  name: "Testaufgabe",
+  description: "Dies ist eine Testaufgabe",
+  dueDate: "2021-06-01T00:00:00.000Z",
+  mediaType: "Modeling",
+  courseId: 1,
+  solutionModelId: 1,
+  rulesetId: 1,
 };
 
 let courseRole: string = "Student";
@@ -115,6 +116,7 @@ const selectedDiagramId = ref<number>();
 const selectedResultTab = ref<any>();
 
 const dialogShowFullDiagram = ref<typeof DialogShowFullDiagram>();
+const dialogEditTask = ref<typeof DialogEditTask>();
 
 onMounted(() => {
   let userId = authUserStore.auth.user?.id;
@@ -124,6 +126,15 @@ onMounted(() => {
 
   diagramStore.createNewDiagram();
 });
+
+const openSettings = () => {
+  dialogEditTask.value?.openDialog(courseTask).then((result: boolean) => {
+    if (result) {
+      // TODO: reload task
+      
+    }
+  });
+};
 
 const openFullDiagram = () => {
   dialogShowFullDiagram.value?.openDialog();
