@@ -4,8 +4,8 @@
     <v-text-field v-model="search" label="Search" density="compact" prepend-icon="mdi-magnify" variant="underlined" hide-details></v-text-field>
     <v-row>
       <v-checkbox v-model="checkboxActive" label="Nur aktive Kurse anzeigen" @change="filterCourseList"></v-checkbox>
-      <v-checkbox v-model="checkboxFriedberg" label="Friedberg" @change="filterCourseList" @click="uncheckGiessenIfChecked"></v-checkbox>
-      <v-checkbox v-model="checkboxGießen" label="Gießen" @change="filterCourseList" @click="uncheckFriedbergIfChecked"></v-checkbox>
+      <v-checkbox v-model="checkboxFriedberg" label="Friedberg" @change="filterCourseList" @click="checkboxGießen = false"></v-checkbox>
+      <v-checkbox v-model="checkboxGießen" label="Gießen" @change="filterCourseList" @click="checkboxFriedberg = false"></v-checkbox>
       <v-checkbox v-model="checkboxParticipation" label="Teilnahme" @change="filterCourseList"></v-checkbox>
     </v-row>
     <v-data-table :headers="headers" :items="displayedCourses" item-value="name" class="elevation-1" :search="search" density="default" height="480px" @click:row="openCourseOrSignUpView">
@@ -72,14 +72,6 @@ const filterCourseList = () => {
   if (checkboxGießen.value) filteredList = filteredList.filter((course) => course.location == "Gießen");
   if (checkboxParticipation.value) filteredList = filteredList.filter((course) => course.participation == true);
   displayedCourses.value = filteredList;
-};
-
-const uncheckGiessenIfChecked = () => {
-  checkboxGießen.value = false;
-};
-
-const uncheckFriedbergIfChecked = () => {
-  checkboxFriedberg.value = false;
 };
 
 const createCourse = () => {
