@@ -23,6 +23,7 @@ class CourseController {
     lateinit var service: CourseService
 
 
+    @CrossOrigin
     @GetMapping("/all/{userId}")
     @ResponseBody
     fun getAll(@PathVariable userId: Long): List<CourseEntry>  = service.getAll(userId)
