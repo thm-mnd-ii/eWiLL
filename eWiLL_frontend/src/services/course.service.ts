@@ -1,120 +1,20 @@
 import axios, { AxiosResponse } from "axios";
 import Course from "../model/course/Course";
-import authHeader from "./auth-header";
+import CoursePL from "../model/course/CoursePL";
+import CourseAndParticipationPL from "../model/course/CourseAndParticipationPL";
 
 class CourseService{
 
-    getAllCourses(userId: number): Course[]{
-      const courses: Course[] = [
-          {
-            id: 0,  
-            semester: "SS21asdf",
-            active: true,
-            name: "MIB13 Datenbanken",
-            location: "Friedberg",
-            participation: true,
-          },
-          {
-            id: 1,
-            semester: "SS21",
-            active: false,
-            name: "Datenbanksysteme",
-            location: "Gießen",
-            participation: false,
-          },
-          {
-            id: 2,
-            semester: "WS21",
-            active: true,
-            name: "Relationale Datenbanken",
-            location: "Friedberg",
-            participation: true,
-          },
-          {
-            id: 3,
-            semester: "SS22",
-            active: false,
-            name: "SQL",
-            location: "Gießen",
-            participation: false,
-          },
-          {
-            id: 4,
-            semester: "SS22",
-            active: false,
-            name: "Datenbanksysteme 2",
-            location: "Gießen",
-            participation: false,
-          },
-          {
-            id: 5,
-            semester: "WS23",
-            active: true,
-            name: "Relationale Datenbanken 2",
-            location: "Friedberg",
-            participation: true,
-          },
-          {
-            id: 6,
-            semester: "SS23",
-            active: false,
-            name: "SQL for Fortgeschrittene",
-            location: "Gießen",
-            participation: false,
-          },
-          {
-            id: 7,
-            semester: "SS23",
-            active: true,
-            name: "SQL for Fortgeschrittene",
-            location: "Gießen",
-            participation: false,
-          },
-          {
-            id: 8,
-            semester: "SS23",
-            active: true,
-            name: "SQL for Fortgeschrittene",
-            location: "Gießen",
-            participation: true,
-          },
-          {
-            id: 9,
-            semester: "SS23",
-            active: false,
-            name: "SQL for Fortgeschrittene",
-            location: "Friedberg",
-            participation: false,
-          },
-          {
-            id: 9,
-            semester: "SS23",
-            active: false,
-            name: "SQL for Fortgeschrittene",
-            location: "Friedberg",
-            participation: true,
-          },
-        ];
-        return courses;
-  }
-
-  getAllCoursesTest(userId: number): Promise<Course[]>{
+  getAllCourses(userId: number): Promise<Course[]>{
     const courses: Course[] = [];
     return new Promise<Course[]>((resolve, reject) => {
       axios.get("/api/course/all/" + userId)
       .then((response) => {
-        for(let i = 0; i < response.data.length; i++){
-          const tmpCourse = {} as Course;
-          const course = response.data[i].course;
-        
-          tmpCourse.id = course.id;
-          tmpCourse.name = course.name;
-          tmpCourse.semester = course.semester;
-          tmpCourse.active = course.active;
-          tmpCourse.location = course.location;
-          tmpCourse.participation = response.data[i].member;
-          courses.push(tmpCourse);
-        }
+        const data: CourseAndParticipationPL[] = response.data
+        data.forEach((element) => {
+          const tmpCourse: Course = this.convertToCourse(element.course, element.member)
+          courses.push(tmpCourse)
+        })
         resolve(courses)
       })
       .catch((error) => {
@@ -123,6 +23,18 @@ class CourseService{
       });
     })
     
+  }
+
+  convertToCourse(payload: CoursePL, member: boolean): Course{
+    const course = {} as Course;
+    course.id = payload.id;
+    course.active = payload.active;
+    course.location = payload.location;
+    course.name = payload.name;
+    course.participation = member;
+    course.semester = "Not yet implemented"
+
+    return course;
   }
 }
 

@@ -52,9 +52,8 @@ onMounted(() => {
   let userId = authUserStore.auth.user?.id;
   if (userId != undefined) {
     courseService
-      .getAllCoursesTest(userId)
+      .getAllCourses(userId)
       .then((data) => {
-        console.log(data);
         allCourses.value = data;
         displayedCourses.value = allCourses.value;
       })
