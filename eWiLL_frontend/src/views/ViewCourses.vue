@@ -3,10 +3,10 @@
   <div class="container">
     <v-text-field v-model="search" label="Search" density="compact" prepend-icon="mdi-magnify" variant="underlined" hide-details></v-text-field>
     <v-row>
-      <v-checkbox v-model="checkboxActive" label="Nur aktive Kurse anzeigen" @change="onCheckboxChange"></v-checkbox>
-      <v-checkbox v-model="checkboxFriedberg" label="Friedberg" @change="onCheckboxChange"></v-checkbox>
-      <v-checkbox v-model="checkboxGießen" label="Gießen" @change="onCheckboxChange"></v-checkbox>
-      <v-checkbox v-model="checkboxParticipation" label="Teilnahme" @change="onCheckboxChange"></v-checkbox>
+      <v-checkbox v-model="checkboxActive" label="Nur aktive Kurse anzeigen" @change="filterCourseList"></v-checkbox>
+      <v-checkbox v-model="checkboxFriedberg" label="Friedberg" @change="filterCourseList" @click="uncheckGiessenIfChecked"></v-checkbox>
+      <v-checkbox v-model="checkboxGießen" label="Gießen" @change="filterCourseList" @click="uncheckFriedbergIfChecked"></v-checkbox>
+      <v-checkbox v-model="checkboxParticipation" label="Teilnahme" @change="filterCourseList"></v-checkbox>
     </v-row>
     <v-data-table :headers="headers" :items="displayedCourses" item-value="name" class="elevation-1" :search="search" density="default" height="480px" @click:row="openCourseOrSignUpView">
       <template #item.active="{ item }">
@@ -51,36 +51,36 @@ const checkboxParticipation = ref(false);
 onMounted(() => {
   let userId = authUserStore.auth.user?.id;
   if (userId != undefined) {
-    allCourses.value = courseService.getAllCourses(userId);
-    displayedCourses.value = allCourses.value;
-    buildSubCourseLists();
+    courseService
+      .getAllCoursesTest(userId)
+      .then((data) => {
+        console.log(data);
+        allCourses.value = data;
+        displayedCourses.value = allCourses.value;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   } else {
     console.log("userId is undefined");
   }
-  courseService.getAllCoursesTest(1);
 });
 
-const buildSubCourseLists = () => {
-  let tmpCoursesActive: Course[] = [];
-  let tmpCoursesParticipation: Course[] = [];
-  let tmpCoursesFriedberg: Course[] = [];
-  let tmpCoursesGießen: Course[] = [];
-
-  allCourses.value.forEach((course) => {
-    if (course.active == true) tmpCoursesActive.push(course);
-    if (course.participation == true) tmpCoursesParticipation.push(course);
-    if (course.location == "Friedberg") tmpCoursesFriedberg.push(course);
-    if (course.location == "Gießen") tmpCoursesGießen.push(course);
-  });
-};
-
-const onCheckboxChange = () => {
+const filterCourseList = () => {
   let filteredList: Course[] = allCourses.value;
   if (checkboxActive.value) filteredList = filteredList.filter((course) => course.active == true);
   if (checkboxFriedberg.value) filteredList = filteredList.filter((course) => course.location == "Friedberg");
   if (checkboxGießen.value) filteredList = filteredList.filter((course) => course.location == "Gießen");
   if (checkboxParticipation.value) filteredList = filteredList.filter((course) => course.participation == true);
   displayedCourses.value = filteredList;
+};
+
+const uncheckGiessenIfChecked = () => {
+  checkboxGießen.value = false;
+};
+
+const uncheckFriedbergIfChecked = () => {
+  checkboxFriedberg.value = false;
 };
 
 const createCourse = () => {

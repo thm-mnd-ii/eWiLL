@@ -98,15 +98,31 @@ class CourseService{
         return courses;
   }
 
-  getAllCoursesTest(userId: number){
+  getAllCoursesTest(userId: number): Promise<Course[]>{
     const courses: Course[] = [];
-    axios.get("/api/course/all/" + userId)
-    .then((response) => {
-      console.log(response);
+    return new Promise<Course[]>((resolve, reject) => {
+      axios.get("/api/course/all/" + userId)
+      .then((response) => {
+        for(let i = 0; i < response.data.length; i++){
+          const tmpCourse = {} as Course;
+          const course = response.data[i].course;
+        
+          tmpCourse.id = course.id;
+          tmpCourse.name = course.name;
+          tmpCourse.semester = course.semester;
+          tmpCourse.active = course.active;
+          tmpCourse.location = course.location;
+          tmpCourse.participation = response.data[i].member;
+          courses.push(tmpCourse);
+        }
+        resolve(courses)
+      })
+      .catch((error) => {
+        console.log(error);
+        reject()
+      });
     })
-    .catch((error) => {
-      console.log(error);
-    });
+    
   }
 }
 
