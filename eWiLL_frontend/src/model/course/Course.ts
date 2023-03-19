@@ -1,8 +1,8 @@
 interface Course {
   id: number;
   name: string;
-  active: number;
-  participation: number;
+  active: boolean;
+  participation: boolean;
   semester: string;
   location: string;
 }
