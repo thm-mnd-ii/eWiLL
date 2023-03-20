@@ -62,13 +62,15 @@ class CourseController {
     @CrossOrigin
     @PostMapping("/{id}/join")
     @ResponseBody
-    fun joinCourse(@PathVariable id: Long,keyPass:String,userId : Long): ResponseEntity<CourseUserRole> {
-        var role = service.joinCourse(id,keyPass,userId);
-        return if(role?.courseId != null && role.userId != null){
-            ResponseEntity.ok(role)
-        }else{
-            ResponseEntity.status(403).build()
+    fun joinCourse(@PathVariable id: Long,@RequestBody keyPass:String,@RequestBody userId : Long): ResponseEntity<CourseUserRole> {
+        try{
+            return ResponseEntity.ok(service.joinCourse(id,keyPass,userId))
+        }catch (e:Exception){
+            if(e.message!!.contains("Wrong KeyPass")){
+                return ResponseEntity.status(403).body(CourseUserRole())
+            }
         }
+        return ResponseEntity.status(500).body(CourseUserRole())
     }
 
     @CrossOrigin
