@@ -9,6 +9,7 @@ import com.wipdev.eWiLL_backend.services.CourseService
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Description
+import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
@@ -61,11 +62,12 @@ class CourseController {
     @CrossOrigin
     @PostMapping("/{id}/join")
     @ResponseBody
-    fun joinCourse(@PathVariable id: Long,keyPass:String,userId : Long): CourseUserRole {
-        return try{
-            service.joinCourse(id,keyPass,userId)
-        }catch (e:Exception) {
-            CourseUserRole()
+    fun joinCourse(@PathVariable id: Long,keyPass:String,userId : Long): ResponseEntity<CourseUserRole> {
+        var role = service.joinCourse(id,keyPass,userId);
+        return if(role?.courseId != null && role.userId != null){
+            ResponseEntity.ok(role)
+        }else{
+            ResponseEntity.status(403).build()
         }
     }
 
