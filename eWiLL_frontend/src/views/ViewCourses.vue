@@ -8,7 +8,7 @@
       <v-checkbox v-model="checkboxGießen" label="Gießen" @change="filterCourseList" @click="checkboxFriedberg = false"></v-checkbox>
       <v-checkbox v-model="checkboxParticipation" label="Teilnahme" @change="filterCourseList"></v-checkbox>
     </v-row>
-    <v-data-table :headers="headers" :items="displayedCourses" item-value="name" class="elevation-1" :search="search" density="default" height="480px" @click:row="openCourseOrSignUpView">
+    <v-data-table :headers="headers" :items="displayedCourses" item-value="name" class="elevation-1" :search="search" density="default" height="480px" @click:row="openCourseOrSignUp">
       <template #item.active="{ item }">
         <v-icon v-if="item.raw.active == false" icon="mdi-close-circle" color="#DD0000"></v-icon>
         <v-icon v-if="item.raw.active == true" icon="mdi-check-circle" color="#81BA24"></v-icon>
@@ -26,7 +26,9 @@ import { onMounted, ref } from "vue";
 import Course from "../model/course/Course";
 import courseService from "../services/course.service";
 import { useAuthUserStore } from "../stores/authUserStore";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const authUserStore = useAuthUserStore();
 
 const search = ref("");
@@ -78,8 +80,9 @@ const createCourse = () => {
   console.log("create course");
 };
 
-const openCourseOrSignUpView = (row: any, item: any) => {
-  console.log(item.item.raw.id);
+const openCourseOrSignUp = (row: any, item: any) => {
+  console.log("uhm, excuse me");
+  router.push("/course/" + item.item.raw.id + "/signup");
 };
 </script>
 
@@ -89,6 +92,7 @@ const openCourseOrSignUpView = (row: any, item: any) => {
   position: relative;
   left: 500px;
   width: 700px;
+  cursor: pointer;
 }
 
 #createCourseBtn {
