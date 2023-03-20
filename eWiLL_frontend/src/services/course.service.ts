@@ -5,6 +5,10 @@ import CourseAndParticipationPL from "../model/course/CourseAndParticipationPL";
 
 class CourseService{
 
+  getCourse(id: number): Promise<AxiosResponse<CoursePL>>{
+    return axios.get("/api/course/" + id) 
+  }
+
   getAllCourses(userId: number): Promise<Course[]>{
     const courses: Course[] = [];
     return new Promise<Course[]>((resolve, reject) => {
@@ -23,6 +27,10 @@ class CourseService{
       });
     })
     
+  }
+
+  joinCourse(courseId: number, key: string, userId: number){
+    return axios.post("/api/course/" + courseId + "/join", { keyPass: key, userId: userId })
   }
 
   convertToCourse(payload: CoursePL, member: boolean): Course{
