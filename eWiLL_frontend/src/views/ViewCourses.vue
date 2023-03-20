@@ -26,7 +26,9 @@ import { onMounted, ref } from "vue";
 import Course from "../model/course/Course";
 import courseService from "../services/course.service";
 import { useAuthUserStore } from "../stores/authUserStore";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const authUserStore = useAuthUserStore();
 
 const search = ref("");
@@ -79,7 +81,8 @@ const createCourse = () => {
 };
 
 const openCourseOrSignUp = (row: any, item: any) => {
-  console.log(item.item.raw.id);
+  console.log("uhm, excuse me");
+  router.push("/course/" + item.item.raw.id + "/signup");
 };
 </script>
 
@@ -89,6 +92,7 @@ const openCourseOrSignUp = (row: any, item: any) => {
   position: relative;
   left: 500px;
   width: 700px;
+  cursor: pointer;
 }
 
 #createCourseBtn {

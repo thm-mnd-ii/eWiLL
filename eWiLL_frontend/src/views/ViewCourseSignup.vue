@@ -18,7 +18,7 @@
     </v-card>
   </div>
   <v-snackbar v-model="snackbarSuccess" :timeout="2500"> Einschreibung erfolgreich </v-snackbar>
-  <v-snackbar v-model="snackbarPassword" :timeout="2500"> Passwort falsch </v-snackbar>
+  <v-snackbar v-model="snackbarPassword" :timeout="2500"> Passwort falsch, bitte versuchen Sie es erneut </v-snackbar>
   <v-snackbar v-model="snackbarError" :timeout="2500"> Oops, something went wrong </v-snackbar>
 </template>
 
@@ -55,18 +55,16 @@ const signup = () => {
     courseService
       .joinCourse(courseId.value, key.value, userId.value)
       .then((response) => {
-        console.log(response);
         if (response.status == 200) {
           snackbarSuccess.value = true;
         }
       })
       .catch((error) => {
-        console.log(error);
-        if (error.status == 403) {
+        if (error.response.status == 403) {
           snackbarPassword.value = true;
         } else {
           snackbarError.value = true;
-          console.log("error");
+          console.log(error);
         }
       });
   }
