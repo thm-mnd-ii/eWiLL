@@ -17,6 +17,9 @@
       </v-card-actions>
     </v-card>
   </div>
+  <v-snackbar v-model="snackbarSuccess" :timeout="2500"> Einschreibung erfolgreich </v-snackbar>
+  <v-snackbar v-model="snackbarPassword" :timeout="2500"> Passwort falsch </v-snackbar>
+  <v-snackbar v-model="snackbarError" :timeout="2500"> Oops, something went wrong </v-snackbar>
 </template>
 
 <script setup lang="ts">
@@ -32,6 +35,9 @@ const course = ref<CoursePL>();
 const key = ref("");
 const courseId = ref(Number(route.params.id));
 const userId = ref(authUserStore.auth.user?.id);
+const snackbarSuccess = ref(false);
+const snackbarPassword = ref(false);
+const snackbarError = ref(false);
 
 onMounted(() => {
   courseService
@@ -46,16 +52,23 @@ onMounted(() => {
 
 const signup = () => {
   if (userId.value != undefined) {
-    courseService.joinCourse(courseId.value, key.value, userId.value).then((response) => {
-      console.log(response);
-      if (response.status == 200) {
-        console.log("ok");
-      } else if (response.status == 403) {
-        console.log("passwort falsch");
-      } else {
-        console.log("error");
-      }
-    });
+    courseService
+      .joinCourse(courseId.value, key.value, userId.value)
+      .then((response) => {
+        console.log(response);
+        if (response.status == 200) {
+          snackbarSuccess.value = true;
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        if (error.status == 403) {
+          snackbarPassword.value = true;
+        } else {
+          snackbarError.value = true;
+          console.log("error");
+        }
+      });
   }
 };
 </script>
