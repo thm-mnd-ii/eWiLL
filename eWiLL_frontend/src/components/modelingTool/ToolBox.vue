@@ -26,6 +26,7 @@ const diagramStore = useDiagramStore();
 const addElement = (e: { clientY: number; clientX: number }, type: EntityType) => {
   if (diagramStore.diagram.entities.length == 0) {
     diagramStore.diagram.entities.push({ id: 1, type: type, entityName: "New Entity", attributes: [], top: e.clientY - 100, left: e.clientX - 50, width: 100 });
+    diagramStore.saveHistory();
     return;
   }
 
@@ -36,6 +37,8 @@ const addElement = (e: { clientY: number; clientX: number }, type: EntityType) =
   const nextID = max + 1;
 
   diagramStore.diagram.entities.push({ id: nextID, type: type, entityName: "New Entity", attributes: [], top: e.clientY - 100, left: e.clientX - 50, width: 100 });
+
+  diagramStore.saveHistory();
 };
 </script>
 

@@ -48,6 +48,9 @@ export const useToolManagementStore = defineStore("tool-management", {
 
       //reset newAnkerPoint
       this.newConnection = {} as Connection;
+
+      //save History
+      diagramStore.saveHistory();
     },
     resetConnection() {
       this.showIncomingAnkerPoints = false;

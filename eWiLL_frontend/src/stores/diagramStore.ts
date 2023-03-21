@@ -112,11 +112,12 @@ export const useDiagramStore = defineStore("diagram", {
       }
     },
     redo() {
-      if (this.historyIndex < this.history.length - 1) {
+      if (this.historyIndex < this.history.length) {
         console.log("redo");
-        console.log(this.historyIndex);
+        console.log("last Index", this.historyIndex);
         this.historyIndex++;
-        this.diagram = this.history[this.historyIndex];
+        console.log("current Index", this.historyIndex);
+        this.diagram = this.history[this.historyIndex - 1];
         this.key++;
       }
     },

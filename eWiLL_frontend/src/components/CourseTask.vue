@@ -34,7 +34,7 @@
             </v-btn>
           </v-card-title>
           <v-card-text class="modeling-container">
-            <ModelingTool :key="modelingToolKey" class="modelPreview"></ModelingTool>
+            <ModelingTool :key="modelingToolKey" class="modelPreview" :is-editable="false"></ModelingTool>
           </v-card-text>
         </v-card>
       </div>

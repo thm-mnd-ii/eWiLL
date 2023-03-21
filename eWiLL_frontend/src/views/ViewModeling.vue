@@ -37,7 +37,7 @@
     </div>
 
     <div class="middle">
-      <ModelingTool :key="modelingToolKey"></ModelingTool>
+      <ModelingTool :key="modelingToolKey" :is-editable="true"></ModelingTool>
     </div>
   </div>
 </template>

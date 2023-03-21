@@ -30,7 +30,7 @@
           <v-btn icon="mdi-undo" class="explorerBtn" :disabled="deleteActive || diagramStore.historyIndex <= 1" @click="diagramStore.undo"></v-btn>
         </div>
         <div>
-          <v-btn icon="mdi-redo" class="explorerBtn" :disabled="deleteActive || diagramStore.historyIndex >= (diagramStore.history.length - 1)" @click="diagramStore.redo"></v-btn>
+          <v-btn icon="mdi-redo" class="explorerBtn" :disabled="deleteActive || diagramStore.historyIndex >= (diagramStore.history.length)" @click="diagramStore.redo"></v-btn>
         </div>
       </v-card-actions>
       <!-- Breaking line -->

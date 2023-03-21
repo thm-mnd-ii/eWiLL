@@ -41,6 +41,8 @@ const deleteEntity = () => {
     let relationIndex = diagramStore.diagram.connections.indexOf(relation);
     diagramStore.diagram.connections.splice(relationIndex, 1);
   }
+
+  diagramStore.saveHistory();
 };
 
 const changeEntityType = () => {
@@ -52,6 +54,8 @@ const changeEntityType = () => {
   } else {
     diagramStore.diagram.entities[entityIndex].type = currentTyp + 1;
   }
+
+  diagramStore.saveHistory();
 };
 
 const manageAttributes = () => {

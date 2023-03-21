@@ -14,9 +14,9 @@
       </v-card-title>
       <v-card-text>
         <v-form ref="form" v-model="valid" class="save-diagram-form">
-          <v-text-field v-model="diagramName" :rules="[(v) => !!v || 'Item is required']" label="Name*" required :disabled="isNewDiagram == false"></v-text-field>
-          <v-select v-model="diagramCategory" :rules="[(v) => !!v || 'Item is required']" :items="categoryNames" item-title="name" item-value="id" label="Kategorie*" required :disabled="isNewDiagram == false"></v-select>
-          <v-btn cols="12" sm="6" md="4" icon="mdi-folder-plus" :disabled="isNewDiagram == false" @click="openCategoryDialog"></v-btn>
+          <v-text-field v-model="diagramName" :rules="[(v) => !!v || 'Item is required']" label="Name*" required></v-text-field>
+          <v-select v-model="diagramCategory" :rules="[(v) => !!v || 'Item is required']" :items="categoryNames" item-title="name" item-value="id" label="Kategorie*" required></v-select>
+          <v-btn cols="12" sm="6" md="4" icon="mdi-folder-plus" @click="openCategoryDialog"></v-btn>
         </v-form>
         <small>*indicates required field</small>
       </v-card-text>
@@ -103,14 +103,22 @@ const saveDiagram = () => {
       }
     });
   } else {
-    diagramService
-      .putDiagram(diagramStore.diagram)
-      .then(() => {
-        _promiseNewDiagram();
-      })
-      .catch(() => {
-        alert("Diagramm konnte nicht gespeichert werden");
-      });
+    form.value.validate().then(() => {
+      if (valid.value) {
+        // set diagram name & category
+        diagramStore.diagram.name = diagramName.value;
+        diagramStore.diagram.categoryId = diagramCategory.value as number;
+
+        diagramService
+          .putDiagram(diagramStore.diagram)
+          .then(() => {
+            _promiseNewDiagram();
+          })
+          .catch(() => {
+            alert("Diagramm konnte nicht gespeichert werden");
+          });
+      }
+    });
   }
 };
 
@@ -129,6 +137,8 @@ const rejectPromise: any = ref(undefined);
 const openDialog = (selectedDiagramId: number | null) => {
   if (selectedDiagramId == diagramStore.diagram.id) {
     isNewDiagram.value = false;
+    diagramName.value = diagramStore.diagram.name;
+    diagramCategory.value = diagramStore.diagram.categoryId;
   } else {
     isNewDiagram.value = true;
   }

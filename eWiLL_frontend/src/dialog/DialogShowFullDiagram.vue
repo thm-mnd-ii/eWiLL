@@ -2,7 +2,7 @@
   <v-dialog v-model="deleteDialog" width="100vw" height="100vh">
     <v-card :title="deleteTitle" :text="deleteMessage" width="100%" height="100%">
       <v-card-text>
-        <ModelingTool class="modelPreview"></ModelingTool>
+        <ModelingTool class="modelPreview" :is-editable="false"></ModelingTool>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>

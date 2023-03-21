@@ -1,8 +1,8 @@
 <template>
-  <div class="container">
+  <div class="container" :class="{ 'not-clickable': !props.isEditable }">
     <ModalAddAttributes />
     <div ref="modelingContainer" class="modelingContainer" @click.self="unselectAll">
-      <EntityMain v-for="entity in entities.diagram.value.entities" :key="entity.id" class="entity" :entity="entity" />
+      <EntityMain v-for="entity in entities.diagram.value.entities" :key="entity.id" class="entity" :entity="entity" :is-editable="props.isEditable" />
 
       <LineMain v-for="line in lineList" :key="line.id" :line="line" />
 
@@ -30,12 +30,14 @@ import Line from "../model/diagram/Line";
 const diagramStore = useDiagramStore();
 const toolManagementStore = useToolManagementStore();
 
+// props
+const props = defineProps<{
+  isEditable: boolean;
+}>();
+
 const modelingContainer = ref<HTMLElement | null>(null);
 
-const lineList: Line[] = reactive([
-  //{ "id": 1, "x1": 200, "y1": 100, "x2": 0, "y2": 0},
-  //{ "id": 2, "x1": 200, "y1": 100, "x2": 0, "y2": 200},
-]);
+const lineList: Line[] = reactive([]);
 
 const entities = storeToRefs(diagramStore);
 
@@ -230,7 +232,7 @@ const spreadDuplicateLines = (calculatedLines: Line[]) => {
 .container {
   width: 100px;
   height: 100px;
-  background-color: rgb(206, 206, 225);
+  background-color: lavender;
   z-index: 0;
   overflow: auto;
 }
@@ -253,5 +255,11 @@ const spreadDuplicateLines = (calculatedLines: Line[]) => {
 .svgMarker {
   width: 0px;
   height: 0px;
+}
+
+.not-clickable * {
+  pointer-events: none;
+  cursor: default;
+  z-index: 10;
 }
 </style>
