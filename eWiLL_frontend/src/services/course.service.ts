@@ -33,6 +33,10 @@ class CourseService{
     return axios.post("/api/course/" + courseId + "/join", { keyPass: key, userId: userId })
   }
 
+  leaveCourse(courseId: number, userId?: number){
+    return axios.post("/api/course/" + courseId + "/leave", {userId})
+  }
+
   getUserRoleInCourse(userId: number, courseId: number): Promise<string>{
     return new Promise<string>((resolve, reject) => {
       axios.get("/api/course/" + courseId + "/user/" + userId + "/role")

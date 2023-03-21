@@ -24,14 +24,16 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { useRoute } from "vue-router";
+import { routerKey, useRoute } from "vue-router";
 import { useAuthUserStore } from "../stores/authUserStore";
+import { useRouter } from "vue-router";
 import DialogConfirmVue from "../dialog/DialogConfirm.vue";
 import Course from "../model/course/Course";
 import CoursePL from "../model/course/CoursePL";
 import courseService from "../services/course.service";
 
 const route = useRoute();
+const router = useRouter();
 const authUserStore = useAuthUserStore();
 const dialogConfirm = ref<typeof DialogConfirmVue>();
 const course = ref<CoursePL>();
@@ -49,10 +51,18 @@ onMounted(() => {
 });
 
 const leaveCourse = () => {
-  console.log(dialogConfirm.value);
   if (dialogConfirm.value) {
     dialogConfirm.value.openDialog(`Verlasse Kurs: ${course.value?.name}`, "Willst du den Kurs wirklich verlassen?").then((result: boolean) => {
-      console.log("yeah buddy");
+      if (result) {
+        courseService
+          .leaveCourse(courseId.value, userId.value)
+          .then((response) => {
+            router.push("/");
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
     });
   }
 };

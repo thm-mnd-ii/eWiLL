@@ -13,7 +13,7 @@ interface CourseRoleRepository : CrudRepository<CourseUserRole, Long> {
 
     @Transactional
     @Modifying
-    @Query("delete from CourseUserRole c")
+    @Query("delete from CourseUserRole c where c.courseId = :id and c.userId = :userId")
     fun deleteByCourseIdAndUserId(id: Long, userId: Long): Int
 
 
