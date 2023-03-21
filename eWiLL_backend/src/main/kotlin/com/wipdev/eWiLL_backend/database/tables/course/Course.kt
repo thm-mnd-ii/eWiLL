@@ -24,11 +24,9 @@ class Course {
     @Column(name = "creationDate", nullable = false)
     open var creationDate: String? = null
 
-    @Column(name = "startDate", nullable = false)
-    open var startDate: String? = null
 
-    @Column(name = "endDate", nullable = false)
-    open var endDate: String? = null
+    @Column(name = "semesterId", nullable = false)
+    open var semesterId: Long? = null
 
 
     @Column(name = "owner_id", nullable = false)

@@ -14,6 +14,8 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.web.servlet.config.annotation.CorsRegistry
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 
 @Configuration
@@ -34,12 +36,22 @@ class WebSecurityConfig {
     @Bean
     @Throws(Exception::class)
     fun filterChain( http: HttpSecurity): SecurityFilterChain? {
-        http.cors()
-            .and().authorizeRequests()
-            .anyRequest().permitAll()
-            .and().csrf().disable();
+        http.cors().and().csrf().disable()
+            .authorizeRequests()
+            .anyRequest().permitAll().and().httpBasic()
         return http.build()
     }
+
+    @Bean
+    fun corsConfigurer(): WebMvcConfigurer? {
+        return object : WebMvcConfigurer {
+            override fun addCorsMappings(registry: CorsRegistry) {
+                registry.addMapping("/**").allowedOrigins("*")
+            }
+        }
+    }
+
+
 
     @Bean
     fun authenticationProvider(): DaoAuthenticationProvider {
