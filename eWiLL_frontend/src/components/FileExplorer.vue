@@ -30,7 +30,7 @@
           <v-btn icon="mdi-undo" class="explorerBtn" :disabled="deleteActive || diagramStore.historyIndex <= 1" @click="diagramStore.undo"></v-btn>
         </div>
         <div>
-          <v-btn icon="mdi-redo" class="explorerBtn" :disabled="deleteActive || diagramStore.historyIndex >= (diagramStore.history.length)" @click="diagramStore.redo"></v-btn>
+          <v-btn icon="mdi-redo" class="explorerBtn" :disabled="deleteActive || diagramStore.historyIndex >= diagramStore.history.length" @click="diagramStore.redo"></v-btn>
         </div>
       </v-card-actions>
       <!-- Breaking line -->
@@ -143,6 +143,12 @@ const categoryClicked = (category: Category) => {
         if (result) {
           diagramService.deleteCategory(category).then(() => {
             updateFiles();
+
+            // If the active diagram is in the deleted category, create a new diagram and move to overview
+            if (diagramStore.diagram.categoryId == category.id) {
+              moveToOverview();
+              diagramStore.createNewDiagram();
+            }
           });
         }
       });
@@ -177,6 +183,11 @@ const diagramSingleClick = (diagram: Diagram) => {
             console.log("Diagram deleted");
             console.log(activeCategorie.value);
             updateFiles();
+
+            // if selected diagram is deleted, create new diagram
+            if (diagram.id == activeDiagramId.value) {
+              diagramStore.createNewDiagram();
+            }
           });
         }
       });
