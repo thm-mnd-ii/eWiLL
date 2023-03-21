@@ -9,7 +9,9 @@ import com.wipdev.eWiLL_backend.repository.CourseRepository
 import com.wipdev.eWiLL_backend.repository.CourseRoleRepository
 import com.wipdev.eWiLL_backend.repository.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+import org.springframework.web.server.ResponseStatusException
 
 @Service
 class CourseService: ICourseService {
@@ -74,10 +76,10 @@ class CourseService: ICourseService {
                 courseRoleRepository.save(courseUserRole)
                 return courseRoleRepository.findAll().first { it.courseId == id && it.userId == userId }
             }else{
-                throw Exception("User already in Course")
+                throw ResponseStatusException(HttpStatus.I_AM_A_TEAPOT,"User already in Course")
             }
         }else{
-            throw Exception("Wrong KeyPass")
+            throw ResponseStatusException(HttpStatus.FORBIDDEN,"Wrong KeyPass")
         }
         return CourseUserRole();
 

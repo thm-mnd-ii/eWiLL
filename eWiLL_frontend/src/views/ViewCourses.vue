@@ -3,18 +3,18 @@
   <div class="container">
     <v-text-field v-model="search" label="Search" density="compact" prepend-icon="mdi-magnify" variant="underlined" hide-details></v-text-field>
     <v-row>
-      <v-checkbox v-model="checkboxActive" label="Nur aktive Kurse anzeigen" @change="onCheckboxChange"></v-checkbox>
-      <v-checkbox v-model="checkboxFriedberg" label="Friedberg" @change="onCheckboxChange"></v-checkbox>
-      <v-checkbox v-model="checkboxGießen" label="Gießen" @change="onCheckboxChange"></v-checkbox>
-      <v-checkbox v-model="checkboxParticipation" label="Teilnahme" @change="onCheckboxChange"></v-checkbox>
+      <v-checkbox v-model="checkboxActive" label="Nur aktive Kurse anzeigen" @change="filterCourseList"></v-checkbox>
+      <v-checkbox v-model="checkboxFriedberg" label="Friedberg" @change="filterCourseList" @click="checkboxGießen = false"></v-checkbox>
+      <v-checkbox v-model="checkboxGießen" label="Gießen" @change="filterCourseList" @click="checkboxFriedberg = false"></v-checkbox>
+      <v-checkbox v-model="checkboxParticipation" label="Teilnahme" @change="filterCourseList"></v-checkbox>
     </v-row>
-    <v-data-table :headers="headers" :items="displayedCourses" item-value="name" class="elevation-1" :search="search" density="default" height="480px">
+    <v-data-table :headers="headers" :items="displayedCourses" item-value="name" class="elevation-1" :search="search" density="default" height="480px" @click:row="openCourseOrSignUp">
       <template #item.active="{ item }">
-        <v-icon v-if="item.raw.active == 0" icon="mdi-close-circle" color="#DD0000"></v-icon>
-        <v-icon v-if="item.raw.active == 1" icon="mdi-check-circle" color="#81BA24"></v-icon>
+        <v-icon v-if="item.raw.active == false" icon="mdi-close-circle" color="#DD0000"></v-icon>
+        <v-icon v-if="item.raw.active == true" icon="mdi-check-circle" color="#81BA24"></v-icon>
       </template>
       <template #item.participation="{ item }">
-        <v-icon v-if="item.raw.participation == 1" icon="mdi-check-bold" color="#81BA24"></v-icon>
+        <v-icon v-if="item.raw.participation == true" icon="mdi-check-bold" color="#81BA24"></v-icon>
       </template>
     </v-data-table>
     <v-btn id="createCourseBtn" @click="createCourse">Kurs erstellen</v-btn>
@@ -26,7 +26,9 @@ import { onMounted, ref } from "vue";
 import Course from "../model/course/Course";
 import courseService from "../services/course.service";
 import { useAuthUserStore } from "../stores/authUserStore";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const authUserStore = useAuthUserStore();
 
 const search = ref("");
@@ -51,39 +53,36 @@ const checkboxParticipation = ref(false);
 onMounted(() => {
   let userId = authUserStore.auth.user?.id;
   if (userId != undefined) {
-    allCourses.value = courseService.getAllCourses(userId);
-    displayedCourses.value = allCourses.value;
-    buildSubCourseLists();
+    courseService
+      .getAllCourses(userId)
+      .then((data) => {
+        allCourses.value = data;
+        displayedCourses.value = allCourses.value;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   } else {
     console.log("userId is undefined");
   }
 });
 
-const buildSubCourseLists = () => {
-  let tmpCoursesActive: Course[] = [];
-  let tmpCoursesParticipation: Course[] = [];
-  let tmpCoursesFriedberg: Course[] = [];
-  let tmpCoursesGießen: Course[] = [];
-
-  allCourses.value.forEach((course) => {
-    if (course.active == 1) tmpCoursesActive.push(course);
-    if (course.participation == 1) tmpCoursesParticipation.push(course);
-    if (course.location == "Friedberg") tmpCoursesFriedberg.push(course);
-    if (course.location == "Gießen") tmpCoursesGießen.push(course);
-  });
-};
-
-const onCheckboxChange = () => {
+const filterCourseList = () => {
   let filteredList: Course[] = allCourses.value;
-  if (checkboxActive.value) filteredList = filteredList.filter((course) => course.active == 1);
+  if (checkboxActive.value) filteredList = filteredList.filter((course) => course.active == true);
   if (checkboxFriedberg.value) filteredList = filteredList.filter((course) => course.location == "Friedberg");
   if (checkboxGießen.value) filteredList = filteredList.filter((course) => course.location == "Gießen");
-  if (checkboxParticipation.value) filteredList = filteredList.filter((course) => course.participation == 1);
+  if (checkboxParticipation.value) filteredList = filteredList.filter((course) => course.participation == true);
   displayedCourses.value = filteredList;
 };
 
 const createCourse = () => {
   console.log("create course");
+};
+
+const openCourseOrSignUp = (row: any, item: any) => {
+  console.log("uhm, excuse me");
+  router.push("/course/" + item.item.raw.id + "/signup");
 };
 </script>
 
@@ -93,6 +92,7 @@ const createCourse = () => {
   position: relative;
   left: 500px;
   width: 700px;
+  cursor: pointer;
 }
 
 #createCourseBtn {

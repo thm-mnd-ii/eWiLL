@@ -10,7 +10,11 @@ INSERT INTO user_roles(user_id,role_id) VALUES (2,1);
 
 Insert into semester(id, name, start_date, end_date) VALUES (0, 'SS23', '2023-04-01', '2023-09-30');
 
-INSERT INTO course (id, active, creation_date, description,  name,  key_password, location, owner_id,semester_id) VALUES (0, true, '2023-04-01', 'Test Kurs 1', null,  '1234', 'Gießen', 1,0);
+
+INSERT INTO course (id, name, description, active, creation_date, start_date, end_date, owner_id, key_password,
+                    location)
+VALUES (nextval('hibernate_sequence'), 'Test course 1', 'Beschreibung', true, '', '', '', 0, 'pass', '');
+
 INSERT INTO course_user_role(id, course_id, role,user_id) VALUES (0,0,'STUDENT',1);
 INSERT INTO course_user_role(id, course_id, role,user_id) VALUES (1,0,'STUDENT',2);
 
