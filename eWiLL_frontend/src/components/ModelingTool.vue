@@ -241,8 +241,8 @@ const spreadDuplicateLines = (calculatedLines: Line[]) => {
   position: relative;
   min-width: 500px;
   min-height: 500px;
-  max-width: 1300px;
-  max-height: 800px;
+  max-width: 2000px;
+  max-height: 2000px;
   background-color: lavender;
   z-index: 1;
 }
