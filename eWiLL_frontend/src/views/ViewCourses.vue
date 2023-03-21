@@ -81,8 +81,8 @@ const createCourse = () => {
 };
 
 const openCourseOrSignUp = (row: any, item: any) => {
-  console.log("uhm, excuse me");
-  router.push("/course/" + item.item.raw.id + "/signup");
+  if (item.item.raw.participation == false) router.push("/course/" + item.item.raw.id + "/signup");
+  else router.push("/course/" + item.item.raw.id);
 };
 </script>
 
