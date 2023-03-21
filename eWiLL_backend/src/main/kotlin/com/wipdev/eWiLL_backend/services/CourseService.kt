@@ -9,7 +9,9 @@ import com.wipdev.eWiLL_backend.repository.CourseRepository
 import com.wipdev.eWiLL_backend.repository.CourseRoleRepository
 import com.wipdev.eWiLL_backend.repository.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+import org.springframework.web.server.ResponseStatusException
 
 @Service
 class CourseService: ICourseService {
@@ -58,7 +60,7 @@ class CourseService: ICourseService {
 
     override fun getStudentsByCourseId(id: Long): List<User> {
         val list : MutableList<User> = mutableListOf()
-        courseRoleRepository.findAll().forEach { if(it.courseId == id && it.role == ECourseRole.STUDENT) list.add(userRepository.findById(it.userId!!).get()) }
+        courseRoleRepository.findAll().forEach { if(it.courseId == id) list.add(userRepository.findById(it.userId!!).get()) }
         return list
     }
 
@@ -72,9 +74,14 @@ class CourseService: ICourseService {
                 courseUserRole.userId = userId
                 courseUserRole.role = ECourseRole.STUDENT
                 courseRoleRepository.save(courseUserRole)
+                return courseRoleRepository.findAll().first { it.courseId == id && it.userId == userId }
+            }else{
+                throw ResponseStatusException(HttpStatus.I_AM_A_TEAPOT,"User already in Course")
             }
+        }else{
+            throw ResponseStatusException(HttpStatus.FORBIDDEN,"Wrong KeyPass")
         }
-        return courseRoleRepository.findAll().first { it.courseId == id && it.userId == userId }
+        return CourseUserRole();
 
     }
 

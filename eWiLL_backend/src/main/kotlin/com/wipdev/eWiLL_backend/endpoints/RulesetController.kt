@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/ruleset")
+@RequestMapping("/api/ruleset")
 @Tag(name = "Ruleset", description = "Ruleset for Evaluation")
 class RulesetController {
 

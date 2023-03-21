@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional
 
 interface CourseRoleRepository : CrudRepository<CourseUserRole, Long> {
 
-    @Query("select (count(c) > 0) from CourseUserRole c")
+    @Query("select (count(c) > 0) from CourseUserRole c where c.courseId = :courseId and c.userId = :userId")
     fun existsByCourseIdAndUserId(courseId: Long, userId: Long): Boolean
 
     @Transactional
