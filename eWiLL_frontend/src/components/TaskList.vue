@@ -38,8 +38,7 @@ const loadTasks = (courseId: number) => {
 };
 
 const openTask = (row: any, item: any) => {
-  if (item.item.raw.participation == false) router.push("/course/" + item.item.raw.id + "/signup");
-  else router.push("/course/" + item.item.raw.id);
+  router.push("/tasks/" + item.item.raw.id);
 };
 
 defineExpose({

@@ -55,6 +55,7 @@ class TaskService : ITaskService {
     fun convert(task: Task): TaskPL {
 
         return TaskPL(
+            task.id,
             task.name,
             task.description,
             task.dueDate,
@@ -69,6 +70,7 @@ class TaskService : ITaskService {
 
     fun convert(taskPL: TaskPL): Task {
         var task = Task()
+        task.id = taskPL.id
         task.name = taskPL.name
         task.description = taskPL.description
         task.dueDate = taskPL.dueDate
