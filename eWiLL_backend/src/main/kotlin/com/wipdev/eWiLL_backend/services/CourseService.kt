@@ -87,6 +87,7 @@ class CourseService: ICourseService {
 
     override fun leaveCourse(id: Long, userId: Long): Course {
         val course = repository.findById(id).get()
+        println(course)
         if(courseRoleRepository.existsByCourseIdAndUserId(id,userId)){
             courseRoleRepository.deleteByCourseIdAndUserId(id,userId)
         }

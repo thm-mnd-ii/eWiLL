@@ -19,6 +19,7 @@
         </div>
       </v-card-text>
     </v-card>
+    <div class="task_list"><TaskList ref="taskList"></TaskList></div>
   </div>
 </template>
 
@@ -28,6 +29,7 @@ import { routerKey, useRoute } from "vue-router";
 import { useAuthUserStore } from "../stores/authUserStore";
 import { useRouter } from "vue-router";
 import DialogConfirmVue from "../dialog/DialogConfirm.vue";
+import TaskList from "../components/TaskList.vue";
 import Course from "../model/course/Course";
 import CoursePL from "../model/course/CoursePL";
 import courseService from "../services/course.service";
@@ -36,6 +38,7 @@ const route = useRoute();
 const router = useRouter();
 const authUserStore = useAuthUserStore();
 const dialogConfirm = ref<typeof DialogConfirmVue>();
+const taskList = ref<typeof TaskList>();
 const course = ref<CoursePL>();
 const courseId = ref(Number(route.params.id));
 const userId = ref(authUserStore.auth.user?.id);
@@ -48,6 +51,10 @@ onMounted(() => {
   if (userId.value != undefined) {
     courseService.getUserRoleInCourse(userId.value, courseId.value).then((response) => (courseRole.value = response));
   }
+
+  if (taskList.value) {
+    taskList.value.loadTasks(courseId.value);
+  }
 });
 
 const leaveCourse = () => {
@@ -57,6 +64,7 @@ const leaveCourse = () => {
         courseService
           .leaveCourse(courseId.value, userId.value)
           .then((response) => {
+            console.log(response);
             router.push("/");
           })
           .catch((error) => {
@@ -72,6 +80,10 @@ const leaveCourse = () => {
 .course {
   width: auto;
   margin: 20px 20px;
+}
+
+.task_list {
+  margin-top: 30px;
 }
 .align-items-center {
   display: flex;

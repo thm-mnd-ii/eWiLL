@@ -73,10 +73,9 @@ class CourseController {
 
     @CrossOrigin
     @PostMapping("/{id}/leave")
-    @ResponseBody
-    fun leaveCourse(
-        @PathVariable id: Long, 
-        userId: Long): Course = service.leaveCourse(id, userId)
+    fun leaveCourse(@PathVariable id: Long, @RequestParam userId: Long){
+            service.leaveCourse(id, userId)
+        } 
 
     @CrossOrigin
     @GetMapping("/{id}/hasKeyPass")

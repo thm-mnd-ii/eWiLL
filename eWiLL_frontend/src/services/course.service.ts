@@ -34,7 +34,7 @@ class CourseService{
   }
 
   leaveCourse(courseId: number, userId?: number){
-    return axios.post("/api/course/" + courseId + "/leave", {userId})
+    return axios.post("/api/course/" + courseId + "/leave?userId=" + userId)
   }
 
   getUserRoleInCourse(userId: number, courseId: number): Promise<string>{
