@@ -19,6 +19,7 @@
     </v-data-table>
     <v-btn id="createCourseBtn" @click="createCourse">Kurs erstellen</v-btn>
   </div>
+  <DialogCreateCourse ref="dialogCreateCourse"></DialogCreateCourse>
 </template>
 
 <script setup lang="ts">
@@ -27,6 +28,9 @@ import Course from "../model/course/Course";
 import courseService from "../services/course.service";
 import { useAuthUserStore } from "../stores/authUserStore";
 import { useRouter } from "vue-router";
+import DialogCreateCourse from "../dialog/DialogCreateCourse.vue";
+
+const dialogCreateCourse = ref<typeof DialogCreateCourse>();
 
 const router = useRouter();
 const authUserStore = useAuthUserStore();
@@ -77,7 +81,7 @@ const filterCourseList = () => {
 };
 
 const createCourse = () => {
-  console.log("create course");
+  if (dialogCreateCourse.value) dialogCreateCourse.value.openDialog();
 };
 
 const openCourseOrSignUp = (row: any, item: any) => {
