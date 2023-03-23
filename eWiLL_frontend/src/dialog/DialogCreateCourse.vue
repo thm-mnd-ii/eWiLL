@@ -83,9 +83,23 @@ const _confirm = () => {
     const course = {} as CoursePL;
     course.name = courseName.value;
     course.description = courseDescription.value;
-    //courseService.postCourse();
-    courseDialog.value = false;
-    resolvePromise.value(true);
+    course.keyPassword = coursePassword.value;
+    course.active = true;
+    course.creationDate = "creation date";
+    course.location = courseLocation.value;
+    course.owner = 0;
+    course.semesterId = 0;
+
+    courseService
+      .postCourse(course)
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    //courseDialog.value = false;
+    //resolvePromise.value(true);
   }
 };
 

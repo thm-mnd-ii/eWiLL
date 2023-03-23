@@ -29,7 +29,7 @@ class CourseService{
     
   }
 
-  postCourse(course: Course){
+  postCourse(course: CoursePL){
     return axios.post("/api/course", course)
   }
 

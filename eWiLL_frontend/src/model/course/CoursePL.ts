@@ -4,8 +4,7 @@ interface CoursePL {
   description: string;
   active: boolean;
   creationDate: string;
-  startDate: string;
-  endDate: string;
+  semesterId: number;
   owner: number;
   keyPassword: string;
   location: string;
