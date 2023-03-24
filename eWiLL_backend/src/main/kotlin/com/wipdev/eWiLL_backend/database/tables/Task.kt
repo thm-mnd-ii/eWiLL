@@ -1,5 +1,6 @@
 package com.wipdev.eWiLL_backend.database.tables
 
+import com.wipdev.eWiLL_backend.MediaType
 import javax.persistence.*
 
 @Entity
@@ -21,7 +22,10 @@ class Task {
     var dueDate: String? = null
 
     @Column(name="mediatype", nullable = false)
-    var mediaType: String? = null
+    var mediaType: MediaType? = null
+
+    @Column(name="liability")
+    var liability: Liability? = Liability.NONE
 
     @Column(name = "courseId", nullable = false)
     var courseId: Long? = null
