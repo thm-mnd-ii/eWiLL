@@ -81,11 +81,14 @@ const filterCourseList = () => {
 };
 
 const createCourse = () => {
-  if (dialogCreateCourse.value) dialogCreateCourse.value.openDialog();
+  if (dialogCreateCourse.value) {
+    dialogCreateCourse.value.openDialog().then((id: number) => {
+      if (id != undefined) router.push("/course/" + id);
+    });
+  }
 };
 
 const openCourseOrSignUp = (row: any, item: any) => {
-  console.log("uhm, excuse me");
   router.push("/course/" + item.item.raw.id + "/signup");
 };
 </script>

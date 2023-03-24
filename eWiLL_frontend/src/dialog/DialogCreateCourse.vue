@@ -5,7 +5,7 @@
         <span v-if="newCourse" class="text-h5">Neuen Kurs erstellen</span>
         <span v-if="!newCourse" class="text-h5">Kurs bearbeiten: </span>
       </v-card-title>
-      <v-form ref="form" v-model="valid">
+      <v-form ref="form" v-model="valid" @submit.prevent>
         <v-card-text>
           <v-row>
             <v-col>
@@ -27,11 +27,15 @@
         </v-card-actions>
       </v-form>
     </v-card>
+    <v-snackbar v-model="snackbarSuccess" :timeout="2500"> Kurs erfolgreich erstellt </v-snackbar>
+    <v-snackbar v-model="snackbarFail" :timeout="2500"> Kurs konnte nicht erstellt werden, bitte versuchen Sie es erneut </v-snackbar>
   </v-dialog>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
+import { useAuthUserStore } from "../stores/authUserStore";
+import { useRouter } from "vue-router";
 import courseService from "../services/course.service";
 import CoursePL from "../model/course/CoursePL";
 
@@ -39,11 +43,18 @@ const courseDialog = ref<boolean>(false);
 const dialogTitle = ref<string>("");
 const deleteMessage = ref<string | undefined>(undefined);
 
+const router = useRouter();
+const authUserStore = useAuthUserStore();
+
 const semesterLabels = ref<string[]>();
 
 // New Course or editing existing course
 const newCourse = ref(true);
 
+const snackbarSuccess = ref(false);
+const snackbarFail = ref(false);
+
+// Form
 const valid = ref();
 const courseName = ref("");
 const courseSemester = ref("");
@@ -51,7 +62,6 @@ const courseDescription = ref("");
 const coursePassword = ref("");
 const courseLocation = ref("");
 
-// Promis
 const resolvePromise: any = ref(undefined);
 const rejectPromise: any = ref(undefined);
 
@@ -85,21 +95,27 @@ const _confirm = () => {
     course.description = courseDescription.value;
     course.keyPassword = coursePassword.value;
     course.active = true;
-    course.creationDate = "creation date";
+    let date = new Date();
+    let year = date.getFullYear();
+    let day = date.getDate();
+    let month = date.getMonth() + 1;
+    course.creationDate = day + "-" + month + "-" + year;
     course.location = courseLocation.value;
-    course.owner = 0;
+    let userId = authUserStore.auth.user?.id;
+    if (userId != undefined) course.owner = userId;
     course.semesterId = 0;
 
     courseService
       .postCourse(course)
       .then((response) => {
-        console.log(response);
+        snackbarSuccess.value = true;
+        courseDialog.value = false;
+        resolvePromise.value(response.data.id);
       })
       .catch((error) => {
+        snackbarFail.value = true;
         console.log(error);
       });
-    //courseDialog.value = false;
-    //resolvePromise.value(true);
   }
 };
 
