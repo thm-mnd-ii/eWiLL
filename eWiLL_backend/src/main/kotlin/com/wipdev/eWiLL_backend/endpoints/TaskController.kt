@@ -40,10 +40,6 @@ class TaskController {
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: Long) = service.delete(id)
 
-    @CrossOrigin
-    @PostMapping("/ruleset")
-    @Description("Creates a new ruleset, check eval/rules/Rule.kt for more information")
-    fun createRuleset(@Parameter ruleset: Ruleset) = service.createRuleset(ruleset)
 
 
 }

@@ -40,7 +40,7 @@ class DiagramService : IDiagramService {
     override fun update(id: Long, diagramPL: DiagramPL): DiagramPL {
         val diagram=diagramRepository.findById(id).get()
         val diagramChanged = convert(diagramPL)
-
+        diagram.name = diagramChanged.name
         diagram.configId = diagramChanged.configId
         diagram.categoryId = diagramChanged.categoryId
         diagram.connections = diagramChanged.connections

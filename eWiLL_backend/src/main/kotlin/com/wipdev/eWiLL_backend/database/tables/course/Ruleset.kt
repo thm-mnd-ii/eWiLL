@@ -1,5 +1,6 @@
 package com.wipdev.eWiLL_backend.database.tables.course
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.wipdev.eWiLL_backend.eval.rules.Rule
 import com.wipdev.eWiLL_backend.eval.rules.RuleConfig
 import io.swagger.v3.core.util.Json
@@ -16,15 +17,18 @@ class Ruleset {
     @Column(name = "name", nullable = false)
     open var name: String? = null
 
-    @Column(name = "rules", nullable = false, length = 100000)
-    open var rules: String? = "[0,1,2]"
+
 
     @Column(name = "course_id", nullable = false, length = 100000)
     open var ruleConfigs : String? = null
 
     fun getRules():Array<Rule>{
-        var ids:Array<Int> =  Json.mapper().readerForArrayOf(Int::class.java).readValue(rules)
-        return Array(ids.size){ i-> Rule.values()[ids[i]]}
+        var arr:Array<RuleConfig> = Json.mapper().readerForArrayOf(RuleConfig::class.java).readValue(ruleConfigs)
+        var rules = mutableListOf<Rule>()
+        for (ruleConfig in arr){
+            rules.add(Rule.values()[ruleConfig.ruleId!!])
+        }
+        return rules.toTypedArray()
     }
 
     fun getRuleConfigs():Array<RuleConfig>{
