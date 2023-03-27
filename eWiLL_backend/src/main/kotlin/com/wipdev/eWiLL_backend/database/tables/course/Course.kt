@@ -25,8 +25,9 @@ class Course {
     open var creationDate: String? = null
 
 
-    @Column(name = "semesterId", nullable = false)
-    open var semesterId: Long? = null
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "semester_id", nullable = false)
+    var semester: Semester? = null
 
 
     @Column(name = "owner_id", nullable = false)
