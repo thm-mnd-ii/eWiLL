@@ -35,21 +35,22 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useAuthUserStore } from "../stores/authUserStore";
-import { useRouter } from "vue-router";
 import courseService from "../services/course.service";
 import CoursePL from "../model/course/CoursePL";
+import semesterService from "../services/semester.service";
+import Semester from "../model/Semester";
 
 const courseDialog = ref<boolean>(false);
 const dialogTitle = ref<string>("");
-const deleteMessage = ref<string | undefined>(undefined);
 
-const router = useRouter();
 const authUserStore = useAuthUserStore();
 
-const semesterLabels = ref<string[]>();
+const semesters = new Map<string, Semester>([]);
+const semesterLabels = ref<string[]>([]);
 
 // New Course or editing existing course
 const newCourse = ref(true);
+const course = ref<CoursePL>({} as CoursePL);
 
 const snackbarSuccess = ref(false);
 const snackbarFail = ref(false);
@@ -66,11 +67,15 @@ const resolvePromise: any = ref(undefined);
 const rejectPromise: any = ref(undefined);
 
 const openDialog = (courseId: number | undefined) => {
-  if (courseId != undefined) newCourse.value = false;
+  initializeSemesters();
+  if (courseId == undefined) {
+    newCourse.value = true;
+    initializeDialogForNewCourse();
+  } else {
+    newCourse.value = false;
+    initializeDialogForEditingCourse(courseId);
+  }
 
-  semesterLabels.value = generateSemesterLables();
-  if (courseId == undefined) initializeDialogForNewCourse();
-  else initializeDialogForEditingCourse(courseId);
   courseDialog.value = true;
 
   return new Promise((resolve, reject) => {
@@ -84,29 +89,32 @@ const initializeDialogForNewCourse = () => {
 };
 
 const initializeDialogForEditingCourse = (courseId: number) => {
-  dialogTitle.value = "Neuen Kurs erstellen";
+  courseService.getCourse(courseId).then((response) => {
+    course.value = response.data;
+  });
+  dialogTitle.value = "Bearbeiten: ";
 };
 
 // TODO
 const _confirm = () => {
   if (valid.value) {
-    const course = {} as CoursePL;
-    course.name = courseName.value;
-    course.description = courseDescription.value;
-    course.keyPassword = coursePassword.value;
-    course.active = true;
+    course.value.name = courseName.value;
+    course.value.description = courseDescription.value;
+    course.value.keyPassword = coursePassword.value;
+    course.value.active = true;
     let date = new Date();
     let year = date.getFullYear();
     let day = date.getDate();
     let month = date.getMonth() + 1;
-    course.creationDate = day + "-" + month + "-" + year;
-    course.location = courseLocation.value;
+    course.value.creationDate = day + "-" + month + "-" + year;
+    course.value.location = courseLocation.value;
     let userId = authUserStore.auth.user?.id;
-    if (userId != undefined) course.owner = userId;
-    course.semesterId = 0;
+    if (userId != undefined) course.value.owner = userId;
+    let semesterId = semesters.get(courseSemester.value)?.id;
+    if (semesterId != undefined) course.value.semesterId = semesterId;
 
     courseService
-      .postCourse(course)
+      .postCourse(course.value)
       .then((response) => {
         snackbarSuccess.value = true;
         courseDialog.value = false;
@@ -121,20 +129,16 @@ const _confirm = () => {
 
 const _cancel = () => {
   courseDialog.value = false;
-  resolvePromise.value(false);
+  resolvePromise.value(undefined);
 };
 
-const generateSemesterLables = () => {
-  const semesterLabels: string[] = [];
-  let year = new Date().getFullYear();
-  // Last 2 digits
-  year = Number(String(year).slice(-2));
-
-  for (let i = year - 1; i <= year + 1; i++) {
-    semesterLabels.push("SS" + i);
-    semesterLabels.push("WS" + i);
-  }
-  return semesterLabels;
+const initializeSemesters = () => {
+  semesterService.getAllSemesters().then((response) => {
+    response.forEach((semester) => {
+      semesterLabels.value.push(semester.name);
+      semesters.set(semester.name, semester);
+    });
+  });
 };
 
 // define expose
