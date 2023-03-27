@@ -45,6 +45,8 @@ class CourseService: ICourseService {
         oldCourse.description = course.description
         oldCourse.keyPassword = course.keyPassword
         oldCourse.owner = course.owner
+        oldCourse.semester = course.semester
+        oldCourse.location  = course.location
         return repository.save(oldCourse)
     }
 
