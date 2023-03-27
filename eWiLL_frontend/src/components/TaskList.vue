@@ -1,7 +1,8 @@
 <!-- eslint-disable vue/valid-v-slot -->
 <template>
   <div class="container">
-    <v-data-table :headers="headers" :items="allTasks" item-value="name" class="elevation-1" density="default" height="480px" @click:row="openTask">
+    <v-text-field v-model="search" class="search-bar" label="Search" density="compact" prepend-icon="mdi-magnify" variant="underlined" hide-details></v-text-field>
+    <v-data-table :headers="headers" :items="allTasks" item-value="name" class="elevation-1" density="default" height="480px" :search="search" @click:row="openTask">
       <template #item.status="{ item }">
         <v-icon v-if="item.raw.status == false" icon="mdi-close-circle" color="#DD0000"></v-icon>
         <v-icon v-if="item.raw.status == true" icon="mdi-check-circle" color="#81BA24"></v-icon>
@@ -17,6 +18,7 @@ import Task from "../model/task/Task";
 import taskService from "../services/task.service";
 
 const router = useRouter();
+const search = ref("");
 
 const headers = [
   { title: "Name", align: "start", key: "name" },
@@ -51,6 +53,10 @@ defineExpose({
   position: flex;
 
   cursor: pointer;
+}
+
+.search-bar {
+  margin-bottom: 20px;
 }
 
 #createCourseBtn {
