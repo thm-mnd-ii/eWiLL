@@ -41,11 +41,13 @@
 import { ref, computed } from "vue";
 import draggable from "vuedraggable";
 import { useToolManagementStore } from "../stores/toolManagementStore";
+import { useDiagramStore } from "@/stores/diagramStore";
 
 import AttributeType from "../enums/AttributeType";
 import Attribute from "../model/diagram/Attribute";
 
 const toolManagementStore = useToolManagementStore();
+const diagramStore = useDiagramStore();
 
 const drag: any = ref();
 const dialog = ref<boolean>(false);
@@ -75,6 +77,8 @@ const deleteAttribute = (attribute: Attribute) => {
   if (toolManagementStore.selectedEntity != undefined) {
     let index = toolManagementStore.selectedEntity.attributes.indexOf(attribute);
     toolManagementStore.selectedEntity.attributes.splice(index, 1);
+
+    diagramStore.saveHistory();
   }
 };
 
@@ -90,6 +94,8 @@ const addAttribute = () => {
 
     newAttributeName.value = "";
     selectedAttributeType.value = AttributeType.Attribute;
+
+    diagramStore.saveHistory();
   }
 };
 

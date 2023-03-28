@@ -20,6 +20,7 @@ const props = defineProps({
 
 const deleteLine = () => {
   diagramStore.diagram.connections.splice(props.line.id, 1);
+  diagramStore.saveHistory();
 };
 
 const changeLineStyle = () => {
@@ -31,6 +32,7 @@ const changeLineStyle = () => {
       diagramStore.diagram.connections[props.line.id].style = currentStyle + 1;
     }
   }
+  diagramStore.saveHistory();
 };
 </script>
 
