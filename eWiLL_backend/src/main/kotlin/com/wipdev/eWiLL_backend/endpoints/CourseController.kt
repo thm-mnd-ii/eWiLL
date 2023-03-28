@@ -35,14 +35,14 @@ class CourseController {
     fun getById(@PathVariable id: Long): Course = service.getById(id)
 
     @CrossOrigin
-    @PutMapping()
+    @PostMapping()
     @ResponseBody
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     fun create(@RequestBody course: Course): Course = service.create(course)
 
     @CrossOrigin
-    @PostMapping("/{id}")
+    @PutMapping("/{id}")
     @ResponseBody
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     fun update(@PathVariable id: Long, @RequestBody course: Course): Course = service.update(id, course)
 
     @CrossOrigin

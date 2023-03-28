@@ -1,3 +1,6 @@
 package com.wipdev.eWiLL_backend.endpoints.payload.requests
 
-data class TaskPL(val id: Long?, val name: String?, val description: String?, val dueDate: String?, val mediaType: String?,val courseId:Long?, val solutionModelId: Long?, val rulesetId:Long?)
+import com.wipdev.eWiLL_backend.MediaType
+import com.wipdev.eWiLL_backend.database.tables.Liability
+
+data class TaskPL(val name: String?, val description: String?, val dueDate: String?, val mediaType: MediaType?,val courseId:Long?, val solutionModel: DiagramPL, val rulesetId:Long?,var liability: Liability?)

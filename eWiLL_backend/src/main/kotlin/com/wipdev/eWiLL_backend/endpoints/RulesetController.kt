@@ -1,7 +1,7 @@
 package com.wipdev.eWiLL_backend.endpoints;
 
 import com.wipdev.eWiLL_backend.database.tables.course.Ruleset
-import com.wipdev.eWiLL_backend.services.IRulesetService
+import com.wipdev.eWiLL_backend.endpoints.payload.requests.RulesetPl
 import com.wipdev.eWiLL_backend.services.RulesetService
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,28 +18,28 @@ class RulesetController {
         @CrossOrigin
         @GetMapping("/{id}")
         @ResponseBody
-        fun getRuleset(@PathVariable id:Long): Ruleset {
+        fun getRuleset(@PathVariable id:Long): RulesetPl {
             return rulesetService.getRuleset(id)
         }
 
         @CrossOrigin
         @GetMapping()
         @ResponseBody
-        fun getAllRulesets(): List<Ruleset> {
+        fun getAllRulesets(): List<RulesetPl> {
             return rulesetService.getAllRulesets()
         }
 
         @CrossOrigin
         @PostMapping()
         @ResponseBody
-        fun createRuleset(@RequestBody ruleset: Ruleset): Ruleset {
+        fun createRuleset(@RequestBody ruleset: RulesetPl): RulesetPl {
             return rulesetService.createRuleset(ruleset)
         }
 
         @CrossOrigin
         @PutMapping("/{id}")
         @ResponseBody
-        fun updateRuleset(@PathVariable id:Long, @RequestBody ruleset: Ruleset): Ruleset {
+        fun updateRuleset(@PathVariable id:Long, @RequestBody ruleset: RulesetPl): RulesetPl {
             return rulesetService.updateRuleset(id, ruleset)
         }
 
@@ -49,6 +49,8 @@ class RulesetController {
         fun deleteRuleset(@PathVariable id:Long) {
             rulesetService.deleteRuleset(id)
         }
+
+
 
 
 
