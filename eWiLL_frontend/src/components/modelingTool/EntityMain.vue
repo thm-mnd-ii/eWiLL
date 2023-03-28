@@ -1,5 +1,5 @@
 <template>
-  <div ref="root" class="objectContainer" :class="{ active: isActive }" @mouseover="hover = true" @mouseleave="hover = false">
+  <div ref="root" class="objectContainer" :class="{ active: isActive }" @mouseover="props.isEditable ? (hover = true) : null" @mouseleave="hover = false">
     <div v-if="hover" class="click-area"></div>
     <span v-if="!isEditable" class="text unselectable" @dblclick="makeTextEditable">{{ entity.entityName }}</span>
     <textarea v-if="isEditable" v-model="entity.entityName" class="textedit" rows="1" @dblclick="makeTextEditable" @keyup.enter="handleEnter"></textarea>
@@ -22,9 +22,9 @@
     </div>
     <EntityWidget v-if="isResizable" :entity="props.entity" />
 
-    <IconEntity v-if="props.entity.type == EntityTyp.ENTITY" class="entity" @dblclick="activateEntity()" @mousedown="mousedown($event)" />
-    <IconRelationshiptyp v-if="props.entity.type == EntityTyp.RELATIONSHIP" class="entity" @dblclick="activateEntity()" @mousedown="mousedown($event)" />
-    <IconEntityRelationshiptyp v-if="props.entity.type == EntityTyp.ENTITYRELATIONSHIP" class="entity" @dblclick="activateEntity()" @mousedown="mousedown($event)" />
+    <IconEntity v-if="props.entity.type == EntityTyp.ENTITY" class="entity" @dblclick="activateEntity" @mousedown="mousedown($event)" />
+    <IconRelationshiptyp v-if="props.entity.type == EntityTyp.RELATIONSHIP" class="entity" @dblclick="activateEntity" @mousedown="mousedown($event)" />
+    <IconEntityRelationshiptyp v-if="props.entity.type == EntityTyp.ENTITYRELATIONSHIP" class="entity" @dblclick="activateEntity" @mousedown="mousedown($event)" />
   </div>
 </template>
 
@@ -48,6 +48,7 @@ import Entity from "../../model/diagram/Entity";
 
 const props = defineProps<{
   entity: Entity;
+  isEditable: boolean;
 }>();
 
 onMounted(() => {
@@ -109,6 +110,10 @@ const hover = ref<boolean>(false);
 
 const isEditable = ref<boolean>(false);
 const makeTextEditable = () => {
+  if (isEditable.value) {
+    diagramStore.saveHistory();
+  }
+
   isEditable.value = !isEditable.value;
 };
 
@@ -168,6 +173,10 @@ const updateEntity = () => {
 };
 
 const activateEntity = () => {
+  if (!props.isEditable) {
+    return;
+  }
+
   if (entity != undefined) {
     if (toolManagementStore.selectedEntity == entity) {
       toolManagementStore.selectedEntity = null;
@@ -180,6 +189,10 @@ const isResizable = computed(() => {
 });
 
 const mousedown = (e: any) => {
+  if (!props.isEditable) {
+    return;
+  }
+
   //console.log(root.value.parentNode.getBoundingClientRect())
 
   console.log("move");
@@ -222,6 +235,8 @@ const mousedown = (e: any) => {
 
     prevX = e.clientX;
     prevY = e.clientY;
+
+    updateEntity();
   };
 
   const mouseup = () => {
@@ -230,6 +245,9 @@ const mousedown = (e: any) => {
 
     //Update Entity to Send new coordinates to parent component
     updateEntity();
+
+    //Save History
+    diagramStore.saveHistory();
   };
 
   window.addEventListener("mousemove", mousemove);

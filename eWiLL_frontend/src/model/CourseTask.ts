@@ -1,13 +1,12 @@
 interface CourseTask {
   id: number;
-  title: string;
+  name: string;
   description: string;
-  course: {
-    id: number;
-    title: string;
-    description: string;
-    tasks: CourseTask[];
-  };
+  dueDate: string;
+  mediaType: string;
+  courseId: number;
+  solutionModelId: number;
+  rulesetId: number;
 }
 
 export default CourseTask;
