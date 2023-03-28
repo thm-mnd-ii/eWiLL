@@ -63,7 +63,6 @@ class TaskService : ITaskService {
     fun convert(task: Task): TaskPL {
 
         return TaskPL(
-            task.id,
             task.name,
             task.description,
             task.dueDate,
