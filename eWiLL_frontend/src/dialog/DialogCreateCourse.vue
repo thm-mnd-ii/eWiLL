@@ -110,8 +110,8 @@ const _confirm = () => {
     course.value.location = courseLocation.value;
     let userId = authUserStore.auth.user?.id;
     if (userId != undefined) course.value.owner = userId;
-    let semesterId = semesters.get(courseSemester.value)?.id;
-    if (semesterId != undefined) course.value.semesterId = semesterId;
+    let semester = semesters.get(courseSemester.value);
+    if (semester != undefined) course.value.semester = semester;
 
     courseService
       .postCourse(course.value)
