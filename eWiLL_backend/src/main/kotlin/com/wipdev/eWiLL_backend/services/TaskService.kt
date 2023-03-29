@@ -17,8 +17,6 @@ class TaskService : ITaskService {
     @Autowired
     lateinit var taskRepository: TaskRepository
 
-    @Autowired
-    lateinit var diagramRepository: DiagramRepository
 
     @Autowired
     lateinit var diagramService: DiagramService
@@ -28,7 +26,7 @@ class TaskService : ITaskService {
 
 
     override fun getAll(courseId: Long): List<TaskPL> =
-        taskRepository.findAll().map { convert(it) }.filter { it.courseId == courseId }
+        taskRepository.findAllByCourseId(courseId).map { convert(it) }
 
 
     override fun getById(id: Long): TaskPL {
@@ -37,14 +35,19 @@ class TaskService : ITaskService {
 
 
     override fun create(courseId: Long, taskPL: TaskPL): Task {
-        diagramService.create(taskPL.solutionModel)
-        return  taskRepository.save(convert(taskPL))
+        var solutionDiagramId = diagramService.create(taskPL.solutionModel!!)
+        return  taskRepository.save(convert(taskPL,solutionDiagramId))
     }
 
     override fun update(id: Long, taskPL: TaskPL): TaskPL {
-        val assignmentEntity = convert(taskPL)
-        assignmentEntity.id = id
-        taskRepository.save(assignmentEntity)
+        val newTask = convert(taskPL,taskPL.solutionModel?.id)
+        val assignmentEntity = taskRepository.findById(id).get()
+        newTask.id = assignmentEntity.id
+        if(taskPL.solutionModel?.id != null){
+            diagramService.update(taskPL.solutionModel?.id!!,taskPL.solutionModel!!)
+        }
+
+        taskRepository.save(newTask)
         return taskPL
     }
 
@@ -76,13 +79,13 @@ class TaskService : ITaskService {
     }
 
 
-    fun convert(taskPL: TaskPL): Task {
+    fun convert(taskPL: TaskPL,solutionModelId : Long?): Task {
         var task = Task()
         task.name = taskPL.name
         task.description = taskPL.description
         task.dueDate = taskPL.dueDate
         task.mediaType = taskPL.mediaType
-        task.solutionModelId = taskPL.solutionModel.id
+        task.solutionModelId = solutionModelId
         task.rulesetId = taskPL.rulesetId
         task.courseId = taskPL.courseId
         task.liability = taskPL.liability
