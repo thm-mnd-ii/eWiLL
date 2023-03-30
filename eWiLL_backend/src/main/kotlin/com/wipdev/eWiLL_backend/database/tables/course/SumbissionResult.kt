@@ -4,23 +4,20 @@ import javax.persistence.*
 
 @Table(name = "result")
 @Entity
-class Result {
+class SumbissionResult {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", nullable = false)
     open var id: Long? = null
 
-    @Column(name = "correct", nullable = false)
+    @Column(name = "correct", nullable = true)
     open var correct: Boolean? = null
 
-    @Column(name = "score", nullable = false)
+    @Column(name = "score", nullable = true)
     open var score: Number? = null
 
-    @Column(name = "comment", nullable = false)
+    @Column(name = "comment", nullable = true)
     open var comment: String? = null
 
-
-    @Column(name = "submissionId", nullable = false)
-    open var submissionId: Long? = null
 
 }
