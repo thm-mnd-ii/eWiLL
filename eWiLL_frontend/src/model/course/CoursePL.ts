@@ -1,10 +1,12 @@
+import Semester from "../Semester"
+
 interface CoursePL {
   id: number;
   name: string;
   description: string;
   active: boolean;
   creationDate: string;
-  semesterId: number;
+  semester: Semester;
   owner: number;
   keyPassword: string;
   location: string;

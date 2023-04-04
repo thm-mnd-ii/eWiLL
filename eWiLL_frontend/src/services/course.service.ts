@@ -37,6 +37,22 @@ class CourseService{
     return axios.post("/api/course/" + courseId + "/join", { keyPass: key, userId: userId })
   }
 
+  leaveCourse(courseId: number, userId?: number){
+    return axios.post("/api/course/" + courseId + "/leave?userId=" + userId)
+  }
+
+  getUserRoleInCourse(userId: number, courseId: number): Promise<string>{
+    return new Promise<string>((resolve, reject) => {
+      axios.get("/api/course/" + courseId + "/user/" + userId + "/role")
+      .then((response) => {
+        resolve(response.data)
+      }).catch((error) => {
+        console.log(error);
+        reject();
+      })
+    })
+  }
+
   convertToCourse(payload: CoursePL, member: boolean): Course{
     const course = {} as Course;
     course.id = payload.id;

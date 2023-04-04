@@ -9,6 +9,8 @@ import ViewProfile from "../views/ViewProfile.vue";
 import ViewCourses from "../views/ViewCourses.vue";
 import ViewTestTask from "../views/ViewTestTask.vue";
 import ViewCourseSignup from "../views/ViewCourseSignup.vue";
+import ViewCourse from "../views/ViewCourse.vue";
+import ViewTask from "../views/ViewTask.vue"
 
 const router = createRouter({
   history: createWebHistory(),
@@ -62,6 +64,16 @@ const router = createRouter({
       path: "/course/:id/signup",
       name: "ViewCourseSignup",
       component: ViewCourseSignup,
+    },
+    {
+      path: "/course/:id",
+      name: "ViewCourse",
+      component: ViewCourse,
+    },
+    {
+    path: "/course/:courseId/task/:taskId",
+    name: "ViewTask",
+    component: ViewTask,
     },
   ],
 });

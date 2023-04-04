@@ -17,8 +17,6 @@ class TaskService : ITaskService {
     @Autowired
     lateinit var taskRepository: TaskRepository
 
-    @Autowired
-    lateinit var diagramRepository: DiagramRepository
 
     @Autowired
     lateinit var diagramService: DiagramService
@@ -27,28 +25,28 @@ class TaskService : ITaskService {
     lateinit var ruleSetRepository: RulesetRepository
 
 
-    override fun getAll(courseId: Long): List<TaskPL> =
-        taskRepository.findAll().map { convert(it) }.filter { it.courseId == courseId }
+    override fun getAll(courseId: Long): List<Task> {
+        return taskRepository.findAllByCourseId(courseId)
+    }
 
-
-    override fun getById(id: Long): TaskPL {
-        return convert(taskRepository.findById(id).get())
+    override fun getById(id: Long): Task {
+        return taskRepository.findById(id).get()
     }
 
 
     override fun create(courseId: Long, taskPL: TaskPL): Task {
-        diagramService.create(taskPL.solutionModel)
-        return  taskRepository.save(convert(taskPL))
+        var solutionDiagramId = diagramService.create(taskPL.solutionModel!!)
+        return  taskRepository.save(convert(taskPL,solutionDiagramId))
     }
 
-    override fun update(id: Long, taskPL: TaskPL): TaskPL {
-        val assignmentEntity = convert(taskPL)
-        assignmentEntity.id = id
-        taskRepository.save(assignmentEntity)
-        return taskPL
+    override fun update(id: Long, task: Task): Task {
+        val assignmentEntity = taskRepository.findById(id).get()
+        task.id = assignmentEntity.id
+        taskRepository.save(task)
+        return task
     }
 
-    override fun delete(id: Long): TaskPL {
+    override fun delete(id: Long): Task {
         val assignment = getById(id)
         taskRepository.deleteById(id)
         return assignment
@@ -76,13 +74,13 @@ class TaskService : ITaskService {
     }
 
 
-    fun convert(taskPL: TaskPL): Task {
+    fun convert(taskPL: TaskPL,solutionModelId : Long?): Task {
         var task = Task()
         task.name = taskPL.name
         task.description = taskPL.description
         task.dueDate = taskPL.dueDate
         task.mediaType = taskPL.mediaType
-        task.solutionModelId = taskPL.solutionModel.id
+        task.solutionModelId = solutionModelId
         task.rulesetId = taskPL.rulesetId
         task.courseId = taskPL.courseId
         task.liability = taskPL.liability

@@ -22,23 +22,27 @@
         <v-btn variant="text" @click="_confirm"> Speichern </v-btn>
       </v-card-actions>
     </v-card>
+    <v-snackbar v-model="snackbarFail" :timeout="3000"> Ein Fehler ist aufgetreten, bitte versuchen Sie es erneut </v-snackbar>
   </v-dialog>
 </template>
 
 <script setup lang="ts">
-import CourseTask from "@/model/CourseTask";
+import Task from "@/model/task/Task";
 import Category from "@/model/diagram/Category";
 import Diagram from "@/model/diagram/Diagram";
 import diagramService from "@/services/diagram.service";
 import { ref, onMounted } from "vue";
 
 import { useAuthUserStore } from "@/stores/authUserStore";
+import taskService from "@/services/task.service";
 
 const authUserStore = useAuthUserStore();
 
 const editTaskDialog = ref<boolean>(false);
+
+const snackbarFail = ref(false);
 const editTitle = ref<string>("");
-const currentTask = ref<CourseTask>({} as CourseTask);
+const currentTask = ref<Task>({} as Task);
 
 const categories = ref<Category[]>([]);
 const diagrams = ref<Diagram[]>([]);
@@ -58,10 +62,8 @@ const descriptionRules = ref<any>([(v: string) => !!v || "Beschreibung ist erfor
 const dueDateRules = ref<any>([(v: string) => !v || (new Date(v) > new Date() && !isNaN(new Date(v).getTime())) || "Ungültiges Datum"]);
 
 onMounted(() => {
-  let userId = authUserStore.auth.user?.id;
-  if (userId != undefined) {
-    getCategories(userId);
-  }
+  let userId = authUserStore.auth.user?.id!;
+  getCategories(userId);
 });
 
 const getCategories = (uId: number) => {
@@ -82,7 +84,7 @@ const updateDiagrams = (categoryId: number) => {
 const resolvePromise: any = ref(undefined);
 const rejectPromise: any = ref(undefined);
 
-const openDialog = (task?: CourseTask) => {
+const openDialog = (task?: Task) => {
   editTaskDialog.value = true;
 
   if (task) {
@@ -90,7 +92,7 @@ const openDialog = (task?: CourseTask) => {
     currentTask.value = task;
   } else {
     editTitle.value = "Neue Aufgabe erstellen";
-    currentTask.value = {} as CourseTask;
+    currentTask.value = {} as Task;
   }
 
   return new Promise((resolve, reject) => {
@@ -102,8 +104,15 @@ const openDialog = (task?: CourseTask) => {
 const _confirm = () => {
   taskForm.value.validate().then(() => {
     if (valid.value) {
-      editTaskDialog.value = false;
-      resolvePromise.value(true);
+      taskService
+        .putTask(currentTask.value.id, currentTask.value)
+        .then(() => {
+          editTaskDialog.value = false;
+          resolvePromise.value(true);
+        })
+        .catch(() => {
+          snackbarFail.value = true;
+        });
     }
   });
 };

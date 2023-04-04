@@ -27,7 +27,6 @@
         </v-card-actions>
       </v-form>
     </v-card>
-    <v-snackbar v-model="snackbarSuccess" :timeout="2500"> Kurs erfolgreich erstellt </v-snackbar>
     <v-snackbar v-model="snackbarFail" :timeout="2500"> Kurs konnte nicht erstellt werden, bitte versuchen Sie es erneut </v-snackbar>
   </v-dialog>
 </template>
@@ -52,7 +51,6 @@ const semesterLabels = ref<string[]>([]);
 const newCourse = ref(true);
 const course = ref<CoursePL>({} as CoursePL);
 
-const snackbarSuccess = ref(false);
 const snackbarFail = ref(false);
 
 // Form
@@ -110,13 +108,12 @@ const _confirm = () => {
     course.value.location = courseLocation.value;
     let userId = authUserStore.auth.user?.id;
     if (userId != undefined) course.value.owner = userId;
-    let semesterId = semesters.get(courseSemester.value)?.id;
-    if (semesterId != undefined) course.value.semesterId = semesterId;
+    let semester = semesters.get(courseSemester.value);
+    if (semester != undefined) course.value.semester = semester;
 
     courseService
       .postCourse(course.value)
       .then((response) => {
-        snackbarSuccess.value = true;
         courseDialog.value = false;
         resolvePromise.value(response.data.id);
       })
