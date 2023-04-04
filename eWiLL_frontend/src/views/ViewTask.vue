@@ -72,9 +72,8 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { routerKey, useRoute } from "vue-router";
+import { useRoute } from "vue-router";
 import { useAuthUserStore } from "../stores/authUserStore";
-import { useRouter } from "vue-router";
 import courseService from "../services/course.service";
 import taskService from "../services/task.service";
 import categoryService from "../services/category.service";
