@@ -1,5 +1,6 @@
 package com.wipdev.eWiLL_backend.endpoints
 
+import com.wipdev.eWiLL_backend.database.tables.Task
 import com.wipdev.eWiLL_backend.database.tables.course.Ruleset
 import com.wipdev.eWiLL_backend.endpoints.payload.requests.TaskPL
 import com.wipdev.eWiLL_backend.services.TaskService
@@ -34,7 +35,7 @@ class TaskController {
     @CrossOrigin
     @PutMapping("/{taskId}")
     @ResponseBody
-    fun update(@PathVariable taskId :Long?,@RequestBody taskPL: TaskPL) = taskId?.let { service.update(it, taskPL) }
+    fun update(@PathVariable taskId :Long?,@RequestBody task: Task) = taskId?.let { service.update(it, task) }
 
     @CrossOrigin
     @DeleteMapping("/{id}")

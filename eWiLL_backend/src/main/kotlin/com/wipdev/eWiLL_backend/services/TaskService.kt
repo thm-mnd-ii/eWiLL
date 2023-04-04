@@ -25,12 +25,12 @@ class TaskService : ITaskService {
     lateinit var ruleSetRepository: RulesetRepository
 
 
-    override fun getAll(courseId: Long): List<TaskPL> =
-        taskRepository.findAllByCourseId(courseId).map { convert(it) }
+    override fun getAll(courseId: Long): List<Task> {
+        return taskRepository.findAllByCourseId(courseId)
+    }
 
-
-    override fun getById(id: Long): TaskPL {
-        return convert(taskRepository.findById(id).get())
+    override fun getById(id: Long): Task {
+        return taskRepository.findById(id).get()
     }
 
 
@@ -39,19 +39,14 @@ class TaskService : ITaskService {
         return  taskRepository.save(convert(taskPL,solutionDiagramId))
     }
 
-    override fun update(id: Long, taskPL: TaskPL): TaskPL {
-        val newTask = convert(taskPL,taskPL.solutionModel?.id)
+    override fun update(id: Long, task: Task): Task {
         val assignmentEntity = taskRepository.findById(id).get()
-        newTask.id = assignmentEntity.id
-        if(taskPL.solutionModel?.id != null){
-            diagramService.update(taskPL.solutionModel?.id!!,taskPL.solutionModel!!)
-        }
-
-        taskRepository.save(newTask)
-        return taskPL
+        task.id = assignmentEntity.id
+        taskRepository.save(task)
+        return task
     }
 
-    override fun delete(id: Long): TaskPL {
+    override fun delete(id: Long): Task {
         val assignment = getById(id)
         taskRepository.deleteById(id)
         return assignment

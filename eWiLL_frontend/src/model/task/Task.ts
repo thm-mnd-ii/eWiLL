@@ -1,5 +1,3 @@
-import Diagram from "../diagram/Diagram"
-
 interface Task {
     id: number;
     name: string;
@@ -7,8 +5,8 @@ interface Task {
     dueDate: string
     mediaType: string 
     courseId: number;
-    solutionModel: Diagram;
-    rulsesetId: number;
+    solutionModelId: number;
+    rulesetId: number;
     liability: string;
     
   }

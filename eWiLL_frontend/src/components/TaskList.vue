@@ -19,6 +19,7 @@ import taskService from "../services/task.service";
 
 const router = useRouter();
 const search = ref("");
+const saveCourseId = ref(0);
 
 const headers = [
   { title: "Name", align: "start", key: "name" },
@@ -29,6 +30,7 @@ const headers = [
 const allTasks = ref<Task[]>([]);
 
 const loadTasks = (courseId: number) => {
+  saveCourseId.value = courseId;
   taskService
     .getAllTasks(courseId)
     .then((data) => {
@@ -40,7 +42,8 @@ const loadTasks = (courseId: number) => {
 };
 
 const openTask = (row: any, item: any) => {
-  router.push("/tasks/" + item.item.raw.id);
+  console.log(allTasks.value);
+  router.push("/course/" + saveCourseId.value + "/task/" + item.item.raw.id);
 };
 
 defineExpose({
