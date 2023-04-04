@@ -1,12 +1,12 @@
 package com.wipdev.eWiLL_backend.eval
 
+import com.wipdev.eWiLL_backend.database.tables.course.SumbissionResult
 import com.wipdev.eWiLL_backend.eval.rules.RuleEvalResult
-import com.wipdev.eWiLL_backend.eval.rules.RuleEvalScore
 import com.wipdev.eWiLL_backend.eval.rules.ScoreType
 
-class DiagramEvalResult(var ruleEvalResults: List<RuleEvalResult>) {
+class DiagramEvalResult(private var ruleEvalResults: List<RuleEvalResult>) {
 
-    var score = 0f
+    private var score = 0f
 
     fun addToRuleEvalResults(ruleEvalResult: RuleEvalResult) {
         ruleEvalResults += ruleEvalResult
@@ -35,6 +35,14 @@ class DiagramEvalResult(var ruleEvalResults: List<RuleEvalResult>) {
         this.score = score
 
         return this;
+    }
+
+    fun getResult():SumbissionResult{
+        val sumbissionResult = SumbissionResult()
+        sumbissionResult.correct = score >= 100
+        sumbissionResult.score = score
+        sumbissionResult.comment = ruleEvalResults.joinToString("\n") { it.message ?: "" }
+        return sumbissionResult
     }
 }
 

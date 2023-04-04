@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @Service
 class CourseService: ICourseService {
@@ -36,6 +38,15 @@ class CourseService: ICourseService {
     }
 
     override fun create(course: Course): Course {
+        val currentDateTime = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        val formattedDateTime = currentDateTime.format(formatter)
+        course.creationDate = formattedDateTime
+        var role = CourseUserRole()
+        role.courseId = course.id
+        role.userId = course.owner
+        role.role = ECourseRole.OWNER
+        courseRoleRepository.save(role)
         return repository.save(course)
     }
 
@@ -122,7 +133,11 @@ class CourseService: ICourseService {
     }
 
     override fun getUserRoleInCourse(courseId: Long, userId: Long): ECourseRole? {
-        return courseRoleRepository.findAll().first { it.courseId == courseId && it.userId == userId }.role
+        return try{
+            courseRoleRepository.findAll().first { it.courseId == courseId && it.userId == userId }.role
+        }catch (e:NoSuchElementException){
+            ECourseRole.NONE
+        }
     }
 
 
