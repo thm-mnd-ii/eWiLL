@@ -41,7 +41,7 @@ class WebSecurityConfig {
             .anyRequest().permitAll().and().httpBasic()
         return http.build()
     }
-    
+
     @Bean
     fun authenticationProvider(): DaoAuthenticationProvider {
         val authenticationProvider  = DaoAuthenticationProvider()

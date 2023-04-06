@@ -7,9 +7,8 @@ import javax.persistence.*
 @Table(name = "users", uniqueConstraints = [UniqueConstraint(columnNames = ["email"])])
 open class User {
 
-    constructor(username: String, password: String, email: String, roles: Set<Role>) {
+    constructor(username: String,  email: String, roles: Set<Role>) {
         this.username = username
-        this.password = password
         this.email = email
         this.roles = roles
     }
@@ -21,8 +20,6 @@ open class User {
     @Column(name = "username", nullable = false)
     open var username:String = ""
 
-    @Column(name = "password", nullable = false)
-    open var password:String = ""
 
     @Column(name = "email", nullable = false)
     open var email:String = ""
@@ -34,7 +31,7 @@ open class User {
     open var roles: Set<Role> = hashSetOf()
 
     override fun toString(): String {
-        return "User(id=$id, username='$username', password='$password', email='$email', roles=$roles)"
+        return "User(id=$id, username='$username', email='$email', roles=$roles)"
     }
 
 

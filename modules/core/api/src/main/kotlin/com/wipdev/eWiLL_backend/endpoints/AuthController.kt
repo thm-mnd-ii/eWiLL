@@ -43,18 +43,17 @@ class AuthController {
         val fbsClient = FbsClient()
         val response = fbsClient.getLoginLdap(loginRequestPL.username!!, loginRequestPL.password!!)
         if (response!!.statusCode() != 200) {
-            println("Error" + response.statusCode() + " " + response.body())
             return ResponseEntity.status(response.statusCode()).build()
         } else {
             if (!userRepository.existsByUsername(loginRequestPL.username)) {
                 val fbsUser = fbsClient.getUserInformation(response.headers())
-                createUserData(fbsUser, loginRequestPL.password)
+                createUserData(fbsUser)
             }
         }
 
 
         val authentication = authentificationManager.authenticate(
-            UsernamePasswordAuthenticationToken(loginRequestPL.username, loginRequestPL.password)
+            UsernamePasswordAuthenticationToken(loginRequestPL.username, "")
         )
         SecurityContextHolder.getContext().authentication = authentication
         val jwt = jwtUtils.generateJwtToken(authentication)
@@ -63,13 +62,11 @@ class AuthController {
         return ResponseEntity.ok(JwtResponse(jwt, userDetails.id, userDetails.username, userDetails.email, roles))
     }
 
-    private fun createUserData(fbsUser: FbsClient.FbsUser, password: String?) {
-        val user = User(fbsUser.username!!, password!!, fbsUser.email!!, emptySet())
+    private fun createUserData(fbsUser: FbsClient.FbsUser) {
+        val user = User(fbsUser.username!!, fbsUser.email!!, emptySet())
         val role = roleRepository.getReferenceById(1L)
         user.roles = setOf(role)
         userRepository.save(user)
-
-
     }
 
 

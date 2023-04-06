@@ -6,10 +6,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
 
-class UserDetailsImpl(val id:Long,username:String,password:String,val email:String,authorities:MutableCollection<GrantedAuthority>):UserDetails {
+class UserDetailsImpl(val id:Long,username:String,val email:String,authorities:MutableCollection<GrantedAuthority>):UserDetails {
 
     private var username:String = username
-    private var password:String = password
     private var authorities:MutableCollection<GrantedAuthority> = authorities
 
 
@@ -21,7 +20,7 @@ class UserDetailsImpl(val id:Long,username:String,password:String,val email:Stri
             user.roles.forEach{
                 authorities.add(SimpleGrantedAuthority(it.name!!.name))
             }
-            return UserDetailsImpl(user.id,user.username,user.password,user.email,authorities)
+            return UserDetailsImpl(user.id,user.username,user.email,authorities)
         }
 
     }
@@ -30,10 +29,10 @@ class UserDetailsImpl(val id:Long,username:String,password:String,val email:Stri
         return authorities
     }
 
-    override fun getPassword(): String {
-        return password
-    }
 
+    override fun getPassword(): String {
+        return ""
+    }
 
     override fun getUsername(): String {
         return username
