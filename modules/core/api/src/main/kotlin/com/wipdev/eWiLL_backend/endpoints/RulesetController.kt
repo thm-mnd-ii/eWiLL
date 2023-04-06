@@ -15,35 +15,35 @@ class RulesetController {
         @Autowired
         lateinit var rulesetService: RulesetService
 
-        @CrossOrigin
+
         @GetMapping("/{id}")
         @ResponseBody
         fun getRuleset(@PathVariable id:Long): RulesetPl {
             return rulesetService.getRuleset(id)
         }
 
-        @CrossOrigin
+
         @GetMapping()
         @ResponseBody
         fun getAllRulesets(): List<RulesetPl> {
             return rulesetService.getAllRulesets()
         }
 
-        @CrossOrigin
+
         @PostMapping()
         @ResponseBody
         fun createRuleset(@RequestBody ruleset: RulesetPl): RulesetPl {
             return rulesetService.createRuleset(ruleset)
         }
 
-        @CrossOrigin
+
         @PutMapping("/{id}")
         @ResponseBody
         fun updateRuleset(@PathVariable id:Long, @RequestBody ruleset: RulesetPl): RulesetPl {
             return rulesetService.updateRuleset(id, ruleset)
         }
 
-        @CrossOrigin
+
         @DeleteMapping("/{id}")
         @ResponseBody
         fun deleteRuleset(@PathVariable id:Long) {
