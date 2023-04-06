@@ -1,5 +1,6 @@
 package com.wipdev.eWiLL_backend.security.auth
 
+
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import org.springframework.beans.factory.annotation.Value
@@ -7,6 +8,12 @@ import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Component
 import java.security.Key
 import java.util.*
+import com.auth0.jwt.JWT
+
+import com.auth0.jwt.interfaces.DecodedJWT
+
+
+
 
 @Component
 class JwtUtils {
@@ -34,6 +41,32 @@ class JwtUtils {
             println("Invalid JWT signature: ${e.message}")
         }
         return false
+    }
+
+    public companion object {
+        fun decodeFBSToken(token: String?): FBSTokenDecodingResult {
+            val decodedJWT: DecodedJWT = JWT.decode(token)
+            return FBSTokenDecodingResult(
+                decodedJWT.getClaim("id").asInt(),
+                decodedJWT.getClaim("username").asString(),
+                decodedJWT.getClaim("courseRoles").asString(),
+                decodedJWT.getClaim("globalRole").asString(),
+                decodedJWT.getClaim("exp").asString(),
+                decodedJWT.getClaim("iat").asString()
+            )
+        }
+
+
+        class FBSTokenDecodingResult(
+            val userID: Int,
+            val username: String,
+            val courseRoles: String,
+            val globalRole: String,
+            val exp: String,
+            val iat: String
+        )
+
+
     }
 
 }

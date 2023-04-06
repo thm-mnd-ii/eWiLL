@@ -4,8 +4,8 @@ import javax.persistence.*
 
 
 @Entity
-@Table(name = "users", uniqueConstraints = [UniqueConstraint(columnNames = ["username"])])
-class User {
+@Table(name = "users", uniqueConstraints = [UniqueConstraint(columnNames = ["email"])])
+open class User {
 
     constructor(username: String, password: String, email: String, roles: Set<Role>) {
         this.username = username
@@ -15,7 +15,7 @@ class User {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     open var id:Long = 0
 
     @Column(name = "username", nullable = false)
@@ -33,7 +33,9 @@ class User {
             inverseJoinColumns = [JoinColumn(name = "role_id")])
     open var roles: Set<Role> = hashSetOf()
 
-
+    override fun toString(): String {
+        return "User(id=$id, username='$username', password='$password', email='$email', roles=$roles)"
+    }
 
 
 
