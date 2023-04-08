@@ -42,12 +42,14 @@ class CourseService: ICourseService {
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
         val formattedDateTime = currentDateTime.format(formatter)
         course.creationDate = formattedDateTime
-        var role = CourseUserRole()
-        role.courseId = course.id
+        course.id = null
+        val savedCourse = repository.save(course)
+        val role = CourseUserRole()
+        role.courseId = savedCourse.id!!
         role.userId = course.owner
         role.role = ECourseRole.OWNER
         courseRoleRepository.save(role)
-        return repository.save(course)
+        return savedCourse
     }
 
     override fun update(id: Long, course: Course): Course {
