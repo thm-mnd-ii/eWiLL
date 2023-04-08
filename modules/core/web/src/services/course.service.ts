@@ -30,7 +30,12 @@ class CourseService{
   }
 
   postCourse(course: CoursePL){
+    course.id = 0;
     return axios.post("/api/course", course)
+  }
+
+  putCourse(course: CoursePL){
+    return axios.put("/api/course/" + course.id, course)
   }
 
   joinCourse(courseId: number, key: string, userId: number){

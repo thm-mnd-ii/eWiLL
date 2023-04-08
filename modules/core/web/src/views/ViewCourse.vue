@@ -7,7 +7,7 @@
         <v-spacer></v-spacer>
         <v-btn variant="text" icon="mdi-account-group" color="dark-gray"></v-btn>
         <v-btn variant="text" icon="mdi-logout-variant" color="dark-gray" @click="leaveCourse"></v-btn>
-        <v-btn variant="text" icon="mdi-cog" color="dark-gray"></v-btn>
+        <v-btn variant="text" icon="mdi-cog" color="dark-gray" @click="editCourse"></v-btn>
       </v-card-title>
       <v-card-text>
         <p>{{ course?.description }}</p>
@@ -21,6 +21,7 @@
     </v-card>
     <div class="task_list"><TaskList ref="taskList"></TaskList></div>
   </div>
+  <DialogCreateCourse ref="dialogCreateCourse"></DialogCreateCourse>
 </template>
 
 <script setup lang="ts">
@@ -33,6 +34,7 @@ import TaskList from "../components/TaskList.vue";
 import Course from "../model/course/Course";
 import CoursePL from "../model/course/CoursePL";
 import courseService from "../services/course.service";
+import DialogCreateCourse from "@/dialog/DialogCreateCourse.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -43,6 +45,7 @@ const course = ref<CoursePL>();
 const courseId = ref(Number(route.params.id));
 const userId = ref(authUserStore.auth.user?.id);
 const courseRole = ref("");
+const dialogCreateCourse = ref<typeof DialogCreateCourse>();
 
 onMounted(() => {
   courseService.getCourse(courseId.value).then((response) => {
@@ -71,6 +74,14 @@ const leaveCourse = () => {
             console.log(error);
           });
       }
+    });
+  }
+};
+
+const editCourse = () => {
+  if (dialogCreateCourse.value) {
+    dialogCreateCourse.value.openDialog(courseId.value).then((id: number) => {
+      console.log("success");
     });
   }
 };
