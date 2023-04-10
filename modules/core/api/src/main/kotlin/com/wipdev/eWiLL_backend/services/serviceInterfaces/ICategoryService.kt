@@ -1,4 +1,4 @@
-package com.wipdev.eWiLL_backend.services
+package com.wipdev.eWiLL_backend.services.serviceInterfaces
 
 import com.wipdev.eWiLL_backend.database.tables.Category
 import com.wipdev.eWiLL_backend.endpoints.payload.requests.CategoryPL

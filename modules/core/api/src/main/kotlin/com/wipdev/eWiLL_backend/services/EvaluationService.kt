@@ -1,11 +1,12 @@
 package com.wipdev.eWiLL_backend.services
 
-import com.wipdev.eWiLL_backend.database.tables.course.SumbissionResult
+import com.wipdev.eWiLL_backend.database.tables.course.SubmissionResult
 import com.wipdev.eWiLL_backend.endpoints.payload.requests.SubmissionRequestPL
 import com.wipdev.eWiLL_backend.eval.DiagramEvalEntry
 import com.wipdev.eWiLL_backend.eval.IDiagramEvaluator
 import com.wipdev.eWiLL_backend.eval.SERMDiagramEvaluator
 import com.wipdev.eWiLL_backend.repository.*
+import com.wipdev.eWiLL_backend.services.serviceInterfaces.IEvaluationService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.util.concurrent.ExecutorService
@@ -13,7 +14,7 @@ import java.util.concurrent.Executors
 
 
 @Service
-class EvaluationService:IEvaluationService {
+class EvaluationService: IEvaluationService {
 
     @Autowired
     lateinit var resultRepository: ResultRepository
@@ -78,7 +79,7 @@ class EvaluationService:IEvaluationService {
 
     }
 
-    override fun getEvalResult(id: Long?): SumbissionResult? = resultRepository.findById(id!!).get()
+    override fun getEvalResult(id: Long?): SubmissionResult? = resultRepository.findById(id!!).get()
 
 
 

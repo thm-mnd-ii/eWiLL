@@ -33,6 +33,7 @@ class RulesetController {
         @PostMapping()
         @ResponseBody
         fun createRuleset(@RequestBody ruleset: RulesetPl): RulesetPl {
+                ruleset.id = null
             return rulesetService.createRuleset(ruleset)
         }
 

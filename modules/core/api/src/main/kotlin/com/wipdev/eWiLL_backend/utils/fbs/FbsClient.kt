@@ -1,4 +1,4 @@
-package com.wipdev.eWiLL_backend.fbs
+package com.wipdev.eWiLL_backend.utils.fbs
 
 import com.auth0.jwt.JWT
 import com.wipdev.eWiLL_backend.security.auth.JwtUtils.Companion.FBSTokenDecodingResult
@@ -41,7 +41,7 @@ class FbsClient {
         return if(response.statusCode() != 200){
             FbsUser()
         }else{
-            Json.mapper().readValue(response.body(),FbsUser::class.java)
+            Json.mapper().readValue(response.body(), FbsUser::class.java)
         }
 
     }

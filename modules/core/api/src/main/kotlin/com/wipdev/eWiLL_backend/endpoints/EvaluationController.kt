@@ -16,7 +16,7 @@ class EvaluationController {
     lateinit var service: EvaluationService
 
 
-    @CrossOrigin
+
     @PostMapping("/submit")
     @ResponseBody
     fun submit(@Parameter submissionRequestPL: SubmissionRequestPL): Long? =
@@ -25,7 +25,7 @@ class EvaluationController {
 
     @GetMapping("/result/{id}")
     @ResponseBody
-    fun getResult(@PathVariable id: Long): com.wipdev.eWiLL_backend.database.tables.course.SumbissionResult? =
+    fun getResult(@PathVariable id: Long): com.wipdev.eWiLL_backend.database.tables.course.SubmissionResult? =
         service.getEvalResult(id)
 
 

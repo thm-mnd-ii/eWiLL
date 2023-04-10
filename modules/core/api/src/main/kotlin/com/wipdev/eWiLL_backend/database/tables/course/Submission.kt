@@ -7,20 +7,36 @@ import javax.persistence.*
 class Submission {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", nullable = false)
-    open var id: Long? = null
+    var id: Long? = null
 
     @Column(name = "userId", nullable = false)
-    open var userId: Long? = null
-
+    var userId: Long? = null
 
     @Column(name = "taskId", nullable = false)
-    open var taskId: Long? = null
+    var taskId: Long? = null
 
     @Column(name = "date", nullable = false)
-    open var date: String? = null
+    var date: String? = null
 
-    @Column(name = "diagram",nullable = false)
-    open var diagram: String? = null
+    @Column(name = "diagram", nullable = false)
+    var diagram: String? = null
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || javaClass != other.javaClass) return false
+
+        other as Submission
+
+        return id == other.id
+    }
+
+    override fun hashCode(): Int {
+        return id?.hashCode() ?: 0
+    }
+
+    override fun toString(): String {
+        return "Submission(id=$id, userId=$userId, taskId=$taskId, date=$date, diagram=$diagram)"
+    }
 }

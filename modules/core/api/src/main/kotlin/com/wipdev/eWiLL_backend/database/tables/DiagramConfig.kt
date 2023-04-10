@@ -8,8 +8,8 @@ class DiagramConfig {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
-    open var id: Long? = null
+    var id: Long? = null
 
     @Column(name = "diagram_type", nullable = false)
-    open var diagramtype: String? = null
+    var diagramtype: String? = null
 }

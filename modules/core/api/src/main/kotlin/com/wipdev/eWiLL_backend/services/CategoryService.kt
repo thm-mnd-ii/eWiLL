@@ -3,11 +3,12 @@ package com.wipdev.eWiLL_backend.services
 import com.wipdev.eWiLL_backend.database.tables.Category
 import com.wipdev.eWiLL_backend.endpoints.payload.requests.CategoryPL
 import com.wipdev.eWiLL_backend.repository.CategoryRepository
+import com.wipdev.eWiLL_backend.services.serviceInterfaces.ICategoryService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-class CategoryService : ICategoryService{
+class CategoryService : ICategoryService {
 
     @Autowired
     lateinit var categoryRepository: CategoryRepository

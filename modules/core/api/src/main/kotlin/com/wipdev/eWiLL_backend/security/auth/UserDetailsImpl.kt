@@ -20,7 +20,7 @@ class UserDetailsImpl(val id:Long,username:String,val email:String,authorities:M
             user.roles.forEach{
                 authorities.add(SimpleGrantedAuthority(it.name!!.name))
             }
-            return UserDetailsImpl(user.id,user.username,user.email,authorities)
+            return UserDetailsImpl(user.id!!,user.username,user.email,authorities)
         }
 
     }
