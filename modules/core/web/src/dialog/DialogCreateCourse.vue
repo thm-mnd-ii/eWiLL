@@ -14,7 +14,7 @@
               <v-text-field v-model="course.keyPassword" color="#81ba24" variant="underlined" label="Passwort" :rules="[(v) => !!v || 'Item is required']" required></v-text-field>
             </v-col>
             <v-col>
-              <v-select v-model="course.semester" color="#81ba24" variant="underlined" label="Semester" :rules="[(v) => !!v || 'Item is required']" required :items="semestersTest" item-title="name" return-object></v-select>
+              <v-select v-model="course.semester" color="#81ba24" variant="underlined" label="Semester" :rules="[(v) => !!v || 'Item is required']" required :items="semesters" item-title="name" return-object></v-select>
               <v-select v-model="course.location" color="#81ba24" variant="underlined" label="Standort" :items="['Friedberg', 'Gießen']" :rules="[(v) => !!v || 'Item is required']" required></v-select>
             </v-col>
           </v-row>
@@ -44,9 +44,7 @@ const dialogTitle = ref<string>("");
 
 const authUserStore = useAuthUserStore();
 
-const semesters = new Map<string, Semester>([]);
-const semesterLabels = ref<string[]>([]);
-const semestersTest = ref<Semester[]>([]);
+const semesters = ref<Semester[]>([]);
 
 // New Course or editing existing course
 const newCourse = ref(true);
@@ -133,13 +131,8 @@ const _cancel = () => {
 };
 
 const initializeSemesters = () => {
-  semesterLabels.value = [];
   semesterService.getAllSemesters().then((response) => {
-    response.forEach((semester) => {
-      semesterLabels.value.push(semester.name);
-      semesters.set(semester.name, semester);
-      semestersTest.value.push(semester);
-    });
+    semesters.value = response;
   });
 };
 
