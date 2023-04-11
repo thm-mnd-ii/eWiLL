@@ -1,7 +1,7 @@
 package com.wipdev.eWiLL_backend
 
 import com.wipdev.eWiLL_backend.database.tables.course.Course
-import com.wipdev.eWiLL_backend.fbs.FbsClient
+import com.wipdev.eWiLL_backend.utils.fbs.FbsClient
 import com.wipdev.eWiLL_backend.repository.CourseRepository
 import com.wipdev.eWiLL_backend.utils.stringsimmilarity.StringFinderUtils
 import com.wipdev.eWiLL_backend.utils.translate.Language

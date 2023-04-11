@@ -1,9 +1,10 @@
 package com.wipdev.eWiLL_backend.endpoints
 
+import com.wipdev.eWiLL_backend.database.tables.Role
 import com.wipdev.eWiLL_backend.database.tables.User
 import com.wipdev.eWiLL_backend.endpoints.payload.requests.LoginRequestPL
 import com.wipdev.eWiLL_backend.endpoints.payload.responses.JwtResponse
-import com.wipdev.eWiLL_backend.fbs.FbsClient
+import com.wipdev.eWiLL_backend.utils.fbs.FbsClient
 import com.wipdev.eWiLL_backend.repository.RoleRepository
 import com.wipdev.eWiLL_backend.repository.UserRepository
 import com.wipdev.eWiLL_backend.security.auth.*
@@ -63,9 +64,8 @@ class AuthController {
     }
 
     private fun createUserData(fbsUser: FbsClient.FbsUser) {
-        val user = User(fbsUser.username!!, fbsUser.email!!, emptySet())
-        val role = roleRepository.getReferenceById(1L)
-        user.roles = setOf(role)
+        val role = roleRepository.getReferenceById(ERole.ROLE_USER.ordinal.toLong())
+        val user = User(null,fbsUser.username!!, fbsUser.email!!, setOf(role))
         userRepository.save(user)
     }
 

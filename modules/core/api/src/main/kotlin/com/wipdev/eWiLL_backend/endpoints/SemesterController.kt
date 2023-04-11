@@ -1,7 +1,6 @@
 package com.wipdev.eWiLL_backend.endpoints
 
 import com.wipdev.eWiLL_backend.database.tables.course.Semester
-import com.wipdev.eWiLL_backend.services.ISemesterService
 import com.wipdev.eWiLL_backend.services.SemesterService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.GetMapping

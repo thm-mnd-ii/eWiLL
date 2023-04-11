@@ -2,7 +2,6 @@ package com.wipdev.eWiLL_backend.endpoints
 
 
 import com.wipdev.eWiLL_backend.endpoints.payload.requests.DiagramPL
-import com.wipdev.eWiLL_backend.services.CategoryService
 import com.wipdev.eWiLL_backend.services.DiagramService
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,25 +17,26 @@ class DiagramController {
 
 
 
-    @CrossOrigin
+
     @GetMapping("/{id}")
     fun getById(@PathVariable id: Long) = iDiagramService.getById(id)
 
-    @CrossOrigin
+
     @PostMapping
     fun create(@RequestBody diagramPL: DiagramPL) = iDiagramService.create(diagramPL)
 
-    @CrossOrigin
+
     @PutMapping
     fun update(@RequestBody diagramPL: DiagramPL) = diagramPL.id?.let { iDiagramService.update(it, diagramPL) }
 
-    @CrossOrigin
+
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: Long) = iDiagramService.delete(id)
 
     //getall by user id
-    @CrossOrigin
-    @GetMapping("/user/{user_id}")
-    fun getByUserId(@PathVariable user_id: Long) = iDiagramService.getByUserId(user_id)
+
+    @GetMapping("/user/{userId}")
+    @ResponseBody
+    fun getByUserId(@PathVariable userId: Long) = iDiagramService.getByUserId(userId)
 
 }

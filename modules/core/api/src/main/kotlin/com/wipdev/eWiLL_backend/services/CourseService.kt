@@ -8,6 +8,7 @@ import com.wipdev.eWiLL_backend.endpoints.payload.CourseEntry
 import com.wipdev.eWiLL_backend.repository.CourseRepository
 import com.wipdev.eWiLL_backend.repository.CourseRoleRepository
 import com.wipdev.eWiLL_backend.repository.UserRepository
+import com.wipdev.eWiLL_backend.services.serviceInterfaces.ICourseService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service

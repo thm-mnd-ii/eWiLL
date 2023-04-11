@@ -17,30 +17,29 @@ class CategoryController {
     @Autowired
     lateinit var iDiagramService: DiagramService
 
-    @CrossOrigin
-    @GetMapping("/{id}/diagrams")
-    fun getById(@PathVariable id:Long) = iDiagramService.getAllByCategoryId(id)
 
-    @CrossOrigin
+    @GetMapping("/{id}/diagrams")
+    fun getById(@PathVariable id: Long) = iDiagramService.getAllByCategoryId(id)
+
+
     @PostMapping
     fun createCategory(@RequestBody category: CategoryPL): Category {
         return iCategoryService.createCategory(category)
     }
 
-    @CrossOrigin
+
     @DeleteMapping("/{id}")
     fun deleteCategory(@PathVariable id: Long): Category {
         return iCategoryService.deleteCategory(id)
     }
 
-    @CrossOrigin
+
     @GetMapping("/user/{user_id}")
     fun getByUserId(@PathVariable user_id: Long): List<Category> {
         return iCategoryService.getByUserId(user_id)
     }
 
 
-    @CrossOrigin
     @PutMapping("/{id}")
     fun updateCategory(@PathVariable id: Long, @RequestBody category: CategoryPL): Category {
         return iCategoryService.updateCategory(id, category)

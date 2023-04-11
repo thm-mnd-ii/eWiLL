@@ -24,42 +24,42 @@ class CourseController {
     lateinit var service: CourseService
 
 
-    @CrossOrigin
+
     @GetMapping("/all/{userId}")
     @ResponseBody
     fun getAll(@PathVariable userId: Long): List<CourseEntry> = service.getAll(userId)
 
-    @CrossOrigin
+
     @GetMapping("/{id}")
     @ResponseBody
     fun getById(@PathVariable id: Long): Course = service.getById(id)
 
-    @CrossOrigin
+
     @PostMapping()
     @ResponseBody
     fun create(@RequestBody course: Course): Course = service.create(course)
 
-    @CrossOrigin
+
     @PutMapping("/{id}")
     @ResponseBody
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     fun update(@PathVariable id: Long, @RequestBody course: Course): Course = service.update(id, course)
 
-    @CrossOrigin
+
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: Long) = service.delete(id)
 
-    @CrossOrigin
+
     @GetMapping("/user/{id}")
     @ResponseBody
     fun getCourseByUserId(@PathVariable id: Long): List<Course> = service.getCourseByUserId(id)
 
-    @CrossOrigin
+
     @GetMapping("/{id}/students")
     @ResponseBody
     fun getStudentsByCourseId(@PathVariable id: Long): List<User> = service.getStudentsByCourseId(id)
 
-    @CrossOrigin
+
     @PostMapping("/{id}/join")
     @ResponseBody
     fun joinCourse(
@@ -71,36 +71,36 @@ class CourseController {
 
     }
 
-    @CrossOrigin
+
     @PostMapping("/{id}/leave")
     fun leaveCourse(@PathVariable id: Long, @RequestParam userId: Long){
             service.leaveCourse(id, userId)
         } 
 
-    @CrossOrigin
+
     @GetMapping("/{id}/hasKeyPass")
     fun hasKeyPass(@PathVariable id: Long): Boolean = service.hasKeyPass(id)
 
-    @CrossOrigin
+
     @PostMapping("/{id}/removeAllButOwner")
     @ResponseBody
     @Description("Removes all users from the course except the owner")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     fun removeAllButOwner(@PathVariable id: Long) = service.removeAllButOwner(id)
 
-    @CrossOrigin
+
     @PostMapping("/{id}/archive")
     @ResponseBody
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     fun archiveCourse(@PathVariable id: Long) = service.archiveCourse(id)
 
-    @CrossOrigin
+
     @PostMapping("/{id}/changeUserRole/{role}")
     @ResponseBody
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     fun changeUserRole(@PathVariable id: Long, @PathVariable role: ECourseRole) = service.changeUserRole(id, role)
 
-    @CrossOrigin
+
     @GetMapping("/{courseId}/user/{userId}/role")
     @ResponseBody
     fun getUserRoleInCourse(@PathVariable courseId: Long, @PathVariable userId: Long): ECourseRole? =

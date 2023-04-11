@@ -3,10 +3,10 @@ package com.wipdev.eWiLL_backend.services
 import com.wipdev.eWiLL_backend.database.tables.Task
 import com.wipdev.eWiLL_backend.database.tables.course.Ruleset
 import com.wipdev.eWiLL_backend.endpoints.payload.requests.TaskPL
-import com.wipdev.eWiLL_backend.repository.DiagramRepository
 
 import com.wipdev.eWiLL_backend.repository.RulesetRepository
 import com.wipdev.eWiLL_backend.repository.TaskRepository
+import com.wipdev.eWiLL_backend.services.serviceInterfaces.ITaskService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -35,7 +35,7 @@ class TaskService : ITaskService {
 
 
     override fun create(courseId: Long, taskPL: TaskPL): Task {
-        var solutionDiagramId = diagramService.create(taskPL.solutionModel!!)
+        val solutionDiagramId = diagramService.create(taskPL.solutionModel!!)
         return  taskRepository.save(convert(taskPL,solutionDiagramId))
     }
 
@@ -68,14 +68,14 @@ class TaskService : ITaskService {
             task.courseId,
             diagramService.getById(task.solutionModelId!!),
             task.rulesetId,
-            task.liability
+            task.eLiability
         )
 
     }
 
 
     fun convert(taskPL: TaskPL,solutionModelId : Long?): Task {
-        var task = Task()
+        val task = Task()
         task.name = taskPL.name
         task.description = taskPL.description
         task.dueDate = taskPL.dueDate
@@ -83,7 +83,7 @@ class TaskService : ITaskService {
         task.solutionModelId = solutionModelId
         task.rulesetId = taskPL.rulesetId
         task.courseId = taskPL.courseId
-        task.liability = taskPL.liability
+        task.eLiability = taskPL.ELiability
 
         return task
 

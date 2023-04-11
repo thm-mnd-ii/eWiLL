@@ -4,40 +4,51 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "Course")
-class Course {
+data class Course(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
-    open var id: Long? = null
+    var id: Long? = null,
 
     @Column(name = "name", nullable = false)
-    open var name: String? = null
+    var name: String? = null,
 
     @Column(name = "description", nullable = false, length = 1000000)
-    open var description: String? = null
+    var description: String? = null,
 
     @Column(name = "active", nullable = false)
-    open var active: Boolean? = null
-
-
+    var active: Boolean? = null,
 
     @Column(name = "creationDate", nullable = false)
-    open var creationDate: String? = null
-
+    var creationDate: String? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "semester_id", nullable = false)
-    var semester: Semester? = null
-
+    var semester: Semester? = null,
 
     @Column(name = "owner_id", nullable = false)
-    open var owner: Long? = null
+    var owner: Long? = null,
 
-    @Column(name="keyPassword",nullable = false)
-    open var keyPassword:String? = null
+    @Column(name = "keyPassword", nullable = false)
+    var keyPassword: String? = null,
 
-    @Column(name="location",nullable = false)
-    open var location:String? = null
+    @Column(name = "location", nullable = false)
+    var location: String? = null,
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || javaClass != other.javaClass) return false
 
+        other as Course
 
+        return id == other.id
+    }
+
+    override fun hashCode(): Int {
+        return id?.hashCode() ?: 0
+    }
+
+    override fun toString(): String {
+        return "Course(id=$id, name=$name, description=$description, active=$active, creationDate=$creationDate, semester=$semester, owner=$owner, keyPassword=$keyPassword, location=$location)"
+    }
 }

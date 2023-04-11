@@ -5,11 +5,12 @@ import com.wipdev.eWiLL_backend.database.tables.course.Ruleset
 import com.wipdev.eWiLL_backend.endpoints.payload.requests.RulesetPl
 import com.wipdev.eWiLL_backend.eval.rules.RuleConfig
 import com.wipdev.eWiLL_backend.repository.RulesetRepository
+import com.wipdev.eWiLL_backend.services.serviceInterfaces.IRulesetService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-class RulesetService : IRulesetService{
+class RulesetService : IRulesetService {
     @Autowired
     lateinit var rulesetRepository: RulesetRepository
 

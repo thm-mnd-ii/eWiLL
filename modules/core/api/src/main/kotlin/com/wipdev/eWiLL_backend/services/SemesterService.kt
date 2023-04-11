@@ -2,11 +2,12 @@ package com.wipdev.eWiLL_backend.services
 
 import com.wipdev.eWiLL_backend.database.tables.course.Semester
 import com.wipdev.eWiLL_backend.repository.SemesterRepository
+import com.wipdev.eWiLL_backend.services.serviceInterfaces.ISemesterService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-class SemesterService : ISemesterService{
+class SemesterService : ISemesterService {
 
     @Autowired
     lateinit var semesterRepository: SemesterRepository
