@@ -4,15 +4,15 @@
       <v-card-text>
         <v-form ref="taskForm" v-model="valid" class="taskForm">
           <div>
-            <v-text-field v-model="currentTask.name" label="Name" :rules="nameRules" variant="underlined" required></v-text-field>
-            <v-textarea v-model="currentTask.description" label="Beschreibung" :rules="descriptionRules" variant="underlined" required></v-textarea>
-            <v-select v-model="selectedCategoryId" label="Kategorie" variant="underlined" :items="categories" item-title="name" item-value="id" @update:model-value="updateDiagrams"></v-select>
-            <v-select v-model="selectedDiagramId" label="Musterdiagram" variant="underlined" :items="diagrams" item-title="name" item-value="id"></v-select>
+            <v-text-field v-model="currentTask.name" label="Name" :rules="nameRules" variant="underlined" required color="#81ba24"></v-text-field>
+            <v-textarea v-model="currentTask.description" label="Beschreibung" :rules="descriptionRules" variant="underlined" required color="#81ba24"></v-textarea>
+            <v-select v-model="selectedCategoryId" label="Kategorie" variant="underlined" :items="categories" item-title="name" item-value="id" color="#81ba24" @update:model-value="updateDiagrams"></v-select>
+            <v-select v-model="currentTask.solutionModelId" label="Musterdiagram" variant="underlined" :items="diagrams" item-title="name" item-value="id" color="#81ba24"></v-select>
           </div>
           <div>
-            <v-text-field v-model="currentTask.dueDate" label="Deadline" :rules="dueDateRules" variant="underlined"></v-text-field>
-            <v-select v-model="currentTask.mediaType" :items="['Modeling', 'Text']" label="Medientyp" variant="underlined" required></v-select>
-            <v-select v-model="currentTask.rulesetId" :items="rulesets" item-title="name" label="Regelsatz" variant="underlined" required></v-select>
+            <v-text-field v-model="currentTask.dueDate" label="Deadline" variant="underlined" color="#81ba24"></v-text-field>
+            <v-select v-model="currentTask.mediaType" :items="['Model', 'Text']" label="Medientyp" variant="underlined" required color="#81ba24"></v-select>
+            <v-select v-model="currentTask.rulesetId" :items="rulesets" item-title="name" label="Regelsatz" variant="underlined" required color="#81ba24" item-value="id"></v-select>
           </div>
         </v-form>
       </v-card-text>
@@ -32,16 +32,18 @@ import Category from "@/model/diagram/Category";
 import Diagram from "@/model/diagram/Diagram";
 import diagramService from "@/services/diagram.service";
 import { ref, onMounted } from "vue";
-
 import { useAuthUserStore } from "@/stores/authUserStore";
+import { useRoute } from "vue-router";
 import taskService from "@/services/task.service";
 
 const authUserStore = useAuthUserStore();
+const route = useRoute();
 
 const editTaskDialog = ref<boolean>(false);
 
 const snackbarFail = ref(false);
 const editTitle = ref<string>("");
+const newTask = ref(false);
 const currentTask = ref<Task>({} as Task);
 
 const categories = ref<Category[]>([]);
@@ -90,9 +92,12 @@ const openDialog = (task?: Task) => {
   if (task) {
     editTitle.value = "Aufgabe bearbeiten";
     currentTask.value = task;
+    newTask.value = false;
   } else {
     editTitle.value = "Neue Aufgabe erstellen";
     currentTask.value = {} as Task;
+    currentTask.value.courseId = Number(route.params.id);
+    newTask.value = true;
   }
 
   return new Promise((resolve, reject) => {
@@ -104,20 +109,36 @@ const openDialog = (task?: Task) => {
 const _confirm = () => {
   taskForm.value.validate().then(() => {
     if (valid.value) {
-      taskService
-        .putTask(currentTask.value.id, currentTask.value)
-        .then(() => {
-          editTaskDialog.value = false;
-          resolvePromise.value(true);
-        })
-        .catch(() => {
-          snackbarFail.value = true;
-        });
+      currentTask.value.mediaType = currentTask.value.mediaType.toUpperCase();
+      console.log(currentTask);
+      if (newTask.value) {
+        taskService
+          .postTask(currentTask.value)
+          .then(() => {
+            editTaskDialog.value = false;
+            resolvePromise.value(true);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      } else {
+        taskService
+          .putTask(currentTask.value.id, currentTask.value)
+          .then(() => {
+            editTaskDialog.value = false;
+            resolvePromise.value(true);
+          })
+          .catch(() => {
+            snackbarFail.value = true;
+          });
+      }
     }
   });
 };
 
 const _cancel = () => {
+  categories.value = [];
+  selectedCategoryId.value = undefined;
   editTaskDialog.value = false;
   resolvePromise.value(false);
 };

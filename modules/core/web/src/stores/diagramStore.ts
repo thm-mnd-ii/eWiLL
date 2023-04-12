@@ -83,6 +83,7 @@ export const useDiagramStore = defineStore("diagram", {
       this.key++;
       // reset history
       this.history = [];
+      this.historyIndex = 0;
     },
     saveHistory() {
       console.log("save history");

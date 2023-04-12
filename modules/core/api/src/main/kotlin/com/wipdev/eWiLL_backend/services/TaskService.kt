@@ -33,10 +33,8 @@ class TaskService : ITaskService {
         return taskRepository.findById(id).get()
     }
 
-
-    override fun create(courseId: Long, taskPL: TaskPL): Task {
-        val solutionDiagramId = diagramService.create(taskPL.solutionModel!!)
-        return  taskRepository.save(convert(taskPL,solutionDiagramId))
+    override fun create(courseId: Long, task: Task): Task {
+        return  taskRepository.save(task)
     }
 
     override fun update(id: Long, task: Task): Task {

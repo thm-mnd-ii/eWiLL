@@ -31,6 +31,10 @@ class TaskService{
         return axios.put("/api/tasks/" + taskId, task)
     }
 
+    postTask(task: Task){
+        return axios.post("/api/tasks/" + task.courseId, task)
+    }
+
 }
 
 export default new TaskService();
