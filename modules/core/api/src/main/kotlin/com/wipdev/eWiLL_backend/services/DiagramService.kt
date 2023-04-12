@@ -7,6 +7,7 @@ import com.wipdev.eWiLL_backend.endpoints.payload.requests.DiagramPL
 import com.wipdev.eWiLL_backend.endpoints.payload.requests.Entity
 import com.wipdev.eWiLL_backend.repository.DiagramConfigRepository
 import com.wipdev.eWiLL_backend.repository.DiagramRepository
+import com.wipdev.eWiLL_backend.services.serviceInterfaces.IDiagramService
 import io.swagger.v3.core.util.Json
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service

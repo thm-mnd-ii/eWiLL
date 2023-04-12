@@ -1,5 +1,5 @@
 package com.wipdev.eWiLL_backend.database.tables
 
-enum class Liability {
+enum class ELiability {
     MANDATORY, OPTIONAL,BONUS,NONE
 }

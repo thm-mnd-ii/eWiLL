@@ -18,26 +18,27 @@ class TaskController {
     @Autowired
     lateinit var service: TaskService
 
-    @CrossOrigin
+
     @GetMapping("/{courseId}/tasks", produces = ["application/json"])
+    @ResponseBody
     fun getAll(@PathVariable courseId: Long) = service.getAll(courseId)
 
-    @CrossOrigin
+
     @GetMapping("/{id}")
     @ResponseBody
     fun getById(@PathVariable id: Long) = service.getById(id)
 
-    @CrossOrigin
+
     @PostMapping("/{courseId}")
     @ResponseBody
     fun create(@PathVariable courseId: Long, @RequestBody task: Task) = service.create(courseId, task)
 
-    @CrossOrigin
+
     @PutMapping("/{taskId}")
     @ResponseBody
     fun update(@PathVariable taskId :Long?,@RequestBody task: Task) = taskId?.let { service.update(it, task) }
 
-    @CrossOrigin
+
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: Long) = service.delete(id)
 

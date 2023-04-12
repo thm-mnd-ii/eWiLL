@@ -1,4 +1,4 @@
-package com.wipdev.eWiLL_backend.services
+package com.wipdev.eWiLL_backend.services.serviceInterfaces
 
 import com.wipdev.eWiLL_backend.database.tables.User
 import com.wipdev.eWiLL_backend.database.tables.course.Course
