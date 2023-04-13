@@ -11,6 +11,7 @@ import ViewTestTask from "../views/ViewTestTask.vue";
 import ViewCourseSignup from "../views/ViewCourseSignup.vue";
 import ViewCourse from "../views/ViewCourse.vue";
 import ViewTask from "../views/ViewTask.vue"
+import ViewIntroduction from "../views/ViewIntroduction.vue"
 
 const router = createRouter({
   history: createWebHistory(),
@@ -74,6 +75,11 @@ const router = createRouter({
     path: "/course/:courseId/task/:taskId",
     name: "ViewTask",
     component: ViewTask,
+    },
+    {
+    path: "/introduction",
+    name: "ViewIntroduction",
+    component: ViewIntroduction,
     },
   ],
 });
