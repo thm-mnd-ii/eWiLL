@@ -11,16 +11,17 @@
         </v-list-item>
       </v-list>
     </v-menu> -->
-    <v-btn prepend-icon="mdi-account" @click="profile">profile</v-btn>
+    <v-btn v-if="admin" prepend-icon="mdi-account" @click="profile">profile</v-btn>
     <v-btn prepend-icon="mdi-logout" @click="logout">logout</v-btn>
   </div>
 </template>
 
 <script setup lang="ts">
-//import { ref } from "vue";
+import { ref } from "vue";
 import { useAuthUserStore } from "../../stores/authUserStore";
 import { useRouter } from "vue-router";
 const router = useRouter();
+const admin = ref(localStorage.getItem("user")?.includes("ADMIN"));
 
 // const options = ref([
 //   { title: "Profil", icon: "mdi-account", method: "profile" },
