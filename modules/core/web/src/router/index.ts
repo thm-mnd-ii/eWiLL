@@ -12,12 +12,13 @@ import ViewCourseSignup from "../views/ViewCourseSignup.vue";
 import ViewCourse from "../views/ViewCourse.vue";
 import ViewTask from "../views/ViewTask.vue"
 import ViewIntroduction from "../views/ViewIntroduction.vue"
+import View404Page from "../views/View404Page.vue"
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
-      path: "/",
+      path: "/home",
       name: "home",
       component: HomeView,
     },
@@ -77,9 +78,14 @@ const router = createRouter({
     component: ViewTask,
     },
     {
-    path: "/introduction",
+    path: "/",
     name: "ViewIntroduction",
     component: ViewIntroduction,
+    },
+    {
+      path: "/:pathMatch(.*)*",
+      name: "View404Page",
+      component: View404Page,
     },
   ],
 });
@@ -89,12 +95,21 @@ router.beforeEach((to, from, next) => {
   const authRequired = !publicPages.includes(to.path);
   const loggedIn = localStorage.getItem("user");
 
+  const nonAdminPages = ["/modeling", "/login", "/impressum", "/datenschutz", "/404", "/"];
+  const adminRequired = !nonAdminPages.includes(to.path);
+  const role = localStorage.getItem("role");
+  const admin = role?.includes("ADMIN")
+
   // trying to access a restricted page + not logged in
   // redirect to login page
   if (authRequired && !loggedIn) {
     next("/login");
   } else {
-    next();
+    if(adminRequired && !admin){
+      next("/404")
+    } else {
+      next();
+    }   
   }
 });
 
