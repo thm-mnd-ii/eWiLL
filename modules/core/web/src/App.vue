@@ -46,14 +46,9 @@ import { RouterLink, RouterView } from "vue-router";
 import IconEWiLL from "./components/icons/IconEWiLL.vue";
 import DropdownUserNav from "./components/modelingTool/DropdownUserNav.vue";
 import { ref } from "vue";
-import { onMounted } from "vue";
 
 const showSideBar = ref(true);
 const admin = ref(localStorage.getItem("user")?.includes("ADMIN"));
-
-onMounted(() => {
-  admin.value = localStorage.getItem("user")?.includes("ADMIN");
-});
 
 const links = [
   { name: "Impressum", url: "/impressum" },
