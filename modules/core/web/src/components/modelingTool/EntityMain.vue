@@ -10,8 +10,8 @@
 
     <!-- <div v-if="isResizable" @mousedown="resizer($event)" class="resizer nw"></div>
         <div v-if="isResizable" @mousedown="resizer($event)" class="resizer ne"></div>
-        <div v-if="isResizable" @mousedown="resizer($event)" class="resizer sw"></div> -->
-    <div v-if="isResizable" class="resizer se" @mousedown="resizer($event)"></div>
+        <div v-if="isResizable" @mousedown="resizer($event)" class="resizer sw"></div> 
+        <div v-if="isResizable" class="resizer se" @mousedown="resizer($event)"></div> -->
 
     <div v-if="hover && !isResizable && !toolManagementStore.showIncomingAnkerPoints">
       <OutgoingAnkerPoint v-for="anker in outgoingAnkerPoint" :key="anker" :position="anker" :entity="props.entity" />

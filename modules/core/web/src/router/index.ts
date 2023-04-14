@@ -13,6 +13,7 @@ import ViewCourse from "../views/ViewCourse.vue";
 import ViewTask from "../views/ViewTask.vue"
 import ViewIntroduction from "../views/ViewIntroduction.vue"
 import View404Page from "../views/View404Page.vue"
+import ViewBugReport from "../views/ViewBugReport.vue"
 
 const router = createRouter({
   history: createWebHistory(),
@@ -87,6 +88,11 @@ const router = createRouter({
       name: "View404Page",
       component: View404Page,
     },
+    {
+      path:"/report",
+      name: "ViewBugReport",
+      component: ViewBugReport,
+    },
   ],
 });
 
@@ -95,7 +101,7 @@ router.beforeEach((to, from, next) => {
   const authRequired = !publicPages.includes(to.path);
   const loggedIn = localStorage.getItem("user");
 
-  const nonAdminPages = ["/modeling", "/login", "/impressum", "/datenschutz", "/404", "/"];
+  const nonAdminPages = ["/modeling", "/login", "/impressum", "/datenschutz", "/404", "/", "/report"];
   const adminRequired = !nonAdminPages.includes(to.path);
   const role = localStorage.getItem("role");
   const admin = role?.includes("ADMIN")

@@ -8,30 +8,29 @@
 
       <v-card-text class="card-text">
         <v-form class="imput-form">
-          <v-text-field v-model="newAttributeName" lable="Attribut Name" variant="solo" required :hide-details="true" />
-
           <v-select v-model="selectedAttributeType" lable="Typ Auswählen" variant="solo" :items="attributeTypes" item-title="key" item-value="attribute" :hide-details="true"></v-select>
+          <v-text-field v-model="newAttributeName" lable="Attribut Name" variant="solo" required :hide-details="true" @keydown.enter="addAttribute" />
 
-          <v-btn class="btn" color="secondary" @click="addAttribute">Hinzufügen</v-btn>
+          <v-btn class="btn" color="success" @click="addAttribute">Hinzufügen</v-btn>
         </v-form>
 
         <draggable v-model="toolManagementStore.selectedEntity.attributes" class="draggable" group="people" item-key="id" @start="drag = true" @end="drag = false">
           <template #item="{ element }">
             <v-card :elevation="2" class="attributes">
-              <v-icon size="x-large" icon="mdi-arrow-up-down"></v-icon>
-
-              <v-text-field v-model="element.name" lable="Attribut Name" variant="solo" required :hide-details="true" />
+              <v-icon size="x-large" icon="mdi-arrow-up-down" color=""></v-icon>
 
               <v-select v-model="element.type" lable="Typ Auswählen" variant="solo" :items="attributeTypes" item-title="key" item-value="attribute" :hide-details="true"> </v-select>
+              <v-text-field v-model="element.name" lable="Attribut Name" variant="solo" required :hide-details="true" />
 
-              <v-icon size="x-large" icon="mdi-delete" @click="deleteAttribute(element)"></v-icon>
+
+              <v-icon size="x-large" icon="mdi-delete" color="error" @click="deleteAttribute(element)"></v-icon>
             </v-card>
           </template>
         </draggable>
       </v-card-text>
 
       <v-card-actions>
-        <v-btn color="primary" block @click="closeModal()">Schließen</v-btn>
+        <v-btn block @click="closeModal()">Schließen</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -121,7 +120,7 @@ const closeModal = () => {
 .imput-form {
   margin-bottom: 10px;
   display: grid;
-  grid-template-columns: 3fr 2fr;
+  grid-template-columns: 2fr 4fr;
   align-items: center;
   justify-items: center;
   grid-gap: 10px 20px;
@@ -142,7 +141,7 @@ const closeModal = () => {
   height: auto;
   background-color: lavender;
   display: grid;
-  grid-template-columns: 1fr 7fr 4fr 1fr;
+  grid-template-columns: 1fr 4fr 7fr 1fr 0.2fr;
   align-items: center;
   justify-items: center;
 }
