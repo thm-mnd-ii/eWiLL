@@ -4,7 +4,7 @@ import axios from "axios";
 class FeedbackService {
 
     postFeedback(feedback: string){
-        return axios.post("/api/feedback/create", feedback)
+        return axios.post("/api/feedback/create", feedback, {headers: {"Content-Type": "text/plain"}})
     }
 
 
