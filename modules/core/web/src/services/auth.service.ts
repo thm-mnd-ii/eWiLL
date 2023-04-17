@@ -1,0 +1,26 @@
+import axios from "axios";
+
+class AuthService {
+  login(user: { username: string; password: string; }) {
+    return axios
+      .post("/api/auth/signin", {
+        username: user.username,
+        password: user.password,
+      })
+      .then((response) => {
+        if (response.data.token) {
+          localStorage.setItem("user", JSON.stringify(response.data));
+          localStorage.setItem("role", response.data["roles"])    
+          console.log("login successful");
+        }
+        return response.data;
+      });
+  }
+
+  logout() {
+    localStorage.removeItem("user");
+    console.log("logout successful");
+  }
+}
+
+export default new AuthService();

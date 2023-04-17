@@ -1,0 +1,20 @@
+name: Backend Test
+
+on:
+  push:
+    branches: [development, master, v*.x]
+    tags:
+      - v**
+  pull_request:
+  
+jobs:
+  build_backend:
+    name: Build Backend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Docker Build
+        working-directory : ./
+        run: docker-compose up -d
+        
+      
