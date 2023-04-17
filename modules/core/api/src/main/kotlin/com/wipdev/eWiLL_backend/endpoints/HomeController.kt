@@ -9,5 +9,5 @@ class HomeController {
     fun home(): String = "index.html"
 
     @GetMapping("/{path:[^api].*}")
-    fun index(): String = "index.html"
+    fun index(): String = "index.html" 
 }
