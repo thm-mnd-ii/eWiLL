@@ -37,6 +37,7 @@ import CoursePL from "../model/course/CoursePL";
 import courseService from "../services/course.service";
 import DialogCreateCourse from "@/dialog/DialogCreateCourse.vue";
 import DialogEditTask from "@/dialog/DialogEditTask.vue";
+import { onBeforeMount } from "vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -51,16 +52,19 @@ const dialogCreateCourse = ref<typeof DialogCreateCourse>();
 const dialogCreateTask = ref<typeof DialogEditTask>();
 
 onMounted(() => {
-  courseService.getCourse(courseId.value).then((response) => {
-    course.value = response.data;
+  courseService.getUserRoleInCourse(userId.value!, courseId.value).then((response) => {
+    if (response == "NONE") {
+      router.push(route.path + "/signup");
+    } else {
+      courseRole.value = response;
+      courseService.getCourse(courseId.value).then((response) => {
+        course.value = response.data;
+        if (taskList.value) {
+          taskList.value.loadTasks(courseId.value);
+        }
+      });
+    }
   });
-  if (userId.value != undefined) {
-    courseService.getUserRoleInCourse(userId.value, courseId.value).then((response) => (courseRole.value = response));
-  }
-
-  if (taskList.value) {
-    taskList.value.loadTasks(courseId.value);
-  }
 });
 
 const leaveCourse = () => {
