@@ -53,6 +53,10 @@ class CourseService{
     })
   }
 
+  deleteCourse(courseId: number){
+    return axios.delete("/api/course/" + courseId)
+  }
+
 }
 
 export default new CourseService();

@@ -20,7 +20,7 @@
           </v-row>
         </v-card-text>
         <v-card-actions>
-          <v-btn class="btn-red">Kurs löschen</v-btn>
+          <v-btn v-if="!newCourse" class="btn-red" @click="deleteCourse">Kurs löschen</v-btn>
           <v-spacer></v-spacer>
           <v-btn class="btn-red" @click="_cancel"> Abbrechen </v-btn>
           <v-btn id="btn-confirm" type="submit" @click="_confirm"> Speichern </v-btn>
@@ -29,6 +29,7 @@
     </v-card>
     <v-snackbar v-model="snackbarFail" :timeout="2500"> Kurs konnte nicht erstellt werden, bitte versuchen Sie es erneut </v-snackbar>
   </v-dialog>
+  <DialogConfirmVue ref="dialogConfirm"></DialogConfirmVue>
 </template>
 
 <script setup lang="ts">
@@ -38,11 +39,15 @@ import courseService from "../services/course.service";
 import CoursePL from "../model/course/CoursePL";
 import semesterService from "../services/semester.service";
 import Semester from "../model/Semester";
+import DialogConfirmVue from "../dialog/DialogConfirm.vue";
+import { useRouter } from "vue-router";
 
 const courseDialog = ref<boolean>(false);
 const dialogTitle = ref<string>("");
 
+const dialogConfirm = ref<typeof DialogConfirmVue>();
 const authUserStore = useAuthUserStore();
+const router = useRouter();
 
 const semesters = ref<Semester[]>([]);
 
@@ -128,6 +133,25 @@ const _confirm = () => {
 const _cancel = () => {
   courseDialog.value = false;
   resolvePromise.value(undefined);
+};
+
+const deleteCourse = () => {
+  if (dialogConfirm.value) {
+    dialogConfirm.value.openDialog(`Lösche Kurs: ${course.value.name}`, "Willst du den Kurs wirklich löschen?").then((result: boolean) => {
+      if (result) {
+        courseService
+          .deleteCourse(course.value.id)
+          .then(() => {
+            courseDialog.value = false;
+            resolvePromise.value(course.value.id);
+            router.push("/courses");
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    });
+  }
 };
 
 const initializeSemesters = () => {
