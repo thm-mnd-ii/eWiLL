@@ -7,4 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping
 class HomeController {
     @GetMapping("/")
     fun home(): String = "index.html"
+
+    @GetMapping("/{path:[^api].*}")
+    fun index(): String = "index.html"
 }
