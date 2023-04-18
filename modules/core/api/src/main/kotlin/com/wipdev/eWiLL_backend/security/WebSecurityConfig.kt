@@ -13,7 +13,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.crypto.password.NoOpPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
-import org.springframework.security.web.access.AccessDeniedHandler
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.web.servlet.config.annotation.CorsRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
@@ -40,14 +39,7 @@ class WebSecurityConfig {
         http.cors().and().csrf().disable()
             .authorizeRequests()
             .anyRequest().permitAll()
-            .and()
-            .exceptionHandling().accessDeniedHandler(accessDeniedHandler())
         return http.build()
-    }
-
-    @Bean
-    public fun accessDeniedHandler(): AccessDeniedHandler {
-        return AccessDeniedHandler{ _, response, _->response.sendRedirect("/index.html")}
     }
 
     @Bean
