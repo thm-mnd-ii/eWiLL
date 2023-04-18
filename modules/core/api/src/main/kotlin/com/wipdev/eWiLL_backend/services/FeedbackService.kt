@@ -1,0 +1,31 @@
+package com.wipdev.eWiLL_backend.services
+
+import com.wipdev.eWiLL_backend.database.tables.course.Feedback
+import com.wipdev.eWiLL_backend.repository.FeedbackRepository
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Service
+
+@Service
+class FeedbackService {
+
+    @Autowired
+    lateinit var feedbackRepository: FeedbackRepository
+    fun findAll(): List<Feedback> {
+        return feedbackRepository.findAll()
+    }
+
+    fun save(feedback: Feedback) {
+        feedback.id = null
+        feedbackRepository.save(feedback)
+    }
+
+    fun delete(id: Long) {
+        feedbackRepository.deleteById(id)
+    }
+
+    fun findById(id: Long): Feedback {
+        return feedbackRepository.findById(id).get()
+    }
+
+
+}
