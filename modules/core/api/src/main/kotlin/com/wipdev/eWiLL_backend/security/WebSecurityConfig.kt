@@ -38,7 +38,7 @@ class WebSecurityConfig {
     fun filterChain( http: HttpSecurity): SecurityFilterChain? {
         http.cors().and().csrf().disable()
             .authorizeRequests()
-            .anyRequest().permitAll().and().httpBasic()
+            .anyRequest().permitAll()
         return http.build()
     }
 
