@@ -10,10 +10,11 @@ import ViewCourses from "../views/ViewCourses.vue";
 import ViewTestTask from "../views/ViewTestTask.vue";
 import ViewCourseSignup from "../views/ViewCourseSignup.vue";
 import ViewCourse from "../views/ViewCourse.vue";
-import ViewTask from "../views/ViewTask.vue"
-import ViewIntroduction from "../views/ViewIntroduction.vue"
-import View404Page from "../views/View404Page.vue"
-import ViewBugReport from "../views/ViewBugReport.vue"
+import ViewTask from "../views/ViewTask.vue";
+import ViewIntroduction from "../views/ViewIntroduction.vue";
+import View404Page from "../views/View404Page.vue";
+import ViewBugReport from "../views/ViewBugReport.vue";
+import authService from "@/services/auth.service";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -74,14 +75,14 @@ const router = createRouter({
       component: ViewCourse,
     },
     {
-    path: "/course/:courseId/task/:taskId",
-    name: "ViewTask",
-    component: ViewTask,
+      path: "/course/:courseId/task/:taskId",
+      name: "ViewTask",
+      component: ViewTask,
     },
     {
-    path: "/",
-    name: "ViewIntroduction",
-    component: ViewIntroduction,
+      path: "/",
+      name: "ViewIntroduction",
+      component: ViewIntroduction,
     },
     {
       path: "/:pathMatch(.*)*",
@@ -89,7 +90,7 @@ const router = createRouter({
       component: View404Page,
     },
     {
-      path:"/report",
+      path: "/report",
       name: "ViewBugReport",
       component: ViewBugReport,
     },
@@ -101,21 +102,34 @@ router.beforeEach((to, from, next) => {
   const authRequired = !publicPages.includes(to.path);
   const loggedIn = localStorage.getItem("user");
 
-  const nonAdminPages = ["/modeling", "/login", "/impressum", "/datenschutz", "/404", "/", "/report"];
+  const nonAdminPages = [
+    "/modeling",
+    "/login",
+    "/impressum",
+    "/datenschutz",
+    "/404",
+    "/",
+    "/report",
+  ];
   const adminRequired = !nonAdminPages.includes(to.path);
   const role = localStorage.getItem("role");
-  const admin = role?.includes("ADMIN")
+  const admin = role?.includes("ADMIN");
+
+  const loginValid = authService.isValid().then((response) => {
+    return response;
+  });
+
 
   // trying to access a restricted page + not logged in
   // redirect to login page
-  if (authRequired && !loggedIn) {
+  if ((authRequired && !loggedIn) || (authRequired && !loginValid)) {
     next("/login");
   } else {
-    if(adminRequired && !admin){
-      next("/404")
+    if (adminRequired && !admin) {
+      next("/404");
     } else {
       next();
-    }   
+    }
   }
 });
 

@@ -21,6 +21,12 @@ class AuthService {
     localStorage.removeItem("user");
     console.log("logout successful");
   }
+
+  isValid() {
+    return axios.get("/api/auth/isValid").then((response) => {
+      return response.data;
+    });
+  }
 }
 
 export default new AuthService();

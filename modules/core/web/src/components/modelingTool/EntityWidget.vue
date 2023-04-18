@@ -19,9 +19,6 @@
 import { useDiagramStore } from "../../stores/diagramStore";
 import { useToolManagementStore } from "../../stores/toolManagementStore";
 
-import IconTrash from "../icons/IconTrash.vue";
-import IconChange from "../icons/IconChange.vue";
-import IconAdd from "../icons/IconAdd.vue";
 import Entity from "../../model/diagram/Entity";
 import EntityType from "../../enums/EntityType";
 
