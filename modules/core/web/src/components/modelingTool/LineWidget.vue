@@ -1,15 +1,18 @@
 <template>
   <div class="widgetContainer">
-    <IconTrash class="widget" @click="deleteLine" />
-    <IconChange class="widget" @click="changeLineStyle" />
+    <span>
+      <v-icon class="widget" icon="mdi-swap-horizontal" color="info" @click="changeLineStyle"></v-icon>
+      <v-tooltip activator="parent" location="top">Change Type</v-tooltip>
+    </span>
+    <span>
+      <v-icon class="widget" icon="mdi-delete-outline" color="error" @click="deleteLine"></v-icon>
+      <v-tooltip activator="parent" location="top">Delete</v-tooltip>
+    </span>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useDiagramStore } from "../../stores/diagramStore";
-
-import IconTrash from "../icons/IconTrash.vue";
-import IconChange from "../icons/IconChange.vue";
 import CardinalityType from "../../enums/CardinalityType";
 
 const diagramStore = useDiagramStore();
