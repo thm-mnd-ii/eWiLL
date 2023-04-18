@@ -27,12 +27,11 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { routerKey, useRoute } from "vue-router";
+import { useRoute } from "vue-router";
 import { useAuthUserStore } from "../stores/authUserStore";
 import { useRouter } from "vue-router";
 import DialogConfirmVue from "../dialog/DialogConfirm.vue";
 import TaskList from "../components/TaskList.vue";
-import Course from "../model/course/Course";
 import CoursePL from "../model/course/CoursePL";
 import courseService from "../services/course.service";
 import DialogCreateCourse from "@/dialog/DialogCreateCourse.vue";

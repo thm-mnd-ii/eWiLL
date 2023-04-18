@@ -1,5 +1,4 @@
 import axios, { AxiosResponse } from "axios";
-import Course from "../model/course/Course";
 import CoursePL from "../model/course/CoursePL";
 import CourseAndParticipationPL from "../model/course/CourseAndParticipationPL";
 
