@@ -42,7 +42,6 @@ const loadTasks = (courseId: number) => {
 };
 
 const openTask = (row: any, item: any) => {
-  console.log(allTasks.value);
   router.push("/course/" + saveCourseId.value + "/task/" + item.item.raw.id);
 };
 

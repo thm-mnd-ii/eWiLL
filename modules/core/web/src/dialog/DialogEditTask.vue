@@ -61,7 +61,7 @@ const nameRules = ref<any>([(v: string) => !!v || "Name ist erforderlich"]);
 const descriptionRules = ref<any>([(v: string) => !!v || "Beschreibung ist erforderlich"]);
 
 // empty, or should be a valid date and in the future
-const dueDateRules = ref<any>([(v: string) => !v || (new Date(v) > new Date() && !isNaN(new Date(v).getTime())) || "Ungültiges Datum"]);
+// const dueDateRules = ref<any>([(v: string) => !v || (new Date(v) > new Date() && !isNaN(new Date(v).getTime())) || "Ungültiges Datum"]);
 
 onMounted(() => {
   let userId = authUserStore.auth.user?.id!;
