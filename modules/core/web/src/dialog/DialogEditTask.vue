@@ -13,6 +13,7 @@
             <v-text-field v-model="currentTask.dueDate" label="Deadline" variant="underlined" color="#81ba24"></v-text-field>
             <v-select v-model="currentTask.mediaType" :items="['Model', 'Text']" label="Medientyp" variant="underlined" required color="#81ba24"></v-select>
             <v-select v-model="currentTask.rulesetId" :items="rulesets" item-title="name" label="Regelsatz" variant="underlined" required color="#81ba24" item-value="id"></v-select>
+            <v-select v-model="currentTask.eliability" :items="liabilities" label="Verpflichtung" variant="underlined" required color="#81ba24" item-title="name" item-value="enum"></v-select>
           </div>
         </v-form>
       </v-card-text>
@@ -51,6 +52,11 @@ const diagrams = ref<Diagram[]>([]);
 const rulesets = ref<any[]>([
   { id: 1, name: "Regelsatz 1" },
   { id: 2, name: "Regelsatz 2" },
+]);
+const liabilities = ref<any[]>([
+  { name: "Verpflichtend", enum: "MANDATORY" },
+  { name: "Bonus", enum: "BONUS" },
+  { name: "Optional", enum: "OPTIONAL" },
 ]);
 
 const taskForm = ref<any>();
@@ -111,6 +117,7 @@ const _confirm = () => {
     if (valid.value) {
       currentTask.value.mediaType = currentTask.value.mediaType.toUpperCase();
       console.log(currentTask);
+      console.log(newTask.value);
       if (newTask.value) {
         taskService
           .postTask(currentTask.value)
