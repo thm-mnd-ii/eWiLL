@@ -96,7 +96,7 @@ const editCourse = () => {
 const createTask = () => {
   if (dialogCreateTask.value) {
     dialogCreateTask.value.openDialog().then((created: boolean) => {
-      console.log(created);
+      taskList.value!.loadTasks(courseId.value);
     });
   }
 };
