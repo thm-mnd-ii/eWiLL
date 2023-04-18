@@ -145,6 +145,7 @@ const categoryClicked = (category: Category) => {
             if (diagramStore.diagram.categoryId == category.id) {
               moveToOverview();
               diagramStore.createNewDiagram();
+              activeDiagramId.value = null;
             }
           });
         }
@@ -182,6 +183,7 @@ const diagramSingleClick = (diagram: Diagram) => {
             // if selected diagram is deleted, create new diagram
             if (diagram.id == activeDiagramId.value) {
               diagramStore.createNewDiagram();
+              activeDiagramId.value = null;
             }
           });
         }
@@ -197,7 +199,6 @@ const saveDialogButtonClick = () => {
       activeDiagramId.value = diagramStore.diagram.id;
     }
   });
-
 };
 
 const createNewDiagram = () => {
