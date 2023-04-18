@@ -13,7 +13,9 @@ import ViewCourse from "../views/ViewCourse.vue";
 import ViewTask from "../views/ViewTask.vue";
 import ViewIntroduction from "../views/ViewIntroduction.vue";
 import View404Page from "../views/View404Page.vue";
-import ViewBugReport from "../views/ViewBugReport.vue";
+import FeedbackReport from "../views/ViewFeedbackReport.vue";
+import FeedbackOverview from "../views/ViewFeedbackOverview.vue";
+
 import authService from "@/services/auth.service";
 
 const router = createRouter({
@@ -90,9 +92,14 @@ const router = createRouter({
       component: View404Page,
     },
     {
-      path: "/report",
+      path: "/feedbackReport",
       name: "ViewBugReport",
-      component: ViewBugReport,
+      component: FeedbackReport,
+    },
+    {
+      path: "/feedbackOverview",
+      name: "ViewBugOverview",
+      component: FeedbackOverview,
     },
   ],
 });
@@ -109,21 +116,20 @@ router.beforeEach(async (to, from, next) => {
     "/datenschutz",
     "/404",
     "/",
-    "/report",
+    "/feedbackReport",
   ];
   const adminRequired = !nonAdminPages.includes(to.path);
   const role = localStorage.getItem("role");
   const admin = role?.includes("ADMIN");
 
   const loginValid = await authService.isValid().then((response) => {
-    if(response === true) {
+    if (response === true) {
       return true;
     } else {
       localStorage.removeItem("user");
       return false;
     }
   });
-
 
   // trying to access a restricted page + not logged in
   // redirect to login page
