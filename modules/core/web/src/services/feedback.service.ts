@@ -1,4 +1,3 @@
-import Semester from "../model/Semester";
 import axios from "axios";
 
 class FeedbackService {
