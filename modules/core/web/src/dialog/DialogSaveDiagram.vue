@@ -5,7 +5,6 @@
     <v-card>
       <v-card-title>
         <span class="text-h5">Save Diagram</span>
-        {{ valid }}
         <br />
         <span v-if="!isNewDiagram" class="text-subtitle-1"
           >{{ diagramStore.diagram.name }} will be overwritten!
@@ -36,6 +35,7 @@ import diagramService from "../services/diagram.service";
 import { useDiagramStore } from "../stores/diagramStore";
 import { useAuthUserStore } from "../stores/authUserStore";
 import DialogAddCategoryVue from "./DialogAddCategory.vue";
+import { on } from "stream";
 
 const diagramStore = useDiagramStore();
 const authUserStore = useAuthUserStore();
@@ -53,17 +53,12 @@ const saveDialog = ref<boolean>(false);
 const isNewDiagram = ref<boolean>(true);
 
 onMounted(() => {
-  let userId = authUserStore.auth.user?.id;
-  if (userId != undefined) {
-    updateCategories(userId);
-  } else {
-    console.log("userId is undefined");
-  }
+  updateCategories();
 });
 
-const updateCategories = (uid: number) => {
+const updateCategories = () => {
   diagramService
-    .getCategories(uid)
+    .getCategories(authUserStore.auth.user?.id as number)
     .then((response) => {
       categoryNames.value = response.data;
     })
@@ -94,7 +89,6 @@ const saveDiagram = () => {
           .then((result) => {
             // result.data == diagram.id
             diagramStore.diagram.id = result.data;
-
             _promiseNewDiagram();
           })
           .catch((error) => {
@@ -128,7 +122,7 @@ const saveDiagram = () => {
 const openCategoryDialog = () => {
   dialogCategory.value?.openDialog().then((result: boolean) => {
     if (result) {
-      updateCategories(authUserStore.auth.user?.id as number);
+      updateCategories();
     }
   });
 };
@@ -138,12 +132,16 @@ const resolvePromise: any = ref(undefined);
 const rejectPromise: any = ref(undefined);
 
 const openDialog = (selectedDiagramId: number | null) => {
+  updateCategories();
+  
   if (selectedDiagramId == diagramStore.diagram.id) {
     isNewDiagram.value = false;
     diagramName.value = diagramStore.diagram.name;
     diagramCategory.value = diagramStore.diagram.categoryId;
   } else {
     isNewDiagram.value = true;
+    diagramName.value = "";
+    diagramCategory.value = undefined;
   }
   saveDialog.value = true;
 
