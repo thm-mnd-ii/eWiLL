@@ -22,7 +22,7 @@
         <v-list-item v-if="admin" to="/checker" active-class="active" prepend-icon="mdi-code-greater-than" title="Überprüfung" value="checker" />
         <v-list-item v-if="admin" to="/testTask" active-class="active" prepend-icon="mdi-file-document-edit" title="Testaufgabe" value="testTask" />
         <v-list-item to="/feedbackReport" active-class="active" prepend-icon="mdi-bug" title="Feedback" value="report" />
-        <v-list-item to="/feedbackOverview" active-class="active" prepend-icon="mdi-view-dashboard-variant-outline" title="Feedback Overview" value="report" />
+        <v-list-item v-if="admin" to="/feedbackOverview" active-class="active" prepend-icon="mdi-view-dashboard-variant-outline" title="Feedback Overview" value="report" />
       </v-list>
     </v-navigation-drawer>
 
