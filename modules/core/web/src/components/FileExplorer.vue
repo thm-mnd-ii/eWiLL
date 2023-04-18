@@ -79,7 +79,6 @@ const categoriesViewActive = ref(true);
 const activeCategorie = ref<Category | null>(null);
 const activeDiagramId = ref<number | null>(null);
 
-const categoryNames = ref<string[]>([]);
 const map = ref<Map<Category, Diagram[]>>(new Map());
 const displayDiagrams = ref<Diagram[]>([]);
 
@@ -195,9 +194,10 @@ const saveDialogButtonClick = () => {
   dialogSave.value?.openDialog(activeDiagramId.value).then((result: boolean) => {
     if (result) {
       updateFiles();
+      activeDiagramId.value = diagramStore.diagram.id;
     }
   });
-  categoryNames.value.length = 0;
+
 };
 
 const createNewDiagram = () => {
