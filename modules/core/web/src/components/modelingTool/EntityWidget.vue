@@ -65,7 +65,7 @@ const changeEntityType = () => {
 };
 
 const manageAttributes = () => {
-  console.log("manageAttributes");
+  // console.log("manageAttributes");
   toolManagementStore.selectedEntity = props.entity;
   toolManagementStore.showModalAddAttributes = true;
 };

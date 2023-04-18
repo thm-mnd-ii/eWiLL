@@ -95,7 +95,6 @@ onMounted(() => {
 const updateFiles = () => {
   const uId = authUserStore.auth.user?.id as number;
   if (uId == undefined) {
-    console.log("userId is undefined");
     return;
   }
 
@@ -179,8 +178,6 @@ const diagramSingleClick = (diagram: Diagram) => {
       dialogConfirm.value.openDialog(`Lösche: ${diagram.name}`, "Willst du das Diagramm wirklich löschen?").then((result: boolean) => {
         if (result) {
           diagramService.deleteDiagram(diagram).then(() => {
-            console.log("Diagram deleted");
-            console.log(activeCategorie.value);
             updateFiles();
 
             // if selected diagram is deleted, create new diagram

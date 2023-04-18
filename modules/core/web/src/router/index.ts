@@ -97,7 +97,7 @@ const router = createRouter({
   ],
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const publicPages = ["/login"];
   const authRequired = !publicPages.includes(to.path);
   const loggedIn = localStorage.getItem("user");
@@ -115,8 +115,13 @@ router.beforeEach((to, from, next) => {
   const role = localStorage.getItem("role");
   const admin = role?.includes("ADMIN");
 
-  const loginValid = authService.isValid().then((response) => {
-    return response;
+  const loginValid = await authService.isValid().then((response) => {
+    if(response === true) {
+      return true;
+    } else {
+      localStorage.removeItem("user");
+      return false;
+    }
   });
 
 
