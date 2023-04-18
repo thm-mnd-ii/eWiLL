@@ -35,7 +35,6 @@ import diagramService from "../services/diagram.service";
 import { useDiagramStore } from "../stores/diagramStore";
 import { useAuthUserStore } from "../stores/authUserStore";
 import DialogAddCategoryVue from "./DialogAddCategory.vue";
-import { on } from "stream";
 
 const diagramStore = useDiagramStore();
 const authUserStore = useAuthUserStore();

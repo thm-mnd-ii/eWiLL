@@ -68,8 +68,7 @@ const leaveCourse = () => {
       if (result) {
         courseService
           .leaveCourse(courseId.value, userId.value)
-          .then((response) => {
-            // console.log(response);
+          .then(() => {
             router.push("/");
           })
           .catch((error) => {
@@ -82,9 +81,7 @@ const leaveCourse = () => {
 
 const editCourse = () => {
   if (dialogCreateCourse.value) {
-    dialogCreateCourse.value.openDialog(courseId.value).then((id: number) => {
-      // console.log("success");
-    });
+    dialogCreateCourse.value.openDialog(courseId.value).then(() => {});
   }
 };
 
