@@ -61,13 +61,7 @@ class FeedbackController {
     @PostMapping("/update/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     fun updateFeedback(@PathVariable id: Long, @RequestBody feedbackPl: FeedbackPl) {
-        val feedback = feedbackService.findById(id)
-        feedback.id = id
-        feedback.text = feedbackPl.text
-        feedback.firstName = feedbackPl.firstName
-        feedback.lastName = feedbackPl.lastName
-        feedback.status = feedbackPl.status
-        feedbackService.save(feedback)
+        feedbackService.update(id, feedbackPl)
     }
 
 }

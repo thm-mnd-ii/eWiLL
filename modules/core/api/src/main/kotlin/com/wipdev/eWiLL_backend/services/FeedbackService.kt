@@ -1,6 +1,7 @@
 package com.wipdev.eWiLL_backend.services
 
 import com.wipdev.eWiLL_backend.database.tables.course.Feedback
+import com.wipdev.eWiLL_backend.endpoints.payload.requests.FeedbackPl
 import com.wipdev.eWiLL_backend.repository.FeedbackRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -24,6 +25,15 @@ class FeedbackService {
 
     fun findById(id: Long): Feedback {
         return feedbackRepository.findById(id).get()
+    }
+
+    fun update(id: Long, feedbackPl: FeedbackPl) {
+        val feedback = findById(id)
+        feedback.text = feedbackPl.text
+        feedback.firstName = feedbackPl.firstName
+        feedback.lastName = feedbackPl.lastName
+        feedback.status = feedbackPl.status
+        feedbackRepository.save(feedback)
     }
 
 
