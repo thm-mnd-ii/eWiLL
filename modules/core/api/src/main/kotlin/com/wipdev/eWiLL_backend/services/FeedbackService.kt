@@ -15,7 +15,6 @@ class FeedbackService {
     }
 
     fun save(feedback: Feedback) {
-        feedback.id = null
         feedbackRepository.save(feedback)
     }
 
