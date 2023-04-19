@@ -79,7 +79,6 @@ const categoriesViewActive = ref(true);
 const activeCategorie = ref<Category | null>(null);
 const activeDiagramId = ref<number | null>(null);
 
-const categoryNames = ref<string[]>([]);
 const map = ref<Map<Category, Diagram[]>>(new Map());
 const displayDiagrams = ref<Diagram[]>([]);
 
@@ -95,7 +94,6 @@ onMounted(() => {
 const updateFiles = () => {
   const uId = authUserStore.auth.user?.id as number;
   if (uId == undefined) {
-    console.log("userId is undefined");
     return;
   }
 
@@ -147,6 +145,7 @@ const categoryClicked = (category: Category) => {
             if (diagramStore.diagram.categoryId == category.id) {
               moveToOverview();
               diagramStore.createNewDiagram();
+              activeDiagramId.value = null;
             }
           });
         }
@@ -179,13 +178,12 @@ const diagramSingleClick = (diagram: Diagram) => {
       dialogConfirm.value.openDialog(`Lösche: ${diagram.name}`, "Willst du das Diagramm wirklich löschen?").then((result: boolean) => {
         if (result) {
           diagramService.deleteDiagram(diagram).then(() => {
-            console.log("Diagram deleted");
-            console.log(activeCategorie.value);
             updateFiles();
 
             // if selected diagram is deleted, create new diagram
             if (diagram.id == activeDiagramId.value) {
               diagramStore.createNewDiagram();
+              activeDiagramId.value = null;
             }
           });
         }
@@ -198,9 +196,9 @@ const saveDialogButtonClick = () => {
   dialogSave.value?.openDialog(activeDiagramId.value).then((result: boolean) => {
     if (result) {
       updateFiles();
+      activeDiagramId.value = diagramStore.diagram.id;
     }
   });
-  categoryNames.value.length = 0;
 };
 
 const createNewDiagram = () => {

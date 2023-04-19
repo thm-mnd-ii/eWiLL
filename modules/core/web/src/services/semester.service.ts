@@ -9,7 +9,7 @@ class SemesterService {
             axios.get("/api/semester")
             .then((response) => {
               semesters = response.data     
-              console.log(semesters)      
+              // console.log(semesters)      
               resolve(semesters)
             })
             .catch((error) => {
