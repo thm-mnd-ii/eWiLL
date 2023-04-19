@@ -20,7 +20,7 @@
               <td class="text-left">{{ feedback.text }}</td>
               <td class="text-left">{{ feedback.timeStamp }}</td>
               <td class="text-left">
-                <v-select v-model="feedback.status" :hide-details=true variant="underlined" :items="feedbackStatuses" @update:model-value="changeStatus(feedback)"></v-select>
+                <v-select v-model="feedback.status" :hide-details="true" variant="underlined" :items="feedbackStatuses" @update:model-value="changeStatus(feedback)"></v-select>
               </td>
               <td class="text-left">
                 <v-btn @click="deleteFeedback(feedback)">Delete</v-btn>
