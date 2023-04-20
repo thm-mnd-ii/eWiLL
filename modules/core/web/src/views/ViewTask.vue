@@ -12,9 +12,15 @@
       <v-card-text>
         <p>{{ task.description }}</p>
         <br />
-        <v-chip prepend-icon="mdi-account-circle" color="secondary" text-color="white" label>
-          {{ courseRole }}
-        </v-chip>
+        <div class="align-items-center">
+          <v-chip prepend-icon="mdi-account-circle" color="secondary" text-color="white" label>
+            {{ courseRole }}
+          </v-chip>
+          <v-spacer></v-spacer>
+          <v-chip v-if="task.eliability == 'BONUS'" color="green">Bonus</v-chip>
+          <v-chip v-if="task.eliability == 'MANDATORY'" color="red">Verpflichtend</v-chip>
+          <v-chip v-if="task.eliability == 'OPTIONAL'" color="yellow">Optional</v-chip>
+        </div>
       </v-card-text>
     </v-card>
 
@@ -219,5 +225,10 @@ const loadCategories = () => {
   position: relative;
   width: 100%;
   height: 100%;
+}
+
+.align-items-center {
+  display: flex;
+  align-items: center;
 }
 </style>
