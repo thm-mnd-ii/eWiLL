@@ -25,7 +25,7 @@ class FeedbackService {
   }
 
   deleteFeedback(id: number) {
-    return axios.post("/api/feedback/delete/" + id, { headers: authHeader() });
+    return axios.delete("/api/feedback/delete/" + id, { headers: authHeader() });
   }
 }
 
