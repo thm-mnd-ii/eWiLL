@@ -4,6 +4,11 @@ import Category from "../model/diagram/Category";
 import authHeader from "./auth-header";
 
 class DiagramService {
+
+  getDiagramById(id: number){
+    return axios.get("/api/diagram/" + id);
+  }
+
   getDiagramsByUserId(userId: number): Promise<AxiosResponse<Diagram[]>> {
     return axios.get("/api/diagram/user/" + userId, { headers: authHeader() });
   }

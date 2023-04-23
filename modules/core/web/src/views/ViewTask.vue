@@ -27,8 +27,8 @@
     <div class="task-main">
       <div class="grid-left">
         <v-form>
-          <v-select v-model="selectedCategoryId" label="Kategorie" variant="underlined" :items="categories" item-title="name" item-value="id" @update:model-value="updateDiagrams"></v-select>
-          <v-select v-model="selectedDiagramId" label="Diagram" variant="underlined" :items="diagrams" item-title="name" item-value="id" @update:model-value="showSelectedDiagram"></v-select>
+          <v-select v-model="selectedCategoryId" label="Kategorie" variant="underlined" :items="categories" item-title="name" :disabled="courseRole != 'STUDENT'" item-value="id" @update:model-value="updateDiagrams"></v-select>
+          <v-select v-model="selectedDiagramId" label="Diagram" variant="underlined" :items="diagrams" item-title="name" item-value="id" :disabled="courseRole != 'STUDENT'" @update:model-value="showSelectedDiagram"></v-select>
         </v-form>
 
         <v-card class="preview-container">
@@ -120,9 +120,9 @@ const taskResults = ref<any[]>([
 ]);
 
 onMounted(() => {
+  courseService.getUserRoleInCourse(userId.value, courseId.value).then((response) => (courseRole.value = response));
   loadTask();
   loadCategories();
-  courseService.getUserRoleInCourse(userId.value, courseId.value).then((response) => (courseRole.value = response));
   diagramStore.createNewDiagram();
 });
 
@@ -137,6 +137,7 @@ const openSettings = () => {
 const loadTask = () => {
   taskService.getTask(taskId.value).then((response) => {
     task.value = response;
+    if (courseRole.value != "STUDENT") loadSolutionModel();
   });
 };
 
@@ -163,6 +164,16 @@ const submitDiagram = () => {
 const loadCategories = () => {
   categoryService.getByUserId(userId.value).then((data) => {
     categories.value = data;
+  });
+};
+
+const loadSolutionModel = () => {
+  diagramService.getDiagramById(task.value.solutionModelId).then((response) => {
+    const categoryId = response.data.categoryId;
+    selectedCategoryId.value = categoryId;
+    diagrams.value.push(response.data);
+    selectedDiagramId.value = task.value.solutionModelId;
+    showSelectedDiagram(selectedDiagramId.value);
   });
 };
 </script>
