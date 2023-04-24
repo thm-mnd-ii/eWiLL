@@ -78,7 +78,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useAuthUserStore } from "../stores/authUserStore";
 import courseService from "../services/course.service";
 import taskService from "../services/task.service";
@@ -95,6 +95,7 @@ import { storeToRefs } from "pinia";
 import ModelingTool from "@/components/ModelingTool.vue";
 
 const route = useRoute();
+const router = useRouter();
 const authUserStore = useAuthUserStore();
 const diagramStore = useDiagramStore();
 const modelingToolKey = storeToRefs(diagramStore).key;
@@ -120,10 +121,16 @@ const taskResults = ref<any[]>([
 ]);
 
 onMounted(() => {
-  courseService.getUserRoleInCourse(userId.value, courseId.value).then((response) => (courseRole.value = response));
-  loadTask();
-  loadCategories();
-  diagramStore.createNewDiagram();
+  courseService.getUserRoleInCourse(userId.value!, courseId.value).then((response) => {
+    if (response == "NONE") {
+      router.push("/course/" + route.params.courseId + "/signup");
+    } else {
+      courseRole.value = response;
+      loadTask();
+      loadCategories();
+      diagramStore.createNewDiagram();
+    }
+  });
 });
 
 const openSettings = () => {
