@@ -89,6 +89,13 @@ const updateDiagrams = (categoryId: number) => {
   });
 };
 
+const setModelAndCategory = () => {
+  diagramService.getDiagramById(currentTask.value.solutionModelId).then((response) => {
+    selectedCategoryId.value = response.data.categoryId;
+    updateDiagrams(selectedCategoryId.value!);
+  });
+};
+
 // #############################
 // Promis
 const resolvePromise: any = ref(undefined);
@@ -101,6 +108,7 @@ const openDialog = (task?: Task) => {
     editTitle.value = "Aufgabe bearbeiten";
     currentTask.value = task;
     newTask.value = false;
+    setModelAndCategory();
   } else {
     editTitle.value = "Neue Aufgabe erstellen";
     currentTask.value = {} as Task;
@@ -118,8 +126,6 @@ const _confirm = () => {
   taskForm.value.validate().then(() => {
     if (valid.value) {
       currentTask.value.mediaType = currentTask.value.mediaType.toUpperCase();
-      console.log(currentTask);
-      console.log(newTask.value);
       if (newTask.value) {
         taskService
           .postTask(currentTask.value)
