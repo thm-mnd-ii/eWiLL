@@ -18,9 +18,10 @@
         </v-form>
       </v-card-text>
       <v-card-actions>
+        <v-btn v-if="!newTask" class="btn-red" @click="deleteTask">Aufgabe löschen</v-btn>
         <v-spacer></v-spacer>
-        <v-btn variant="text" @click="_cancel"> Abbrechen </v-btn>
-        <v-btn variant="text" @click="_confirm"> Speichern </v-btn>
+        <v-btn class="btn-red" @click="_cancel"> Abbrechen </v-btn>
+        <v-btn id="btn-confirm" type="submit" @click="_confirm"> Speichern </v-btn>
       </v-card-actions>
     </v-card>
     <v-snackbar v-model="snackbarFail" :timeout="3000"> Ein Fehler ist aufgetreten, bitte versuchen Sie es erneut </v-snackbar>
@@ -36,6 +37,7 @@ import { ref, onMounted } from "vue";
 import { useAuthUserStore } from "@/stores/authUserStore";
 import { useRoute } from "vue-router";
 import taskService from "@/services/task.service";
+import router from "@/router";
 
 const authUserStore = useAuthUserStore();
 const route = useRoute();
@@ -150,6 +152,12 @@ const _cancel = () => {
   resolvePromise.value(false);
 };
 
+const deleteTask = () => {
+  taskService.deleteTask(currentTask.value.id).then(() => {
+    router.push("/course/" + currentTask.value.courseId);
+  });
+};
+
 // define expose
 defineExpose({
   openDialog,
@@ -161,5 +169,15 @@ defineExpose({
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-gap: 10px;
+}
+
+#btn-confirm {
+  background-color: #81ba24;
+  color: #ffffff;
+}
+
+.btn-red {
+  background-color: #db3e1f;
+  color: #ffffff;
 }
 </style>
