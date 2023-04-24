@@ -57,7 +57,7 @@ const test = ["News 1", "News 2"];
 <style scoped lang="scss">
 .card {
   position: relative;
-  left: 14.2%;
+  left: 17.4%;
   width: 550px;
   margin: 20px;
   margin-top: 50px;
