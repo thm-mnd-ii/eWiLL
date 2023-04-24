@@ -7,7 +7,7 @@
         <v-spacer></v-spacer>
         <v-btn variant="text" icon="mdi-account-group" color="dark-gray"></v-btn>
         <v-btn variant="text" icon="mdi-logout-variant" color="dark-gray" @click="leaveCourse"></v-btn>
-        <v-btn variant="text" icon="mdi-cog" color="dark-gray" @click="editCourse"></v-btn>
+        <v-btn v-if="courseRole == 'OWNER'" variant="text" icon="mdi-cog" color="dark-gray" @click="editCourse"></v-btn>
       </v-card-title>
       <v-card-text>
         <p>{{ course?.description }}</p>
