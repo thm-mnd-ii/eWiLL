@@ -6,7 +6,7 @@
 
         <!-- <span> <IconEWiLL /> </span> -->
       </v-card-title>
-      <v-card-text class="text"> ...auf unserer neuen Modellierungsplattform EWiLL. In der aktuellen Version steht Euch die Modellierung zur Verfügung, viele weitere Features folgen in der Zukunft. Eure erstellten Diagramme könnt ihr abspeichern und in verschiedenen Kategorien einsortieren, die Ihr ebenfalls selber anlegen könnt. </v-card-text>
+      <v-card-text class="text"> ...auf unserer neuen Modellierungsplattform eWiLL. In der aktuellen Version steht Euch die Modellierung zur Verfügung, viele weitere Features folgen in der Zukunft. Eure erstellten Diagramme könnt ihr abspeichern und in verschiedenen Kategorien einsortieren, die Ihr ebenfalls selber anlegen könnt. </v-card-text>
       <v-card-actions>
         <v-spacer>
           <v-btn class="btn" to="/modeling">Hier könnt Ihr modellieren</v-btn>

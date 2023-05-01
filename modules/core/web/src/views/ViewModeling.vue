@@ -43,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 
 import ModelingTool from "@/components/ModelingTool.vue";
 import FileExplorer from "@/components/FileExplorer.vue";
@@ -60,6 +60,16 @@ const currentTime = ref<Date>(new Date());
 setInterval(() => {
   currentTime.value = new Date();
 }, 1000);
+
+const warnBeforeUnload = () => {
+  window.addEventListener("beforeunload", (event) => {
+    event.preventDefault();
+  });
+};
+
+onMounted(() => {
+  warnBeforeUnload();
+});
 
 // current weekday day date year time seconds in european format
 const currentDateTime = computed(() => {

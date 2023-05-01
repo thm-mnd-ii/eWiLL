@@ -50,7 +50,6 @@
 </template>
 
 <script setup lang="ts">
-const dashboardNewsText = "++ Du hast ein Lernziel erreicht ++";
 const test = ["News 1", "News 2"];
 </script>
 

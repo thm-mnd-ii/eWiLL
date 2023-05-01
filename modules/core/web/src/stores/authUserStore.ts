@@ -21,8 +21,6 @@ const initialState = user
   ? { status: { loggedIn: true }, user }
   : { status: { loggedIn: false }, user: null };
 
-console.log(initialState);
-
 export const useAuthUserStore = defineStore("auth", {
   state: (): State => ({
     auth: initialState,

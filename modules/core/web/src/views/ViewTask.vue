@@ -165,7 +165,7 @@ const showSelectedDiagram = (diagramId: number) => {
 };
 
 const submitDiagram = () => {
-  console.log("submit diagram");
+  // console.log("submit diagram");
 };
 
 const loadCategories = () => {

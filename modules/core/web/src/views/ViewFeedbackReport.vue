@@ -3,8 +3,6 @@
     <v-card class="card">
       <v-card-title class="title">
         <span>Zur Verbesserung unseres Dienstes würden wir uns über Feedback freuen</span>
-
-        <!-- <span> <IconEWiLL /> </span> -->
       </v-card-title>
       <v-card-text class="text">
         <v-textarea v-model="feedback"></v-textarea>
@@ -29,6 +27,7 @@ const snackbarSuccess = ref(false);
 const sendFeedback = () => {
   feedbackService.postFeedback(feedback.value).then(() => {
     snackbarSuccess.value = true;
+    feedback.value = "";
   });
 };
 </script>
