@@ -7,7 +7,7 @@ interface Task {
     courseId: number;
     solutionModelId: number;
     rulesetId: number;
-    liability: string;
+    eliability: string;
     
   }
   

@@ -89,7 +89,7 @@ const createCourse = () => {
 };
 
 const openCourseOrSignUp = (row: any, item: any) => {
-  if (item.item.raw.participation == false) router.push("/course/" + item.item.raw.id + "/signup");
+  if (item.item.raw.member == false) router.push("/course/" + item.item.raw.course.id + "/signup");
   else router.push("/course/" + item.item.raw.course.id);
 };
 </script>
