@@ -65,7 +65,7 @@ class AuthController {
 
     private fun createUserData(fbsUser: FbsClient.FbsUser) {
         val role = roleRepository.getReferenceById(ERole.ROLE_USER.ordinal.toLong())
-        val user = User(null,fbsUser.username!!, fbsUser.email!!, setOf(role))
+        val user = User(null,fbsUser.username!!, fbsUser.email!!,fbsUser.prename!!,fbsUser.surname!!, setOf(role))
         userRepository.save(user)
     }
 
