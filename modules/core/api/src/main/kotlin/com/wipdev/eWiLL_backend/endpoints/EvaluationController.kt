@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*
 
 @RequestMapping("/api/evaluation/v2")
 @RestController
-@Tag(name = "Evaluation/Checker", description = "Checker API")
+@Tag(name = "Submission Controller", description = "Checker API")
 class EvaluationController {
 
     @Autowired
@@ -20,7 +20,7 @@ class EvaluationController {
     @PostMapping("/submit")
     @ResponseBody
     fun submit(@Parameter submissionRequestPL: SubmissionRequestPL): Long? =
-        service.eval(submissionRequestPL)
+        service.submit(submissionRequestPL) // TODO change back to eval
 
 
     @GetMapping("/result/{id}")
