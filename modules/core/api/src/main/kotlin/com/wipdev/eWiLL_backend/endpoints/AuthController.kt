@@ -48,6 +48,7 @@ class AuthController {
         } else {
             if (!userRepository.existsByUsername(loginRequestPL.username)) {
                 val fbsUser = fbsClient.getUserInformation(response.headers())
+                println(fbsUser)
                 createUserData(fbsUser)
             }
         }
