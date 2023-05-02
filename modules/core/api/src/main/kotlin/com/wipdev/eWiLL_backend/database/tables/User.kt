@@ -13,6 +13,10 @@ data class User(
 
     @Column(name = "email", nullable = false) val email: String = "",
 
+    @Column(name = "firstName", nullable = true) val firstName: String = "",
+
+    @Column(name = "lastName", nullable = true) val lastName: String = "",
+
     @ManyToMany(fetch = FetchType.EAGER) @JoinTable(
         name = "user_roles",
         joinColumns = [JoinColumn(name = "user_id")],
