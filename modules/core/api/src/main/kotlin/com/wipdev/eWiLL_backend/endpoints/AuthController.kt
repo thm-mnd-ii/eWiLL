@@ -44,6 +44,8 @@ class AuthController {
         val fbsClient = FbsClient()
         val response = fbsClient.getLoginLdap(loginRequestPL.username!!, loginRequestPL.password!!)
         if (response!!.statusCode() != 200) {
+            if(response.statusCode() != 401)
+                print(response.statusCode().toString() + " " + response.body())
             return ResponseEntity.status(response.statusCode()).build()
         } else {
             if (!userRepository.existsByUsername(loginRequestPL.username)) {
