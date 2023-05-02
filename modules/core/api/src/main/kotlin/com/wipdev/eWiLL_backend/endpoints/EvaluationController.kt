@@ -29,4 +29,9 @@ class EvaluationController {
         service.getEvalResult(id)
 
 
+    @GetMapping("/submissionIds/{userId}/{taskId}")
+    @ResponseBody
+    fun getSubmissionIds(@PathVariable userId: Long, @PathVariable taskId: Long): List<Long> =
+        service.getSubmissionIds(userId, taskId)
+
 }

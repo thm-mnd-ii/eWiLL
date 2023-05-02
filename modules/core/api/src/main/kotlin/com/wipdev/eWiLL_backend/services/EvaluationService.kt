@@ -102,7 +102,9 @@ class EvaluationService: IEvaluationService {
     }
 
     override fun getEvalResult(id: Long?): SubmissionResult? = resultRepository.findById(id!!).get()
-
+    fun getSubmissionIds(userId: Long, taskId: Long): List<Long> {
+        return submissionRepository.findAllByUserIdAndTaskId(userId, taskId)
+    }
 
 
 }
