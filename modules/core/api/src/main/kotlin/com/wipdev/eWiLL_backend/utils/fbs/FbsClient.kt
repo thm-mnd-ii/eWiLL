@@ -8,6 +8,7 @@ import java.net.http.HttpClient
 import java.net.http.HttpHeaders
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
+import java.nio.charset.StandardCharsets
 
 
 class FbsClient {
@@ -17,10 +18,12 @@ class FbsClient {
     fun getLoginLdap(username: String, password: String): HttpResponse<String>? {
         val url = "$baseUrl/login/ldap"
         val client = HttpClient.newBuilder().build()
+        val passwordBytes = password.toByteArray(StandardCharsets.UTF_8)
+        val requestBody = "{\"username\":\"$username\",\"password\":\"${String(passwordBytes, StandardCharsets.UTF_8)}\"}"
         val request = HttpRequest.newBuilder()
             .uri(URI.create(url))
             .header("Content-Type", "application/json")
-            .POST(HttpRequest.BodyPublishers.ofString("{\"username\":\"$username\",\"password\":\"$password\"}"))
+            .POST(HttpRequest.BodyPublishers.ofString(requestBody))
             .build()
         return client.send(request, HttpResponse.BodyHandlers.ofString())
     }
