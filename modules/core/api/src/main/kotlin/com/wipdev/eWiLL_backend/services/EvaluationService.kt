@@ -1,5 +1,6 @@
 package com.wipdev.eWiLL_backend.services
 
+import com.wipdev.eWiLL_backend.database.tables.course.Submission
 import com.wipdev.eWiLL_backend.database.tables.course.SubmissionResult
 import com.wipdev.eWiLL_backend.endpoints.payload.requests.SubmissionRequestPL
 import com.wipdev.eWiLL_backend.eval.DiagramEvalEntry
@@ -9,6 +10,8 @@ import com.wipdev.eWiLL_backend.repository.*
 import com.wipdev.eWiLL_backend.services.serviceInterfaces.IEvaluationService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -26,28 +29,44 @@ class EvaluationService: IEvaluationService {
 
     @Autowired
     lateinit var configRepository: DiagramConfigRepository
+
+    @Autowired
+    lateinit var submissionRepository: SubmissionRepository
     @Autowired
     lateinit var rulesetRepository: RulesetRepository
     override fun eval(submissionRequestPL: SubmissionRequestPL): Long? {
         //Collect Data for evaluation
-        val task = taskRepository.findById(submissionRequestPL.taskId.toLong()).get()
-        val ruleset = task.rulesetId?.let { rulesetRepository.findById(it).get() }
-        val diagram = submissionRequestPL.diagramPL;
-        val solutionDiagram = DiagramService.convert(diagramRepository.findById(task.solutionModelId!!).get(), configRepository)
+
+        val diagram = diagramRepository.getReferenceById(submissionRequestPL.diagramId)
+
+
+
+        var submission = Submission()
+        val currentDateTime = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        val formattedDateTime = currentDateTime.format(formatter)
+        submission.date = formattedDateTime
+        submission.diagram = diagram.toString()
+        submission.taskId = submissionRequestPL.taskId
+        submission.userId = submissionRequestPL.userId
+
+        submission = submissionRepository.save(submission)
+
+        return submission.id
 
         //Prepare evaluation
-        val diagramEvalEntry = DiagramEvalEntry(task, ruleset, diagram, listOf(solutionDiagram))
-        val evaluator: IDiagramEvaluator =
-            SERMDiagramEvaluator()//TODO: Change to diffrent Controller when using other models
+        //val diagramEvalEntry = DiagramEvalEntry(task, ruleset, diagram, listOf(solutionDiagram))
+        //val evaluator: IDiagramEvaluator =
+          //  SERMDiagramEvaluator()//TODO: Change to diffrent Controller when using other models
 
         //
-        val result = resultRepository.saveEmpty();
-        if (result != null) {
-            runEvalAsync(evaluator, result.id, diagramEvalEntry)
-            return result.id
-        }else{
-            throw Exception("Could not save empty result")
-        }
+       // val result = resultRepository.saveEmpty();
+       // if (result != null) {
+       //     runEvalAsync(evaluator, result.id, diagramEvalEntry)
+       //     return result.id
+       // }else{
+       //     throw Exception("Could not save empty result")
+        //}
 
 
         //var result = evaluator.eval(diagramEvalEntry)
