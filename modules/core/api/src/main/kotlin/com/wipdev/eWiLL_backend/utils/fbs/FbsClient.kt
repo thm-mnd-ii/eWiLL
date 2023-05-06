@@ -20,7 +20,8 @@ class FbsClient {
         val client = HttpClient.newBuilder().build()
 
         val passwordBytes = password.toByteArray(StandardCharsets.UTF_8)
-        val requestBody = "{\"username\":\"$username\",\"password\":\"${String(passwordBytes, StandardCharsets.UTF_8)}\"}"
+        val requestBody =
+            "{\"username\":\"$username\",\"password\":\"${String(passwordBytes, StandardCharsets.UTF_8)}\"}"
         val request = HttpRequest.newBuilder()
             .uri(URI.create(url))
             .header("Content-Type", "application/json")
@@ -29,8 +30,11 @@ class FbsClient {
         return client.send(request, HttpResponse.BodyHandlers.ofString())
     }
 
-    fun getUserInformation(headers:HttpHeaders): FbsUser {
-        val decodingResult = decodeFBSToken(headers.firstValue("Authorization").get().subSequence("Bearer ".length,headers.firstValue("Authorization").get().length).toString())
+    fun getUserInformation(headers: HttpHeaders): FbsUser {
+        val decodingResult = decodeFBSToken(
+            headers.firstValue("Authorization").get()
+                .subSequence("Bearer ".length, headers.firstValue("Authorization").get().length).toString()
+        )
         val id = decodingResult.userID
         val url = "$baseUrl/users/${id}"
         val client = HttpClient.newBuilder().build()
@@ -40,11 +44,11 @@ class FbsClient {
             .header("Authorization", headers.firstValue("Authorization").get())
             .GET()
             .build()
-        val response =  client.send(request, HttpResponse.BodyHandlers.ofString())
+        val response = client.send(request, HttpResponse.BodyHandlers.ofString())
         println(response.body() + " " + response.statusCode())
-        return if(response.statusCode() != 200){
+        return if (response.statusCode() != 200) {
             FbsUser()
-        }else{
+        } else {
             Json.mapper().readValue(response.body(), FbsUser::class.java)
         }
 
@@ -63,16 +67,16 @@ class FbsClient {
         )
     }
 
-    class FbsUser{
-        var id:Int? = 0
-        var prename:String? = ""
-        var surname:String? = ""
-        var email:String? = ""
-        var username:String? = ""
-        var password:String? = ""
-        var alias:String? = ""
-        var globalRole:String? = ""
-        var name : String? = ""
+    class FbsUser {
+        var id: Int? = 0
+        var prename: String? = ""
+        var surname: String? = ""
+        var email: String? = ""
+        var username: String? = ""
+        var password: String? = ""
+        var alias: String? = ""
+        var globalRole: String? = ""
+        var name: String? = ""
 
         override fun toString(): String {
             return "FbsUser(id=$id, prename='$prename', surname='$surname', email='$email', username='$username', password='$password', alias='$alias', globalRole='$globalRole', name='$name')"
