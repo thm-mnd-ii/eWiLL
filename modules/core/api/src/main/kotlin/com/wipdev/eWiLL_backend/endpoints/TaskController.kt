@@ -33,7 +33,6 @@ class TaskController {
     @ResponseBody
     fun create(@PathVariable courseId: Long, @RequestBody task: Task) = service.create(courseId, task)
 
-
     @PutMapping("/{taskId}")
     @ResponseBody
     fun update(@PathVariable taskId :Long?,@RequestBody task: Task) = taskId?.let { service.update(it, task) }
