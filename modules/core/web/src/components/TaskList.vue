@@ -7,6 +7,11 @@
         <v-icon v-if="item.raw.status == false" icon="mdi-close-circle" color="#DD0000"></v-icon>
         <v-icon v-if="item.raw.status == true" icon="mdi-check-circle" color="#81BA24"></v-icon>
       </template>
+      <template #item.eliability="{ item }">
+        <v-chip v-if="item.raw.eliability == 'MANDATORY'" color="red">Verpflichtend</v-chip>
+        <v-chip v-if="item.raw.eliability == 'OPTIONAL'" color="yellow">Optional</v-chip>
+        <v-chip v-if="item.raw.eliability == 'BONUS'" color="green">Bonus</v-chip>
+      </template>
     </v-data-table>
   </div>
 </template>
@@ -23,8 +28,9 @@ const saveCourseId = ref(0);
 
 const headers = [
   { title: "Name", align: "start", key: "name" },
-  { title: "Status", align: "start", key: "status" },
-  { title: "Abgabeende", align: "end", key: "dueDate" },
+  { title: "Abgabeart", align: "start", key: "eliability" },
+  { title: "Abgabeende", align: "start", key: "dueDate" },
+  { title: "Abgabestatus", align: "start", key: "status" },
 ];
 
 const allTasks = ref<Task[]>([]);
@@ -42,7 +48,6 @@ const loadTasks = (courseId: number) => {
 };
 
 const openTask = (row: any, item: any) => {
-  console.log(allTasks.value);
   router.push("/course/" + saveCourseId.value + "/task/" + item.item.raw.id);
 };
 

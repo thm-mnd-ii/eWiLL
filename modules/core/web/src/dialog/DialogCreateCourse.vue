@@ -3,24 +3,24 @@
     <v-card>
       <v-card-title>
         <span v-if="newCourse" class="text-h5">Neuen Kurs erstellen</span>
-        <span v-if="!newCourse" class="text-h5">Kurs bearbeiten: </span>
+        <span v-if="!newCourse" class="text-h5">Kurs bearbeiten: {{ course.name }}</span>
       </v-card-title>
       <v-form ref="form" v-model="valid" @submit.prevent>
         <v-card-text>
           <v-row>
             <v-col>
-              <v-text-field v-model="courseName" color="#81ba24" variant="underlined" label="Name" :rules="[(v) => !!v || 'Item is required']" required></v-text-field>
-              <v-text-field v-model="courseDescription" color="#81ba24" variant="underlined" label="Beschreibung" :rules="[(v) => !!v || 'Item is required']" required></v-text-field>
-              <v-text-field v-model="coursePassword" color="#81ba24" variant="underlined" label="Passwort" :rules="[(v) => !!v || 'Item is required']" required></v-text-field>
+              <v-text-field v-model="course.name" color="#81ba24" variant="underlined" label="Name" :rules="[(v) => !!v || 'Item is required']" required></v-text-field>
+              <v-text-field v-model="course.description" color="#81ba24" variant="underlined" label="Beschreibung" :rules="[(v) => !!v || 'Item is required']" required></v-text-field>
+              <v-text-field v-model="course.keyPassword" color="#81ba24" variant="underlined" label="Passwort" :rules="[(v) => !!v || 'Item is required']" required></v-text-field>
             </v-col>
             <v-col>
-              <v-select v-model="courseSemester" color="#81ba24" variant="underlined" label="Semester" :rules="[(v) => !!v || 'Item is required']" required :items="semesterLabels"></v-select>
-              <v-select v-model="courseLocation" color="#81ba24" variant="underlined" label="Standort" :items="['Friedberg', 'Gießen']" :rules="[(v) => !!v || 'Item is required']" required></v-select>
+              <v-select v-model="course.semester" color="#81ba24" variant="underlined" label="Semester" :rules="[(v) => !!v || 'Item is required']" required :items="semesters" item-title="name" return-object></v-select>
+              <v-select v-model="course.location" color="#81ba24" variant="underlined" label="Standort" :items="['Friedberg', 'Gießen']" :rules="[(v) => !!v || 'Item is required']" required></v-select>
             </v-col>
           </v-row>
         </v-card-text>
         <v-card-actions>
-          <v-btn class="btn-red">Kurs löschen</v-btn>
+          <v-btn v-if="!newCourse" class="btn-red" @click="deleteCourse">Kurs löschen</v-btn>
           <v-spacer></v-spacer>
           <v-btn class="btn-red" @click="_cancel"> Abbrechen </v-btn>
           <v-btn id="btn-confirm" type="submit" @click="_confirm"> Speichern </v-btn>
@@ -29,6 +29,7 @@
     </v-card>
     <v-snackbar v-model="snackbarFail" :timeout="2500"> Kurs konnte nicht erstellt werden, bitte versuchen Sie es erneut </v-snackbar>
   </v-dialog>
+  <DialogConfirmVue ref="dialogConfirm"></DialogConfirmVue>
 </template>
 
 <script setup lang="ts">
@@ -38,14 +39,17 @@ import courseService from "../services/course.service";
 import CoursePL from "../model/course/CoursePL";
 import semesterService from "../services/semester.service";
 import Semester from "../model/Semester";
+import DialogConfirmVue from "../dialog/DialogConfirm.vue";
+import { useRouter } from "vue-router";
 
 const courseDialog = ref<boolean>(false);
 const dialogTitle = ref<string>("");
 
+const dialogConfirm = ref<typeof DialogConfirmVue>();
 const authUserStore = useAuthUserStore();
+const router = useRouter();
 
-const semesters = new Map<string, Semester>([]);
-const semesterLabels = ref<string[]>([]);
+const semesters = ref<Semester[]>([]);
 
 // New Course or editing existing course
 const newCourse = ref(true);
@@ -55,11 +59,7 @@ const snackbarFail = ref(false);
 
 // Form
 const valid = ref();
-const courseName = ref("");
 const courseSemester = ref("");
-const courseDescription = ref("");
-const coursePassword = ref("");
-const courseLocation = ref("");
 
 const resolvePromise: any = ref(undefined);
 const rejectPromise: any = ref(undefined);
@@ -73,7 +73,6 @@ const openDialog = (courseId: number | undefined) => {
     newCourse.value = false;
     initializeDialogForEditingCourse(courseId);
   }
-
   courseDialog.value = true;
 
   return new Promise((resolve, reject) => {
@@ -89,38 +88,45 @@ const initializeDialogForNewCourse = () => {
 const initializeDialogForEditingCourse = (courseId: number) => {
   courseService.getCourse(courseId).then((response) => {
     course.value = response.data;
+    refreshTextFields();
   });
   dialogTitle.value = "Bearbeiten: ";
+};
+
+const refreshTextFields = () => {
+  courseSemester.value = course.value.semester.name;
 };
 
 // TODO
 const _confirm = () => {
   if (valid.value) {
-    course.value.name = courseName.value;
-    course.value.description = courseDescription.value;
-    course.value.keyPassword = coursePassword.value;
+    // course.active has to be handled by the backend. Needs to be removed because it tempers with the put.
     course.value.active = true;
-    let date = new Date();
-    let year = date.getFullYear();
-    let day = date.getDate();
-    let month = date.getMonth() + 1;
-    course.value.creationDate = day + "-" + month + "-" + year;
-    course.value.location = courseLocation.value;
     let userId = authUserStore.auth.user?.id;
     if (userId != undefined) course.value.owner = userId;
-    let semester = semesters.get(courseSemester.value);
-    if (semester != undefined) course.value.semester = semester;
-
-    courseService
-      .postCourse(course.value)
-      .then((response) => {
-        courseDialog.value = false;
-        resolvePromise.value(response.data.id);
-      })
-      .catch((error) => {
-        snackbarFail.value = true;
-        console.log(error);
-      });
+    if (newCourse.value == true) {
+      courseService
+        .postCourse(course.value)
+        .then((response) => {
+          courseDialog.value = false;
+          resolvePromise.value(response.data.id);
+        })
+        .catch((error) => {
+          snackbarFail.value = true;
+          console.log(error);
+        });
+    } else {
+      console.log(course);
+      courseService
+        .putCourse(course.value)
+        .then((response) => {
+          courseDialog.value = false;
+          resolvePromise.value(response.data.id);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   }
 };
 
@@ -129,12 +135,28 @@ const _cancel = () => {
   resolvePromise.value(undefined);
 };
 
+const deleteCourse = () => {
+  if (dialogConfirm.value) {
+    dialogConfirm.value.openDialog(`Lösche Kurs: ${course.value.name}`, "Willst du den Kurs wirklich löschen?").then((result: boolean) => {
+      if (result) {
+        courseService
+          .deleteCourse(course.value.id)
+          .then(() => {
+            courseDialog.value = false;
+            resolvePromise.value(course.value.id);
+            router.push("/courses");
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    });
+  }
+};
+
 const initializeSemesters = () => {
   semesterService.getAllSemesters().then((response) => {
-    response.forEach((semester) => {
-      semesterLabels.value.push(semester.name);
-      semesters.set(semester.name, semester);
-    });
+    semesters.value = response;
   });
 };
 

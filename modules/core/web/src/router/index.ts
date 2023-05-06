@@ -10,13 +10,19 @@ import ViewCourses from "../views/ViewCourses.vue";
 import ViewTestTask from "../views/ViewTestTask.vue";
 import ViewCourseSignup from "../views/ViewCourseSignup.vue";
 import ViewCourse from "../views/ViewCourse.vue";
-import ViewTask from "../views/ViewTask.vue"
+import ViewTask from "../views/ViewTask.vue";
+import ViewIntroduction from "../views/ViewIntroduction.vue";
+import View404Page from "../views/View404Page.vue";
+import FeedbackReport from "../views/ViewFeedbackReport.vue";
+import FeedbackOverview from "../views/ViewFeedbackOverview.vue";
+
+import authService from "@/services/auth.service";
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
-      path: "/",
+      path: "/home",
       name: "home",
       component: HomeView,
     },
@@ -71,24 +77,70 @@ const router = createRouter({
       component: ViewCourse,
     },
     {
-    path: "/course/:courseId/task/:taskId",
-    name: "ViewTask",
-    component: ViewTask,
+      path: "/course/:courseId/task/:taskId",
+      name: "ViewTask",
+      component: ViewTask,
+    },
+    {
+      path: "/",
+      name: "ViewIntroduction",
+      component: ViewIntroduction,
+    },
+    {
+      path: "/:pathMatch(.*)*",
+      name: "View404Page",
+      component: View404Page,
+    },
+    {
+      path: "/feedbackReport",
+      name: "ViewBugReport",
+      component: FeedbackReport,
+    },
+    {
+      path: "/feedbackOverview",
+      name: "ViewBugOverview",
+      component: FeedbackOverview,
     },
   ],
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const publicPages = ["/login"];
   const authRequired = !publicPages.includes(to.path);
   const loggedIn = localStorage.getItem("user");
 
+  const nonAdminPages = [
+    "/modeling",
+    "/login",
+    "/impressum",
+    "/datenschutz",
+    "/404",
+    "/",
+    "/feedbackReport",
+  ];
+  const adminRequired = !nonAdminPages.includes(to.path);
+  const role = localStorage.getItem("role");
+  const admin = role?.includes("ADMIN");
+
+  const loginValid = await authService.isValid().then((response) => {
+    if (response === true) {
+      return true;
+    } else {
+      localStorage.removeItem("user");
+      return false;
+    }
+  });
+
   // trying to access a restricted page + not logged in
   // redirect to login page
-  if (authRequired && !loggedIn) {
+  if ((authRequired && !loggedIn) || (authRequired && !loginValid)) {
     next("/login");
   } else {
-    next();
+    if (adminRequired && !admin) {
+      next("/404");
+    } else {
+      next();
+    }
   }
 });
 

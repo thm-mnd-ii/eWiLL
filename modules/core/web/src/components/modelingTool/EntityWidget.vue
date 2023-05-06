@@ -1,8 +1,17 @@
 <template>
   <div class="widgetContainer">
-    <IconTrash class="widget" @click="deleteEntity">Edit Widget</IconTrash>
-    <IconChange class="widget" @click="changeEntityType" />
-    <IconAdd class="widget" @click="manageAttributes" />
+    <span>
+      <v-icon class="widget" icon="mdi-pencil-outline" color="success" @click="manageAttributes"></v-icon>
+      <v-tooltip activator="parent" location="top">Attribute</v-tooltip>
+    </span>
+    <span>
+      <v-icon class="widget" icon="mdi-swap-horizontal" color="info" @click="changeEntityType"></v-icon>
+      <v-tooltip activator="parent" location="top">Change Type</v-tooltip>
+    </span>
+    <span>
+      <v-icon class="widget" icon="mdi-delete-outline" color="error" @click="deleteEntity"></v-icon>
+      <v-tooltip activator="parent" location="top">Delete</v-tooltip>
+    </span>
   </div>
 </template>
 
@@ -10,9 +19,6 @@
 import { useDiagramStore } from "../../stores/diagramStore";
 import { useToolManagementStore } from "../../stores/toolManagementStore";
 
-import IconTrash from "../icons/IconTrash.vue";
-import IconChange from "../icons/IconChange.vue";
-import IconAdd from "../icons/IconAdd.vue";
 import Entity from "../../model/diagram/Entity";
 import EntityType from "../../enums/EntityType";
 
@@ -59,7 +65,7 @@ const changeEntityType = () => {
 };
 
 const manageAttributes = () => {
-  console.log("manageAttributes");
+  // console.log("manageAttributes");
   toolManagementStore.selectedEntity = props.entity;
   toolManagementStore.showModalAddAttributes = true;
 };

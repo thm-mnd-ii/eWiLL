@@ -1,21 +1,22 @@
 <template>
   <v-parallax class="background" src="https://images.unsplash.com/photo-1617957718614-8c23f060c2d0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1332&q=80">
     <v-card class="login-container">
+      <v-tooltip
+        ><p>Zur Anmeldung benötigen Sie ihre persönlichen THM-Zugangsdaten.</p>
+        <p>Persönliche THM-Kennung bestehend aus 4 Buchstaben und 2 Zahlen,</p>
+        <p>sowie Ihr persönliches Passwort</p>
+        <template #activator="{ props }"> <v-icon v-bind="props" class="helpIcon">mdi-help-circle</v-icon></template>
+      </v-tooltip>
       <v-card-title class="login-title">
         <span>Login</span>
+
         <!-- <span> <IconEWiLL /> </span> -->
       </v-card-title>
       <v-card-text class="form-container">
-        <div>
-          <v-btn color="green" @click="casLogin">CAS Login</v-btn>
-        </div>
-        <div>
-          <v-chip variant="elevated" color="info"> or </v-chip>
-        </div>
         <v-form ref="form" v-model="valid" lazy-validation>
-          <v-text-field v-model="userInput" :rules="userRules" label="Benutzername" required></v-text-field>
-          <v-text-field v-model="passwordInput" :rules="passwordRules" label="Passwort" type="password" required></v-text-field>
-          <v-btn v-if="!loading" :disabled="!valid" @click="localLogin"> Lokaler Login </v-btn>
+          <v-text-field v-model="userInput" :rules="userRules" label="THM-Kennung" required></v-text-field>
+          <v-text-field v-model="passwordInput" :rules="passwordRules" label="THM-Passwort" type="password" required></v-text-field>
+          <v-btn v-if="!loading" :disabled="!valid" @click="localLogin"> Login </v-btn>
           <v-progress-circular v-if="loading" indeterminate></v-progress-circular>
         </v-form>
         <v-alert v-if="errorMessage.length != 0" icon="mdi-alert" :text="errorMessage" type="error" variant="outlined"></v-alert>
@@ -37,10 +38,6 @@ const passwordInput = ref(null);
 const errorMessage = ref("");
 const valid = ref(false);
 const loading = ref(false);
-
-const casLogin = () => {
-  console.log("CAS Login");
-};
 
 let userRules = [(v: string) => !!v || "Benutzername is required"];
 let passwordRules = [(v: string) => !!v || "Password is required"];
@@ -112,6 +109,11 @@ const localLogin = () => {
     grid-template-columns: repeat(1, 1fr);
     align-items: center;
     justify-items: stretch;
+  }
+
+  .helpIcon {
+    position: relative;
+    left: 45%;
   }
 }
 </style>

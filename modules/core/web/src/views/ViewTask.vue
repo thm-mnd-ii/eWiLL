@@ -12,17 +12,23 @@
       <v-card-text>
         <p>{{ task.description }}</p>
         <br />
-        <v-chip prepend-icon="mdi-account-circle" color="secondary" text-color="white" label>
-          {{ courseRole }}
-        </v-chip>
+        <div class="align-items-center">
+          <v-chip prepend-icon="mdi-account-circle" color="secondary" text-color="white" label>
+            {{ courseRole }}
+          </v-chip>
+          <v-spacer></v-spacer>
+          <v-chip v-if="task.eliability == 'BONUS'" color="green">Bonus</v-chip>
+          <v-chip v-if="task.eliability == 'MANDATORY'" color="red">Verpflichtend</v-chip>
+          <v-chip v-if="task.eliability == 'OPTIONAL'" color="yellow">Optional</v-chip>
+        </div>
       </v-card-text>
     </v-card>
 
     <div class="task-main">
       <div class="grid-left">
         <v-form>
-          <v-select v-model="selectedCategoryId" label="Kategorie" variant="underlined" :items="categories" item-title="name" item-value="id" @update:model-value="updateDiagrams"></v-select>
-          <v-select v-model="selectedDiagramId" label="Diagram" variant="underlined" :items="diagrams" item-title="name" item-value="id" @update:model-value="showSelectedDiagram"></v-select>
+          <v-select v-model="selectedCategoryId" label="Kategorie" variant="underlined" :items="categories" item-title="name" :disabled="courseRole != 'STUDENT'" item-value="id" @update:model-value="updateDiagrams"></v-select>
+          <v-select v-model="selectedDiagramId" label="Diagram" variant="underlined" :items="diagrams" item-title="name" item-value="id" :disabled="courseRole != 'STUDENT'" @update:model-value="showSelectedDiagram"></v-select>
         </v-form>
 
         <v-card class="preview-container">
@@ -72,7 +78,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useAuthUserStore } from "../stores/authUserStore";
 import courseService from "../services/course.service";
 import taskService from "../services/task.service";
@@ -89,6 +95,7 @@ import { storeToRefs } from "pinia";
 import ModelingTool from "@/components/ModelingTool.vue";
 
 const route = useRoute();
+const router = useRouter();
 const authUserStore = useAuthUserStore();
 const diagramStore = useDiagramStore();
 const modelingToolKey = storeToRefs(diagramStore).key;
@@ -114,10 +121,16 @@ const taskResults = ref<any[]>([
 ]);
 
 onMounted(() => {
-  loadTask();
-  loadCategories();
-  courseService.getUserRoleInCourse(userId.value, courseId.value).then((response) => (courseRole.value = response));
-  diagramStore.createNewDiagram();
+  courseService.getUserRoleInCourse(userId.value!, courseId.value).then((response) => {
+    if (response == "NONE") {
+      router.push("/course/" + route.params.courseId + "/signup");
+    } else {
+      courseRole.value = response;
+      loadTask();
+      loadCategories();
+      diagramStore.createNewDiagram();
+    }
+  });
 });
 
 const openSettings = () => {
@@ -131,6 +144,7 @@ const openSettings = () => {
 const loadTask = () => {
   taskService.getTask(taskId.value).then((response) => {
     task.value = response;
+    if (courseRole.value != "STUDENT") loadSolutionModel();
   });
 };
 
@@ -151,12 +165,22 @@ const showSelectedDiagram = (diagramId: number) => {
 };
 
 const submitDiagram = () => {
-  console.log("submit diagram");
+  // console.log("submit diagram");
 };
 
 const loadCategories = () => {
   categoryService.getByUserId(userId.value).then((data) => {
     categories.value = data;
+  });
+};
+
+const loadSolutionModel = () => {
+  diagramService.getDiagramById(task.value.solutionModelId).then((response) => {
+    const categoryId = response.data.categoryId;
+    selectedCategoryId.value = categoryId;
+    diagrams.value.push(response.data);
+    selectedDiagramId.value = task.value.solutionModelId;
+    showSelectedDiagram(selectedDiagramId.value);
   });
 };
 </script>
@@ -219,5 +243,10 @@ const loadCategories = () => {
   position: relative;
   width: 100%;
   height: 100%;
+}
+
+.align-items-center {
+  display: flex;
+  align-items: center;
 }
 </style>

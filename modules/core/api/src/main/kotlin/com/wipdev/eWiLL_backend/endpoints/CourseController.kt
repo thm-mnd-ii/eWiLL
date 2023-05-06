@@ -42,7 +42,6 @@ class CourseController {
 
     @PutMapping("/{id}")
     @ResponseBody
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     fun update(@PathVariable id: Long, @RequestBody course: Course): Course = service.update(id, course)
 
 

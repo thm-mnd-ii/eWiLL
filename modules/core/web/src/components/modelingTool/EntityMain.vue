@@ -10,8 +10,8 @@
 
     <!-- <div v-if="isResizable" @mousedown="resizer($event)" class="resizer nw"></div>
         <div v-if="isResizable" @mousedown="resizer($event)" class="resizer ne"></div>
-        <div v-if="isResizable" @mousedown="resizer($event)" class="resizer sw"></div> -->
-    <div v-if="isResizable" class="resizer se" @mousedown="resizer($event)"></div>
+        <div v-if="isResizable" @mousedown="resizer($event)" class="resizer sw"></div> 
+        <div v-if="isResizable" class="resizer se" @mousedown="resizer($event)"></div> -->
 
     <div v-if="hover && !isResizable && !toolManagementStore.showIncomingAnkerPoints">
       <OutgoingAnkerPoint v-for="anker in outgoingAnkerPoint" :key="anker" :position="anker" :entity="props.entity" />
@@ -119,7 +119,6 @@ const makeTextEditable = () => {
 
 const handleEnter = (e: any) => {
   if (entity?.entityName !== undefined) {
-    //console.log(e);
     const curPos = e.srcElement.selectionStart;
 
     if (e.ctrlKey) {
@@ -195,7 +194,7 @@ const mousedown = (e: any) => {
 
   //console.log(root.value.parentNode.getBoundingClientRect())
 
-  console.log("move");
+  // console.log("move");
   let el = e.target.parentNode;
 
   if (root.value == null || root.value.parentElement == null) return;
@@ -255,7 +254,7 @@ const mousedown = (e: any) => {
 };
 
 const resizer = (e: any) => {
-  console.log("resize");
+  // console.log("resize");
 
   let currentResizer = e.target;
 
@@ -285,23 +284,23 @@ const resizer = (e: any) => {
     // }
 
     if (currentResizer.classList.contains("nw")) {
-      console.log("nw");
+      // console.log("nw");
       el.style.width = rect.width + (prevX - e.clientX) + "px";
       el.style.left = relativePos.left + (prevX - e.clientX) + "px";
       el.style.top = relativePos.top - (prevY - e.clientY) + "px";
       el.style.left = relativePos.left - (prevX - e.clientX) + "px";
       // TODO: Bug
     } else if (currentResizer.classList.contains("ne")) {
-      console.log("ne");
+      // console.log("ne");
       el.style.width = rect.width - (prevX - e.clientX) + "px";
       el.style.top = relativePos.top - (prevY - e.clientY) + "px";
       // TODO: Bug
     } else if (currentResizer.classList.contains("sw")) {
-      console.log("sw");
+      // console.log("sw");
       el.style.width = rect.width + (prevX - e.clientX) + "px";
       el.style.left = relativePos.left - (prevX - e.clientX) + "px";
     } else if (currentResizer.classList.contains("se")) {
-      console.log("se");
+      // console.log("se");
       el.style.width = rect.width - (prevX - e.clientX) + "px";
     }
 

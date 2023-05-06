@@ -31,8 +31,7 @@ class TaskController {
 
     @PostMapping("/{courseId}")
     @ResponseBody
-    fun create(@PathVariable courseId: Long, @RequestBody taskPL: TaskPL) = service.create(courseId, taskPL)
-
+    fun create(@PathVariable courseId: Long, @RequestBody task: Task) = service.create(courseId, task)
 
     @PutMapping("/{taskId}")
     @ResponseBody

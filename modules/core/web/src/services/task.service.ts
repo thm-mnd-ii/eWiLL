@@ -31,6 +31,14 @@ class TaskService{
         return axios.put("/api/tasks/" + taskId, task)
     }
 
+    postTask(task: Task){
+        return axios.post("/api/tasks/" + task.courseId, task)
+    }
+
+    deleteTask(id: number){
+        return axios.delete("/api/tasks/" + id);
+    }
+
 }
 
 export default new TaskService();

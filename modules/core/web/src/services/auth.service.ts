@@ -1,7 +1,7 @@
 import axios from "axios";
 
 class AuthService {
-  login(user: { username: string; password: string; }) {
+  login(user: { username: string; password: string }) {
     return axios
       .post("/api/auth/signin", {
         username: user.username,
@@ -10,6 +10,7 @@ class AuthService {
       .then((response) => {
         if (response.data.token) {
           localStorage.setItem("user", JSON.stringify(response.data));
+          localStorage.setItem("role", response.data["roles"]);
           console.log("login successful");
         }
         return response.data;
@@ -19,6 +20,14 @@ class AuthService {
   logout() {
     localStorage.removeItem("user");
     console.log("logout successful");
+  }
+
+  isValid() {
+    return axios.get("/api/auth/isValid").then((response) => {
+      return response.data;
+    }).catch((error) => {
+      return error.response;
+    });
   }
 }
 

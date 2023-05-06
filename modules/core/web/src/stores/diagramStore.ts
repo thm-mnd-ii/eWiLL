@@ -83,12 +83,13 @@ export const useDiagramStore = defineStore("diagram", {
       this.key++;
       // reset history
       this.history = [];
+      this.historyIndex = 0;
     },
     saveHistory() {
-      console.log("save history");
-      console.log("last Index", this.historyIndex);
-      console.log("history length", this.history.length);
-      console.log("history", this.history);
+      // console.log("save history");
+      // console.log("last Index", this.historyIndex);
+      // console.log("history length", this.history.length);
+      // console.log("history", this.history);
 
       // remove all history after current index
       this.history.splice(this.historyIndex, this.history.length);
@@ -98,14 +99,14 @@ export const useDiagramStore = defineStore("diagram", {
 
       this.historyIndex = this.history.length;
 
-      console.log("current Index", this.historyIndex);
+      // console.log("current Index", this.historyIndex);
     },
     undo() {
       if (this.historyIndex > 1) {
-        console.log("undo");
-        console.log("last Index", this.historyIndex);
+        // console.log("undo");
+        // console.log("last Index", this.historyIndex);
         this.historyIndex--;
-        console.log("current Index", this.historyIndex);
+        // console.log("current Index", this.historyIndex);
 
         this.diagram = this.history[this.historyIndex - 1];
         this.key++;
@@ -113,10 +114,10 @@ export const useDiagramStore = defineStore("diagram", {
     },
     redo() {
       if (this.historyIndex < this.history.length) {
-        console.log("redo");
-        console.log("last Index", this.historyIndex);
+        // console.log("redo");
+        // console.log("last Index", this.historyIndex);
         this.historyIndex++;
-        console.log("current Index", this.historyIndex);
+        // console.log("current Index", this.historyIndex);
         this.diagram = this.history[this.historyIndex - 1];
         this.key++;
       }

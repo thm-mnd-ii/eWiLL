@@ -19,22 +19,21 @@
         </div>
 
         <div>
+          <v-btn icon="mdi-undo" class="explorerBtn" :disabled="deleteActive || diagramStore.historyIndex <= 1" @click="diagramStore.undo"></v-btn>
+        </div>
+        <div>
+          <v-btn icon="mdi-redo" class="explorerBtn" :disabled="deleteActive || diagramStore.historyIndex >= diagramStore.history.length" @click="diagramStore.redo"></v-btn>
+        </div>
+        <div></div>
+        <div>
           <v-btn icon="mdi-arrow-left" class="explorerBtn" :disabled="deleteActive || categoriesViewActive" @click="moveToOverview"></v-btn>
         </div>
         <!-- reload -->
         <div>
           <v-btn icon="mdi-refresh" class="explorerBtn" :disabled="deleteActive" @click="updateFiles"></v-btn>
         </div>
-        <div></div>
-        <div>
-          <v-btn icon="mdi-undo" class="explorerBtn" :disabled="deleteActive || diagramStore.historyIndex <= 1" @click="diagramStore.undo"></v-btn>
-        </div>
-        <div>
-          <v-btn icon="mdi-redo" class="explorerBtn" :disabled="deleteActive || diagramStore.historyIndex >= diagramStore.history.length" @click="diagramStore.redo"></v-btn>
-        </div>
       </v-card-actions>
-      <!-- Breaking line -->
-      <v-divider></v-divider>
+
       <v-card-text>
         <!-- TODO: Implement Search -->
         <!-- <v-text-field v-model="search" label="Search" class="search" @input="searchInput"></v-text-field> -->
@@ -42,8 +41,8 @@
         <v-list v-if="categoriesViewActive">
           <v-list-item v-for="[key] in map" :key="key.id" class="list-item" @click="categoryClicked(key)">
             <template #prepend>
-              <v-icon v-if="deleteActive" size="15px" color="error">mdi-delete</v-icon>
-              <v-icon v-if="!deleteActive" size="15px">mdi-folder</v-icon>
+              <v-icon v-if="deleteActive" size="20px" color="error">mdi-delete</v-icon>
+              <v-icon v-if="!deleteActive" size="20px">mdi-folder</v-icon>
             </template>
             <v-list-item-title v-text="key.name"></v-list-item-title>
           </v-list-item>
@@ -52,8 +51,8 @@
         <v-list v-if="!categoriesViewActive">
           <v-list-item v-for="diagram in displayDiagrams" :key="diagram.name" class="list-item" :value="diagram.name" @dblclick="loadDiagramIntoStore(diagram)" @click="diagramSingleClick(diagram)">
             <template #prepend>
-              <v-icon v-if="deleteActive" size="15px" color="error">mdi-delete</v-icon>
-              <v-icon v-if="!deleteActive" size="15px">mdi-file-document</v-icon>
+              <v-icon v-if="deleteActive" size="20px" color="error">mdi-delete</v-icon>
+              <v-icon v-if="!deleteActive" size="20px">mdi-file-document</v-icon>
             </template>
             <v-list-item-title v-text="diagram.name"></v-list-item-title>
           </v-list-item>
@@ -80,7 +79,6 @@ const categoriesViewActive = ref(true);
 const activeCategorie = ref<Category | null>(null);
 const activeDiagramId = ref<number | null>(null);
 
-const categoryNames = ref<string[]>([]);
 const map = ref<Map<Category, Diagram[]>>(new Map());
 const displayDiagrams = ref<Diagram[]>([]);
 
@@ -96,7 +94,6 @@ onMounted(() => {
 const updateFiles = () => {
   const uId = authUserStore.auth.user?.id as number;
   if (uId == undefined) {
-    console.log("userId is undefined");
     return;
   }
 
@@ -148,6 +145,7 @@ const categoryClicked = (category: Category) => {
             if (diagramStore.diagram.categoryId == category.id) {
               moveToOverview();
               diagramStore.createNewDiagram();
+              activeDiagramId.value = null;
             }
           });
         }
@@ -180,13 +178,12 @@ const diagramSingleClick = (diagram: Diagram) => {
       dialogConfirm.value.openDialog(`Lösche: ${diagram.name}`, "Willst du das Diagramm wirklich löschen?").then((result: boolean) => {
         if (result) {
           diagramService.deleteDiagram(diagram).then(() => {
-            console.log("Diagram deleted");
-            console.log(activeCategorie.value);
             updateFiles();
 
             // if selected diagram is deleted, create new diagram
             if (diagram.id == activeDiagramId.value) {
               diagramStore.createNewDiagram();
+              activeDiagramId.value = null;
             }
           });
         }
@@ -199,9 +196,9 @@ const saveDialogButtonClick = () => {
   dialogSave.value?.openDialog(activeDiagramId.value).then((result: boolean) => {
     if (result) {
       updateFiles();
+      activeDiagramId.value = diagramStore.diagram.id;
     }
   });
-  categoryNames.value.length = 0;
 };
 
 const createNewDiagram = () => {
@@ -256,8 +253,8 @@ const createNewDiagram = () => {
 }
 
 .v-list-item-title {
-  font-size: 0.7rem;
-  line-height: 0.7rem;
+  font-size: 0.85rem;
+  line-height: 0.95rem;
 }
 
 .list-item {

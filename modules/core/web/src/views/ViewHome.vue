@@ -50,14 +50,13 @@
 </template>
 
 <script setup lang="ts">
-const dashboardNewsText = "++ Du hast ein Lernziel erreicht ++";
 const test = ["News 1", "News 2"];
 </script>
 
 <style scoped lang="scss">
 .card {
   position: relative;
-  left: 14.2%;
+  left: 17.4%;
   width: 550px;
   margin: 20px;
   margin-top: 50px;

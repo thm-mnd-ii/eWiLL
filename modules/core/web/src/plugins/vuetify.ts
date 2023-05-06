@@ -30,7 +30,7 @@ export default createVuetify({
           "dark-gray": "#414958",
           black: "#1F242E",
           white: "#FFFFFF",
-          error: "#cc0000",
+          error: "#e60000",
           info: "#2196F3",
           success: "#4CAF50",
           warning: "#FB8C00",

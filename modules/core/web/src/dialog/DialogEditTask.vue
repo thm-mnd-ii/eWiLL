@@ -4,22 +4,24 @@
       <v-card-text>
         <v-form ref="taskForm" v-model="valid" class="taskForm">
           <div>
-            <v-text-field v-model="currentTask.name" label="Name" :rules="nameRules" variant="underlined" required></v-text-field>
-            <v-textarea v-model="currentTask.description" label="Beschreibung" :rules="descriptionRules" variant="underlined" required></v-textarea>
-            <v-select v-model="selectedCategoryId" label="Kategorie" variant="underlined" :items="categories" item-title="name" item-value="id" @update:model-value="updateDiagrams"></v-select>
-            <v-select v-model="selectedDiagramId" label="Musterdiagram" variant="underlined" :items="diagrams" item-title="name" item-value="id"></v-select>
+            <v-text-field v-model="currentTask.name" label="Name" :rules="nameRules" variant="underlined" required color="#81ba24"></v-text-field>
+            <v-textarea v-model="currentTask.description" label="Beschreibung" :rules="descriptionRules" variant="underlined" required color="#81ba24"></v-textarea>
+            <v-select v-model="selectedCategoryId" label="Kategorie" variant="underlined" :items="categories" item-title="name" item-value="id" color="#81ba24" @update:model-value="updateDiagrams"></v-select>
+            <v-select v-model="currentTask.solutionModelId" label="Musterdiagram" variant="underlined" :items="diagrams" item-title="name" item-value="id" color="#81ba24"></v-select>
           </div>
           <div>
-            <v-text-field v-model="currentTask.dueDate" label="Deadline" :rules="dueDateRules" variant="underlined"></v-text-field>
-            <v-select v-model="currentTask.mediaType" :items="['Modeling', 'Text']" label="Medientyp" variant="underlined" required></v-select>
-            <v-select v-model="currentTask.rulesetId" :items="rulesets" item-title="name" label="Regelsatz" variant="underlined" required></v-select>
+            <v-text-field v-model="currentTask.dueDate" label="Deadline" variant="underlined" color="#81ba24"></v-text-field>
+            <v-select v-model="currentTask.mediaType" :items="['Model', 'Text']" label="Medientyp" variant="underlined" required color="#81ba24"></v-select>
+            <v-select v-model="currentTask.rulesetId" :items="rulesets" item-title="name" label="Regelsatz" variant="underlined" required color="#81ba24" item-value="id"></v-select>
+            <v-select v-model="currentTask.eliability" :items="liabilities" label="Verpflichtung" variant="underlined" required color="#81ba24" item-title="name" item-value="enum"></v-select>
           </div>
         </v-form>
       </v-card-text>
       <v-card-actions>
+        <v-btn v-if="!newTask" class="btn-red" @click="deleteTask">Aufgabe löschen</v-btn>
         <v-spacer></v-spacer>
-        <v-btn variant="text" @click="_cancel"> Abbrechen </v-btn>
-        <v-btn variant="text" @click="_confirm"> Speichern </v-btn>
+        <v-btn class="btn-red" @click="_cancel"> Abbrechen </v-btn>
+        <v-btn id="btn-confirm" type="submit" @click="_confirm"> Speichern </v-btn>
       </v-card-actions>
     </v-card>
     <v-snackbar v-model="snackbarFail" :timeout="3000"> Ein Fehler ist aufgetreten, bitte versuchen Sie es erneut </v-snackbar>
@@ -32,16 +34,19 @@ import Category from "@/model/diagram/Category";
 import Diagram from "@/model/diagram/Diagram";
 import diagramService from "@/services/diagram.service";
 import { ref, onMounted } from "vue";
-
 import { useAuthUserStore } from "@/stores/authUserStore";
+import { useRoute } from "vue-router";
 import taskService from "@/services/task.service";
+import router from "@/router";
 
 const authUserStore = useAuthUserStore();
+const route = useRoute();
 
 const editTaskDialog = ref<boolean>(false);
 
 const snackbarFail = ref(false);
 const editTitle = ref<string>("");
+const newTask = ref(false);
 const currentTask = ref<Task>({} as Task);
 
 const categories = ref<Category[]>([]);
@@ -49,6 +54,11 @@ const diagrams = ref<Diagram[]>([]);
 const rulesets = ref<any[]>([
   { id: 1, name: "Regelsatz 1" },
   { id: 2, name: "Regelsatz 2" },
+]);
+const liabilities = ref<any[]>([
+  { name: "Verpflichtend", enum: "MANDATORY" },
+  { name: "Bonus", enum: "BONUS" },
+  { name: "Optional", enum: "OPTIONAL" },
 ]);
 
 const taskForm = ref<any>();
@@ -59,7 +69,7 @@ const nameRules = ref<any>([(v: string) => !!v || "Name ist erforderlich"]);
 const descriptionRules = ref<any>([(v: string) => !!v || "Beschreibung ist erforderlich"]);
 
 // empty, or should be a valid date and in the future
-const dueDateRules = ref<any>([(v: string) => !v || (new Date(v) > new Date() && !isNaN(new Date(v).getTime())) || "Ungültiges Datum"]);
+// const dueDateRules = ref<any>([(v: string) => !v || (new Date(v) > new Date() && !isNaN(new Date(v).getTime())) || "Ungültiges Datum"]);
 
 onMounted(() => {
   let userId = authUserStore.auth.user?.id!;
@@ -79,6 +89,13 @@ const updateDiagrams = (categoryId: number) => {
   });
 };
 
+const setModelAndCategory = () => {
+  diagramService.getDiagramById(currentTask.value.solutionModelId).then((response) => {
+    selectedCategoryId.value = response.data.categoryId;
+    updateDiagrams(selectedCategoryId.value!);
+  });
+};
+
 // #############################
 // Promis
 const resolvePromise: any = ref(undefined);
@@ -90,9 +107,13 @@ const openDialog = (task?: Task) => {
   if (task) {
     editTitle.value = "Aufgabe bearbeiten";
     currentTask.value = task;
+    newTask.value = false;
+    setModelAndCategory();
   } else {
     editTitle.value = "Neue Aufgabe erstellen";
     currentTask.value = {} as Task;
+    currentTask.value.courseId = Number(route.params.id);
+    newTask.value = true;
   }
 
   return new Promise((resolve, reject) => {
@@ -104,22 +125,43 @@ const openDialog = (task?: Task) => {
 const _confirm = () => {
   taskForm.value.validate().then(() => {
     if (valid.value) {
-      taskService
-        .putTask(currentTask.value.id, currentTask.value)
-        .then(() => {
-          editTaskDialog.value = false;
-          resolvePromise.value(true);
-        })
-        .catch(() => {
-          snackbarFail.value = true;
-        });
+      currentTask.value.mediaType = currentTask.value.mediaType.toUpperCase();
+      if (newTask.value) {
+        taskService
+          .postTask(currentTask.value)
+          .then(() => {
+            editTaskDialog.value = false;
+            resolvePromise.value(true);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      } else {
+        taskService
+          .putTask(currentTask.value.id, currentTask.value)
+          .then(() => {
+            editTaskDialog.value = false;
+            resolvePromise.value(true);
+          })
+          .catch(() => {
+            snackbarFail.value = true;
+          });
+      }
     }
   });
 };
 
 const _cancel = () => {
+  categories.value = [];
+  selectedCategoryId.value = undefined;
   editTaskDialog.value = false;
   resolvePromise.value(false);
+};
+
+const deleteTask = () => {
+  taskService.deleteTask(currentTask.value.id).then(() => {
+    router.push("/course/" + currentTask.value.courseId);
+  });
 };
 
 // define expose
@@ -133,5 +175,15 @@ defineExpose({
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-gap: 10px;
+}
+
+#btn-confirm {
+  background-color: #81ba24;
+  color: #ffffff;
+}
+
+.btn-red {
+  background-color: #db3e1f;
+  color: #ffffff;
 }
 </style>

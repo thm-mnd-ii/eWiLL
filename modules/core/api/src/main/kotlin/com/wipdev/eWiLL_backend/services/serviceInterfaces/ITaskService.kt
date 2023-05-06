@@ -11,7 +11,8 @@ interface ITaskService {
 
     fun getAll(courseId: Long): List<Task>
     fun getById(id: Long): Task
-    fun create(courseId: Long, taskPL: TaskPL): Task
+
+    fun create(courseId: Long, task: Task): Task
     fun update(id: Long, task: Task): Task
     fun delete(id: Long): Task
     fun createRuleset(ruleset: Ruleset): Long?
