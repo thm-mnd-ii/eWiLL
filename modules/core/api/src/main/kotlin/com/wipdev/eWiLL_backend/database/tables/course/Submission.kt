@@ -20,7 +20,7 @@ class Submission {
     @Column(name = "date", nullable = false)
     var date: String? = null
 
-    @Column(name = "diagram", nullable = false)
+    @Column(name = "diagram", nullable = false, length = 100000)
     var diagram: String? = null
 
     override fun equals(other: Any?): Boolean {

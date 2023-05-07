@@ -1,6 +1,7 @@
 <template>
   <DialogShowFullDiagram ref="dialogShowFullDiagram" />
   <DialogEditTask ref="dialogEditTask" />
+  <DialogConfirm ref="dialogConfirm" />
 
   <div class="task">
     <v-card>
@@ -44,7 +45,7 @@
           </v-card-text>
         </v-card>
       </div>
-      <div class="grid-right">
+      <div v-if="courseRole == 'STUDENT'" class="grid-right">
         <v-btn class="submit-btn" color="dark-gray" variant="flat" @click="submitDiagram">prüfen</v-btn>
         <br />
         <div class="task-trials-caption font-weight-medium">
@@ -84,12 +85,15 @@ import courseService from "../services/course.service";
 import taskService from "../services/task.service";
 import categoryService from "../services/category.service";
 import Task from "../model/task/Task";
+import SubmitPL from "../model/SubmitPL";
 import DialogEditTask from "@/dialog/DialogEditTask.vue";
+import DialogConfirm from "@/dialog/DialogConfirm.vue";
 
 import Category from "@/model/diagram/Category";
 import Diagram from "@/model/diagram/Diagram";
 import DialogShowFullDiagram from "@/dialog/DialogShowFullDiagram.vue";
 import diagramService from "@/services/diagram.service";
+import evaluationService from "@/services/evaluation.service";
 import { useDiagramStore } from "@/stores/diagramStore";
 import { storeToRefs } from "pinia";
 import ModelingTool from "@/components/ModelingTool.vue";
@@ -108,11 +112,13 @@ const userId = ref(authUserStore.auth.user?.id!);
 
 const dialogEditTask = ref<typeof DialogEditTask>();
 const dialogShowFullDiagram = ref<typeof DialogShowFullDiagram>();
+const dialogConfirm = ref<typeof DialogConfirm>();
 
 const categories = ref<Category[]>([]);
 const selectedCategoryId = ref<number>();
 const diagrams = ref<Diagram[]>([]);
 const selectedDiagramId = ref<number>();
+const selectedDiagram = ref<Diagram>();
 
 const selectedResultTab = ref<any>();
 const taskResults = ref<any[]>([
@@ -160,12 +166,22 @@ const updateDiagrams = (categoryId: number) => {
 };
 
 const showSelectedDiagram = (diagramId: number) => {
-  // console.log(diagrams.value.find((d) => d.id == diagramId));
+  selectedDiagram.value = diagrams.value.find((d) => d.id == diagramId);
   diagramStore.loadDiagram(diagrams.value.find((d) => d.id == diagramId) as Diagram);
 };
 
 const submitDiagram = () => {
-  // console.log("submit diagram");
+  if (selectedDiagramId.value != undefined) {
+    dialogConfirm.value?.openDialog("Abgabe: " + selectedDiagram.value!.name, "Möchten Sie das Diagram wirklich einreichen?", "Einreichen").then((result: boolean) => {
+      if (result) {
+        const submitPL = {} as SubmitPL;
+        submitPL.diagramId = selectedDiagramId.value!;
+        submitPL.taskId = taskId.value;
+        submitPL.userId = userId.value;
+        evaluationService.submitDiagram(submitPL);
+      }
+    });
+  }
 };
 
 const loadCategories = () => {
