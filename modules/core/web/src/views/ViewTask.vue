@@ -50,7 +50,7 @@
         <br />
         <div class="task-trials-caption font-weight-medium">
           <span>Auswertungsergebnisse</span>
-          <span>Anzahl Abgaben: {{ countSubmission }}</span>
+          <span>Anzahl Abgaben: {{ submissionCount }}</span>
         </div>
         <v-card class="task-trials-tabs">
           <v-tabs v-model="selectedResultTab" bg-color="teal-darken-3" slider-color="teal-lighten-3">
@@ -86,6 +86,7 @@ import taskService from "../services/task.service";
 import categoryService from "../services/category.service";
 import Task from "../model/task/Task";
 import SubmitPL from "../model/SubmitPL";
+import Result from "../model/submission/Result";
 import DialogEditTask from "@/dialog/DialogEditTask.vue";
 import DialogConfirm from "@/dialog/DialogConfirm.vue";
 
@@ -120,13 +121,11 @@ const diagrams = ref<Diagram[]>([]);
 const selectedDiagramId = ref<number>();
 const selectedDiagram = ref<Diagram>();
 
-const countSubmission = ref(0);
+//const submissions = ref();
+const submissionCount = ref(0);
 
 const selectedResultTab = ref<any>();
-const taskResults = ref<any[]>([
-  { id: 1, name: "Item 1" },
-  { id: 2, name: "Item 2" },
-]);
+const taskResults = ref<Result[]>();
 
 onMounted(() => {
   courseService.getUserRoleInCourse(userId.value!, courseId.value).then((response) => {
@@ -137,7 +136,7 @@ onMounted(() => {
       loadTask();
       loadCategories();
       diagramStore.createNewDiagram();
-      loadSubmissions();
+      if (courseRole.value == "STUDENT") loadSubmissions();
     }
   });
 });
@@ -157,7 +156,13 @@ const loadTask = () => {
   });
 };
 
-const loadSubmissions = () => {};
+const loadSubmissions = () => {
+  evaluationService.getSubmissionIdsByUserAndTask(userId.value, taskId.value).then((response) => {
+    const submissionIds = response.data;
+    submissionCount.value = submissionIds.length;
+    // TODO: Load submissions/results
+  });
+};
 
 const openFullDiagram = () => {
   dialogShowFullDiagram.value?.openDialog("");
@@ -183,7 +188,9 @@ const submitDiagram = () => {
         submitPL.diagramId = selectedDiagramId.value!;
         submitPL.taskId = taskId.value;
         submitPL.userId = userId.value;
-        evaluationService.submitDiagram(submitPL);
+        evaluationService.submitDiagram(submitPL).then(() => {
+          loadSubmissions();
+        });
       }
     });
   }
