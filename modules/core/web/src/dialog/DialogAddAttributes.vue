@@ -14,16 +14,15 @@
           <v-btn class="btn" color="success" @click="addAttribute">Hinzufügen</v-btn>
         </v-form>
 
-        <draggable v-model="toolManagementStore.selectedEntity.attributes" class="draggable" group="people" item-key="id" @start="drag = true" @end="drag = false">
+        <draggable v-model="toolManagementStore.selectedEntity.attributes" class="draggable" ghost-class="ghost" group="people" item-key="id" @start="drag = true" @end="drag = false">
           <template #item="{ element }">
             <v-card :elevation="2" class="attributes">
-              <v-icon size="x-large" icon="mdi-arrow-up-down" color=""></v-icon>
+              <v-icon size="large" icon="mdi-arrow-up-down" color=""></v-icon>
 
-              <v-select v-model="element.type" lable="Typ Auswählen" variant="solo" :items="attributeTypes" item-title="key" item-value="attribute" :hide-details="true"> </v-select>
-              <v-text-field v-model="element.name" lable="Attribut Name" variant="solo" required :hide-details="true" />
+              <v-select v-model="element.type" lable="Typ Auswählen" variant="filled" class="input" :items="attributeTypes" item-title="key" item-value="attribute" :hide-details="true"> </v-select>
+              <v-text-field v-model="element.name" lable="Attribut Name" variant="filled" class="input" required :hide-details="true" />
 
-
-              <v-icon size="x-large" icon="mdi-delete" color="error" @click="deleteAttribute(element)"></v-icon>
+              <v-icon size="large" icon="mdi-delete" color="error" @click="deleteAttribute(element)"></v-icon>
             </v-card>
           </template>
         </draggable>
@@ -139,15 +138,19 @@ const closeModal = () => {
   margin: 10px 0px;
   width: 100%;
   height: auto;
-  background-color: lavender;
+  background-color: white;
   display: grid;
   grid-template-columns: 1fr 4fr 7fr 1fr 0.2fr;
   align-items: center;
   justify-items: center;
+
+  * {
+    width: 100%;
+    padding: 0px 5px;
+  }
 }
 
-.draggable > .attributes > * {
-  width: 100%;
-  padding: 0px 5px;
+.ghost {
+  color: rgb(var(--v-theme-success));
 }
 </style>

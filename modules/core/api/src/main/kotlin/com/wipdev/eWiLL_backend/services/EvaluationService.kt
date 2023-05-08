@@ -29,6 +29,9 @@ class EvaluationService: IEvaluationService {
 
     @Autowired
     lateinit var configRepository: DiagramConfigRepository
+
+    @Autowired
+    lateinit var submissionRepository: SubmissionRepository
     @Autowired
     lateinit var rulesetRepository: RulesetRepository
 
@@ -52,24 +55,37 @@ class EvaluationService: IEvaluationService {
 
     override fun eval(submissionRequestPL: SubmissionRequestPL): Long? {
         //Collect Data for evaluation
-        val task = taskRepository.findById(submissionRequestPL.taskId.toLong()).get()
-        val ruleset = task.rulesetId?.let { rulesetRepository.findById(it).get() }
-        val diagram = submissionRequestPL.diagramPL;
-        val solutionDiagram = DiagramService.convert(diagramRepository.findById(task.solutionModelId!!).get(), configRepository)
+
+        val diagram = diagramRepository.getReferenceById(submissionRequestPL.diagramId)
+
+
+
+        var submission = Submission()
+        val currentDateTime = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        val formattedDateTime = currentDateTime.format(formatter)
+        submission.date = formattedDateTime
+        submission.diagram = diagram.toString()
+        submission.taskId = submissionRequestPL.taskId
+        submission.userId = submissionRequestPL.userId
+
+        submission = submissionRepository.save(submission)
+
+        return submission.id
 
         //Prepare evaluation
-        val diagramEvalEntry = DiagramEvalEntry(task, ruleset, diagram, listOf(solutionDiagram))
-        val evaluator: IDiagramEvaluator =
-            SERMDiagramEvaluator()//TODO: Change to diffrent Controller when using other models
+        //val diagramEvalEntry = DiagramEvalEntry(task, ruleset, diagram, listOf(solutionDiagram))
+        //val evaluator: IDiagramEvaluator =
+          //  SERMDiagramEvaluator()//TODO: Change to diffrent Controller when using other models
 
         //
-        val result = resultRepository.saveEmpty();
-        if (result != null) {
-            runEvalAsync(evaluator, result.id, diagramEvalEntry)
-            return result.id
-        }else{
-            throw Exception("Could not save empty result")
-        }
+       // val result = resultRepository.saveEmpty();
+       // if (result != null) {
+       //     runEvalAsync(evaluator, result.id, diagramEvalEntry)
+       //     return result.id
+       // }else{
+       //     throw Exception("Could not save empty result")
+        //}
 
 
         //var result = evaluator.eval(diagramEvalEntry)
