@@ -50,7 +50,7 @@
         <br />
         <div class="task-trials-caption font-weight-medium">
           <span>Auswertungsergebnisse</span>
-          <span>Versuch 5 / 10</span>
+          <span>Anzahl Abgaben: {{ countSubmission }}</span>
         </div>
         <v-card class="task-trials-tabs">
           <v-tabs v-model="selectedResultTab" bg-color="teal-darken-3" slider-color="teal-lighten-3">
@@ -120,6 +120,8 @@ const diagrams = ref<Diagram[]>([]);
 const selectedDiagramId = ref<number>();
 const selectedDiagram = ref<Diagram>();
 
+const countSubmission = ref(0);
+
 const selectedResultTab = ref<any>();
 const taskResults = ref<any[]>([
   { id: 1, name: "Item 1" },
@@ -135,6 +137,7 @@ onMounted(() => {
       loadTask();
       loadCategories();
       diagramStore.createNewDiagram();
+      loadSubmissions();
     }
   });
 });
@@ -153,6 +156,8 @@ const loadTask = () => {
     if (courseRole.value != "STUDENT") loadSolutionModel();
   });
 };
+
+const loadSubmissions = () => {};
 
 const openFullDiagram = () => {
   dialogShowFullDiagram.value?.openDialog("");
