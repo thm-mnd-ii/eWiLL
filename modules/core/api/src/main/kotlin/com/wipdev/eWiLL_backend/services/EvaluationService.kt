@@ -34,6 +34,22 @@ class EvaluationService: IEvaluationService {
     lateinit var submissionRepository: SubmissionRepository
     @Autowired
     lateinit var rulesetRepository: RulesetRepository
+
+    /* fun submit(submissionRequestPL: SubmissionRequestPL) : Long?{
+        val submission = Submission()
+        val diagram = diagramRepository.save(DiagramService.(submissionRequestPL.diagramId))
+        submission.diagram = diagram.toString()
+        submission.taskId = submissionRequestPL.taskId
+        submission.userId = diagram.ownerId
+        val currentDateTime = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        val formattedDateTime = currentDateTime.format(formatter)
+        submission.date = formattedDateTime
+        val submissionSaved = submissionRepository.save(submission)
+
+        return submissionSaved.id
+    } */
+
     override fun eval(submissionRequestPL: SubmissionRequestPL): Long? {
         //Collect Data for evaluation
 
@@ -99,7 +115,9 @@ class EvaluationService: IEvaluationService {
     }
 
     override fun getEvalResult(id: Long?): SubmissionResult? = resultRepository.findById(id!!).get()
-
+    fun getSubmissionIds(userId: Long, taskId: Long): List<Long> {
+        return submissionRepository.findAllByUserIdAndTaskId(userId, taskId)
+    }
 
 
 }

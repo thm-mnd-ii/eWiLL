@@ -5,6 +5,7 @@ import com.wipdev.eWiLL_backend.database.tables.course.Course
 import com.wipdev.eWiLL_backend.database.tables.course.CourseUserRole
 import com.wipdev.eWiLL_backend.database.tables.course.ECourseRole
 import com.wipdev.eWiLL_backend.endpoints.payload.CourseEntry
+import com.wipdev.eWiLL_backend.endpoints.payload.CourseUser
 import com.wipdev.eWiLL_backend.endpoints.payload.requests.JoinRequestPL
 import com.wipdev.eWiLL_backend.services.CourseService
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -56,7 +57,7 @@ class CourseController {
 
     @GetMapping("/{id}/students")
     @ResponseBody
-    fun getStudentsByCourseId(@PathVariable id: Long): List<User> = service.getStudentsByCourseId(id)
+    fun getStudentsByCourseId(@PathVariable id: Long): List<CourseUser> = service.getStudentsByCourseId(id)
 
 
     @PostMapping("/{id}/join")
