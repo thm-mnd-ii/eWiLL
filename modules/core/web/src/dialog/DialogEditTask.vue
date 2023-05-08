@@ -11,9 +11,10 @@
           </div>
           <div>
             <v-text-field v-model="currentTask.dueDate" label="Deadline" variant="underlined" color="#81ba24"></v-text-field>
-            <v-select v-model="currentTask.mediaType" :items="['Model', 'Text']" label="Medientyp" variant="underlined" required color="#81ba24"></v-select>
-            <v-select v-model="currentTask.rulesetId" :items="rulesets" item-title="name" label="Regelsatz" variant="underlined" required color="#81ba24" item-value="id"></v-select>
+            <v-select v-if="!workInProgress" v-model="currentTask.mediaType" :items="['Model', 'Text']" label="Medientyp" variant="underlined" required color="#81ba24"></v-select>
+            <v-select v-if="!workInProgress" v-model="currentTask.rulesetId" :items="rulesets" item-title="name" label="Regelsatz" variant="underlined" required color="#81ba24" item-value="id"></v-select>
             <v-select v-model="currentTask.eliability" :items="liabilities" label="Verpflichtung" variant="underlined" required color="#81ba24" item-title="name" item-value="enum"></v-select>
+            <v-select v-if="!workInProgress" :items="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]" label="Versuche" variant="underlined" required color="#81ba24"></v-select>
           </div>
         </v-form>
       </v-card-text>
@@ -38,6 +39,8 @@ import { useAuthUserStore } from "@/stores/authUserStore";
 import { useRoute } from "vue-router";
 import taskService from "@/services/task.service";
 import router from "@/router";
+
+const workInProgress = ref(true);
 
 const authUserStore = useAuthUserStore();
 const route = useRoute();
@@ -113,6 +116,8 @@ const openDialog = (task?: Task) => {
     editTitle.value = "Neue Aufgabe erstellen";
     currentTask.value = {} as Task;
     currentTask.value.courseId = Number(route.params.id);
+    currentTask.value.mediaType = "MODEL";
+    currentTask.value.rulesetId = 1;
     newTask.value = true;
   }
 
