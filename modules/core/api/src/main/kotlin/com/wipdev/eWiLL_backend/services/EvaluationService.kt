@@ -35,12 +35,9 @@ class EvaluationService: IEvaluationService {
     @Autowired
     lateinit var rulesetRepository: RulesetRepository
 
-    @Autowired
-    lateinit var submissionRepository : SubmissionRepository
-
-    fun submit(submissionRequestPL: SubmissionRequestPL) : Long?{
+    /* fun submit(submissionRequestPL: SubmissionRequestPL) : Long?{
         val submission = Submission()
-        val diagram = diagramRepository.save(DiagramService.convert(submissionRequestPL.diagramPL))
+        val diagram = diagramRepository.save(DiagramService.(submissionRequestPL.diagramId))
         submission.diagram = diagram.toString()
         submission.taskId = submissionRequestPL.taskId
         submission.userId = diagram.ownerId
@@ -51,7 +48,7 @@ class EvaluationService: IEvaluationService {
         val submissionSaved = submissionRepository.save(submission)
 
         return submissionSaved.id
-    }
+    } */
 
     override fun eval(submissionRequestPL: SubmissionRequestPL): Long? {
         //Collect Data for evaluation
