@@ -15,6 +15,7 @@ import ViewIntroduction from "../views/ViewIntroduction.vue";
 import View404Page from "../views/View404Page.vue";
 import FeedbackReport from "../views/ViewFeedbackReport.vue";
 import FeedbackOverview from "../views/ViewFeedbackOverview.vue";
+import ViewMembers from "../views/ViewMembers.vue";
 
 import authService from "@/services/auth.service";
 
@@ -101,6 +102,11 @@ const router = createRouter({
       name: "ViewBugOverview",
       component: FeedbackOverview,
     },
+    {
+      path: "/course/:courseId/members",
+      name: "ViewMembers",
+      component: ViewMembers
+    }
   ],
 });
 
