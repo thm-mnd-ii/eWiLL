@@ -30,7 +30,7 @@ const headers = [
   { title: "Name", align: "start", key: "name" },
   { title: "Abgabeart", align: "start", key: "eliability" },
   { title: "Abgabeende", align: "start", key: "dueDate" },
-  { title: "Abgabestatus", align: "start", key: "status" },
+  { title: "Bestanden", align: "start", key: "status" },
 ];
 
 const allTasks = ref<Task[]>([]);
