@@ -9,13 +9,14 @@ import java.net.http.HttpHeaders
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.nio.charset.StandardCharsets
+import javax.servlet.http.HttpServletRequest
 
 
 class FbsClient {
 
     private final val baseUrl = "https://feedback.mni.thm.de/api/v1"
 
-    fun getLoginLdap(username: String, password: String): HttpResponse<String>? {
+    fun getLoginLdap(username: String, password: String, servletRequest: HttpServletRequest): HttpResponse<String>? {
         val url = "$baseUrl/login/ldap"
         val client = HttpClient.newBuilder().build()
 
@@ -25,12 +26,13 @@ class FbsClient {
         val request = HttpRequest.newBuilder()
             .uri(URI.create(url))
             .header("Content-Type", "application/json")
+            .header("X-Forwarded-For",servletRequest.getHeader("X-Forwarded-For") )
             .POST(HttpRequest.BodyPublishers.ofString(requestBody))
             .build()
         return client.send(request, HttpResponse.BodyHandlers.ofString())
     }
 
-    fun getUserInformation(headers: HttpHeaders): FbsUser {
+    fun getUserInformation(headers: HttpHeaders, servletRequest: HttpServletRequest): FbsUser {
         val decodingResult = decodeFBSToken(
             headers.firstValue("Authorization").get()
                 .subSequence("Bearer ".length, headers.firstValue("Authorization").get().length).toString()
@@ -42,6 +44,7 @@ class FbsClient {
         val request = HttpRequest.newBuilder()
             .uri(URI.create(url))
             .header("Authorization", headers.firstValue("Authorization").get())
+            .header("X-Forwarded-For",servletRequest.getHeader("X-Forwarded-For") )
             .GET()
             .build()
         val response = client.send(request, HttpResponse.BodyHandlers.ofString())
