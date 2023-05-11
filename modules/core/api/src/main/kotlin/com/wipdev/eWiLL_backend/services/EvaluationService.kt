@@ -88,6 +88,9 @@ class EvaluationService: IEvaluationService {
         //var result = evaluator.eval(diagramEvalEntry)
     }
 
+    override fun getNewestSubmissionIds(userId: Long, taskId: Long): Long {
+        return submissionRepository.findFirstByUserIdAndTaskIdOrderByDateDesc(userId, taskId).id!!
+    }
 
 
     val executor: ExecutorService = Executors.newSingleThreadExecutor()
