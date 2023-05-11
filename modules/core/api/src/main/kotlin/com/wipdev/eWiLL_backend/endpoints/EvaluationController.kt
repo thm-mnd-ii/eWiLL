@@ -32,4 +32,9 @@ class EvaluationController {
     fun getSubmissionIds(@PathVariable userId: Long, @PathVariable taskId: Long): List<Long> =
         service.getSubmissionIds(userId, taskId)
 
+    @GetMapping("/submissionId/newest/{userId}/{taskId}")
+    @ResponseBody
+    fun getSubmissionId(@PathVariable userId: Long, @PathVariable taskId: Long): Long =
+        service.getNewestSubmissionIds(userId, taskId)
+
 }

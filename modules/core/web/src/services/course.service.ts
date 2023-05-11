@@ -56,6 +56,10 @@ class CourseService{
     return axios.delete("/api/course/" + courseId)
   }
 
+  getCourseMembers(courseId: number){
+    return axios.get("/api/course/" + courseId + "/students")
+  }
+
 }
 
 export default new CourseService();
