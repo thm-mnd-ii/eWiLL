@@ -4,6 +4,7 @@
     <!-- TODO: refactor DialogSaveDiagramVue like DialogConfirmVue to handle the dialog with promises -->
     <DialogSaveDiagramVue ref="dialogSave"></DialogSaveDiagramVue>
     <DialogConfirmVue ref="dialogConfirm"></DialogConfirmVue>
+    <DialogExportDiagramVue ref="dialogExport"></DialogExportDiagramVue>
 
     <v-card :elevation="0" class="explorer">
       <v-divider></v-divider>
@@ -15,7 +16,7 @@
           <v-btn icon="mdi-content-save" class="explorerBtn" :disabled="deleteActive" @click="saveDialogButtonClick"></v-btn>
         </div>
         <div>
-          <v-btn icon="mdi-delete" class="explorerBtn" :class="{ deleteBtnActive: deleteActive }" @click="deleteActive = !deleteActive"></v-btn>
+          <v-btn icon="mdi-export" class="explorerBtn" :disabled="deleteActive" @click="openExportDialog"></v-btn>
         </div>
 
         <div>
@@ -24,7 +25,9 @@
         <div>
           <v-btn icon="mdi-redo" class="explorerBtn" :disabled="deleteActive || diagramStore.historyIndex >= diagramStore.history.length" @click="diagramStore.redo"></v-btn>
         </div>
-        <div></div>
+        <div>
+          <v-btn icon="mdi-delete" class="explorerBtn" :class="{ deleteBtnActive: deleteActive }" @click="deleteActive = !deleteActive"></v-btn>
+        </div>
         <div>
           <v-btn icon="mdi-arrow-left" class="explorerBtn" :disabled="deleteActive || categoriesViewActive" @click="moveToOverview"></v-btn>
         </div>
@@ -67,6 +70,7 @@ import Diagram from "../model/diagram/Diagram";
 import Category from "../model/diagram/Category";
 import DialogSaveDiagramVue from "../dialog/DialogSaveDiagram.vue";
 import DialogConfirmVue from "../dialog/DialogConfirm.vue";
+import DialogExportDiagramVue from "../dialog/DialogExportDiagram.vue";
 import diagramService from "../services/diagram.service";
 import { useDiagramStore } from "../stores/diagramStore";
 import { useAuthUserStore } from "../stores/authUserStore";
@@ -74,6 +78,7 @@ import { onMounted, ref } from "vue";
 
 const dialogConfirm = ref<typeof DialogConfirmVue>();
 const dialogSave = ref<typeof DialogSaveDiagramVue>();
+const dialogExport = ref<typeof DialogExportDiagramVue>();
 
 const categoriesViewActive = ref(true);
 const activeCategorie = ref<Category | null>(null);
@@ -207,6 +212,10 @@ const createNewDiagram = () => {
       diagramStore.createNewDiagram();
     }
   });
+};
+
+const openExportDialog = () => {
+  dialogExport.value?.openDialog();
 };
 </script>
 
