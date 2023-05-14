@@ -31,7 +31,7 @@ const saveDialog = ref<boolean>(false);
 const exportCategory = ref<string>("PNG");
 
 const exportDiagram = () => {
-  let div = toolManagementStore.diagramDiv;
+  let div = toolManagementStore.diagramDiv?.cloneNode(true);
   if (div == null) {
     return;
   }
@@ -85,10 +85,15 @@ const exportDiagram = () => {
 
         // Remove the canvas from the DOM
         document.body.removeChild(canvas);
+
+        // reload diagram
+        diagramStore.key++;
       },
       (e) => {
         console.log(e);
       }
+
+      // remove the canvas from the DOM
     );
   }
   _close();
@@ -129,7 +134,7 @@ const setInlineStyles = (svg: any) => {
   }
   // hardcode computed css styles inside SVG
   var allElements = traverse(svg);
-  console.log(allElements);
+  // console.log(allElements);
 
   var i = allElements.length;
   while (i--) {
