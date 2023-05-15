@@ -48,11 +48,11 @@
         </v-card>
       </div>
       <div v-if="courseRole == 'STUDENT'" class="grid-right">
-        <v-btn class="submit-btn" color="dark-gray" variant="flat" @click="submitDiagram">prüfen</v-btn>
+        <v-btn class="submit-btn" color="dark-gray" variant="flat" :disabled="submissionCount >= task.maxSubmissions" @click="submitDiagram">prüfen</v-btn>
         <br />
         <div class="task-trials-caption font-weight-medium">
           <span>Auswertungsergebnisse</span>
-          <span>Anzahl Abgaben: {{ submissionCount }}</span>
+          <span>Anzahl Abgaben: {{ submissionCount }} / {{ task.maxSubmissions }}</span>
         </div>
         <v-card class="task-trials-tabs">
           <v-tabs v-model="selectedResultTab" bg-color="teal-darken-3" slider-color="teal-lighten-3">
