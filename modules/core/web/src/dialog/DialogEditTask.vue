@@ -118,7 +118,7 @@ const openDialog = (task?: Task) => {
     currentTask.value = {} as Task;
     currentTask.value.courseId = Number(route.params.id);
     currentTask.value.mediaType = "MODEL";
-    currentTask.value.rulesetId = 1;
+    currentTask.value.rulesetId = 0;
     newTask.value = true;
   }
 
