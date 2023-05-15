@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/valid-v-slot -->
 <template>
   <DialogShowFullDiagram ref="dialogShowFullDiagram" />
   <DialogEditTask ref="dialogEditTask" />
@@ -75,6 +76,15 @@
           </v-window>
         </v-card>
       </div>
+      <div v-if="courseRole != 'STUDENT'" class="grid-right">
+        <h3>Abgaben</h3>
+        <br />
+        <v-data-table :headers="submissionHeaders" :items="items">
+          <template #item.diagram="{}">
+            <v-btn>Preview</v-btn>
+          </template>
+        </v-data-table>
+      </div>
     </div>
   </div>
 </template>
@@ -128,6 +138,19 @@ const submissionCount = ref(0);
 
 const selectedResultTab = ref<any>();
 const taskResults = ref<Result[]>();
+
+const submissionHeaders = [
+  { title: "Vorname", align: "start", value: "prename", key: "prename" },
+  { title: "Nachname", align: "start", value: "surname", key: "surname" },
+  { title: "Diagramm", align: "start", value: "diagram", key: "diagram" },
+  { title: "Datum", align: "start", value: "date", key: "date" },
+];
+
+const items = [
+  { prename: "Maximilian", surname: "Hönig", diagram: "diagram", date: "11.1023.32" },
+  { prename: "Maximilian", surname: "Hönig", diagram: "diagram", date: "11.1023.32" },
+  { prename: "Lukas", surname: "Müller", diagram: "diagram", date: "11.1023.32" },
+];
 
 onMounted(() => {
   courseService.getUserRoleInCourse(userId.value!, courseId.value).then((response) => {
