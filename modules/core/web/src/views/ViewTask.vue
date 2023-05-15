@@ -18,6 +18,8 @@
             {{ courseRole }}
           </v-chip>
           <v-spacer></v-spacer>
+          <v-chip v-if="task.maxSubmissions != 999" class="margin-right-5px">Versuche: {{ task.maxSubmissions }}</v-chip>
+          <v-chip v-if="task.maxSubmissions == 999" class="margin-right-5px">Versuche: unbegrenzt</v-chip>
           <v-chip v-if="task.eliability == 'BONUS'" color="green">Bonus</v-chip>
           <v-chip v-if="task.eliability == 'MANDATORY'" color="red">Verpflichtend</v-chip>
           <v-chip v-if="task.eliability == 'OPTIONAL'" color="yellow">Optional</v-chip>
@@ -276,5 +278,9 @@ const loadSolutionModel = () => {
 .align-items-center {
   display: flex;
   align-items: center;
+}
+
+.margin-right-5px {
+  margin-right: 5px;
 }
 </style>

@@ -14,7 +14,7 @@
             <v-select v-if="!workInProgress" v-model="currentTask.mediaType" :items="['Model', 'Text']" label="Medientyp" variant="underlined" required color="#81ba24"></v-select>
             <v-select v-if="!workInProgress" v-model="currentTask.rulesetId" :items="rulesets" item-title="name" label="Regelsatz" variant="underlined" required color="#81ba24" item-value="id"></v-select>
             <v-select v-model="currentTask.eliability" :items="liabilities" label="Verpflichtung" variant="underlined" required color="#81ba24" item-title="name" item-value="enum"></v-select>
-            <v-select v-if="!workInProgress" :items="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]" label="Versuche" variant="underlined" required color="#81ba24"></v-select>
+            <v-select v-model="maxSubmissions" :items="['Unbegrenzt', 1, 2, 3, 4, 5, 7, 8, 9, 10]" label="Versuche" variant="underlined" required color="#81ba24" @update:model-value="updateMaxSubmissionsOnCurrentTask"></v-select>
           </div>
         </v-form>
       </v-card-text>
@@ -52,6 +52,7 @@ const editTitle = ref<string>("");
 const newTask = ref(false);
 const currentTask = ref<Task>({} as Task);
 
+const maxSubmissions = ref();
 const categories = ref<Category[]>([]);
 const diagrams = ref<Diagram[]>([]);
 const rulesets = ref<any[]>([
@@ -167,6 +168,11 @@ const deleteTask = () => {
   taskService.deleteTask(currentTask.value.id).then(() => {
     router.push("/course/" + currentTask.value.courseId);
   });
+};
+
+const updateMaxSubmissionsOnCurrentTask = (submissions: any) => {
+  if (submissions == "Unbegrenzt") currentTask.value.maxSubmissions = 999;
+  else currentTask.value.maxSubmissions = submissions;
 };
 
 // define expose
