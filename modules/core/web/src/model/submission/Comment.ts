@@ -1,13 +1,16 @@
-import HighlightLevel from "@/enums/HighlightLevel";
-import ResultLevel from "@/enums/ResultLevel";
+import StatusLevel from "@/enums/StatusLevel";
+import FeedbackLevel from "@/enums/FeedbackLevel";
+import MessageType from "@/enums/MessageType";
 
 interface Comment {
-    resultLevel: ResultLevel;
-    message: string;
-    affectedEntityId: number;
-    affectedAttributeName: string;
-    highlightLevel: HighlightLevel;
-  }
-  
-  export default Comment;
-  
+  feedbackLevel: FeedbackLevel;
+  message: string;
+  resultMessageType: MessageType;
+  affectedEntityId: number;
+  affectedEntityName: number;
+  affectedAttributeName: string;
+  connectedToId: number;
+  statusLevel: StatusLevel;
+}
+
+export default Comment;
