@@ -23,6 +23,7 @@ class CategoryController {
 
 
     @PostMapping
+    @ResponseBody
     fun createCategory(@RequestBody category: CategoryPL): Category {
         return iCategoryService.createCategory(category)
     }

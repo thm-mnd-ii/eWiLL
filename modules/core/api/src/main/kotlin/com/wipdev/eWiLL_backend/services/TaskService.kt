@@ -33,7 +33,9 @@ class TaskService : ITaskService {
         return taskRepository.findById(id).get()
     }
 
+
     override fun create(courseId: Long, task: Task): Task {
+        task.id = null
         return  taskRepository.save(task)
     }
 

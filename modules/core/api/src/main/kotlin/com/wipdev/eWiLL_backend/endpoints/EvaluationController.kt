@@ -9,24 +9,33 @@ import org.springframework.web.bind.annotation.*
 
 @RequestMapping("/api/evaluation/v2")
 @RestController
-@Tag(name = "Evaluation/Checker", description = "Checker API")
+@Tag(name = "Submission Controller", description = "Checker API")
 class EvaluationController {
 
     @Autowired
     lateinit var service: EvaluationService
 
 
-
     @PostMapping("/submit")
     @ResponseBody
-    fun submit(@Parameter submissionRequestPL: SubmissionRequestPL): Long? =
-        service.eval(submissionRequestPL)
 
+    fun submit(@RequestBody submissionRequestPL: SubmissionRequestPL): Long? =
+        service.eval(submissionRequestPL)
 
     @GetMapping("/result/{id}")
     @ResponseBody
     fun getResult(@PathVariable id: Long): com.wipdev.eWiLL_backend.database.tables.course.SubmissionResult? =
         service.getEvalResult(id)
 
+
+    @GetMapping("/submissionIds/{userId}/{taskId}")
+    @ResponseBody
+    fun getSubmissionIds(@PathVariable userId: Long, @PathVariable taskId: Long): List<Long> =
+        service.getSubmissionIds(userId, taskId)
+
+    @GetMapping("/submissionId/newest/{userId}/{taskId}")
+    @ResponseBody
+    fun getSubmissionId(@PathVariable userId: Long, @PathVariable taskId: Long): Long =
+        service.getNewestSubmissionIds(userId, taskId)
 
 }

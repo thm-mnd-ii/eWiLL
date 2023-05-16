@@ -86,15 +86,15 @@ const updateAttributes = () => {
   props.entity.attributes.forEach((attribute: Attribute) => {
     switch (attribute.type) {
       case AttributeTyp.PrimaryKey:
-        formattedAttributes.value += "<b>" + attribute.name + "</b>, ";
+        formattedAttributes.value += "<b><u>#" + attribute.name + "</u></b>, ";
         break;
 
       case AttributeTyp.ForeignKey:
-        formattedAttributes.value += "<u>" + attribute.name + "</u>, ";
+        formattedAttributes.value += "<i>*" + attribute.name + "</i>, ";
         break;
 
       case AttributeTyp.Attribute:
-        formattedAttributes.value += "<i>" + attribute.name + "</i>, ";
+        formattedAttributes.value += "<span>" + attribute.name + "</span>, ";
         break;
 
       default:

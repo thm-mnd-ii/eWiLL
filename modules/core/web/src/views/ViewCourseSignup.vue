@@ -24,12 +24,13 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useAuthUserStore } from "../stores/authUserStore";
 import CoursePL from "../model/course/CoursePL";
 import courseService from "../services/course.service";
 
 const route = useRoute();
+const router = useRouter();
 const authUserStore = useAuthUserStore();
 const course = ref<CoursePL>();
 const key = ref("");
@@ -56,7 +57,7 @@ const signup = () => {
       .joinCourse(courseId.value, key.value, userId.value)
       .then((response) => {
         if (response.status == 200) {
-          snackbarSuccess.value = true;
+          router.push("/course/" + courseId.value);
         }
       })
       .catch((error) => {

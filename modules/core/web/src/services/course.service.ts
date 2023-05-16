@@ -52,6 +52,19 @@ class CourseService{
     })
   }
 
+  changeUserRole(courseId: number){
+    //TO-DO: This route is not correct
+    return axios.post("/api/course/" + courseId + "/changeUserRole/")
+  }
+
+  deleteCourse(courseId: number){
+    return axios.delete("/api/course/" + courseId)
+  }
+
+  getCourseMembers(courseId: number){
+    return axios.get("/api/course/" + courseId + "/students")
+  }
+
 }
 
 export default new CourseService();

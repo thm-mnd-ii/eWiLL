@@ -9,4 +9,5 @@ interface IEvaluationService {
     fun eval(submissionRequestPL: SubmissionRequestPL): Long?
 
     fun getEvalResult(id :Long?): com.wipdev.eWiLL_backend.database.tables.course.SubmissionResult?
+    fun getNewestSubmissionIds(userId: Long, taskId: Long): Long
 }

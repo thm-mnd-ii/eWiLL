@@ -1,6 +1,7 @@
 <template>
   <DialogShowFullDiagram ref="dialogShowFullDiagram" />
   <DialogEditTask ref="dialogEditTask" />
+  <DialogConfirm ref="dialogConfirm" />
 
   <div class="task">
     <v-card>
@@ -12,17 +13,23 @@
       <v-card-text>
         <p>{{ task.description }}</p>
         <br />
-        <v-chip prepend-icon="mdi-account-circle" color="secondary" text-color="white" label>
-          {{ courseRole }}
-        </v-chip>
+        <div class="align-items-center">
+          <v-chip prepend-icon="mdi-account-circle" color="secondary" text-color="white" label>
+            {{ courseRole }}
+          </v-chip>
+          <v-spacer></v-spacer>
+          <v-chip v-if="task.eliability == 'BONUS'" color="green">Bonus</v-chip>
+          <v-chip v-if="task.eliability == 'MANDATORY'" color="red">Verpflichtend</v-chip>
+          <v-chip v-if="task.eliability == 'OPTIONAL'" color="yellow">Optional</v-chip>
+        </div>
       </v-card-text>
     </v-card>
 
     <div class="task-main">
       <div class="grid-left">
         <v-form>
-          <v-select v-model="selectedCategoryId" label="Kategorie" variant="underlined" :items="categories" item-title="name" item-value="id" @update:model-value="updateDiagrams"></v-select>
-          <v-select v-model="selectedDiagramId" label="Diagram" variant="underlined" :items="diagrams" item-title="name" item-value="id" @update:model-value="showSelectedDiagram"></v-select>
+          <v-select v-model="selectedCategoryId" label="Kategorie" variant="underlined" :items="categories" item-title="name" :disabled="courseRole != 'STUDENT'" item-value="id" @update:model-value="updateDiagrams"></v-select>
+          <v-select v-model="selectedDiagramId" label="Diagram" variant="underlined" :items="diagrams" item-title="name" item-value="id" :disabled="courseRole != 'STUDENT'" @update:model-value="showSelectedDiagram"></v-select>
         </v-form>
 
         <v-card class="preview-container">
@@ -38,12 +45,12 @@
           </v-card-text>
         </v-card>
       </div>
-      <div class="grid-right">
+      <div v-if="courseRole == 'STUDENT'" class="grid-right">
         <v-btn class="submit-btn" color="dark-gray" variant="flat" @click="submitDiagram">prüfen</v-btn>
         <br />
         <div class="task-trials-caption font-weight-medium">
           <span>Auswertungsergebnisse</span>
-          <span>Versuch 5 / 10</span>
+          <span>Anzahl Abgaben: {{ submissionCount }}</span>
         </div>
         <v-card class="task-trials-tabs">
           <v-tabs v-model="selectedResultTab" bg-color="teal-darken-3" slider-color="teal-lighten-3">
@@ -72,23 +79,28 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useAuthUserStore } from "../stores/authUserStore";
 import courseService from "../services/course.service";
 import taskService from "../services/task.service";
 import categoryService from "../services/category.service";
 import Task from "../model/task/Task";
+import SubmitPL from "../model/SubmitPL";
+import Result from "../model/submission/Result";
 import DialogEditTask from "@/dialog/DialogEditTask.vue";
+import DialogConfirm from "@/dialog/DialogConfirm.vue";
 
 import Category from "@/model/diagram/Category";
 import Diagram from "@/model/diagram/Diagram";
 import DialogShowFullDiagram from "@/dialog/DialogShowFullDiagram.vue";
 import diagramService from "@/services/diagram.service";
+import evaluationService from "@/services/evaluation.service";
 import { useDiagramStore } from "@/stores/diagramStore";
 import { storeToRefs } from "pinia";
 import ModelingTool from "@/components/ModelingTool.vue";
 
 const route = useRoute();
+const router = useRouter();
 const authUserStore = useAuthUserStore();
 const diagramStore = useDiagramStore();
 const modelingToolKey = storeToRefs(diagramStore).key;
@@ -101,23 +113,32 @@ const userId = ref(authUserStore.auth.user?.id!);
 
 const dialogEditTask = ref<typeof DialogEditTask>();
 const dialogShowFullDiagram = ref<typeof DialogShowFullDiagram>();
+const dialogConfirm = ref<typeof DialogConfirm>();
 
 const categories = ref<Category[]>([]);
 const selectedCategoryId = ref<number>();
 const diagrams = ref<Diagram[]>([]);
 const selectedDiagramId = ref<number>();
+const selectedDiagram = ref<Diagram>();
+
+//const submissions = ref();
+const submissionCount = ref(0);
 
 const selectedResultTab = ref<any>();
-const taskResults = ref<any[]>([
-  { id: 1, name: "Item 1" },
-  { id: 2, name: "Item 2" },
-]);
+const taskResults = ref<Result[]>();
 
 onMounted(() => {
-  loadTask();
-  loadCategories();
-  courseService.getUserRoleInCourse(userId.value, courseId.value).then((response) => (courseRole.value = response));
-  diagramStore.createNewDiagram();
+  courseService.getUserRoleInCourse(userId.value!, courseId.value).then((response) => {
+    if (response == "NONE") {
+      router.push("/course/" + route.params.courseId + "/signup");
+    } else {
+      courseRole.value = response;
+      loadTask();
+      loadCategories();
+      diagramStore.createNewDiagram();
+      if (courseRole.value == "STUDENT") loadSubmissions();
+    }
+  });
 });
 
 const openSettings = () => {
@@ -131,6 +152,15 @@ const openSettings = () => {
 const loadTask = () => {
   taskService.getTask(taskId.value).then((response) => {
     task.value = response;
+    if (courseRole.value != "STUDENT") loadSolutionModel();
+  });
+};
+
+const loadSubmissions = () => {
+  evaluationService.getSubmissionIdsByUserAndTask(userId.value, taskId.value).then((response) => {
+    const submissionIds = response.data;
+    submissionCount.value = submissionIds.length;
+    // TODO: Load submissions/results
   });
 };
 
@@ -146,17 +176,39 @@ const updateDiagrams = (categoryId: number) => {
 };
 
 const showSelectedDiagram = (diagramId: number) => {
-  // console.log(diagrams.value.find((d) => d.id == diagramId));
+  selectedDiagram.value = diagrams.value.find((d) => d.id == diagramId);
   diagramStore.loadDiagram(diagrams.value.find((d) => d.id == diagramId) as Diagram);
 };
 
 const submitDiagram = () => {
-  // console.log("submit diagram");
+  if (selectedDiagramId.value != undefined) {
+    dialogConfirm.value?.openDialog("Abgabe: " + selectedDiagram.value!.name, "Möchten Sie das Diagram wirklich einreichen?", "Einreichen").then((result: boolean) => {
+      if (result) {
+        const submitPL = {} as SubmitPL;
+        submitPL.diagramId = selectedDiagramId.value!;
+        submitPL.taskId = taskId.value;
+        submitPL.userId = userId.value;
+        evaluationService.submitDiagram(submitPL).then(() => {
+          loadSubmissions();
+        });
+      }
+    });
+  }
 };
 
 const loadCategories = () => {
   categoryService.getByUserId(userId.value).then((data) => {
     categories.value = data;
+  });
+};
+
+const loadSolutionModel = () => {
+  diagramService.getDiagramById(task.value.solutionModelId).then((response) => {
+    const categoryId = response.data.categoryId;
+    selectedCategoryId.value = categoryId;
+    diagrams.value.push(response.data);
+    selectedDiagramId.value = task.value.solutionModelId;
+    showSelectedDiagram(selectedDiagramId.value);
   });
 };
 </script>
@@ -219,5 +271,10 @@ const loadCategories = () => {
   position: relative;
   width: 100%;
   height: 100%;
+}
+
+.align-items-center {
+  display: flex;
+  align-items: center;
 }
 </style>
