@@ -135,7 +135,7 @@ class CourseService: ICourseService {
     override fun changeUserRole(courseId: Long,userId:Long, role: ECourseRole,executorUserId:Long): ResponseEntity<CourseUserRole> {
         val executorRole = getUserRoleInCourse(courseId,executorUserId)
         return if(executorRole == ECourseRole.OWNER || executorRole == ECourseRole.TUTOR){
-            courseRoleRepository.updateByCourseIdAndUserId(courseId,userId,role.toString())
+            courseRoleRepository.updateByCourseIdAndUserId(courseId,userId,role.name)
             ResponseEntity(courseRoleRepository.findAll().first { it.courseId == courseId && it.userId == userId },HttpStatus.OK)
         }else{
             ResponseEntity(HttpStatus.FORBIDDEN)
