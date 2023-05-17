@@ -6,6 +6,7 @@ import com.wipdev.eWiLL_backend.database.tables.course.CourseUserRole
 import com.wipdev.eWiLL_backend.database.tables.course.ECourseRole
 import com.wipdev.eWiLL_backend.endpoints.payload.CourseEntry
 import com.wipdev.eWiLL_backend.endpoints.payload.CourseUser
+import org.springframework.http.ResponseEntity
 
 interface ICourseService {
     fun getAll(userId:Long): List<CourseEntry>
@@ -21,7 +22,7 @@ interface ICourseService {
     fun hasKeyPass(id: Long): Boolean
     fun removeAllButOwner(id: Long): Course
     fun archiveCourse(id: Long): Course
-    fun changeUserRole(courseId: Long,userId:Long, role: ECourseRole): CourseUserRole
+    fun changeUserRole(courseId: Long,userId:Long, role: ECourseRole,executorUserId:Long): ResponseEntity<CourseUserRole>
     fun getUserRoleInCourse(courseId: Long, userId: Long): ECourseRole?
 
 

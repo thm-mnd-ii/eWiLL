@@ -12,6 +12,7 @@ import com.wipdev.eWiLL_backend.repository.UserRepository
 import com.wipdev.eWiLL_backend.services.serviceInterfaces.ICourseService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
 import java.time.LocalDateTime
@@ -131,9 +132,14 @@ class CourseService: ICourseService {
         return repository.save(course)
     }
 
-    override fun changeUserRole(courseId: Long,userId:Long, role: ECourseRole): CourseUserRole {
-        courseRoleRepository.updateByCourseIdAndUserId(courseId,userId,role.toString())
-        return courseRoleRepository.findByCourseIdAndUserId(courseId,userId)!!
+    override fun changeUserRole(courseId: Long,userId:Long, role: ECourseRole,executorUserId:Long): ResponseEntity<CourseUserRole> {
+        val executorRole = getUserRoleInCourse(courseId,executorUserId)
+        return if(executorRole == ECourseRole.OWNER || executorRole == ECourseRole.TUTOR){
+            courseRoleRepository.updateByCourseIdAndUserId(courseId,userId,role.toString())
+            ResponseEntity(courseRoleRepository.findAll().first { it.courseId == courseId && it.userId == userId },HttpStatus.OK)
+        }else{
+            ResponseEntity(HttpStatus.FORBIDDEN)
+        }
     }
 
     override fun getUserRoleInCourse(courseId: Long, userId: Long): ECourseRole? {
