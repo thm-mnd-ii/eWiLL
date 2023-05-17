@@ -23,6 +23,9 @@ class Submission {
     @Column(name = "diagram", nullable = false, length = 100000)
     var diagram: String? = null
 
+    @Column(name = "attempt", nullable = false)
+    var attempt: Int? = null
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || javaClass != other.javaClass) return false

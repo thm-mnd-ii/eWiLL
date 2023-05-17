@@ -8,12 +8,6 @@ import org.springframework.stereotype.Repository
 @Repository
 interface ResultRepository : JpaRepository<SubmissionResult, Long> {
 
-    @Query("INSERT INTO result (correct, score, comment) VALUES (null, null, null)", nativeQuery = true)
-    fun saveEmpty(): SubmissionResult? {
-        return findLatestSumbissionResult()
-    }
-
-
-    @Query("SELECT r FROM SubmissionResult r ORDER BY r.id DESC")
-    fun findLatestSumbissionResult(): SubmissionResult?
+    @Query("SELECT r FROM SubmissionResult r WHERE r.submissionId = :submissionId")
+    fun getResultsBySubmissionId(submissionId: Long): SubmissionResult?
 }

@@ -19,6 +19,9 @@ class SubmissionResult {
     @Column(name = "comment", nullable = true)
     var comment: String? = null
 
+    @Column(name = "submissionId", nullable = false)
+    var submissionId: Long? = null
+
     override fun toString(): String {
         return "SumbissionResult(id=$id, correct=$correct, score=$score, comment=$comment)"
     }

@@ -5,7 +5,6 @@ import com.wipdev.eWiLL_backend.database.tables.course.SubmissionResult
 import com.wipdev.eWiLL_backend.endpoints.payload.requests.SubmissionRequestPL
 import com.wipdev.eWiLL_backend.eval.DiagramEvalEntry
 import com.wipdev.eWiLL_backend.eval.IDiagramEvaluator
-import com.wipdev.eWiLL_backend.eval.SERMDiagramEvaluator
 import com.wipdev.eWiLL_backend.repository.*
 import com.wipdev.eWiLL_backend.services.serviceInterfaces.IEvaluationService
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,13 +16,14 @@ import java.util.concurrent.Executors
 
 
 @Service
-class EvaluationService: IEvaluationService {
+class EvaluationService : IEvaluationService {
 
     @Autowired
     lateinit var resultRepository: ResultRepository
 
     @Autowired
     lateinit var diagramRepository: DiagramRepository
+
     @Autowired
     lateinit var taskRepository: TaskRepository
 
@@ -32,64 +32,33 @@ class EvaluationService: IEvaluationService {
 
     @Autowired
     lateinit var submissionRepository: SubmissionRepository
+
     @Autowired
     lateinit var rulesetRepository: RulesetRepository
 
-    /* fun submit(submissionRequestPL: SubmissionRequestPL) : Long?{
-        val submission = Submission()
-        val diagram = diagramRepository.save(DiagramService.(submissionRequestPL.diagramId))
-        submission.diagram = diagram.toString()
-        submission.taskId = submissionRequestPL.taskId
-        submission.userId = diagram.ownerId
-        val currentDateTime = LocalDateTime.now()
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-        val formattedDateTime = currentDateTime.format(formatter)
-        submission.date = formattedDateTime
-        val submissionSaved = submissionRepository.save(submission)
-
-        return submissionSaved.id
-    } */
 
     override fun eval(submissionRequestPL: SubmissionRequestPL): Long? {
-        //Collect Data for evaluation
-
         val diagram = diagramRepository.getReferenceById(submissionRequestPL.diagramId)
+        val submission = Submission()
 
-
-
-        var submission = Submission()
-        val currentDateTime = LocalDateTime.now()
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-        val formattedDateTime = currentDateTime.format(formatter)
-        submission.date = formattedDateTime
+        submission.date = getDateTimeString()
         submission.diagram = diagram.toString()
         submission.taskId = submissionRequestPL.taskId
         submission.userId = submissionRequestPL.userId
+        submission.attempt =
+            submissionRepository.getAttempts(submissionRequestPL.userId, submissionRequestPL.taskId) + 1
 
-        submission = submissionRepository.save(submission)
-
-        return submission.id
-
-        //Prepare evaluation
-        //val diagramEvalEntry = DiagramEvalEntry(task, ruleset, diagram, listOf(solutionDiagram))
-        //val evaluator: IDiagramEvaluator =
-          //  SERMDiagramEvaluator()//TODO: Change to diffrent Controller when using other models
-
-        //
-       // val result = resultRepository.saveEmpty();
-       // if (result != null) {
-       //     runEvalAsync(evaluator, result.id, diagramEvalEntry)
-       //     return result.id
-       // }else{
-       //     throw Exception("Could not save empty result")
-        //}
-
-
-        //var result = evaluator.eval(diagramEvalEntry)
+        return submissionRepository.save(submission).id
     }
 
-    override fun getNewestSubmissionIds(userId: Long, taskId: Long): Long {
-        return submissionRepository.findFirstByUserIdAndTaskIdOrderByDateDesc(userId, taskId).id!!
+    private fun getDateTimeString(): String? {
+        val currentDateTime = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        return currentDateTime.format(formatter)
+    }
+
+    override fun getNewestSubmission(userId: Long, taskId: Long): Submission {
+        return submissionRepository.findFirstByUserIdAndTaskIdOrderByDateDesc(userId, taskId)
     }
 
 
@@ -102,14 +71,14 @@ class EvaluationService: IEvaluationService {
     }
 
     fun runEval(evaluator: IDiagramEvaluator, id: Long?, diagramEvalEntry: DiagramEvalEntry) {
-        try{
+        try {
             var result = evaluator.eval(diagramEvalEntry)
             var r = result.getResult()
             r.id = id
             resultRepository.save(r)
-        }catch (e:Exception){
+        } catch (e: Exception) {
             var result = resultRepository.getReferenceById(id!!)
-            result.comment = "Error while evaluating"+e.message
+            result.comment = "Error while evaluating" + e.message
             result.correct = false
             result.score = 0f
             resultRepository.save(result)
@@ -117,10 +86,53 @@ class EvaluationService: IEvaluationService {
 
     }
 
-    override fun getEvalResult(id: Long?): SubmissionResult? = resultRepository.findById(id!!).get()
-    fun getSubmissionIds(userId: Long, taskId: Long): List<Long> {
+    override fun getSubmissionResultBySubmissionId(id: Long?): SubmissionResult? =
+        resultRepository.getResultsBySubmissionId(id!!)
+
+
+    fun getSubmissions(userId: Long, taskId: Long): List<Submission> {
         return submissionRepository.findAllByUserIdAndTaskId(userId, taskId)
+    }
+
+    fun getNewestSubmissionsByTaskId(taskId: Long): List<Submission> {
+        return submissionRepository.getNewestSubmissionsByTaskId(taskId)
+    }
+
+    fun getSubmissionsByTaskId(taskId: Long): List<Submission> {
+        return submissionRepository.getSubmissionsByTaskId(taskId)
     }
 
 
 }
+
+/* fun submit(submissionRequestPL: SubmissionRequestPL) : Long?{
+      val submission = Submission()
+      val diagram = diagramRepository.save(DiagramService.(submissionRequestPL.diagramId))
+      submission.diagram = diagram.toString()
+      submission.taskId = submissionRequestPL.taskId
+      submission.userId = diagram.ownerId
+      val currentDateTime = LocalDateTime.now()
+      val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+      val formattedDateTime = currentDateTime.format(formatter)
+      submission.date = formattedDateTime
+      val submissionSaved = submissionRepository.save(submission)
+
+      return submissionSaved.id
+  }
+
+  Prepare evaluation
+  //val diagramEvalEntry = DiagramEvalEntry(task, ruleset, diagram, listOf(solutionDiagram))
+  //val evaluator: IDiagramEvaluator =
+  //  SERMDiagramEvaluator()//TODO: Change to diffrent Controller when using other models
+
+  //
+  // val result = resultRepository.saveEmpty();
+  // if (result != null) {
+  //     runEvalAsync(evaluator, result.id, diagramEvalEntry)
+  //     return result.id
+  // }else{
+  //     throw Exception("Could not save empty result")
+  //}
+
+
+  var result = evaluator.eval(diagramEvalEntry)*/
