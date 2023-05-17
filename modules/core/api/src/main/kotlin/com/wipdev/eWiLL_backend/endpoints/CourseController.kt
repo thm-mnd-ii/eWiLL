@@ -1,6 +1,5 @@
 package com.wipdev.eWiLL_backend.endpoints
 
-import com.wipdev.eWiLL_backend.database.tables.User
 import com.wipdev.eWiLL_backend.database.tables.course.Course
 import com.wipdev.eWiLL_backend.database.tables.course.CourseUserRole
 import com.wipdev.eWiLL_backend.database.tables.course.ECourseRole
@@ -11,7 +10,6 @@ import com.wipdev.eWiLL_backend.services.CourseService
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Description
-import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
@@ -25,7 +23,6 @@ class CourseController {
     lateinit var service: CourseService
 
 
-
     @GetMapping("/all/{userId}")
     @ResponseBody
     fun getAll(@PathVariable userId: Long): List<CourseEntry> = service.getAll(userId)
@@ -36,7 +33,7 @@ class CourseController {
     fun getById(@PathVariable id: Long): Course = service.getById(id)
 
 
-    @PostMapping()
+    @PostMapping
     @ResponseBody
     fun create(@RequestBody course: Course): Course = service.create(course)
 
@@ -63,8 +60,7 @@ class CourseController {
     @PostMapping("/{id}/join")
     @ResponseBody
     fun joinCourse(
-        @PathVariable id: Long,
-        @RequestBody joinRequestPL: JoinRequestPL
+        @PathVariable id: Long, @RequestBody joinRequestPL: JoinRequestPL
     ): CourseUserRole {
 
         return service.joinCourse(id, joinRequestPL.keyPass, joinRequestPL.userId)
@@ -73,9 +69,9 @@ class CourseController {
 
 
     @PostMapping("/{id}/leave")
-    fun leaveCourse(@PathVariable id: Long, @RequestParam userId: Long){
-            service.leaveCourse(id, userId)
-        } 
+    fun leaveCourse(@PathVariable id: Long, @RequestParam userId: Long) {
+        service.leaveCourse(id, userId)
+    }
 
 
     @GetMapping("/{id}/hasKeyPass")
@@ -97,7 +93,12 @@ class CourseController {
 
     @PostMapping("/{courseId}/changeUserRole/{userId}/{role}/{executorUserId}")
     @ResponseBody
-    fun changeUserRole(@PathVariable courseId: Long,@PathVariable userId:Long, @PathVariable role: ECourseRole,@PathVariable executorUserId:Long) = service.changeUserRole(courseId,userId, role,executorUserId)
+    fun changeUserRole(
+        @PathVariable courseId: Long,
+        @PathVariable userId: Long,
+        @PathVariable role: ECourseRole,
+        @PathVariable executorUserId: Long
+    ) = service.changeUserRole(courseId, userId, role, executorUserId)
 
 
     @GetMapping("/{courseId}/user/{userId}/role")
