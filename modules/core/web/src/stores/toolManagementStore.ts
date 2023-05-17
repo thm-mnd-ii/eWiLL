@@ -15,6 +15,7 @@ interface State {
   mode: Mode;
   showIncomingAnkerPoints: boolean;
   newConnection: Connection;
+  diagramDiv: HTMLElement | null;
 }
 
 export const useToolManagementStore = defineStore("tool-management", {
@@ -25,6 +26,7 @@ export const useToolManagementStore = defineStore("tool-management", {
     mode: Mode.EDIT,
     showIncomingAnkerPoints: false,
     newConnection: {} as Connection,
+    diagramDiv: null,
   }),
   getters: {},
   actions: {
