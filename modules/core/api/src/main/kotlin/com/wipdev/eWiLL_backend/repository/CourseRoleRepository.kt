@@ -20,5 +20,7 @@ interface CourseRoleRepository : CrudRepository<CourseUserRole, Long> {
     @Query("select c from CourseUserRole c where c.courseId = :courseId and c.userId = :userId")
     fun findByCourseIdAndUserId(courseId: Long, userId: Long): CourseUserRole?
 
-
+    @Modifying
+    @Query("update CourseUserRole c set c.role = :role where c.courseId = :courseId and c.userId = :userId")
+    fun updateByCourseIdAndUserId(courseId: Long, userId: Long, role: String): Int
 }

@@ -95,10 +95,10 @@ class CourseController {
     fun archiveCourse(@PathVariable id: Long) = service.archiveCourse(id)
 
 
-    @PostMapping("/{id}/changeUserRole/{role}")
+    @PostMapping("/{courseId}/changeUserRole/{userId}/{role}")
     @ResponseBody
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    fun changeUserRole(@PathVariable id: Long, @PathVariable role: ECourseRole) = service.changeUserRole(id, role)
+    fun changeUserRole(@PathVariable courseId: Long,@PathVariable userId:Long, @PathVariable role: ECourseRole) = service.changeUserRole(courseId,userId, role)
 
 
     @GetMapping("/{courseId}/user/{userId}/role")

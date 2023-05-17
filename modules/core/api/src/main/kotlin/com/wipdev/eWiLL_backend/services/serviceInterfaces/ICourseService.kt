@@ -21,7 +21,7 @@ interface ICourseService {
     fun hasKeyPass(id: Long): Boolean
     fun removeAllButOwner(id: Long): Course
     fun archiveCourse(id: Long): Course
-    fun changeUserRole(id: Long, role: ECourseRole): CourseUserRole
+    fun changeUserRole(courseId: Long,userId:Long, role: ECourseRole): CourseUserRole
     fun getUserRoleInCourse(courseId: Long, userId: Long): ECourseRole?
 
 

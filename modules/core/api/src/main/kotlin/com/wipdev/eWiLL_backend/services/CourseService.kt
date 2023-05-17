@@ -131,10 +131,9 @@ class CourseService: ICourseService {
         return repository.save(course)
     }
 
-    override fun changeUserRole(id: Long, role: ECourseRole): CourseUserRole {
-        val courseUserRole = courseRoleRepository.findById(id).get()
-        courseUserRole.role = role
-        return courseRoleRepository.save(courseUserRole)
+    override fun changeUserRole(courseId: Long,userId:Long, role: ECourseRole): CourseUserRole {
+        courseRoleRepository.updateByCourseIdAndUserId(courseId,userId,role.toString())
+        return courseRoleRepository.findByCourseIdAndUserId(courseId,userId)!!
     }
 
     override fun getUserRoleInCourse(courseId: Long, userId: Long): ECourseRole? {
