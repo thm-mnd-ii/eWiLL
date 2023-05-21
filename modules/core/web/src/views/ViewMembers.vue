@@ -127,10 +127,15 @@ const kickAllStudents = () => {
 };
 
 const changeRole = (member: Member) => {
-  courseService.changeUserRole(courseId.value, member.user.id, member.role, userId.value).then(() => {
-    snackbarSuccess.value = true;
-    loadCourseMembers();
-  });
+  courseService
+    .changeUserRole(courseId.value, member.user.id, member.role, userId.value)
+    .then(() => {
+      snackbarSuccess.value = true;
+      loadCourseMembers();
+    })
+    .catch(() => {
+      loadCourseMembers();
+    });
 };
 
 const returnToCourse = () => {
