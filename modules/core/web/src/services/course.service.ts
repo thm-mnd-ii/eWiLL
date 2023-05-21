@@ -52,9 +52,8 @@ class CourseService{
     })
   }
 
-  changeUserRole(courseId: number){
-    //TO-DO: This route is not correct
-    return axios.post("/api/course/" + courseId + "/changeUserRole/")
+  changeUserRole(courseId: number, userId: number, role: string, executorUserId: number){
+    return axios.post("/api/course/" + courseId + "/changeUserRole/" + userId + "/" + role + "/" + executorUserId)
   }
 
   deleteCourse(courseId: number){
