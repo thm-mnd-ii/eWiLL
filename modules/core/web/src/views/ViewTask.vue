@@ -77,13 +77,9 @@
         </v-card>
       </div>
       <div v-if="courseRole != 'STUDENT'" class="grid-right">
-        <h3>Abgaben</h3>
+        <h3>Abgaben: {{ submissionCount }}</h3>
         <br />
-        <v-data-table :headers="submissionHeaders" :items="items">
-          <template #item.diagram="{}">
-            <v-btn>Preview</v-btn>
-          </template>
-        </v-data-table>
+        <v-btn @click="openViewTaskSubmissions">Zu den Abgaben</v-btn>
       </div>
     </div>
   </div>
@@ -110,6 +106,7 @@ import evaluationService from "@/services/evaluation.service";
 import { useDiagramStore } from "@/stores/diagramStore";
 import { storeToRefs } from "pinia";
 import ModelingTool from "@/components/ModelingTool.vue";
+import submissionService from "@/services/submission.service";
 
 const route = useRoute();
 const router = useRouter();
@@ -139,19 +136,6 @@ const submissionCount = ref(0);
 const selectedResultTab = ref<any>();
 const taskResults = ref<Result[]>();
 
-const submissionHeaders = [
-  { title: "Vorname", align: "start", value: "prename", key: "prename" },
-  { title: "Nachname", align: "start", value: "surname", key: "surname" },
-  { title: "Diagramm", align: "start", value: "diagram", key: "diagram" },
-  { title: "Datum", align: "start", value: "date", key: "date" },
-];
-
-const items = [
-  { prename: "Maximilian", surname: "Hönig", diagram: "diagram", date: "11.1023.32" },
-  { prename: "Maximilian", surname: "Hönig", diagram: "diagram", date: "11.1023.32" },
-  { prename: "Lukas", surname: "Müller", diagram: "diagram", date: "11.1023.32" },
-];
-
 onMounted(() => {
   courseService.getUserRoleInCourse(userId.value!, courseId.value).then((response) => {
     if (response == "NONE") {
@@ -161,6 +145,7 @@ onMounted(() => {
       loadTask();
       loadCategories();
       diagramStore.createNewDiagram();
+      if (courseRole.value != "STUDENT") loadNumberSubmissions();
       if (courseRole.value == "STUDENT") loadSubmissions();
     }
   });
@@ -234,6 +219,16 @@ const loadSolutionModel = () => {
     diagrams.value.push(response.data);
     selectedDiagramId.value = task.value.solutionModelId;
     showSelectedDiagram(selectedDiagramId.value);
+  });
+};
+
+const openViewTaskSubmissions = () => {
+  router.push(route.path + "/submissions");
+};
+
+const loadNumberSubmissions = () => {
+  submissionService.getSubmissionsByTask(taskId.value).then((response) => {
+    submissionCount.value = response.data.length;
   });
 };
 </script>
