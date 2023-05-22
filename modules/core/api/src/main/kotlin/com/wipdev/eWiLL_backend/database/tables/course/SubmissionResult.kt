@@ -1,5 +1,6 @@
 package com.wipdev.eWiLL_backend.database.tables.course
 
+import org.hibernate.annotations.Type
 import javax.persistence.*
 
 @Entity
@@ -16,33 +17,20 @@ class SubmissionResult {
     @Column(name = "score", nullable = true)
     var score: Number? = null
 
-    @Column(name = "comment", nullable = true)
-    var comment: String? = null
+    @Type(type = "jsonb")
+    @Column(name = "comment", nullable = true, columnDefinition = "jsonb")
+    var comments: List<Any>? = null
 
     @Column(name = "submissionId", nullable = false)
     var submissionId: Long? = null
 
-    override fun toString(): String {
-        return "SumbissionResult(id=$id, correct=$correct, score=$score, comment=$comment)"
+
+    public fun addComment(comment: String) {
+        comments = if (comments == null) {
+            listOf(comment)
+        } else {
+            comments!!.plus(comment)
+        }
     }
 
-    override fun hashCode(): Int {
-        var result = id?.hashCode() ?: 0
-        result = 31 * result + (correct?.hashCode() ?: 0)
-        result = 31 * result + (score?.hashCode() ?: 0)
-        result = 31 * result + (comment?.hashCode() ?: 0)
-        return result
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as SubmissionResult
-
-        if (id != other.id) return false
-        if (correct != other.correct) return false
-        if (score != other.score) return false
-        return comment == other.comment
-    }
 }

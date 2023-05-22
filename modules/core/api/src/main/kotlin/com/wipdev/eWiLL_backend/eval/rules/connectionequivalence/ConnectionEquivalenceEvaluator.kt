@@ -3,7 +3,7 @@ package com.wipdev.eWiLL_backend.eval.rules.connectionequivalence
 import com.wipdev.eWiLL_backend.eval.compile.DiagramConnection
 import com.wipdev.eWiLL_backend.eval.compile.DiagramEvalPL
 import com.wipdev.eWiLL_backend.eval.rules.*
-import com.wipdev.eWiLL_backend.eval.utils.Dictionary
+import com.wipdev.eWiLL_backend.utils.translate.Dictionary
 import com.wipdev.eWiLL_backend.utils.stringsimmilarity.StringFinderUtils
 
 class ConnectionEquivalenceEvaluator: IRuleEvaluator {
