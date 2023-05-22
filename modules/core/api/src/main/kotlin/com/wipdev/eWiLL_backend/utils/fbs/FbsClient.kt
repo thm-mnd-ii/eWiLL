@@ -13,7 +13,7 @@ import java.nio.charset.StandardCharsets
 
 class FbsClient {
 
-    private final val baseUrl = "https://feedback.mni.thm.de/api/v1"
+    private val baseUrl = "https://feedback.mni.thm.de/api/v1"
 
     fun getLoginLdap(username: String, password: String): HttpResponse<String>? {
         val url = "$baseUrl/login/ldap"

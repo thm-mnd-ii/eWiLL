@@ -1,6 +1,5 @@
 package com.wipdev.eWiLL_backend.endpoints
 
-import com.wipdev.eWiLL_backend.database.tables.User
 import com.wipdev.eWiLL_backend.database.tables.course.Course
 import com.wipdev.eWiLL_backend.database.tables.course.CourseUserRole
 import com.wipdev.eWiLL_backend.database.tables.course.ECourseRole
@@ -11,7 +10,6 @@ import com.wipdev.eWiLL_backend.services.CourseService
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Description
-import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 

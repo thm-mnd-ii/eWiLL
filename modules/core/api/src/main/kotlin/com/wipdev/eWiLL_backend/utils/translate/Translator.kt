@@ -1,7 +1,6 @@
 package com.wipdev.eWiLL_backend.utils.translate
 
 import org.springframework.http.MediaType
-import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 
@@ -32,8 +31,8 @@ class Translator {
         }
         @Deprecated("Update api")
         fun detectLanguage(message: String): Language {
-            val client = WebClient.create();
-            val bodyMessage = "[{\"Text\": \"$message\"}]";
+            val client = WebClient.create()
+            val bodyMessage = "[{\"Text\": \"$message\"}]"
             val response = client.post()
                 .uri("https://microsoft-translator-text.p.rapidapi.com/Detect?api-version=3.0")
                 .header("content-type", "application/json")

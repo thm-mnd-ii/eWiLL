@@ -81,7 +81,7 @@ class DiagramService : IDiagramService {
                 diagram.categoryId ?: 0//Default Category is 0
             )
         }
-        fun parseConnections(connections: String?): List<Connection> {
+        private fun parseConnections(connections: String?): List<Connection> {
             return Json.mapper().readValue(connections, Array<Connection>::class.java).toList()
 
         }

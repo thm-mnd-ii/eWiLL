@@ -2,7 +2,7 @@ package com.wipdev.eWiLL_backend.eval.rules.entityequivalence
 
 import com.wipdev.eWiLL_backend.eval.compile.DiagramEvalPL
 import com.wipdev.eWiLL_backend.eval.rules.*
-import com.wipdev.eWiLL_backend.eval.utils.Dictionary
+import com.wipdev.eWiLL_backend.utils.translate.Dictionary
 import com.wipdev.eWiLL_backend.utils.stringsimmilarity.StringFinderUtils
 
 class EntityCheckNameRuleEvaluator : IRuleEvaluator {

@@ -34,14 +34,14 @@ class DiagramEvalResult(private var ruleEvalResults: List<RuleEvalResult>) {
         }
         this.score = score
 
-        return this;
+        return this
     }
 
     fun getResult():SubmissionResult{
         val submissionResult = SubmissionResult()
         submissionResult.correct = score >= 100
         submissionResult.score = score
-        submissionResult.comment = ruleEvalResults.joinToString("\n") { it.message ?: "" }
+        submissionResult.addComment(ruleEvalResults.joinToString("\n") { it.message ?: "" })
         return submissionResult
     }
 }

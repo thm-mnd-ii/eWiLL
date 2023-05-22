@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service
 @Service
 interface IEvaluationService {
 
-    fun eval(submissionRequestPL: SubmissionRequestPL): Long?
+    fun submit(submissionRequestPL: SubmissionRequestPL): Long?
 
     fun getSubmissionResultBySubmissionId(id :Long?): com.wipdev.eWiLL_backend.database.tables.course.SubmissionResult?
     fun getNewestSubmission(userId: Long, taskId: Long): Submission

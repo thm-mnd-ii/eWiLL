@@ -3,26 +3,25 @@ package com.wipdev.eWiLL_backend.eval.rules.attributeequivalence
 import com.wipdev.eWiLL_backend.endpoints.payload.requests.Attribute
 import com.wipdev.eWiLL_backend.eval.compile.DiagramEvalPL
 import com.wipdev.eWiLL_backend.eval.rules.*
-import com.wipdev.eWiLL_backend.eval.utils.Dictionary
 import com.wipdev.eWiLL_backend.utils.stringsimmilarity.StringFinderUtils
-import com.wipdev.eWiLL_backend.utils.translate.Translator
+import com.wipdev.eWiLL_backend.utils.translate.Dictionary
 
 class AttributeEquivalenceEvaluator: IRuleEvaluator {
 
 
     override fun eval(diagramEvalPL: DiagramEvalPL, rule: Rule, ruleConfig: RuleConfig): RuleEvalResult {
         var stringBuilder = StringBuilder()
-        var errors = 0;
+        var errors = 0
         for(entity in diagramEvalPL.bestSolutionDiagram.nodes) {
             for (attribute in entity.entity!!.attributes!!) {
-               var possibleNames =Dictionary.getPossibleNames(attribute.name!!)
-                var found = false;
-                var foundAttibute: Attribute? = null;
+               var possibleNames = Dictionary.getPossibleNames(attribute.name!!)
+                var found = false
+                var foundAttibute: Attribute? = null
                 for(att in entity.otherModelNode.entity!!.attributes!!){
                     if(StringFinderUtils.isPresent(att.name!!,possibleNames)){
                         stringBuilder.append("Attribute ${att.name} is correct")
-                        found = true;
-                        foundAttibute = att;
+                        found = true
+                        foundAttibute = att
                     }
                 }
                 if(!found){

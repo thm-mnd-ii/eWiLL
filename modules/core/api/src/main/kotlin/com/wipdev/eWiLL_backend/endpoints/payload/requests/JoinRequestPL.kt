@@ -1,4 +1,4 @@
-package com.wipdev.eWiLL_backend.endpoints.payload.requests;
+package com.wipdev.eWiLL_backend.endpoints.payload.requests
 
 data class JoinRequestPL (
     var keyPass:String,

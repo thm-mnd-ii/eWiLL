@@ -1,6 +1,5 @@
 package com.wipdev.eWiLL_backend.services
 
-import com.wipdev.eWiLL_backend.database.tables.User
 import com.wipdev.eWiLL_backend.database.tables.course.Course
 import com.wipdev.eWiLL_backend.database.tables.course.CourseUserRole
 import com.wipdev.eWiLL_backend.database.tables.course.ECourseRole

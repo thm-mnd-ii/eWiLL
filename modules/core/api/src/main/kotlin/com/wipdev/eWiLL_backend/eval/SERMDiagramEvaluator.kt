@@ -12,7 +12,7 @@ class SERMDiagramEvaluator : IDiagramEvaluator {
 
         var diagramEvalResult = DiagramEvalResult( emptyList())
         for(rule in diagramEvalPL.ruleset!!.getRules()) {
-            var ruleResult = rule.ruleEvaluator.eval(diagramEvalPL, rule,diagramEvalPL.ruleset!!.getRuleConfigs().first(){it.ruleId == rule.id})
+            var ruleResult = rule.ruleEvaluator.eval(diagramEvalPL, rule,diagramEvalPL.ruleset!!.getRuleConfigs().first {it.ruleId == rule.id})
             diagramEvalResult.addToRuleEvalResults(ruleResult)
         }
         return diagramEvalResult.calculateScore()

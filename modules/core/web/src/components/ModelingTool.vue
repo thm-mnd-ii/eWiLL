@@ -49,6 +49,8 @@ const minHeight = computed(() => diagramStore.getMinHeight() + 200);
 onMounted(() => {
   updateLines();
   updateArea();
+
+  toolManagementStore.diagramDiv = modelingContainer.value as HTMLElement;
 });
 
 diagramStore.$subscribe(() => {

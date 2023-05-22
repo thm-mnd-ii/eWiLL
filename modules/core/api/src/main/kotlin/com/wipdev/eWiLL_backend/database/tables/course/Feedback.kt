@@ -1,6 +1,5 @@
 package com.wipdev.eWiLL_backend.database.tables.course
 
-import com.wipdev.eWiLL_backend.MediaType
 import com.wipdev.eWiLL_backend.database.tables.EFeedbackStatus
 import javax.persistence.*
 
