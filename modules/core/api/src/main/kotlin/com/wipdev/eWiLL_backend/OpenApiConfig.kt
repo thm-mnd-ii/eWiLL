@@ -15,7 +15,7 @@ class OpenApiConfig {
                 Info()
                     .title("eWiLL_backend API")
                     .version("0.9")
-                    .description("API for managing eWiLL_backend functionality.")
+                    .description("API für das Feedback-System für Datenbank-Systeme an der THM")
                     .license(
                         io.swagger.v3.oas.models.info.License()
                             .name("Apache 2.0")
