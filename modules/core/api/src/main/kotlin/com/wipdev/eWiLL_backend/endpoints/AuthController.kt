@@ -1,13 +1,12 @@
 package com.wipdev.eWiLL_backend.endpoints
 
-import com.wipdev.eWiLL_backend.database.tables.Role
 import com.wipdev.eWiLL_backend.database.tables.User
 import com.wipdev.eWiLL_backend.endpoints.payload.requests.LoginRequestPL
 import com.wipdev.eWiLL_backend.endpoints.payload.responses.JwtResponse
-import com.wipdev.eWiLL_backend.utils.fbs.FbsClient
 import com.wipdev.eWiLL_backend.repository.RoleRepository
 import com.wipdev.eWiLL_backend.repository.UserRepository
 import com.wipdev.eWiLL_backend.security.auth.*
+import com.wipdev.eWiLL_backend.utils.fbs.FbsClient
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity

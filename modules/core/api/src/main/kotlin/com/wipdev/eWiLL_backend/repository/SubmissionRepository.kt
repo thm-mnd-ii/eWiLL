@@ -1,8 +1,8 @@
 package com.wipdev.eWiLL_backend.repository
 
-import org.springframework.data.jpa.repository.Query
 import com.wipdev.eWiLL_backend.database.tables.course.Submission
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Query
 
 interface SubmissionRepository : JpaRepository<Submission, Long> {
 

@@ -9,7 +9,7 @@ val id: Long?,
                    val attributes: Array<Attribute>?
  */
 
-class Entity () {
+class Entity {
 
     var id: Long? = null
     var type: Int? = null

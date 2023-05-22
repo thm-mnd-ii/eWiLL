@@ -25,7 +25,7 @@ class SubmissionResult {
     var submissionId: Long? = null
 
 
-    public fun addComment(comment: String) {
+    fun addComment(comment: String) {
         comments = if (comments == null) {
             listOf(comment)
         } else {

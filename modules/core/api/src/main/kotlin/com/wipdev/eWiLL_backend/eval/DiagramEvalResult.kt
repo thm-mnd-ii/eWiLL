@@ -34,7 +34,7 @@ class DiagramEvalResult(private var ruleEvalResults: List<RuleEvalResult>) {
         }
         this.score = score
 
-        return this;
+        return this
     }
 
     fun getResult():SubmissionResult{

@@ -1,4 +1,4 @@
-package com.wipdev.eWiLL_backend.endpoints;
+package com.wipdev.eWiLL_backend.endpoints
 
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.GetMapping
