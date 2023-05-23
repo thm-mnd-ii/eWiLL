@@ -21,4 +21,5 @@ interface CourseRoleRepository : CrudRepository<CourseUserRole, Long> {
     fun findByCourseIdAndUserId(courseId: Long, userId: Long): CourseUserRole?
 
 
+
 }
