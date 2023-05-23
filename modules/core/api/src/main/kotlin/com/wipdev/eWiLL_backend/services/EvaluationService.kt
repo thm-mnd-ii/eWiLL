@@ -17,6 +17,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import java.util.stream.Collectors.toList
 import javax.persistence.Column
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
@@ -86,7 +87,7 @@ class EvaluationService : IEvaluationService {
             val ruleset = Ruleset()//TODO Change here when configs are needed
             val solutionDiagrams: List<DiagramPL> =
                 listOf(diagramRepository.getReferenceById(submission.diagram!!.toLong())).stream()
-                    .map { DiagramService.convert(it, configRepository) }.toList()
+                    .map { DiagramService.convert(it, configRepository) }.collect(toList())
             val diagramEvalEntry = DiagramEvalEntry(
                 taskRepository.getReferenceById(submission.taskId!!),
                 ruleset,
@@ -143,17 +144,17 @@ class EvaluationService : IEvaluationService {
 
     fun getSubmissions(userId: Long, taskId: Long): List<SubmissionWithDiagram> {
         return submissionRepository.findAllByUserIdAndTaskId(userId, taskId).stream()
-            .map { getAsSubmissionWithDiagram(it) }.toList()
+            .map { getAsSubmissionWithDiagram(it) }.collect(toList())
     }
 
     fun getNewestSubmissionsByTaskId(taskId: Long): List<SubmissionWithDiagram> {
         return submissionRepository.getNewestSubmissionsByTaskId(taskId).stream()
-            .map { getAsSubmissionWithDiagram(it) }.toList()
+            .map { getAsSubmissionWithDiagram(it) }.collect(toList())
     }
 
     fun getSubmissionsByTaskId(taskId: Long): List<SubmissionWithDiagram> {
         return submissionRepository.getSubmissionsByTaskId(taskId).stream().map { getAsSubmissionWithDiagram(it) }
-            .toList()
+            .collect(toList())
     }
 
     private fun getAsSubmissionWithDiagram(submission: Submission): SubmissionWithDiagram {
