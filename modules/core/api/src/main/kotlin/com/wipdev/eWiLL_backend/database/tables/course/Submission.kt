@@ -1,5 +1,7 @@
 package com.wipdev.eWiLL_backend.database.tables.course
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.wipdev.eWiLL_backend.database.tables.Diagram
 import javax.persistence.*
 
 @Entity
@@ -23,6 +25,21 @@ class Submission {
     @Column(name = "diagram", nullable = false, length = 100000)
     var diagram: String? = null
 
+    // Convert the diagram to a JSON string when setting the property
+    fun setDiagram(diagram: Diagram) {
+        val objectMapper = ObjectMapper()
+        this.diagram = objectMapper.writeValueAsString(diagram)
+    }
+
+    // Convert the JSON string back to a Diagram object when getting the property
+    fun getDiagram(): Diagram? {
+        val objectMapper = ObjectMapper()
+        return diagram?.let {
+            objectMapper.readValue(it, Diagram::class.java)
+        }
+    }
+
+
     @Column(name = "attempt", nullable = false)
     var attempt: Int? = null
 
@@ -39,7 +56,5 @@ class Submission {
         return id?.hashCode() ?: 0
     }
 
-    override fun toString(): String {
-        return "Submission(id=$id, userId=$userId, taskId=$taskId, date=$date, diagram=$diagram)"
-    }
+
 }
