@@ -14,7 +14,7 @@
             <v-select v-if="!workInProgress" v-model="currentTask.mediaType" :items="['Model', 'Text']" label="Medientyp" variant="underlined" required color="#81ba24"></v-select>
             <v-select v-if="!workInProgress" v-model="currentTask.rulesetId" :items="rulesets" item-title="name" label="Regelsatz" variant="underlined" required color="#81ba24" item-value="id"></v-select>
             <v-select v-model="currentTask.eliability" :items="liabilities" label="Verpflichtung" variant="underlined" required color="#81ba24" item-title="name" item-value="enum"></v-select>
-            <v-select v-model="maxSubmissions" :items="['Unbegrenzt', 1, 2, 3, 4, 5, 7, 8, 9, 10]" label="Versuche" variant="underlined" required color="#81ba24" @update:model-value="updateMaxSubmissionsOnCurrentTask"></v-select>
+            <v-select v-model="maxSubmissions" :items="arrayMaxSubmissions" label="Versuche" variant="underlined" required color="#81ba24" hint="0 = unbegrenzt" placeholder="0 = unbegrenzt" @update:model-value="updateMaxSubmissionsOnCurrentTask"></v-select>
           </div>
         </v-form>
       </v-card-text>
@@ -39,6 +39,8 @@ import { useAuthUserStore } from "@/stores/authUserStore";
 import { useRoute } from "vue-router";
 import taskService from "@/services/task.service";
 import router from "@/router";
+
+const arrayMaxSubmissions = Array.from(Array(100).keys());
 
 const workInProgress = ref(true);
 
@@ -171,7 +173,7 @@ const deleteTask = () => {
 };
 
 const updateMaxSubmissionsOnCurrentTask = (submissions: any) => {
-  if (submissions == "Unbegrenzt") currentTask.value.maxSubmissions = 999;
+  if (submissions == 0) currentTask.value.maxSubmissions = 999;
   else currentTask.value.maxSubmissions = submissions;
 };
 
