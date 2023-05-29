@@ -85,7 +85,11 @@ const leaveCourse = () => {
 
 const editCourse = () => {
   if (dialogCreateCourse.value) {
-    dialogCreateCourse.value.openDialog(courseId.value).then(() => {});
+    dialogCreateCourse.value.openDialog(courseId.value).then(() => {
+      courseService.getCourse(courseId.value).then((response) => {
+        course.value = response.data;
+      });
+    });
   }
 };
 
