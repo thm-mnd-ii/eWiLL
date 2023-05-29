@@ -2,7 +2,8 @@ interface Result {
     id: number;
     correct: boolean;
     score: number;
-    comment: string;
+    comments: string[];
+    submissionId: number;
   }
   
   export default Result;

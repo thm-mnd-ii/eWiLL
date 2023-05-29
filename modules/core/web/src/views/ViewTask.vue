@@ -55,26 +55,7 @@
           <span>Auswertungsergebnisse</span>
           <span>Anzahl Abgaben: {{ submissionCount }} / {{ task.maxSubmissions }}</span>
         </div>
-        <v-card class="task-trials-tabs">
-          <v-tabs v-model="selectedResultTab" bg-color="teal-darken-3" slider-color="teal-lighten-3">
-            <v-tab v-for="tab in taskResults" :key="tab.id" :value="tab.id">
-              {{ "Ergebnis " + tab.id }}
-            </v-tab>
-          </v-tabs>
-          <v-window v-model="selectedResultTab">
-            <v-window-item v-for="tab in taskResults" :key="tab.id" :value="tab.id">
-              <v-card flat>
-                <v-card-text class="task-trials-text">
-                  <p>Tab {{ tab.id }}</p>
-                </v-card-text>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn class="" append-icon="mdi-open-in-new" color="dark-gray" variant="text"> Zeige Fehler im Diagram </v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-window-item>
-          </v-window>
-        </v-card>
+        <TaskSubmissionsResultsTabs ref="taskSubmissionsResultsTabs"></TaskSubmissionsResultsTabs>
       </div>
       <div v-if="courseRole != 'STUDENT'" class="grid-right">
         <h3>Abgaben: {{ submissionCount }}</h3>
@@ -108,6 +89,9 @@ import { storeToRefs } from "pinia";
 import ModelingTool from "@/components/ModelingTool.vue";
 import submissionService from "@/services/submission.service";
 
+import TaskSubmissionsResultsTabs from "@/components/TaskSubmissionsResultsTabs.vue";
+const taskSubmissionsResultsTabs = ref<typeof TaskSubmissionsResultsTabs>();
+
 const route = useRoute();
 const router = useRouter();
 const authUserStore = useAuthUserStore();
@@ -132,9 +116,6 @@ const selectedDiagram = ref<Diagram>();
 
 //const submissions = ref();
 const submissionCount = ref(0);
-
-const selectedResultTab = ref<any>();
-const taskResults = ref<Result[]>();
 
 onMounted(() => {
   courseService.getUserRoleInCourse(userId.value!, courseId.value).then((response) => {
@@ -171,6 +152,7 @@ const loadSubmissions = () => {
     const submissionIds = response.data;
     submissionCount.value = submissionIds.length;
     // TODO: Load submissions/results
+    if (submissionCount.value > 0) taskSubmissionsResultsTabs.value!.load(taskId.value);
   });
 };
 

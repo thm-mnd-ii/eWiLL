@@ -1,9 +1,11 @@
+import Diagram from "../diagram/Diagram"
+
 interface Submission {
     id: number;
     userId: number;
     taskId: number;
     date: string;
-    diagram: string;
+    diagram: Diagram
     attempt: number;
   }
   

@@ -17,6 +17,10 @@ class SubmissionService{
     getLatestSubmissionsByTask(taskId: number){
         return axios.get("/api/evaluation/v2/submission/newest/" + taskId)
     }
+
+    getResultBySubmissionId(submissionId: number){
+        return axios.get("/api/evaluation/v2/result/" + submissionId)
+    }
 }
 
 export default new SubmissionService();
