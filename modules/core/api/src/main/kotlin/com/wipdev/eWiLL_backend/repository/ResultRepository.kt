@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository
 @Repository
 interface ResultRepository : JpaRepository<SubmissionResult, Long> {
 
+
     @Query("SELECT r FROM SubmissionResult r WHERE r.submissionId = :submissionId")
-    fun getResultsBySubmissionId(submissionId: Long): SubmissionResult?
+    fun findBySubmissionId(submissionId: Long): SubmissionResult
 }

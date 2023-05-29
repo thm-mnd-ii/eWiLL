@@ -96,10 +96,10 @@ class EvaluationService : IEvaluationService {
             )
             try {
                 val result = evaluator.eval(diagramEvalEntry)
-                resultRepository.save(result.getResult())
+                resultRepository.save(result.getResult(submission.id!!))
 
             } catch (e: Exception) {
-                var result = resultRepository.getResultsBySubmissionId(submission.id!!)
+                var result = resultRepository.findBySubmissionId(submission.id!!)
                 if(result == null){
                     result = SubmissionResult()
                 }
@@ -111,7 +111,7 @@ class EvaluationService : IEvaluationService {
                 resultRepository.save(result)
             }
         } catch (e: Exception) {
-            var result = resultRepository.getResultsBySubmissionId(submission.id!!)
+            var result = resultRepository.findBySubmissionId(submission.id!!)
             if(result == null){
                 result = SubmissionResult()
             }
@@ -139,7 +139,7 @@ class EvaluationService : IEvaluationService {
 
 
     override fun getSubmissionResultBySubmissionId(id: Long?): SubmissionResult? =
-        resultRepository.getResultsBySubmissionId(id!!)
+        resultRepository.findBySubmissionId(id!!)
 
 
     fun getSubmissions(userId: Long, taskId: Long): List<SubmissionWithDiagram> {

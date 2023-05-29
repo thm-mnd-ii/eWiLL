@@ -24,8 +24,11 @@ class EvaluationController {
 
     @GetMapping("/result/{submissionId}")
     @ResponseBody
-    fun getResult(@PathVariable submissionId: Long): SubmissionResult? =
-        service.getSubmissionResultBySubmissionId(submissionId)
+    fun getResult(@PathVariable submissionId: Long): SubmissionResult?{
+
+        return service.getSubmissionResultBySubmissionId(submissionId)
+    }
+
 
 
     @GetMapping("/submissionIds/{userId}/{taskId}")

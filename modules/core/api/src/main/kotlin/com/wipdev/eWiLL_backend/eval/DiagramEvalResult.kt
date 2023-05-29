@@ -37,11 +37,12 @@ class DiagramEvalResult(private var ruleEvalResults: List<RuleEvalResult>) {
         return this
     }
 
-    fun getResult():SubmissionResult{
+    fun getResult(submissionId :Long):SubmissionResult{
         val submissionResult = SubmissionResult()
         submissionResult.correct = score >= 100
         submissionResult.score = score
         submissionResult.addComment(ruleEvalResults.joinToString("\n") { it.message ?: "" })
+        submissionResult.submissionId = submissionId
         return submissionResult
     }
 }

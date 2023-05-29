@@ -11,13 +11,13 @@ class SubmissionResult {
     @Column(name = "id", nullable = false)
     var id: Long? = null
 
-    @Column(name = "correct", nullable = true)
-    var correct: Boolean? = null
+    @Column(name = "correct", nullable = false)
+    var correct: Boolean? = false
 
-    @Column(name = "score", nullable = true)
-    var score: Number? = null
+    @Column(name = "score", nullable = false)
+    var score: Float? = 0f
 
-    @Type(type = "jsonb")
+    @Type(type = "com.wipdev.eWiLL_backend.database.tables.utils.JsonbUserType")
     @Column(name = "comment", nullable = true, columnDefinition = "jsonb")
     var comments: List<Any>? = null
 
