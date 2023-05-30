@@ -67,6 +67,8 @@ const localLogin = () => {
           errorMessage.value = "Server Error";
         } else if (error.response.status == 404) {
           errorMessage.value = "Server nicht erreichbar";
+        } else if (error.response.status == 429) {
+          errorMessage.value = "Zu viele Anfragen";
         } else {
           errorMessage.value = "Unbekannter Fehler";
         }
