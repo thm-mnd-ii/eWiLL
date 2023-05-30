@@ -23,7 +23,7 @@
       <v-text-field v-model="search" label="Search" density="compact" prepend-icon="mdi-magnify" variant="underlined" hide-details class="search-field"></v-text-field>
       <v-data-table :headers="headers" :items="members" item-value="name" class="elevation-1" :search="search" density="default" height="480px">
         <template #item.role="{ item }">
-          <v-select v-model="item.raw.role" item variant="plain" :items="['STUDENT', 'DOZENT', 'OWNER']" class="select" :disabled="courseRole == 'STUDENT'" @update:model-value="changeRole(item.raw)"></v-select>
+          <v-select v-model="item.raw.role" item variant="plain" :items="['STUDENT', 'TUTOR', 'OWNER']" class="select" :disabled="courseRole == 'STUDENT'" @update:model-value="changeRole(item.raw)"></v-select>
         </template>
         <template #item.actions="{ item }">
           <v-btn icon="mdi-delete" color="red" variant="text" :disabled="courseRole == 'STUDENT'" @click="kickUser(item.raw.user)"></v-btn>
@@ -33,6 +33,7 @@
 
     <div class="task-main"></div>
   </div>
+  <v-snackbar v-model="snackbarSuccess" :timeout="2500"> Rolle erfolgreich geändert </v-snackbar>
 </template>
 
 <script setup lang="ts">
@@ -48,6 +49,7 @@ const route = useRoute();
 const router = useRouter();
 const authUserStore = useAuthUserStore();
 const dialogConfirm = ref<typeof DialogConfirmVue>();
+const snackbarSuccess = ref(false);
 
 const members = ref<Member[]>();
 
@@ -125,7 +127,15 @@ const kickAllStudents = () => {
 };
 
 const changeRole = (member: Member) => {
-  //TO-DO: Change user role
+  courseService
+    .changeUserRole(courseId.value, member.user.id, member.role, userId.value)
+    .then(() => {
+      snackbarSuccess.value = true;
+      loadCourseMembers();
+    })
+    .catch(() => {
+      loadCourseMembers();
+    });
 };
 
 const returnToCourse = () => {
