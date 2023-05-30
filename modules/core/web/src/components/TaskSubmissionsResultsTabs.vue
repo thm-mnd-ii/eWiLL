@@ -9,8 +9,8 @@
       <v-window-item v-for="tab in submissionsWithResults" :key="tab.submission.id" :value="tab.submission.id">
         <v-card flat>
           <v-card-text class="task-trials-text">
-            <v-chip v-if="tab.result.correct" color="green" append-icon="mdi-check-circle" class="margin-right-5px">Lösung korrekt: </v-chip>
-            <v-chip v-if="!tab.result.correct" color="red" append-icon="mdi-close-circle" class="margin-right-5px">Lösung korrekt: </v-chip>
+            <v-chip v-if="tab.result.correct" color="green" append-icon="mdi-check-circle" class="margin-right-5px">Korrekt: </v-chip>
+            <v-chip v-if="!tab.result.correct" color="red" append-icon="mdi-close-circle" class="margin-right-5px">Korrekt: </v-chip>
             <v-chip v-if="tab.result.correct" color="green">Score: {{ tab.result.score }}</v-chip>
             <v-chip v-if="!tab.result.correct" color="red">Score: {{ tab.result.score }}</v-chip>
             <br />
