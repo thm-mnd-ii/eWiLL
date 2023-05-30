@@ -7,7 +7,7 @@ class AuthService {
       .then((response) => response.data.ip)
       .catch((error) => {
         console.error("Fehler beim Abrufen der IP-Adresse:", error);
-        return null;
+        throw error;
       });
   }
 
@@ -37,8 +37,7 @@ class AuthService {
           return response.data;
         })
         .catch((error) => {
-          console.log(error);
-          return error.response;
+          throw error;
         });
     });
   }
