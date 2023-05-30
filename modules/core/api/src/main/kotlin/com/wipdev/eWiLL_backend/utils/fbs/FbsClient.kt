@@ -23,13 +23,24 @@ class FbsClient {
         val passwordBytes = password.toByteArray(StandardCharsets.UTF_8)
         val requestBody =
             "{\"username\":\"$username\",\"password\":\"${String(passwordBytes, StandardCharsets.UTF_8)}\"}"
-        val request = HttpRequest.newBuilder()
-            .uri(URI.create(url))
-            .header("Content-Type", "application/json")
-            .header("X-Forwarded-For",servletRequest.getHeader("X-Forwarded-For") )
-            .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-            .build()
-        return client.send(request, HttpResponse.BodyHandlers.ofString())
+        if(servletRequest.getHeader("X-Forwarded-For").isNullOrEmpty()){
+            val request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .build()
+            return client.send(request, HttpResponse.BodyHandlers.ofString())
+        }else{
+            val request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Content-Type", "application/json")
+                .header("X-Forwarded-For",servletRequest.getHeader("X-Forwarded-For") )
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .build()
+            return client.send(request, HttpResponse.BodyHandlers.ofString())
+        }
+
+
     }
 
     fun getUserInformation(headers: HttpHeaders, servletRequest: HttpServletRequest): FbsUser {
