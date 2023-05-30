@@ -51,19 +51,33 @@ class FbsClient {
         val id = decodingResult.userID
         val url = "$baseUrl/users/${id}"
         val client = HttpClient.newBuilder().build()
-
-        val request = HttpRequest.newBuilder()
-            .uri(URI.create(url))
-            .header("Authorization", headers.firstValue("Authorization").get())
-            .header("X-Forwarded-For",servletRequest.getHeader("X-Forwarded-For") )
-            .GET()
-            .build()
-        val response = client.send(request, HttpResponse.BodyHandlers.ofString())
-        println(response.body() + " " + response.statusCode())
-        return if (response.statusCode() != 200) {
-            FbsUser()
-        } else {
-            Json.mapper().readValue(response.body(), FbsUser::class.java)
+        if(servletRequest.getHeader("X-Forwarded-For").isNullOrEmpty()){
+            val request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Authorization", headers.firstValue("Authorization").get())
+                .GET()
+                .build()
+            val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+            println(response.body() + " " + response.statusCode())
+            return if (response.statusCode() != 200) {
+                FbsUser()
+            } else {
+                Json.mapper().readValue(response.body(), FbsUser::class.java)
+            }
+        }else{
+            val request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Authorization", headers.firstValue("Authorization").get())
+                .header("X-Forwarded-For",servletRequest.getHeader("X-Forwarded-For") )
+                .GET()
+                .build()
+            val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+            println(response.body() + " " + response.statusCode())
+            return if (response.statusCode() != 200) {
+                FbsUser()
+            } else {
+                Json.mapper().readValue(response.body(), FbsUser::class.java)
+            }
         }
 
     }
