@@ -163,7 +163,7 @@ class EvaluationService : IEvaluationService {
         submissionWithDiagram.userId = submission.userId
         submissionWithDiagram.taskId = submission.taskId
         submissionWithDiagram.date = submission.date
-        submissionWithDiagram.diagram = submission.getDiagram()
+        submissionWithDiagram.diagram = submission.getDiagram()?.let { DiagramService.convert(it, configRepository) }
         submissionWithDiagram.attempt = submission.attempt
         return submissionWithDiagram
     }
@@ -178,7 +178,7 @@ class EvaluationService : IEvaluationService {
 
         var date: String? = null
 
-        var diagram: Diagram? = null
+        var diagram: DiagramPL? = null
 
         var attempt: Int? = null
 
