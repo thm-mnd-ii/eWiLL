@@ -34,4 +34,9 @@ class DiagramNode {
     }
 
 
+    public fun getEntityName(): String? {
+        return entity!!.entityName
+    }
+
+
 }

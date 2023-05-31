@@ -13,6 +13,5 @@ interface ITaskService {
     fun create(courseId: Long, task: Task): Task
     fun update(id: Long, task: Task): Task
     fun delete(id: Long): Task
-    fun createRuleset(ruleset: Ruleset): Long?
 
 }

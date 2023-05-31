@@ -7,7 +7,7 @@ import com.wipdev.eWiLL_backend.utils.translate.Dictionary
 import com.wipdev.eWiLL_backend.utils.stringsimmilarity.StringFinderUtils
 
 class ConnectionEquivalenceEvaluator: IRuleEvaluator {
-    override fun eval(diagramEvalPL: DiagramEvalPL, rule: Rule, ruleConfig: RuleConfig): RuleEvalResult {
+    override fun eval(diagramEvalPL: DiagramEvalPL, rule: Rule): RuleEvalResult {
         var stringbuilder = StringBuilder()
         var errors = 0;
         for(diagramConnection in diagramEvalPL.bestSolutionDiagram.connections){

@@ -50,4 +50,8 @@ class Entity {
         result = 31 * result + (attributes?.contentHashCode() ?: 0)
         return result
     }
+
+    override fun toString(): String {
+        return "Entity(id=$id, type=$type, entityName=$entityName, top=$top, left=$left, width=$width, attributes=${attributes?.contentToString()})"
+    }
 }

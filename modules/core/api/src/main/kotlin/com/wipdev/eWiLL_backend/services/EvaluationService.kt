@@ -84,13 +84,12 @@ class EvaluationService : IEvaluationService {
     fun runEval(submission: Submission, diagram: Diagram) {
         try {
             val evaluator: IDiagramEvaluator = SERMDiagramEvaluator()
-            val ruleset = Ruleset()//TODO Change here when configs are needed
+            val task = taskRepository.getReferenceById(submission.taskId!!)
             val solutionDiagrams: List<DiagramPL> =
-                listOf(diagramRepository.getReferenceById(submission.diagram!!.toLong())).stream()
-                    .map { DiagramService.convert(it, configRepository) }.collect(toList())
+                listOf(diagramRepository.getReferenceById(task.solutionModelId!!))
+                    .stream().map { DiagramService.convert(it, configRepository) }.collect(toList())
             val diagramEvalEntry = DiagramEvalEntry(
                 taskRepository.getReferenceById(submission.taskId!!),
-                ruleset,
                 DiagramService.convert(diagram, configRepository),
                 solutionDiagrams
             )
@@ -100,9 +99,8 @@ class EvaluationService : IEvaluationService {
 
             } catch (e: Exception) {
                 var result = resultRepository.findBySubmissionId(submission.id!!)
-                if(result == null){
+                if(result == null)
                     result = SubmissionResult()
-                }
                 result.addComment("Error occurred during evaluation, see logs for more details")
                 e.printStackTrace()
                 result.correct = false
@@ -112,9 +110,8 @@ class EvaluationService : IEvaluationService {
             }
         } catch (e: Exception) {
             var result = resultRepository.findBySubmissionId(submission.id!!)
-            if(result == null){
+            if(result == null)
                 result = SubmissionResult()
-            }
             result.addComment("Error preparing Evaluation, see logs for more details")
             e.printStackTrace()
             result.correct = false

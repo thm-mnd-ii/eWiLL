@@ -18,7 +18,7 @@ class SubmissionResult {
     var score: Float? = 0f
 
     @Type(type = "com.wipdev.eWiLL_backend.database.tables.utils.JsonbUserType")
-    @Column(name = "comment", nullable = true, columnDefinition = "jsonb")
+    @Column(name = "comment", nullable = true, columnDefinition = "jsonb", length = 100000)
     var comments: List<Any>? = null
 
     @Column(name = "submissionId", nullable = false)

@@ -10,5 +10,5 @@ interface ResultRepository : JpaRepository<SubmissionResult, Long> {
 
 
     @Query("SELECT r FROM SubmissionResult r WHERE r.submissionId = :submissionId")
-    fun findBySubmissionId(submissionId: Long): SubmissionResult
+    fun findBySubmissionId(submissionId: Long): SubmissionResult?
 }

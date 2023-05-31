@@ -21,8 +21,6 @@ class TaskService : ITaskService {
     @Autowired
     lateinit var diagramService: DiagramService
 
-    @Autowired
-    lateinit var ruleSetRepository: RulesetRepository
 
 
     override fun getAll(courseId: Long): List<Task> {
@@ -52,9 +50,7 @@ class TaskService : ITaskService {
         return assignment
     }
 
-    override fun createRuleset(ruleset: Ruleset): Long? {
-        return ruleSetRepository.save(ruleset).id
-    }
+
 
 
 

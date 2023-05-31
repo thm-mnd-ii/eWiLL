@@ -9,7 +9,7 @@ import com.wipdev.eWiLL_backend.utils.translate.Dictionary
 class AttributeEquivalenceEvaluator: IRuleEvaluator {
 
 
-    override fun eval(diagramEvalPL: DiagramEvalPL, rule: Rule, ruleConfig: RuleConfig): RuleEvalResult {
+    override fun eval(diagramEvalPL: DiagramEvalPL, rule: Rule): RuleEvalResult {
         var stringBuilder = StringBuilder()
         var errors = 0
         for(entity in diagramEvalPL.bestSolutionDiagram.nodes) {
