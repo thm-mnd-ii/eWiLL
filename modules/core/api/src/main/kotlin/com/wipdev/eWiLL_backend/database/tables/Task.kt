@@ -39,7 +39,7 @@ data class Task(
     @Column(name = "rulesetId", nullable = false)
     var rulesetId: Long? = null,
 
-    @Column(name="maxSubmissions", nullable = false)
+    @Column(name="maxSubmissions", nullable = true)
     var maxSubmissions: Int? = 999
 ) {
 

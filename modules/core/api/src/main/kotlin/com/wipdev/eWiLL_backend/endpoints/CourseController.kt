@@ -23,7 +23,6 @@ class CourseController {
     lateinit var service: CourseService
 
 
-
     @GetMapping("/all/{userId}")
     @ResponseBody
     fun getAll(@PathVariable userId: Long): List<CourseEntry> = service.getAll(userId)
@@ -34,7 +33,7 @@ class CourseController {
     fun getById(@PathVariable id: Long): Course = service.getById(id)
 
 
-    @PostMapping()
+    @PostMapping
     @ResponseBody
     fun create(@RequestBody course: Course): Course = service.create(course)
 
@@ -61,8 +60,7 @@ class CourseController {
     @PostMapping("/{id}/join")
     @ResponseBody
     fun joinCourse(
-        @PathVariable id: Long,
-        @RequestBody joinRequestPL: JoinRequestPL
+        @PathVariable id: Long, @RequestBody joinRequestPL: JoinRequestPL
     ): CourseUserRole {
 
         return service.joinCourse(id, joinRequestPL.keyPass, joinRequestPL.userId)
@@ -71,9 +69,9 @@ class CourseController {
 
 
     @PostMapping("/{id}/leave")
-    fun leaveCourse(@PathVariable id: Long, @RequestParam userId: Long){
-            service.leaveCourse(id, userId)
-        } 
+    fun leaveCourse(@PathVariable id: Long, @RequestParam userId: Long) {
+        service.leaveCourse(id, userId)
+    }
 
 
     @GetMapping("/{id}/hasKeyPass")
@@ -93,10 +91,14 @@ class CourseController {
     fun archiveCourse(@PathVariable id: Long) = service.archiveCourse(id)
 
 
-    @PostMapping("/{id}/changeUserRole/{role}")
+    @PostMapping("/{courseId}/changeUserRole/{userId}/{role}/{executorUserId}")
     @ResponseBody
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    fun changeUserRole(@PathVariable id: Long, @PathVariable role: ECourseRole) = service.changeUserRole(id, role)
+    fun changeUserRole(
+        @PathVariable courseId: Long,
+        @PathVariable userId: Long,
+        @PathVariable role: ECourseRole,
+        @PathVariable executorUserId: Long
+    ) = service.changeUserRole(courseId, userId, role, executorUserId)
 
 
     @GetMapping("/{courseId}/user/{userId}/role")

@@ -52,26 +52,28 @@ const localLogin = () => {
       password: passwordInput.value,
     };
 
-    authUserStore.login(user).then(
-      () => {
+    authUserStore
+      .login(user)
+      .then(() => {
         setTimeout(() => {
           router.push("/");
         }, 1000);
-      },
-      (error) => {
+      })
+      .catch((error) => {
         loading.value = false;
         console.log(error);
-        if (error.response.status == 401) {
+        if (error.response && error.response.status === 401) {
           errorMessage.value = "Benutzername oder Passwort ist falsch";
-        } else if (error.response.status == 500) {
+        } else if (error.response && error.response.status === 500) {
           errorMessage.value = "Server Error";
-        } else if (error.response.status == 404) {
+        } else if (error.response && error.response.status === 404) {
           errorMessage.value = "Server nicht erreichbar";
+        } else if (error.response && error.response.status === 429) {
+          errorMessage.value = "Zu viele Anfragen";
         } else {
           errorMessage.value = "Unbekannter Fehler";
         }
-      }
-    );
+      });
   } else {
     loading.value = false;
     errorMessage.value = "Bitte füllen Sie alle Felder aus";
