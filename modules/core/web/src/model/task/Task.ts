@@ -8,6 +8,7 @@ interface Task {
     solutionModelId: number;
     rulesetId: number;
     eliability: string;
+    maxSubmissions: number;
     
   }
   

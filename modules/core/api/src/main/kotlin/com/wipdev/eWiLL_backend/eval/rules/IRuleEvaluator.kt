@@ -5,6 +5,6 @@ import com.wipdev.eWiLL_backend.eval.compile.DiagramEvalPL
 
 interface IRuleEvaluator {
 
-    fun eval(diagramEvalPL: DiagramEvalPL,rule: Rule,ruleConfig : RuleConfig): RuleEvalResult
+    fun eval(diagramEvalPL: DiagramEvalPL,rule: Rule): RuleEvalResult
 
 }

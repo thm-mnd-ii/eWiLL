@@ -9,7 +9,7 @@ val id: Long?,
                    val attributes: Array<Attribute>?
  */
 
-class Entity () {
+class Entity {
 
     var id: Long? = null
     var type: Int? = null
@@ -49,5 +49,9 @@ class Entity () {
         result = 31 * result + (width ?: 0)
         result = 31 * result + (attributes?.contentHashCode() ?: 0)
         return result
+    }
+
+    override fun toString(): String {
+        return "Entity(id=$id, type=$type, entityName=$entityName, top=$top, left=$left, width=$width, attributes=${attributes?.contentToString()})"
     }
 }

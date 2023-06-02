@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/valid-v-slot -->
 <template>
   <DialogShowFullDiagram ref="dialogShowFullDiagram" />
   <DialogEditTask ref="dialogEditTask" />
@@ -18,6 +19,8 @@
             {{ courseRole }}
           </v-chip>
           <v-spacer></v-spacer>
+          <v-chip v-if="task.maxSubmissions != 999" class="margin-right-5px">Versuche: {{ task.maxSubmissions }}</v-chip>
+          <v-chip v-if="task.maxSubmissions == 999" class="margin-right-5px">Versuche: unbegrenzt</v-chip>
           <v-chip v-if="task.eliability == 'BONUS'" color="green">Bonus</v-chip>
           <v-chip v-if="task.eliability == 'MANDATORY'" color="red">Verpflichtend</v-chip>
           <v-chip v-if="task.eliability == 'OPTIONAL'" color="yellow">Optional</v-chip>
@@ -46,32 +49,18 @@
         </v-card>
       </div>
       <div v-if="courseRole == 'STUDENT'" class="grid-right">
-        <v-btn class="submit-btn" color="dark-gray" variant="flat" @click="submitDiagram">prüfen</v-btn>
+        <v-btn class="submit-btn" color="dark-gray" variant="flat" :disabled="submissionCount >= task.maxSubmissions" @click="submitDiagram">prüfen</v-btn>
         <br />
         <div class="task-trials-caption font-weight-medium">
           <span>Auswertungsergebnisse</span>
-          <span>Anzahl Abgaben: {{ submissionCount }}</span>
+          <span>Anzahl Abgaben: {{ submissionCount }} / {{ task.maxSubmissions }}</span>
         </div>
-        <v-card class="task-trials-tabs">
-          <v-tabs v-model="selectedResultTab" bg-color="teal-darken-3" slider-color="teal-lighten-3">
-            <v-tab v-for="tab in taskResults" :key="tab.id" :value="tab.id">
-              {{ "Ergebnis " + tab.id }}
-            </v-tab>
-          </v-tabs>
-          <v-window v-model="selectedResultTab">
-            <v-window-item v-for="tab in taskResults" :key="tab.id" :value="tab.id">
-              <v-card flat>
-                <v-card-text class="task-trials-text">
-                  <p>Tab {{ tab.id }}</p>
-                </v-card-text>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn class="" append-icon="mdi-open-in-new" color="dark-gray" variant="text"> Zeige Fehler im Diagram </v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-window-item>
-          </v-window>
-        </v-card>
+        <TaskSubmissionsResultsTabs ref="taskSubmissionsResultsTabs"></TaskSubmissionsResultsTabs>
+      </div>
+      <div v-if="courseRole != 'STUDENT'" class="grid-right">
+        <h3>Abgaben: {{ submissionCount }}</h3>
+        <br />
+        <v-btn @click="openViewTaskSubmissions">Zu den Abgaben</v-btn>
       </div>
     </div>
   </div>
@@ -98,6 +87,10 @@ import evaluationService from "@/services/evaluation.service";
 import { useDiagramStore } from "@/stores/diagramStore";
 import { storeToRefs } from "pinia";
 import ModelingTool from "@/components/ModelingTool.vue";
+import submissionService from "@/services/submission.service";
+
+import TaskSubmissionsResultsTabs from "@/components/TaskSubmissionsResultsTabs.vue";
+const taskSubmissionsResultsTabs = ref<typeof TaskSubmissionsResultsTabs>();
 
 const route = useRoute();
 const router = useRouter();
@@ -124,9 +117,6 @@ const selectedDiagram = ref<Diagram>();
 //const submissions = ref();
 const submissionCount = ref(0);
 
-const selectedResultTab = ref<any>();
-const taskResults = ref<Result[]>();
-
 onMounted(() => {
   courseService.getUserRoleInCourse(userId.value!, courseId.value).then((response) => {
     if (response == "NONE") {
@@ -136,6 +126,7 @@ onMounted(() => {
       loadTask();
       loadCategories();
       diagramStore.createNewDiagram();
+      if (courseRole.value != "STUDENT") loadNumberSubmissions();
       if (courseRole.value == "STUDENT") loadSubmissions();
     }
   });
@@ -161,6 +152,7 @@ const loadSubmissions = () => {
     const submissionIds = response.data;
     submissionCount.value = submissionIds.length;
     // TODO: Load submissions/results
+    if (submissionCount.value > 0) taskSubmissionsResultsTabs.value!.load(taskId.value);
   });
 };
 
@@ -209,6 +201,16 @@ const loadSolutionModel = () => {
     diagrams.value.push(response.data);
     selectedDiagramId.value = task.value.solutionModelId;
     showSelectedDiagram(selectedDiagramId.value);
+  });
+};
+
+const openViewTaskSubmissions = () => {
+  router.push(route.path + "/submissions");
+};
+
+const loadNumberSubmissions = () => {
+  submissionService.getSubmissionsByTask(taskId.value).then((response) => {
+    submissionCount.value = response.data.length;
   });
 };
 </script>
@@ -276,5 +278,9 @@ const loadSolutionModel = () => {
 .align-items-center {
   display: flex;
   align-items: center;
+}
+
+.margin-right-5px {
+  margin-right: 5px;
 }
 </style>

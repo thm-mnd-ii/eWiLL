@@ -3,23 +3,24 @@
     <DialogConfirmVue ref="dialogConfirm"></DialogConfirmVue>
     <v-card>
       <v-card-title class="align-items-center">
-        <h3 class="headline mb-0">{{ course?.name }}</h3>
+        <h3 class="headline mb-0">Abgaben von {{ task?.name }}</h3>
         <v-spacer></v-spacer>
-        <v-btn variant="text" icon="mdi-account-group" color="dark-gray" @click="openMembersView"></v-btn>
-        <v-btn variant="text" icon="mdi-logout-variant" color="dark-gray" @click="leaveCourse"></v-btn>
-        <v-btn v-if="courseRole == 'OWNER'" variant="text" icon="mdi-cog" color="dark-gray" @click="editCourse"></v-btn>
       </v-card-title>
       <v-card-text>
-        <p>{{ course?.description }}</p>
+        <p>{{ task?.description }}</p>
         <br />
         <div class="align-items-center">
           <v-chip prepend-icon="mdi-account-circle" color="secondary" text-color="white" label> {{ courseRole }} </v-chip>
           <v-spacer></v-spacer>
-          <v-btn v-if="courseRole == 'OWNER' || courseRole == 'TUTOR'" variant="text" @click="createTask">Aufgabe erstellen</v-btn>
+          <v-chip v-if="task?.maxSubmissions != 999" class="margin-right-5px">Versuche: {{ task?.maxSubmissions }}</v-chip>
+          <v-chip v-if="task?.maxSubmissions == 999" class="margin-right-5px">Versuche: unbegrenzt</v-chip>
+          <v-chip v-if="task?.eliability == 'BONUS'" color="green">Bonus</v-chip>
+          <v-chip v-if="task?.eliability == 'MANDATORY'" color="red">Verpflichtend</v-chip>
+          <v-chip v-if="task?.eliability == 'OPTIONAL'" color="yellow">Optional</v-chip>
         </div>
       </v-card-text>
     </v-card>
-    <div class="task_list"><TaskList ref="taskList"></TaskList></div>
+    <div class="task_list"><SubmissionsList ref="submissionsList"></SubmissionsList></div>
   </div>
   <DialogCreateCourse ref="dialogCreateCourse"></DialogCreateCourse>
   <DialogEditTask ref="dialogCreateTask"></DialogEditTask>
@@ -33,22 +34,27 @@ import { useRouter } from "vue-router";
 import DialogConfirmVue from "../dialog/DialogConfirm.vue";
 import TaskList from "../components/TaskList.vue";
 import CoursePL from "../model/course/CoursePL";
+import taskService from "../services/task.service";
 import courseService from "../services/course.service";
 import DialogCreateCourse from "@/dialog/DialogCreateCourse.vue";
 import DialogEditTask from "@/dialog/DialogEditTask.vue";
-import { onBeforeMount } from "vue";
+import SubmissionsList from "@/components/SubmissionsList.vue";
+import Task from "../model/task/Task";
 
 const route = useRoute();
 const router = useRouter();
 const authUserStore = useAuthUserStore();
 const dialogConfirm = ref<typeof DialogConfirmVue>();
-const taskList = ref<typeof TaskList>();
+const submissionsList = ref<typeof SubmissionsList>();
 const course = ref<CoursePL>();
-const courseId = ref(Number(route.params.id));
+const courseId = ref(Number(route.params.courseId));
+const taskId = ref(Number(route.params.taskId));
 const userId = ref(authUserStore.auth.user?.id);
 const courseRole = ref("");
 const dialogCreateCourse = ref<typeof DialogCreateCourse>();
 const dialogCreateTask = ref<typeof DialogEditTask>();
+
+const task = ref<Task>();
 
 onMounted(() => {
   courseService.getUserRoleInCourse(userId.value!, courseId.value).then((response) => {
@@ -56,54 +62,13 @@ onMounted(() => {
       router.push(route.path + "/signup");
     } else {
       courseRole.value = response;
-      courseService.getCourse(courseId.value).then((response) => {
-        course.value = response.data;
-        if (taskList.value) {
-          taskList.value.loadTasks(courseId.value);
-        }
+      submissionsList.value!.loadSubmissions(taskId.value);
+      taskService.getTask(taskId.value).then((response) => {
+        task.value = response;
       });
     }
   });
 });
-
-const leaveCourse = () => {
-  if (dialogConfirm.value) {
-    dialogConfirm.value.openDialog(`Verlasse Kurs: ${course.value?.name}`, "Willst du den Kurs wirklich verlassen?").then((result: boolean) => {
-      if (result) {
-        courseService
-          .leaveCourse(courseId.value, userId.value)
-          .then(() => {
-            router.push("/");
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      }
-    });
-  }
-};
-
-const editCourse = () => {
-  if (dialogCreateCourse.value) {
-    dialogCreateCourse.value.openDialog(courseId.value).then(() => {
-      courseService.getCourse(courseId.value).then((response) => {
-        course.value = response.data;
-      });
-    });
-  }
-};
-
-const createTask = () => {
-  if (dialogCreateTask.value) {
-    dialogCreateTask.value.openDialog().then((created: boolean) => {
-      taskList.value!.loadTasks(courseId.value);
-    });
-  }
-};
-
-const openMembersView = () => {
-  router.push(route.path + "/members");
-};
 </script>
 
 <style scoped>

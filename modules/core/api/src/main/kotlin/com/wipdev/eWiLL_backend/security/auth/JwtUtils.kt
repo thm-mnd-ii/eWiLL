@@ -1,6 +1,8 @@
 package com.wipdev.eWiLL_backend.security.auth
 
 
+import com.auth0.jwt.JWT
+import com.auth0.jwt.interfaces.DecodedJWT
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import org.springframework.beans.factory.annotation.Value
@@ -8,11 +10,6 @@ import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Component
 import java.security.Key
 import java.util.*
-import com.auth0.jwt.JWT
-
-import com.auth0.jwt.interfaces.DecodedJWT
-
-
 
 
 @Component
@@ -43,7 +40,7 @@ class JwtUtils {
         return false
     }
 
-    public companion object {
+    companion object {
         fun decodeFBSToken(token: String?): FBSTokenDecodingResult {
             val decodedJWT: DecodedJWT = JWT.decode(token)
             return FBSTokenDecodingResult(
