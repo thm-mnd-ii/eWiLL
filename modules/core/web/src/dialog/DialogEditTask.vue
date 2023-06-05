@@ -27,6 +27,7 @@
     </v-card>
     <v-snackbar v-model="snackbarFail" :timeout="3000"> Ein Fehler ist aufgetreten, bitte versuchen Sie es erneut </v-snackbar>
   </v-dialog>
+  <DialogConfirmVue ref="dialogConfirm"></DialogConfirmVue>
 </template>
 
 <script setup lang="ts">
@@ -39,6 +40,7 @@ import { useAuthUserStore } from "@/stores/authUserStore";
 import { useRoute } from "vue-router";
 import taskService from "@/services/task.service";
 import router from "@/router";
+import DialogConfirmVue from "../dialog/DialogConfirm.vue";
 
 const arrayMaxSubmissions = Array.from(Array(100).keys());
 
@@ -48,6 +50,7 @@ const authUserStore = useAuthUserStore();
 const route = useRoute();
 
 const editTaskDialog = ref<boolean>(false);
+const dialogConfirm = ref<typeof DialogConfirmVue>();
 
 const snackbarFail = ref(false);
 const editTitle = ref<string>("");
@@ -169,8 +172,12 @@ const _cancel = () => {
 };
 
 const deleteTask = () => {
-  taskService.deleteTask(currentTask.value.id).then(() => {
-    router.push("/course/" + currentTask.value.courseId);
+  dialogConfirm.value?.openDialog(`Lösche Aufgabe`, "Willst du die Aufgabe wirklich löschen?").then((result: boolean) => {
+    if (result) {
+      taskService.deleteTask(currentTask.value.id).then(() => {
+        router.push("/course/" + currentTask.value.courseId);
+      });
+    }
   });
 };
 
