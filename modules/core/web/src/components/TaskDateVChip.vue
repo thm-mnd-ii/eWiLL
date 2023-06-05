@@ -8,10 +8,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch } from "vue";
+
+const props = defineProps({ dueDateProp: String });
 
 const dueDate = ref();
 const timeDifference = ref();
+
+watch(
+  () => props.dueDateProp,
+  (first, second) => {
+    setDueDate(first!);
+  }
+);
 
 const setDueDate = (dateTime: string) => {
   dueDate.value = dateTime;

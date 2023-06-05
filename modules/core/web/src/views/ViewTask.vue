@@ -19,7 +19,7 @@
             {{ courseRole }}
           </v-chip>
           <v-spacer></v-spacer>
-          <TaskDateVChip ref="taskDateVChip" class="margin-right-5px"></TaskDateVChip>
+          <TaskDateVChip ref="taskDateVChip" class="margin-right-5px" :due-date-prop="task.dueDate"></TaskDateVChip>
           <v-chip v-if="task.maxSubmissions != 999" class="margin-right-5px">Versuche: {{ task.maxSubmissions }}</v-chip>
           <v-chip v-if="task.maxSubmissions == 999" class="margin-right-5px">Versuche: unbegrenzt</v-chip>
           <v-chip v-if="task.eliability == 'BONUS'" color="green">Bonus</v-chip>
@@ -146,7 +146,7 @@ const openSettings = () => {
 const loadTask = () => {
   taskService.getTask(taskId.value).then((response) => {
     task.value = response;
-    taskDateVChip.value?.setDueDate(task.value.dueDate);
+    //taskDateVChip.value?.setDueDate(task.value.dueDate);
     if (courseRole.value != "STUDENT") loadSolutionModel();
   });
 };
