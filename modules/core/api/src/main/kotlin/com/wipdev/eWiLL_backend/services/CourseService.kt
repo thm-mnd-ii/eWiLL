@@ -1,23 +1,24 @@
 package com.wipdev.eWiLL_backend.services
 
-import com.wipdev.eWiLL_backend.database.tables.User
 import com.wipdev.eWiLL_backend.database.tables.course.Course
 import com.wipdev.eWiLL_backend.database.tables.course.CourseUserRole
 import com.wipdev.eWiLL_backend.database.tables.course.ECourseRole
 import com.wipdev.eWiLL_backend.endpoints.payload.CourseEntry
+import com.wipdev.eWiLL_backend.endpoints.payload.CourseUser
 import com.wipdev.eWiLL_backend.repository.CourseRepository
 import com.wipdev.eWiLL_backend.repository.CourseRoleRepository
 import com.wipdev.eWiLL_backend.repository.UserRepository
 import com.wipdev.eWiLL_backend.services.serviceInterfaces.ICourseService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 @Service
-class CourseService: ICourseService {
+class CourseService : ICourseService {
 
     @Autowired
     lateinit var repository: CourseRepository
@@ -28,9 +29,10 @@ class CourseService: ICourseService {
     @Autowired
     lateinit var userRepository: UserRepository
 
-    override fun getAll(userId:Long): List<CourseEntry> {
-        val list : MutableList<CourseEntry> = mutableListOf()
-        repository.findAll().forEach { list.add(CourseEntry(it,courseRoleRepository.existsByCourseIdAndUserId(it.id!!,userId))) }
+    override fun getAll(userId: Long): List<CourseEntry> {
+        val list: MutableList<CourseEntry> = mutableListOf()
+        repository.findAll()
+            .forEach { list.add(CourseEntry(it, courseRoleRepository.existsByCourseIdAndUserId(it.id!!, userId))) }
         return list
     }
 
@@ -60,7 +62,7 @@ class CourseService: ICourseService {
         oldCourse.keyPassword = course.keyPassword
         oldCourse.owner = course.owner
         oldCourse.semester = course.semester
-        oldCourse.location  = course.location
+        oldCourse.location = course.location
         return repository.save(oldCourse)
     }
 
@@ -69,41 +71,49 @@ class CourseService: ICourseService {
     }
 
     override fun getCourseByUserId(id: Long): List<Course> {
-        val list : MutableList<Course> = mutableListOf()
-        repository.findAll().forEach { if(it.owner == id) list.add(it) }
+        val list: MutableList<Course> = mutableListOf()
+        repository.findAll().forEach { if (it.owner == id) list.add(it) }
         return list
     }
 
-    override fun getStudentsByCourseId(id: Long): List<User> {
-        val list : MutableList<User> = mutableListOf()
-        courseRoleRepository.findAll().forEach { if(it.courseId == id) list.add(userRepository.findById(it.userId!!).get()) }
+    override fun getStudentsByCourseId(id: Long): List<CourseUser> {
+        val list: MutableList<CourseUser> = mutableListOf()
+        courseRoleRepository.findAll().forEach {
+            if (it.courseId == id)
+                list.add(
+                    CourseUser(
+                        userRepository.findById(it.userId!!).get(),
+                        courseRoleRepository.findByCourseIdAndUserId(id, it.userId!!)!!.role!!
+                    )
+                )
+        }
         return list
     }
 
     override fun joinCourse(id: Long, keyPass: String, userId: Long): CourseUserRole {
 
         val course = repository.findById(id).get()
-        if(course.keyPassword == keyPass){
-            if(!courseRoleRepository.existsByCourseIdAndUserId(id,userId)){
+        if (course.keyPassword == keyPass) {
+            if (!courseRoleRepository.existsByCourseIdAndUserId(id, userId)) {
                 val courseUserRole = CourseUserRole()
                 courseUserRole.courseId = id
                 courseUserRole.userId = userId
                 courseUserRole.role = ECourseRole.STUDENT
                 courseRoleRepository.save(courseUserRole)
                 return courseRoleRepository.findAll().first { it.courseId == id && it.userId == userId }
-            }else{
-                throw ResponseStatusException(HttpStatus.I_AM_A_TEAPOT,"User already in Course")
+            } else {
+                throw ResponseStatusException(HttpStatus.I_AM_A_TEAPOT, "User already in Course")
             }
-        }else{
-            throw ResponseStatusException(HttpStatus.FORBIDDEN,"Wrong KeyPass")
+        } else {
+            throw ResponseStatusException(HttpStatus.FORBIDDEN, "Wrong KeyPass")
         }
 
     }
 
     override fun leaveCourse(id: Long, userId: Long): Course {
         val course = repository.findById(id).get()
-        if(courseRoleRepository.existsByCourseIdAndUserId(id,userId)){
-            courseRoleRepository.deleteByCourseIdAndUserId(id,userId)
+        if (courseRoleRepository.existsByCourseIdAndUserId(id, userId)) {
+            courseRoleRepository.deleteByCourseIdAndUserId(id, userId)
         }
         return course
     }
@@ -127,16 +137,31 @@ class CourseService: ICourseService {
         return repository.save(course)
     }
 
-    override fun changeUserRole(id: Long, role: ECourseRole): CourseUserRole {
-        val courseUserRole = courseRoleRepository.findById(id).get()
-        courseUserRole.role = role
-        return courseRoleRepository.save(courseUserRole)
+    override fun changeUserRole(
+        courseId: Long,
+        userId: Long,
+        role: ECourseRole,
+        executorUserId: Long
+    ): ResponseEntity<CourseUserRole> {
+        val executorRole = getUserRoleInCourse(courseId, executorUserId)
+        return if (executorRole == ECourseRole.OWNER || executorRole == ECourseRole.TUTOR) {
+            val courseRole = courseRoleRepository.findByCourseIdAndUserId(courseId, userId)!!
+            courseRole.role = role
+            courseRoleRepository.save(courseRole)
+
+            ResponseEntity(
+                courseRoleRepository.findAll().first { it.courseId == courseId && it.userId == userId },
+                HttpStatus.OK
+            )
+        } else {
+            ResponseEntity(HttpStatus.FORBIDDEN)
+        }
     }
 
     override fun getUserRoleInCourse(courseId: Long, userId: Long): ECourseRole? {
-        return try{
+        return try {
             courseRoleRepository.findAll().first { it.courseId == courseId && it.userId == userId }.role
-        }catch (e:NoSuchElementException){
+        } catch (e: NoSuchElementException) {
             ECourseRole.NONE
         }
     }

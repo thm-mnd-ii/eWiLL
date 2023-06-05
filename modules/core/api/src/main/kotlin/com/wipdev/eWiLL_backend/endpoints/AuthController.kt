@@ -1,15 +1,17 @@
 package com.wipdev.eWiLL_backend.endpoints
 
-import com.wipdev.eWiLL_backend.database.tables.Role
 import com.wipdev.eWiLL_backend.database.tables.User
 import com.wipdev.eWiLL_backend.endpoints.payload.requests.LoginRequestPL
 import com.wipdev.eWiLL_backend.endpoints.payload.responses.JwtResponse
-import com.wipdev.eWiLL_backend.utils.fbs.FbsClient
 import com.wipdev.eWiLL_backend.repository.RoleRepository
 import com.wipdev.eWiLL_backend.repository.UserRepository
 import com.wipdev.eWiLL_backend.security.auth.*
+import com.wipdev.eWiLL_backend.utils.fbs.FbsClient
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.enums.ParameterIn
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Description
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.authentication.AuthenticationManager
@@ -17,6 +19,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.bind.annotation.*
+import javax.servlet.http.HttpServletRequest
 
 @RestController
 @RequestMapping("/api/auth")
@@ -39,15 +42,28 @@ class AuthController {
 
 
     @PostMapping("/signin")
+    @Description("Sign in with username and password")
     @ResponseBody
-    fun authenticateUser(@RequestBody loginRequestPL: LoginRequestPL): ResponseEntity<JwtResponse> {
+    fun authenticateUser(
+        @RequestBody loginRequestPL: LoginRequestPL,
+        @Parameter(
+            name = "X-Forwarded-For",
+            `in` = ParameterIn.HEADER,
+            description = "IP Address",
+            required = true
+        ) request: HttpServletRequest
+    )
+            : ResponseEntity<JwtResponse> {
         val fbsClient = FbsClient()
-        val response = fbsClient.getLoginLdap(loginRequestPL.username!!, loginRequestPL.password!!)
+        val response = fbsClient.getLoginLdap(loginRequestPL.username!!, loginRequestPL.password!!, request)
         if (response!!.statusCode() != 200) {
+            if (response.statusCode() != 401)
+                print(response.statusCode().toString() + " " + response.body())
             return ResponseEntity.status(response.statusCode()).build()
         } else {
             if (!userRepository.existsByUsername(loginRequestPL.username)) {
-                val fbsUser = fbsClient.getUserInformation(response.headers())
+                val fbsUser = fbsClient.getUserInformation(response.headers(), request)
+                println(fbsUser)
                 createUserData(fbsUser)
             }
         }
@@ -65,7 +81,7 @@ class AuthController {
 
     private fun createUserData(fbsUser: FbsClient.FbsUser) {
         val role = roleRepository.getReferenceById(ERole.ROLE_USER.ordinal.toLong())
-        val user = User(null,fbsUser.username!!, fbsUser.email!!, setOf(role))
+        val user = User(null, fbsUser.username!!, fbsUser.email!!, fbsUser.prename!!, fbsUser.surname!!, setOf(role))
         userRepository.save(user)
     }
 

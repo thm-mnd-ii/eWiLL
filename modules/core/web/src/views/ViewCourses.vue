@@ -95,19 +95,15 @@ const openCourseOrSignUp = (row: any, item: any) => {
 </script>
 
 <style scoped lang="scss">
-.container {
-  margin-top: 30px;
-  position: relative;
-  left: 500px;
-  width: 700px;
-  cursor: pointer;
-}
-
 #createCourseBtn {
   color: #ffffff;
   margin-top: 20px;
   background-color: #81ba24;
-  position: absolute;
-  left: 38%;
+  left: 45%;
+}
+
+.container {
+  width: auto;
+  margin: 20px 20px;
 }
 </style>

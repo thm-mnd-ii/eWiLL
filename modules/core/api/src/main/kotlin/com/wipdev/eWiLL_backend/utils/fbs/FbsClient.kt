@@ -8,40 +8,76 @@ import java.net.http.HttpClient
 import java.net.http.HttpHeaders
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
+import java.nio.charset.StandardCharsets
+import javax.servlet.http.HttpServletRequest
 
 
 class FbsClient {
 
-    private final val baseUrl = "https://feedback.mni.thm.de/api/v1"
+    private val baseUrl = "https://feedback.mni.thm.de/api/v1"
 
-    fun getLoginLdap(username: String, password: String): HttpResponse<String>? {
+    fun getLoginLdap(username: String, password: String, servletRequest: HttpServletRequest): HttpResponse<String>? {
         val url = "$baseUrl/login/ldap"
         val client = HttpClient.newBuilder().build()
-        val request = HttpRequest.newBuilder()
-            .uri(URI.create(url))
-            .header("Content-Type", "application/json")
-            .POST(HttpRequest.BodyPublishers.ofString("{\"username\":\"$username\",\"password\":\"$password\"}"))
-            .build()
-        return client.send(request, HttpResponse.BodyHandlers.ofString())
+
+        val passwordBytes = password.toByteArray(StandardCharsets.UTF_8)
+        val requestBody =
+            "{\"username\":\"$username\",\"password\":\"${String(passwordBytes, StandardCharsets.UTF_8)}\"}"
+        if(servletRequest.getHeader("X-Forwarded-For").isNullOrEmpty()){
+            val request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .build()
+            return client.send(request, HttpResponse.BodyHandlers.ofString())
+        }else{
+            val request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Content-Type", "application/json")
+                .header("X-Forwarded-For",servletRequest.getHeader("X-Forwarded-For") )
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .build()
+            return client.send(request, HttpResponse.BodyHandlers.ofString())
+        }
+
+
     }
 
-    fun getUserInformation(headers:HttpHeaders): FbsUser {
-        val decodingResult = decodeFBSToken(headers.firstValue("Authorization").get().subSequence("Bearer ".length,headers.firstValue("Authorization").get().length).toString())
+    fun getUserInformation(headers: HttpHeaders, servletRequest: HttpServletRequest): FbsUser {
+        val decodingResult = decodeFBSToken(
+            headers.firstValue("Authorization").get()
+                .subSequence("Bearer ".length, headers.firstValue("Authorization").get().length).toString()
+        )
         val id = decodingResult.userID
         val url = "$baseUrl/users/${id}"
         val client = HttpClient.newBuilder().build()
-
-        val request = HttpRequest.newBuilder()
-            .uri(URI.create(url))
-            .header("Authorization", headers.firstValue("Authorization").get())
-            .GET()
-            .build()
-        val response =  client.send(request, HttpResponse.BodyHandlers.ofString())
-        println(response.body() + " " + response.statusCode())
-        return if(response.statusCode() != 200){
-            FbsUser()
+        if(servletRequest.getHeader("X-Forwarded-For").isNullOrEmpty()){
+            val request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Authorization", headers.firstValue("Authorization").get())
+                .GET()
+                .build()
+            val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+            println(response.body() + " " + response.statusCode())
+            return if (response.statusCode() != 200) {
+                FbsUser()
+            } else {
+                Json.mapper().readValue(response.body(), FbsUser::class.java)
+            }
         }else{
-            Json.mapper().readValue(response.body(), FbsUser::class.java)
+            val request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Authorization", headers.firstValue("Authorization").get())
+                .header("X-Forwarded-For",servletRequest.getHeader("X-Forwarded-For") )
+                .GET()
+                .build()
+            val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+            println(response.body() + " " + response.statusCode())
+            return if (response.statusCode() != 200) {
+                FbsUser()
+            } else {
+                Json.mapper().readValue(response.body(), FbsUser::class.java)
+            }
         }
 
     }
@@ -59,16 +95,16 @@ class FbsClient {
         )
     }
 
-    class FbsUser{
-        var id:Int? = 0
-        var prename:String? = ""
-        var surname:String? = ""
-        var email:String? = ""
-        var username:String? = ""
-        var password:String? = ""
-        var alias:String? = ""
-        var globalRole:String? = ""
-        var name : String? = ""
+    class FbsUser {
+        var id: Int? = 0
+        var prename: String? = ""
+        var surname: String? = ""
+        var email: String? = ""
+        var username: String? = ""
+        var password: String? = ""
+        var alias: String? = ""
+        var globalRole: String? = ""
+        var name: String? = ""
 
         override fun toString(): String {
             return "FbsUser(id=$id, prename='$prename', surname='$surname', email='$email', username='$username', password='$password', alias='$alias', globalRole='$globalRole', name='$name')"

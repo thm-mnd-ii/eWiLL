@@ -5,7 +5,7 @@
       <v-card-title class="align-items-center">
         <h3 class="headline mb-0">{{ course?.name }}</h3>
         <v-spacer></v-spacer>
-        <v-btn variant="text" icon="mdi-account-group" color="dark-gray"></v-btn>
+        <v-btn variant="text" icon="mdi-account-group" color="dark-gray" @click="openMembersView"></v-btn>
         <v-btn variant="text" icon="mdi-logout-variant" color="dark-gray" @click="leaveCourse"></v-btn>
         <v-btn v-if="courseRole == 'OWNER'" variant="text" icon="mdi-cog" color="dark-gray" @click="editCourse"></v-btn>
       </v-card-title>
@@ -85,7 +85,11 @@ const leaveCourse = () => {
 
 const editCourse = () => {
   if (dialogCreateCourse.value) {
-    dialogCreateCourse.value.openDialog(courseId.value).then(() => {});
+    dialogCreateCourse.value.openDialog(courseId.value).then(() => {
+      courseService.getCourse(courseId.value).then((response) => {
+        course.value = response.data;
+      });
+    });
   }
 };
 
@@ -95,6 +99,10 @@ const createTask = () => {
       taskList.value!.loadTasks(courseId.value);
     });
   }
+};
+
+const openMembersView = () => {
+  router.push(route.path + "/members");
 };
 </script>
 

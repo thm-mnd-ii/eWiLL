@@ -37,8 +37,10 @@ data class Task(
     var solutionModelId: Long? = null,
 
     @Column(name = "rulesetId", nullable = false)
-    var rulesetId: Long? = null
+    var rulesetId: Long? = null,
 
+    @Column(name="maxSubmissions", nullable = true)
+    var maxSubmissions: Int? = 999
 ) {
 
 

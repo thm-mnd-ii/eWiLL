@@ -17,4 +17,9 @@ interface CourseRoleRepository : CrudRepository<CourseUserRole, Long> {
     fun deleteByCourseIdAndUserId(id: Long, userId: Long): Int
 
 
+    @Query("select c from CourseUserRole c where c.courseId = :courseId and c.userId = :userId")
+    fun findByCourseIdAndUserId(courseId: Long, userId: Long): CourseUserRole?
+
+
+
 }

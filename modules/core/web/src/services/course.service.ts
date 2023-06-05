@@ -1,6 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 import CoursePL from "../model/course/CoursePL";
 import CourseAndParticipationPL from "../model/course/CourseAndParticipationPL";
+import Member from "../model/course/Member"
 
 class CourseService{
 
@@ -52,8 +53,32 @@ class CourseService{
     })
   }
 
+  changeUserRole(courseId: number, userId: number, role: string, executorUserId: number){
+    return axios.post("/api/course/" + courseId + "/changeUserRole/" + userId + "/" + role + "/" + executorUserId)
+  }
+
   deleteCourse(courseId: number){
     return axios.delete("/api/course/" + courseId)
+  }
+
+  getCourseMembers(courseId: number){
+    return axios.get("/api/course/" + courseId + "/students")
+  }
+
+  getCourseMembersAsMap(courseId: number): Promise<Map<number, Member>>{
+    const map: Map<number, Member> = new Map();
+    return new Promise<Map<number, Member>>((resolve, reject) => {
+      this.getCourseMembers(courseId)
+      .then((response) => {
+        response.data.forEach((element: Member) => {
+          map.set(element.user.id, element)
+        });
+        resolve(map);
+      })
+      .catch(() => {
+        reject()
+      })
+    })
   }
 
 }

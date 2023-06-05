@@ -1,12 +1,12 @@
-package com.wipdev.eWiLL_backend.database.tables.course;
+package com.wipdev.eWiLL_backend.database.tables.course
 
-import javax.persistence.*;
+import javax.persistence.*
 
 @Entity
 @Table(name = "semester")
 data class Semester(
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", nullable = false)
     var id: Long? = null,
 

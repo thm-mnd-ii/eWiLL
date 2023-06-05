@@ -10,4 +10,16 @@ class RuleEvalScore {
         this.score = score
         this.scoreType = scoreType
     }
+
+    override fun toString(): String {
+        return "RuleEvalScore(score=$score, scoreType=$scoreType)"
+    }
+
+    fun getScore():Float{
+        return when(scoreType){
+            ScoreType.PERCENTAGE -> score.toFloat()
+            ScoreType.ERROR_COUNT -> 100 - score.toFloat()
+            else -> 0f
+        }
+    }
 }
