@@ -15,7 +15,7 @@
             <v-chip v-if="!tab.result.correct" color="red">Score: {{ tab.result.score }}</v-chip>
             <br />
             <br />
-            <p>Tab {{ tab.result.comments[0] }}</p>
+            <p v-for="comment in tab.result.comments" :key="comment">{{ comment }}</p>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
