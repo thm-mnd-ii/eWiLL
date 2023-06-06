@@ -12,6 +12,9 @@
         <v-chip v-if="item.raw.eliability == 'OPTIONAL'" color="yellow">Optional</v-chip>
         <v-chip v-if="item.raw.eliability == 'BONUS'" color="green">Bonus</v-chip>
       </template>
+      <template #item.dueDate="{ item }">
+        <TaskDateVChip :due-date-prop="item.raw.dueDate"></TaskDateVChip>
+      </template>
     </v-data-table>
   </div>
 </template>
@@ -21,6 +24,7 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import Task from "../model/task/Task";
 import taskService from "../services/task.service";
+import TaskDateVChip from "./TaskDateVChip.vue";
 
 const router = useRouter();
 const search = ref("");

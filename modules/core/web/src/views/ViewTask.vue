@@ -146,7 +146,6 @@ const openSettings = () => {
 const loadTask = () => {
   taskService.getTask(taskId.value).then((response) => {
     task.value = response;
-    //taskDateVChip.value?.setDueDate(task.value.dueDate);
     if (courseRole.value != "STUDENT") loadSolutionModel();
   });
 };
