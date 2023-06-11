@@ -76,7 +76,6 @@ import taskService from "../services/task.service";
 import categoryService from "../services/category.service";
 import Task from "../model/task/Task";
 import SubmitPL from "../model/SubmitPL";
-import Result from "../model/submission/Result";
 import DialogEditTask from "@/dialog/DialogEditTask.vue";
 import DialogConfirm from "@/dialog/DialogConfirm.vue";
 
@@ -136,10 +135,8 @@ onMounted(() => {
 });
 
 const openSettings = () => {
-  dialogEditTask.value?.openDialog(task.value).then((result: boolean) => {
-    if (result) {
-      // TODO: reload task
-    }
+  dialogEditTask.value?.openDialog(task.value).then(() => {
+    loadTask();
   });
 };
 
