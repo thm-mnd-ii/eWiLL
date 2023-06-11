@@ -9,7 +9,6 @@ interface Task {
     rulesetId: number;
     eliability: string;
     maxSubmissions: number;
-    
   }
   
   export default Task;
