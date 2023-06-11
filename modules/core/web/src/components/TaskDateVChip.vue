@@ -9,11 +9,16 @@
 
 <script setup lang="ts">
 import { ref, watch } from "vue";
+import { onMounted } from "vue";
 
 const props = defineProps({ dueDateProp: String });
 
 const dueDate = ref();
 const timeDifference = ref();
+
+onMounted(() => {
+  if (props.dueDateProp != undefined) setDueDate(props.dueDateProp);
+});
 
 watch(
   () => props.dueDateProp,
