@@ -24,9 +24,9 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import courseService from "../services/course.service";
 import { useAuthUserStore } from "../stores/authUserStore";
 import { useRouter } from "vue-router";
+import courseService from "../services/course.service";
 import DialogCreateCourse from "../dialog/DialogCreateCourse.vue";
 import CourseAndParticipationPL from "@/model/course/CourseAndParticipationPL";
 
