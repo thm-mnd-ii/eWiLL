@@ -29,7 +29,7 @@ class TestController {
     fun runEvalOnTest(){
         val startTime = System.currentTimeMillis()
         val sampleSize = 20;
-        val diagramIds = getDiagramsWithHighestId(sampleSize)
+        val diagramIds = listOf<Long>(264)//getDiagramsWithHighestId(sampleSize)
         val taskId = 268L
         val userId = 2L
         println("Starting Evaluation on $sampleSize diagrams")
@@ -37,13 +37,7 @@ class TestController {
         val endTime = System.currentTimeMillis()
         val time = endTime - startTime
         println("Async Time: $time")
-
-        while(getIsADone(submissionIds[submissionIds.size-1])){
-            Thread.sleep(100)
-        }
-        val endTime2 = System.currentTimeMillis()
-        val time2 = endTime2 - startTime
-        println("Sync Time: $time2")
+        println("Waiting for results")
     }
 
     fun getIsADone(submissionId:Long):Boolean{

@@ -1,5 +1,6 @@
 package com.wipdev.eWiLL_backend.utils.translate
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.swagger.v3.core.util.Json
 import org.springframework.http.MediaType
 import org.springframework.web.reactive.function.client.WebClient
@@ -32,8 +33,16 @@ class Translator {
             }
             val text = file.readText()
             if(text.isEmpty()) return
-            val map = Json.mapper().readValue(text, Map::class.java)
-            cache.putAll(map as Map<out String, TranslateResponse>)
+            val objectMapper = ObjectMapper()
+            val map: Map<String, TranslateResponse> = objectMapper.readValue(
+                text,
+                objectMapper.typeFactory.constructMapType(
+                    Map::class.java,
+                    String::class.java,
+                    TranslateResponse::class.java
+                )
+            )
+            cache.putAll(map)
 
 
         }
