@@ -3,6 +3,8 @@ package com.wipdev.eWiLL_backend.endpoints
 import com.wipdev.eWiLL_backend.database.tables.course.Submission
 import com.wipdev.eWiLL_backend.database.tables.course.SubmissionResult
 import com.wipdev.eWiLL_backend.endpoints.payload.requests.SubmissionRequestPL
+import com.wipdev.eWiLL_backend.eval.ResultLevel
+import com.wipdev.eWiLL_backend.eval.rules.SubmissionResultWithResultMessages
 import com.wipdev.eWiLL_backend.services.EvaluationService
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,15 +21,16 @@ class EvaluationController {
 
     @PostMapping("/submit")
     @ResponseBody
-
     fun submit(@RequestBody submissionRequestPL: SubmissionRequestPL): Long? =
         service.submit(submissionRequestPL)
 
-    @GetMapping("/result/{submissionId}")
-    @ResponseBody
-    fun getResult(@PathVariable submissionId: Long): SubmissionResult?{
 
-        return service.getSubmissionResultBySubmissionId(submissionId)
+
+    @GetMapping("/result/{submissionId}/{level}")
+    @ResponseBody
+    fun getResultByLevel(@PathVariable submissionId: Long,@PathVariable level: ResultLevel): SubmissionResultWithResultMessages?{
+
+        return service.getSubmissionResultBySubmissionId(submissionId,level)
     }
 
 

@@ -37,7 +37,11 @@ class DiagramEvalResult(private var ruleEvalResults: List<RuleEvalResult>) {
 
         submissionResult.correct = score >= 100
         submissionResult.score = score
-        submissionResult.addComment(ruleEvalResults.joinToString("\n") { it.message ?: "" })
+        for (ruleEvalResult in ruleEvalResults) {
+            for (resultMessage in ruleEvalResult.messages) {
+                submissionResult.addResultMessage(resultMessage)
+            }
+        }
         submissionResult.submissionId = submissionId
         return submissionResult
     }
