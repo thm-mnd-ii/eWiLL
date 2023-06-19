@@ -19,7 +19,13 @@ class AttributeEquivalenceEvaluator: IRuleEvaluator {
                var possibleNames = Dictionary.getPossibleNames(attribute.name!!)
                 var found = false
                 var foundAttibute: Attribute? = null
-                for(att in entity.otherModelNode.entity!!.attributes!!){
+                if(entity.otherModelNode == null){
+                    messages.add(ResultMessage(ResultLevel.DEBUG,"Skipping Entity ${entity.entity!!.entityName} cause it does not exist.",entity.entity!!.id!!,"",
+                        HighlightLevel.INCORRECT))
+                    errors++
+                    continue
+                }
+                for(att in entity.otherModelNode!!.entity!!.attributes!!){
                     if(StringFinderUtils.isPresent(att.name!!,possibleNames)){
                         messages.add(ResultMessage(ResultLevel.BASIC,"Attribute ${att.name} is correct",entity.entity!!.id!!,att.name!!,
                             HighlightLevel.CORRECT))
@@ -45,6 +51,7 @@ class AttributeEquivalenceEvaluator: IRuleEvaluator {
             }
 
         }
-        return RuleEvalResult(RuleEvalScore(errors, ScoreType.ERROR_COUNT),messages,rule.ruleType,rule.id)
+        val totalAttributes = diagramEvalPL.bestSolutionDiagram.nodes.sumOf { it.entity!!.attributes!!.size }
+        return RuleEvalResult(RuleEvalScore((totalAttributes-errors)/totalAttributes.toFloat(), ScoreType.PERCENTAGE),messages,rule.ruleType,rule.id)
     }
 }

@@ -1,0 +1,93 @@
+{
+  "Getreidesorten" : {
+    "data" : {
+      "translations" : {
+        "translatedText" : "cereals"
+      }
+    }
+  },
+  "Produkt_ART" : {
+    "data" : {
+      "translations" : {
+        "translatedText" : "Product Type"
+      }
+    }
+  },
+  "Landwirt" : {
+    "data" : {
+      "translations" : {
+        "translatedText" : "farmer"
+      }
+    }
+  },
+  "Lieferung" : {
+    "data" : {
+      "translations" : {
+        "translatedText" : "Delivery"
+      }
+    }
+  },
+  "angebaute Sorten" : {
+    "data" : {
+      "translations" : {
+        "translatedText" : "cultivated varieties"
+      }
+    }
+  },
+  "Produkt" : {
+    "data" : {
+      "translations" : {
+        "translatedText" : "Product"
+      }
+    }
+  },
+  "ID" : {
+    "data" : {
+      "translations" : {
+        "translatedText" : "ID"
+      }
+    }
+  },
+  "Bezeichnung" : {
+    "data" : {
+      "translations" : {
+        "translatedText" : "Designation"
+      }
+    }
+  },
+  "P_ID" : {
+    "data" : {
+      "translations" : {
+        "translatedText" : "P_ID"
+      }
+    }
+  },
+  "P_Bezeichnung" : {
+    "data" : {
+      "translations" : {
+        "translatedText" : "P_Description"
+      }
+    }
+  },
+  "Rohstoff" : {
+    "data" : {
+      "translations" : {
+        "translatedText" : "raw material"
+      }
+    }
+  },
+  "Datum" : {
+    "data" : {
+      "translations" : {
+        "translatedText" : "Datum"
+      }
+    }
+  },
+  "Chargennnummer" : {
+    "data" : {
+      "translations" : {
+        "translatedText" : "batch number"
+      }
+    }
+  }
+}

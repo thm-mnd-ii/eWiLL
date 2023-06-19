@@ -36,7 +36,7 @@ class ConnectionEquivalenceEvaluator: IRuleEvaluator {
                 errors++
             }
         }
-        return RuleEvalResult(RuleEvalScore(errors, ScoreType.ERROR_COUNT),messages,rule.ruleType,rule.id)
+        return RuleEvalResult(RuleEvalScore((diagramEvalPL.bestSolutionDiagram.connections.size.toFloat()-errors)/diagramEvalPL.bestSolutionDiagram.connections.size.toFloat(), ScoreType.PERCENTAGE),messages,rule.ruleType,rule.id)
     }
 
     private fun findConnection(diagramConnection: DiagramConnection, diagramEvalPL: DiagramEvalPL):DiagramConnection? {
