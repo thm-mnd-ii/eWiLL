@@ -29,11 +29,12 @@ class TestController {
     fun runEvalOnTest(){
         val startTime = System.currentTimeMillis()
         val sampleSize = 20;
-        val diagramIds = listOf<Long>(264)//getDiagramsWithHighestId(sampleSize)
+        val diagramIds =getDiagramsWithHighestId(sampleSize)
+        //listOf<Long>(264)//
         val taskId = 268L
         val userId = 2L
         println("Starting Evaluation on $sampleSize diagrams")
-        val submissionIds = runEvalOnDiagrams(diagramIds,taskId,userId)
+        val submissionIds = runEvalOnDiagrams(diagramIds.plus(264),taskId,userId)
         val endTime = System.currentTimeMillis()
         val time = endTime - startTime
         println("Async Time: $time")
