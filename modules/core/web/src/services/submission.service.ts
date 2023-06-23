@@ -18,8 +18,8 @@ class SubmissionService{
         return axios.get("/api/evaluation/v2/submission/newest/" + taskId)
     }
 
-    getResultBySubmissionId(submissionId: number){
-        return axios.get("/api/evaluation/v2/result/" + submissionId)
+    getResultBySubmissionIdAndLevel(submissionId: number, level: string){
+        return axios.get("/api/evaluation/v2/result/" + submissionId + "/" + level)
     }
 }
 

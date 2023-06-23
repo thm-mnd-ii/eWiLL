@@ -64,7 +64,8 @@ class TaskService : ITaskService {
             task.courseId,
             diagramService.getById(task.solutionModelId!!),
             task.rulesetId,
-            task.eLiability
+            task.eLiability,
+            task.showLevel
         )
 
     }
@@ -80,6 +81,7 @@ class TaskService : ITaskService {
         task.rulesetId = taskPL.rulesetId
         task.courseId = taskPL.courseId
         task.eLiability = taskPL.ELiability
+        task.showLevel = taskPL.showLevel
 
         return task
 

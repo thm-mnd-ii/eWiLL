@@ -4,17 +4,18 @@
       <v-card-text>
         <v-form ref="taskForm" v-model="valid" class="taskForm">
           <div>
-            <v-text-field v-model="currentTask.name" label="Name" :rules="nameRules" variant="underlined" required color="#81ba24"></v-text-field>
-            <v-textarea v-model="currentTask.description" label="Beschreibung" :rules="descriptionRules" variant="underlined" required color="#81ba24"></v-textarea>
-            <v-select v-model="selectedCategoryId" label="Kategorie" variant="underlined" :items="categories" item-title="name" item-value="id" color="#81ba24" @update:model-value="updateDiagrams"></v-select>
+            <v-text-field v-model="currentTask.name" label="Name" :rules="nameRules" variant="underlined" color="#81ba24"></v-text-field>
+            <v-textarea v-model="currentTask.description" label="Beschreibung" :rules="descriptionRules" variant="underlined" color="#81ba24"></v-textarea>
+            <v-select v-model="selectedCategoryId" required label="Kategorie" variant="underlined" :items="categories" item-title="name" item-value="id" color="#81ba24" @update:model-value="updateDiagrams"></v-select>
             <v-select v-model="currentTask.solutionModelId" label="Musterdiagram" variant="underlined" :items="diagrams" item-title="name" item-value="id" color="#81ba24"></v-select>
           </div>
           <div>
             <v-text-field v-model="currentTask.dueDate" :rules="dueDateRules" label="Deadline" variant="underlined" color="#81ba24" hint="DD.MM.YYYY HH:MM"></v-text-field>
-            <v-select v-if="!workInProgress" v-model="currentTask.mediaType" :items="['Model', 'Text']" label="Medientyp" variant="underlined" required color="#81ba24"></v-select>
-            <v-select v-if="!workInProgress" v-model="currentTask.rulesetId" :items="rulesets" item-title="name" label="Regelsatz" variant="underlined" required color="#81ba24" item-value="id"></v-select>
-            <v-select v-model="currentTask.eliability" :items="liabilities" label="Verpflichtung" variant="underlined" required color="#81ba24" item-title="name" item-value="enum"></v-select>
-            <v-select v-model="maxSubmissions" :items="arrayMaxSubmissions" label="Versuche" variant="underlined" required color="#81ba24" hint="0 = unbegrenzt" placeholder="0 = unbegrenzt" @update:model-value="updateMaxSubmissionsOnCurrentTask"></v-select>
+            <v-select v-if="!workInProgress" v-model="currentTask.mediaType" :items="['Model', 'Text']" label="Medientyp" variant="underlined" color="#81ba24"></v-select>
+            <v-select v-if="!workInProgress" v-model="currentTask.rulesetId" :items="rulesets" item-title="name" label="Regelsatz" variant="underlined" color="#81ba24" item-value="id"></v-select>
+            <v-select v-model="currentTask.eliability" :items="liabilities" label="Verpflichtung" variant="underlined" color="#81ba24" item-title="name" item-value="enum"></v-select>
+            <v-select v-model="maxSubmissions" :items="arrayMaxSubmissions" label="Versuche" variant="underlined" color="#81ba24" hint="0 = unbegrenzt" placeholder="0 = unbegrenzt" @update:model-value="updateMaxSubmissionsOnCurrentTask"></v-select>
+            <v-select v-model="currentTask.showLevel" label="Feedback Level" :rules="feedbackRules" variant="underlined" color="#81ba24" :items="resultLevels" item-title="id" item-value="enum"></v-select>
           </div>
         </v-form>
       </v-card-text>
@@ -69,6 +70,13 @@ const liabilities = ref<any[]>([
   { name: "Bonus", enum: "BONUS" },
   { name: "Optional", enum: "OPTIONAL" },
 ]);
+const resultLevels = ref<any[]>([
+  { id: 0, enum: "NOTHING" },
+  { id: 1, enum: "BASIC" },
+  { id: 2, enum: "INFO" },
+  { id: 3, enum: "DEBUG" },
+  { id: 4, enum: "ERROR" },
+]);
 
 const taskForm = ref<any>();
 const valid = ref(false);
@@ -76,6 +84,7 @@ const selectedCategoryId = ref<number>();
 const selectedDiagramId = ref<number>();
 const nameRules = ref<any>([(v: string) => !!v || "Name ist erforderlich"]);
 const descriptionRules = ref<any>([(v: string) => !!v || "Beschreibung ist erforderlich"]);
+const feedbackRules = ref<any>([(v: string) => !!v || "Feedback Level ist erforderlich"]);
 const regex = /^([0-2][0-9]|3[0-1])\.(0[1-9]|1[0-2])\.\d{4} ([01][0-9]|2[0-3]):[0-5][0-9]$/;
 const dueDateRules = ref<any>([(v: string) => !v || regex.test(v) || "Ungültiges Datum dd.mm.yyyy hh:mm"]);
 
@@ -169,6 +178,7 @@ const _cancel = () => {
   selectedCategoryId.value = undefined;
   editTaskDialog.value = false;
   resolvePromise.value(false);
+  console.log(currentTask.value);
 };
 
 const deleteTask = () => {
