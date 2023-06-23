@@ -9,6 +9,7 @@ interface Task {
     rulesetId: number;
     eliability: string;
     maxSubmissions: number;
+    showLevel: string;
     
   }
   
