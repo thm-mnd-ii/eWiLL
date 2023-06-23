@@ -19,6 +19,7 @@
             {{ courseRole }}
           </v-chip>
           <v-spacer></v-spacer>
+          <TaskDateVChip ref="taskDateVChip" class="margin-right-5px" :due-date-prop="task.dueDate"></TaskDateVChip>
           <v-chip v-if="task.maxSubmissions != 999" class="margin-right-5px">Versuche: {{ task.maxSubmissions }}</v-chip>
           <v-chip v-if="task.maxSubmissions == 999" class="margin-right-5px">Versuche: unbegrenzt</v-chip>
           <v-chip v-if="task.eliability == 'BONUS'" color="green">Bonus</v-chip>
@@ -75,7 +76,6 @@ import taskService from "../services/task.service";
 import categoryService from "../services/category.service";
 import Task from "../model/task/Task";
 import SubmitPL from "../model/SubmitPL";
-import Result from "../model/submission/Result";
 import DialogEditTask from "@/dialog/DialogEditTask.vue";
 import DialogConfirm from "@/dialog/DialogConfirm.vue";
 
@@ -90,7 +90,9 @@ import ModelingTool from "@/components/ModelingTool.vue";
 import submissionService from "@/services/submission.service";
 
 import TaskSubmissionsResultsTabs from "@/components/TaskSubmissionsResultsTabs.vue";
+import TaskDateVChip from "@/components/TaskDateVChip.vue";
 const taskSubmissionsResultsTabs = ref<typeof TaskSubmissionsResultsTabs>();
+const taskDateVChip = ref<typeof TaskDateVChip>();
 
 const route = useRoute();
 const router = useRouter();
@@ -133,16 +135,15 @@ onMounted(() => {
 });
 
 const openSettings = () => {
-  dialogEditTask.value?.openDialog(task.value).then((result: boolean) => {
-    if (result) {
-      // TODO: reload task
-    }
+  dialogEditTask.value?.openDialog(task.value).then(() => {
+    loadTask();
   });
 };
 
 const loadTask = () => {
   taskService.getTask(taskId.value).then((response) => {
     task.value = response;
+    taskDateVChip.value?.setDueDate(task.value.dueDate);
     if (courseRole.value != "STUDENT") loadSolutionModel();
   });
 };
@@ -151,7 +152,6 @@ const loadSubmissions = () => {
   evaluationService.getSubmissionIdsByUserAndTask(userId.value, taskId.value).then((response) => {
     const submissionIds = response.data;
     submissionCount.value = submissionIds.length;
-    // TODO: Load submissions/results
     if (submissionCount.value > 0) taskSubmissionsResultsTabs.value!.load(taskId.value);
   });
 };
