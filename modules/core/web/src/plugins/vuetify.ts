@@ -10,7 +10,7 @@ import "vuetify/styles";
 
 // Composables
 import { createVuetify } from "vuetify";
-import { VDataTable } from 'vuetify/labs/VDataTable'
+import { VDataTable } from "vuetify/labs/VDataTable";
 
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
 export default createVuetify({
@@ -24,7 +24,8 @@ export default createVuetify({
           background: "#FFFFFF",
           surface: "#FFFFFF",
           primary: "#81BA24",
-          "primary-darken-1": "#3700B3",
+          "primary-dark": "#4F8A00",
+          "primary-light": "#B4ED59",
           secondary: "#03DAC6",
           "secondary-darken-1": "#018786",
           "dark-gray": "#414958",
