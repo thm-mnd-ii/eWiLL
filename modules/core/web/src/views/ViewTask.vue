@@ -1,5 +1,7 @@
 <!-- eslint-disable vue/valid-v-slot -->
 <template>
+  <BreadCrumb :link="router.currentRoute.value.fullPath"></BreadCrumb>
+
   <DialogShowFullDiagram ref="dialogShowFullDiagram" />
   <DialogEditTask ref="dialogEditTask" />
   <DialogConfirm ref="dialogConfirm" />
@@ -78,6 +80,7 @@ import Task from "../model/task/Task";
 import SubmitPL from "../model/SubmitPL";
 import DialogEditTask from "@/dialog/DialogEditTask.vue";
 import DialogConfirm from "@/dialog/DialogConfirm.vue";
+import BreadCrumb from "@/components/BreadCrumb.vue";
 
 import Category from "@/model/diagram/Category";
 import Diagram from "@/model/diagram/Diagram";

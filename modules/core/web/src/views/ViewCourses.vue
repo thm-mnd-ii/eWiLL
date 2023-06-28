@@ -1,8 +1,9 @@
 <!-- eslint-disable vue/valid-v-slot -->
 <template>
+  <BreadCrumb link="Alle Kurse"></BreadCrumb>
   <div class="container">
     <CoursesList ref="coursesList"></CoursesList>
-    <v-btn id="createCourseBtn" @click="createCourse">Kurs erstellen</v-btn>
+    <v-btn id="createCourseBtn" color="primary-dark" @click="createCourse">Kurs erstellen</v-btn>
   </div>
   <DialogCreateCourse ref="dialogCreateCourse"></DialogCreateCourse>
 </template>
@@ -12,6 +13,7 @@ import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import DialogCreateCourse from "../dialog/DialogCreateCourse.vue";
 import CoursesList from "@/components/CoursesList.vue";
+import BreadCrumb from "@/components/BreadCrumb.vue";
 
 const dialogCreateCourse = ref<typeof DialogCreateCourse>();
 const coursesList = ref<typeof CoursesList>();
@@ -33,10 +35,10 @@ const createCourse = () => {
 
 <style scoped lang="scss">
 #createCourseBtn {
-  color: #ffffff;
+  margin: 0 auto;
+  display: block;
   margin-top: 20px;
-  background-color: #81ba24;
-  left: 45%;
+  margin-bottom: 20px;
 }
 
 .container {

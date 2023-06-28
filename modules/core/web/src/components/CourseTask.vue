@@ -77,6 +77,7 @@ import { storeToRefs } from "pinia";
 import ModelingTool from "@/components/ModelingTool.vue";
 import DialogShowFullDiagram from "@/dialog/DialogShowFullDiagram.vue";
 import DialogEditTask from "@/dialog/DialogEditTask.vue";
+import BreadCrumbVue from "./BreadCrumb.vue";
 
 import diagramService from "@/services/diagram.service";
 
