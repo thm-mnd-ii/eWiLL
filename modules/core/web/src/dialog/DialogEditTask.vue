@@ -15,7 +15,7 @@
             <v-select v-if="!workInProgress" v-model="currentTask.rulesetId" :items="rulesets" item-title="name" label="Regelsatz" variant="underlined" color="#81ba24" item-value="id"></v-select>
             <v-select v-model="currentTask.eliability" :items="liabilities" label="Verpflichtung" variant="underlined" color="#81ba24" item-title="name" item-value="enum"></v-select>
             <v-select v-model="maxSubmissions" :items="arrayMaxSubmissions" label="Versuche" variant="underlined" color="#81ba24" hint="0 = unbegrenzt" placeholder="0 = unbegrenzt" @update:model-value="updateMaxSubmissionsOnCurrentTask"></v-select>
-            <v-select v-model="currentTask.showLevel" label="Feedback Level" :rules="feedbackRules" variant="underlined" color="#81ba24" :items="resultLevels" item-title="id" item-value="enum"></v-select>
+            <v-slider v-model="sliderPosition" :min="0" :max="2" :step="1" thumb-label label="Feedback Level" color="#81ba24" hint="0 = Kein Feedback, 1 = Hinweis auf Fehler, 2 = Lösungsvorschläge" @update:model-value="updateShowLevel"></v-slider>
           </div>
         </v-form>
       </v-card-text>
@@ -70,21 +70,21 @@ const liabilities = ref<any[]>([
   { name: "Bonus", enum: "BONUS" },
   { name: "Optional", enum: "OPTIONAL" },
 ]);
-const resultLevels = ref<any[]>([
-  { id: 0, enum: "NOTHING" },
-  { id: 1, enum: "BASIC" },
-  { id: 2, enum: "INFO" },
-  { id: 3, enum: "DEBUG" },
-  { id: 4, enum: "ERROR" },
+const resultLevels = new Map<number, string>([
+  [0, "NOTHING"],
+  [1, "BASIC"],
+  [2, "INFO"],
+  [3, "DEBUG"],
+  [4, "ERROR"],
 ]);
 
 const taskForm = ref<any>();
 const valid = ref(false);
 const selectedCategoryId = ref<number>();
 const selectedDiagramId = ref<number>();
+const sliderPosition = ref();
 const nameRules = ref<any>([(v: string) => !!v || "Name ist erforderlich"]);
 const descriptionRules = ref<any>([(v: string) => !!v || "Beschreibung ist erforderlich"]);
-const feedbackRules = ref<any>([(v: string) => !!v || "Feedback Level ist erforderlich"]);
 const regex = /^([0-2][0-9]|3[0-1])\.(0[1-9]|1[0-2])\.\d{4} ([01][0-9]|2[0-3]):[0-5][0-9]$/;
 const dueDateRules = ref<any>([(v: string) => !v || regex.test(v) || "Ungültiges Datum dd.mm.yyyy hh:mm"]);
 
@@ -129,12 +129,14 @@ const openDialog = (task?: Task) => {
     currentTask.value = task;
     newTask.value = false;
     setModelAndCategory();
+    loadShowLevel(task.showLevel);
   } else {
     editTitle.value = "Neue Aufgabe erstellen";
     currentTask.value = {} as Task;
     currentTask.value.courseId = Number(route.params.id);
     currentTask.value.mediaType = "MODEL";
     currentTask.value.rulesetId = 0;
+    currentTask.value.showLevel = "NOTHING";
     newTask.value = true;
   }
 
@@ -178,7 +180,6 @@ const _cancel = () => {
   selectedCategoryId.value = undefined;
   editTaskDialog.value = false;
   resolvePromise.value(false);
-  console.log(currentTask.value);
 };
 
 const deleteTask = () => {
@@ -194,6 +195,16 @@ const deleteTask = () => {
 const updateMaxSubmissionsOnCurrentTask = (submissions: any) => {
   if (submissions == 0) currentTask.value.maxSubmissions = 999;
   else currentTask.value.maxSubmissions = submissions;
+};
+
+const updateShowLevel = (value: any) => {
+  currentTask.value.showLevel = resultLevels.get(value)!;
+};
+
+const loadShowLevel = (level: string) => {
+  resultLevels.forEach((value, key) => {
+    if (value == level) sliderPosition.value = key;
+  });
 };
 
 // define expose
