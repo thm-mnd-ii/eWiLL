@@ -19,7 +19,7 @@
             </v-col>
           </v-row>
         </v-card-text>
-        <v-card-actions>
+        <v-card-actions class="card-actions">
           <v-btn v-if="!newCourse" color="error" variant="flat" @click="deleteCourse">Kurs löschen</v-btn>
           <v-spacer></v-spacer>
           <v-btn color="error" variant="flat" @click="_cancel"> Abbrechen </v-btn>
@@ -166,4 +166,9 @@ defineExpose({
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.card-actions {
+  padding: 1rem;
+}
+
+</style>

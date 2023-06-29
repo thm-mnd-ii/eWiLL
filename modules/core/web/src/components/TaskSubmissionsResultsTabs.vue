@@ -10,7 +10,7 @@
         <v-card flat>
           <v-card-text class="task-trials-text">
             <v-chip v-if="tab.result.correct" color="green" append-icon="mdi-check-circle" class="margin-right-5px">Korrekt: </v-chip>
-            <v-chip v-if="!tab.result.correct" color="red" append-icon="mdi-close-circle" class="margin-right-5px">Korrekt: </v-chip>
+            <v-chip v-if="!tab.result.correct" color="red" append-icon="mdi-close-circle" class="margin-right-5px">Fehlerhaft: </v-chip>
             <v-chip v-if="tab.result.correct" color="green">Score: {{ tab.result.score }}</v-chip>
             <v-chip v-if="!tab.result.correct" color="red">Score: {{ tab.result.score }}</v-chip>
             <br />
@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { useAuthUserStore } from "../stores/authUserStore";
 import { useDiagramStore } from "@/stores/diagramStore";
 // Models

@@ -6,24 +6,22 @@
           <div>
             <v-text-field v-model="currentTask.name" label="Name" :rules="nameRules" variant="underlined" color="#81ba24"></v-text-field>
             <v-textarea v-model="currentTask.description" label="Beschreibung" :rules="descriptionRules" variant="underlined" color="#81ba24"></v-textarea>
-            <v-select v-model="selectedCategoryId" required label="Kategorie" variant="underlined" :items="categories" item-title="name" item-value="id" color="#81ba24" @update:model-value="updateDiagrams"></v-select>
-            <v-select v-model="currentTask.solutionModelId" label="Musterdiagram" variant="underlined" :items="diagrams" item-title="name" item-value="id" color="#81ba24"></v-select>
+            <v-select v-model="selectedCategoryId" label="Kategorie" :rules="modelRules" variant="underlined" :items="categories" item-title="name" item-value="id" color="#81ba24" @update:model-value="updateDiagrams"></v-select>
+            <v-select v-model="currentTask.solutionModelId" label="Musterdiagram" :rules="modelRules" variant="underlined" :items="diagrams" item-title="name" item-value="id" color="#81ba24"></v-select>
           </div>
           <div>
             <v-text-field v-model="currentTask.dueDate" :rules="dueDateRules" label="Deadline" variant="underlined" color="#81ba24" hint="DD.MM.YYYY HH:MM"></v-text-field>
-            <v-select v-if="!workInProgress" v-model="currentTask.mediaType" :items="['Model', 'Text']" label="Medientyp" variant="underlined" color="#81ba24"></v-select>
-            <v-select v-if="!workInProgress" v-model="currentTask.rulesetId" :items="rulesets" item-title="name" label="Regelsatz" variant="underlined" color="#81ba24" item-value="id"></v-select>
-            <v-select v-model="currentTask.eliability" :items="liabilities" label="Verpflichtung" variant="underlined" color="#81ba24" item-title="name" item-value="enum"></v-select>
+            <v-select v-model="currentTask.eliability" :rules="liabilityRules" :items="liabilities" label="Verpflichtung" variant="underlined" color="#81ba24" item-title="name" item-value="enum"></v-select>
             <v-select v-model="maxSubmissions" :items="arrayMaxSubmissions" label="Versuche" variant="underlined" color="#81ba24" hint="0 = unbegrenzt" placeholder="0 = unbegrenzt" @update:model-value="updateMaxSubmissionsOnCurrentTask"></v-select>
-            <v-slider v-model="sliderPosition" :min="0" :max="2" :step="1" thumb-label label="Feedback Level" color="#81ba24" hint="0 = Kein Feedback, 1 = Hinweis auf Fehler, 2 = Lösungsvorschläge" @update:model-value="updateShowLevel"></v-slider>
+            <v-slider v-model="sliderPosition" :min="0" :max="2" :step="1" thumb-label label="Feedback Level" color="#81ba24" hint="0 = Kein Feedback, 1 = Hinweis auf Fehler, 2 = Lösungsvorschläge" persistent-hint @update:model-value="updateShowLevel"></v-slider>
           </div>
         </v-form>
       </v-card-text>
-      <v-card-actions>
+      <v-card-actions class="card-actions">
         <v-btn v-if="!newTask" class="btn-red" @click="deleteTask">Aufgabe löschen</v-btn>
         <v-spacer></v-spacer>
-        <v-btn class="btn-red" @click="_cancel"> Abbrechen </v-btn>
-        <v-btn id="btn-confirm" type="submit" @click="_confirm"> Speichern </v-btn>
+        <v-btn color="error" variant="flat" @click="_cancel"> Abbrechen </v-btn>
+        <v-btn color="success" variant="flat" @click="_confirm"> Speichern </v-btn>
       </v-card-actions>
     </v-card>
     <v-snackbar v-model="snackbarFail" :timeout="3000"> Ein Fehler ist aufgetreten, bitte versuchen Sie es erneut </v-snackbar>
@@ -45,8 +43,6 @@ import DialogConfirmVue from "../dialog/DialogConfirm.vue";
 
 const arrayMaxSubmissions = Array.from(Array(100).keys());
 
-const workInProgress = ref(true);
-
 const authUserStore = useAuthUserStore();
 const route = useRoute();
 
@@ -61,10 +57,7 @@ const currentTask = ref<Task>({} as Task);
 const maxSubmissions = ref();
 const categories = ref<Category[]>([]);
 const diagrams = ref<Diagram[]>([]);
-const rulesets = ref<any[]>([
-  { id: 1, name: "Regelsatz 1" },
-  { id: 2, name: "Regelsatz 2" },
-]);
+
 const liabilities = ref<any[]>([
   { name: "Verpflichtend", enum: "MANDATORY" },
   { name: "Bonus", enum: "BONUS" },
@@ -85,8 +78,10 @@ const selectedDiagramId = ref<number>();
 const sliderPosition = ref();
 const nameRules = ref<any>([(v: string) => !!v || "Name ist erforderlich"]);
 const descriptionRules = ref<any>([(v: string) => !!v || "Beschreibung ist erforderlich"]);
+const modelRules = ref<any>([(v: string) => !!v || "Musterdiagramm ist erforderlich"]);
 const regex = /^([0-2][0-9]|3[0-1])\.(0[1-9]|1[0-2])\.\d{4} ([01][0-9]|2[0-3]):[0-5][0-9]$/;
-const dueDateRules = ref<any>([(v: string) => !v || regex.test(v) || "Ungültiges Datum dd.mm.yyyy hh:mm"]);
+const dueDateRules = ref<any>([(v: string) => !!v && regex.test(v) || "Ungültiges Datum dd.mm.yyyy hh:mm"]);
+const liabilityRules = ref<any>([(v: string) => !!v || "Verpflichtung ist erforderlich"]);
 
 // empty, or should be a valid date and in the future
 // const dueDateRules = ref<any>([(v: string) => !v || (new Date(v) > new Date() && !isNaN(new Date(v).getTime())) || "Ungültiges Datum"]);
@@ -220,13 +215,7 @@ defineExpose({
   grid-gap: 10px;
 }
 
-#btn-confirm {
-  background-color: #81ba24;
-  color: #ffffff;
-}
-
-.btn-red {
-  background-color: #db3e1f;
-  color: #ffffff;
+.card-actions{
+  padding: 1rem;
 }
 </style>

@@ -29,14 +29,12 @@ const wordReplacement = (word: string) => {
 };
 
 onMounted(() => {
-  console.log(props.link);
   calculateBreadCrumb();
 });
 
 const calculateBreadCrumb = async () => {
   // add items to breadcrumb
   const path = props.link.split("/").filter((item) => item != "");
-  console.log(path);
 
   for (let i = 0; i < path.length; i++) {
     const item = path[i];
