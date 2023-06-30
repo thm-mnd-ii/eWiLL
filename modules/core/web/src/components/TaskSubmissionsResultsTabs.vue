@@ -15,7 +15,7 @@
             <v-chip v-if="!tab.result.correct" color="red">Score: {{ tab.result.score }}</v-chip>
             <br />
             <br />
-            <p>Tab {{ tab.result.comments[0] }}</p>
+            <p v-for="comment in tab.result.comments" :key="comment.message">{{ comment.message }}</p>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -36,6 +36,7 @@ import { useDiagramStore } from "@/stores/diagramStore";
 import Submission from "../model/submission/Submission";
 import SubmissionAndResult from "../model/submission/SubmissionAndResult";
 import Diagram from "../model/diagram/Diagram";
+import Task from "../model/task/Task";
 // Services
 import submissionService from "@/services/submission.service";
 //Dialogs
@@ -51,12 +52,12 @@ const dialogShowFullDiagram = ref();
 const submissions = ref<Submission[]>();
 const submissionsWithResults = ref<SubmissionAndResult[]>();
 
-const load = (taskId: number) => {
+const load = (task: Task) => {
   submissionsWithResults.value = [];
-  submissionService.getSubmissionIdsByUserAndTask(userId.value, taskId).then((response) => {
+  submissionService.getSubmissionIdsByUserAndTask(userId.value, task.id).then((response) => {
     submissions.value = response.data;
     submissions.value?.forEach((submission) => {
-      submissionService.getResultBySubmissionId(submission.id).then((response) => {
+      submissionService.getResultBySubmissionIdAndLevel(submission.id, task.showLevel).then((response) => {
         let tmp = {} as SubmissionAndResult;
         tmp.submission = submission;
         tmp.result = response.data;

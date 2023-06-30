@@ -2,6 +2,7 @@ package com.wipdev.eWiLL_backend.eval
 
 import com.wipdev.eWiLL_backend.database.tables.course.SubmissionResult
 import com.wipdev.eWiLL_backend.eval.rules.RuleEvalResult
+import com.wipdev.eWiLL_backend.eval.rules.ScoreType
 
 class DiagramEvalResult(private var ruleEvalResults: List<RuleEvalResult>) {
 
@@ -13,22 +14,18 @@ class DiagramEvalResult(private var ruleEvalResults: List<RuleEvalResult>) {
 
     //In percentage
     fun calculateScore(): DiagramEvalResult {
-        var score = 0f
+
         var percentageSum = 0f
-        var percentageCount = 0
         ruleEvalResults.forEach {
-            percentageSum += it.score.getScore()
-            percentageCount++
-
+            println(it.score.score)
+            if (it.score.scoreType == ScoreType.PERCENTAGE) {
+                percentageSum += it.score.score * 100
+            } else if (it.score.scoreType == ScoreType.ERROR_COUNT) {
+                percentageSum += (100 - it.score.score)
+            }
         }
 
-
-
-        if (percentageCount != 0) {
-            score += percentageSum / percentageCount
-        }
-        this.score = score
-
+        this.score = percentageSum / ruleEvalResults.size
         return this
     }
 
@@ -37,7 +34,11 @@ class DiagramEvalResult(private var ruleEvalResults: List<RuleEvalResult>) {
 
         submissionResult.correct = score >= 100
         submissionResult.score = score
-        submissionResult.addComment(ruleEvalResults.joinToString("\n") { it.message ?: "" })
+        for (ruleEvalResult in ruleEvalResults) {
+            for (resultMessage in ruleEvalResult.messages) {
+                submissionResult.addResultMessage(resultMessage)
+            }
+        }
         submissionResult.submissionId = submissionId
         return submissionResult
     }

@@ -1,5 +1,6 @@
 package com.wipdev.eWiLL_backend.database.tables.course
 
+import com.wipdev.eWiLL_backend.eval.rules.ResultMessage
 import org.hibernate.annotations.Type
 import javax.persistence.*
 
@@ -19,17 +20,23 @@ class SubmissionResult {
 
     @Type(type = "com.wipdev.eWiLL_backend.database.tables.utils.JsonbUserType")
     @Column(name = "comment", nullable = true, columnDefinition = "jsonb", length = 100000)
-    var comments: List<Any>? = null
+    private var comments: List<Any>? = null
+
 
     @Column(name = "submissionId", nullable = false)
     var submissionId: Long? = null
 
 
-    fun addComment(comment: String) {
+
+    fun getResultMessages(): List<ResultMessage> {
+        return comments!!.map { ResultMessage.fromJsonString(it.toString()) }
+    }
+
+    fun addResultMessage(message: ResultMessage) {
         comments = if (comments == null) {
-            listOf(comment)
+            listOf(message.toJsonString())
         } else {
-            comments!!.plus(comment)
+            comments!!.plus(message.toJsonString())
         }
     }
 
