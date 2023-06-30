@@ -51,6 +51,7 @@ class TaskService : ITaskService {
             model.id = null
             model.ownerId = -1
             model.name +="(Kopie)"
+
             val newDiagramId = diagramService.create(model)
             task.solutionModelId = newDiagramId
         }
