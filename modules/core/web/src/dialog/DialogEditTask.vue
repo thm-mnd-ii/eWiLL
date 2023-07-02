@@ -4,16 +4,16 @@
       <v-card-text>
         <v-form ref="taskForm" v-model="valid" class="taskForm">
           <div>
-            <v-text-field v-model="currentTask.name" label="Name" :rules="nameRules" variant="underlined" color="#81ba24"></v-text-field>
-            <v-textarea v-model="currentTask.description" label="Beschreibung" :rules="descriptionRules" variant="underlined" color="#81ba24"></v-textarea>
-            <v-select v-model="selectedCategoryId" label="Kategorie" :rules="modelRules" variant="underlined" :items="categories" item-title="name" item-value="id" color="#81ba24" @update:model-value="updateDiagrams"></v-select>
-            <v-select v-model="currentTask.solutionModelId" label="Musterdiagram" :rules="modelRules" variant="underlined" :items="diagrams" item-title="name" item-value="id" color="#81ba24"></v-select>
+            <v-text-field v-model="currentTask.name" label="Name" :rules="nameRules" variant="underlined" color="primary"></v-text-field>
+            <v-textarea v-model="currentTask.description" label="Beschreibung" :rules="descriptionRules" variant="underlined" color="primary"></v-textarea>
+            <v-select v-model="selectedCategoryId" label="Kategorie" :rules="modelRules" variant="underlined" :items="categories" item-title="name" item-value="id" color="primary" @update:model-value="updateDiagrams"></v-select>
+            <v-select v-model="currentTask.solutionModelId" label="Musterdiagram" :rules="modelRules" variant="underlined" :items="diagrams" item-title="name" item-value="id" color="primary"></v-select>
           </div>
           <div>
-            <v-text-field v-model="currentTask.dueDate" :rules="dueDateRules" label="Deadline" variant="underlined" color="#81ba24" hint="DD.MM.YYYY HH:MM"></v-text-field>
-            <v-select v-model="currentTask.eliability" :rules="liabilityRules" :items="liabilities" label="Verpflichtung" variant="underlined" color="#81ba24" item-title="name" item-value="enum"></v-select>
-            <v-select v-model="maxSubmissions" :items="arrayMaxSubmissions" label="Versuche" variant="underlined" color="#81ba24" hint="0 = unbegrenzt" placeholder="0 = unbegrenzt" @update:model-value="updateMaxSubmissionsOnCurrentTask"></v-select>
-            <v-slider v-model="sliderPosition" :min="0" :max="2" :step="1" thumb-label label="Feedback Level" color="#81ba24" hint="0 = Kein Feedback, 1 = Hinweis auf Fehler, 2 = Lösungsvorschläge" persistent-hint @update:model-value="updateShowLevel"></v-slider>
+            <v-text-field v-model="currentTask.dueDate" :rules="dueDateRules" label="Deadline" variant="underlined" color="primary" hint="DD.MM.YYYY HH:MM"></v-text-field>
+            <v-select v-model="currentTask.eliability" :rules="liabilityRules" :items="liabilities" label="Verpflichtung" variant="underlined" color="primary" item-title="name" item-value="enum"></v-select>
+            <v-select v-model="maxSubmissions" :items="arrayMaxSubmissions" label="Versuche" variant="underlined" color="primary" hint="0 = unbegrenzt" placeholder="0 = unbegrenzt" @update:model-value="updateMaxSubmissionsOnCurrentTask"></v-select>
+            <v-slider v-model="sliderPosition" :min="0" :max="2" :step="1" thumb-label label="Feedback Level" color="primary" hint="0 = Kein Feedback, 1 = Hinweis auf Fehler, 2 = Lösungsvorschläge" persistent-hint @update:model-value="updateShowLevel"></v-slider>
           </div>
         </v-form>
       </v-card-text>
