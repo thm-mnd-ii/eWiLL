@@ -59,7 +59,7 @@ const router = createRouter({
       component: ViewProfile,
     },
     {
-      path: "/courses",
+      path: "/course",
       name: "ViewCourses",
       component: ViewCourses,
     },

@@ -17,7 +17,7 @@
       <v-list density="compact" active-class="active" nav>
         <v-list-item to="/" active-class="active" prepend-icon="mdi-human-greeting" title="Willkommen" value="introduction" />
         <v-list-item v-if="admin" to="/home" active-class="active" prepend-icon="mdi-home-variant" title="Startseite" value="home" />
-        <v-list-item v-if="admin" to="/courses" active-class="active" prepend-icon="mdi-file-multiple" title="Alle Kurse" value="courses" />
+        <v-list-item v-if="admin" to="/course" active-class="active" prepend-icon="mdi-file-multiple" title="Alle Kurse" value="course" />
         <v-list-item to="/modeling" active-class="active" prepend-icon="mdi-pencil-ruler" title="Modellierung" value="modeling" />
         <v-list-item v-if="admin" to="/checker" active-class="active" prepend-icon="mdi-code-greater-than" title="Überprüfung" value="checker" />
         <v-list-item v-if="admin" to="/testTask" active-class="active" prepend-icon="mdi-file-document-edit" title="Testaufgabe" value="testTask" />

@@ -9,7 +9,19 @@ import { ref } from "vue";
 import courseService from "../services/course.service";
 import taskService from "../services/task.service";
 
-const items = ref<string[]>(["Start"]);
+// items for breadcrumb
+// {
+// title: 'Dashboard',
+//         disabled: false,
+//         href: 'breadcrumbs_dashboard',
+//       },
+const items = ref<Array<{ title: string; disabled: boolean; href: string }>>([
+  {
+    title: "Home",
+    disabled: false,
+    href: "/",
+  },
+]);
 
 //define props
 const props = defineProps<{
@@ -20,7 +32,7 @@ const props = defineProps<{
 const wordReplacement = (word: string) => {
   switch (word) {
     case "course":
-      return "Kurs";
+      return "Alle Kurse";
     case "task":
       return "Aufgabe";
     default:
@@ -36,25 +48,44 @@ const calculateBreadCrumb = async () => {
   // add items to breadcrumb
   const path = props.link.split("/").filter((item) => item != "");
 
+  let breadcrumbItem: { title: string; disabled: boolean; href: string };
+
   for (let i = 0; i < path.length; i++) {
     const item = path[i];
-    const word = wordReplacement(item);
+    const title = wordReplacement(item);
+    // create relative link for item
+    const link = "/" + path.slice(0, i + 1).join("/");
+    const disabled = i == path.length - 1;
 
-    // if last item was course, add course name
+    breadcrumbItem = {
+      title: title,
+      disabled: disabled,
+      href: link,
+    };
+
+    // if last item was course, replace id with course name
     if (i > 0 && path[i - 1] == "course") {
-      let courseName = courseService.getCourse(Number(path[i])).then((response) => {
+      let newTitle = await courseService.getCourse(Number(path[i])).then((response) => {
         return response.data.name;
       });
 
-      items.value.push(await courseName);
-    } else if (i > 0 && path[i - 1] == "task") {
-      let taskName = taskService.getTask(Number(path[i])).then((response) => {
+      breadcrumbItem.title = newTitle;
+
+      items.value.push(breadcrumbItem);
+    }
+    // if last item was course, replace id with task name
+    else if (i > 0 && path[i - 1] == "task") {
+      let newTitle = await taskService.getTask(Number(path[i])).then((response) => {
         return response.name;
       });
 
-      items.value.push(await taskName);
+      breadcrumbItem.title = newTitle;
+
+      items.value.push(breadcrumbItem);
+    } else if (path[i] == "task") {
+      continue;
     } else {
-      items.value.push(word);
+      items.value.push(breadcrumbItem);
     }
   }
 };
