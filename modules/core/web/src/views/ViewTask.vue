@@ -1,11 +1,13 @@
 <!-- eslint-disable vue/valid-v-slot -->
 <template>
+  <TaskDateVChip ref="taskDateVChip" class="hide" :due-date-prop="task.dueDate"></TaskDateVChip>
+
   <DialogShowFullDiagram ref="dialogShowFullDiagram" />
   <DialogEditTask ref="dialogEditTask" />
   <DialogConfirm ref="dialogConfirm" />
 
   <div class="task">
-    <TaskVCard @task-updated="loadTask"></TaskVCard>
+    <TaskVCard ref="taskVCard" @task-updated="loadTask"></TaskVCard>
 
     <div v-if="courseRole != 'STUDENT'" class="switchRole">
       <!-- btn switch to student mode -->
@@ -80,9 +82,12 @@ import ModelingTool from "@/components/ModelingTool.vue";
 import submissionService from "@/services/submission.service";
 import CourseRoles from "@/enums/CourseRoles";
 import ResultLevels from "@/enums/ResultLevels";
+import TaskDateVChip from "@/components/TaskDateVChip.vue";
 
 import TaskSubmissionsResultsTabs from "@/components/TaskSubmissionsResultsTabs.vue";
 import TaskVCard from "@/components/TaskVCard.vue";
+
+const taskDateVChip = ref<typeof TaskDateVChip>();
 
 const taskSubmissionsResultsTabs = ref<typeof TaskSubmissionsResultsTabs>();
 
@@ -115,6 +120,7 @@ const submissionCount = ref(0);
 
 const isDue = ref(false);
 
+// TODO: refactor in service and delete hidden component
 watch(
   () => task.value.dueDate,
   (newVal) => {
@@ -312,5 +318,9 @@ const loadNumberSubmissions = () => {
   display: flex;
   justify-content: center;
   margin: 10px 20px;
+}
+
+.hide {
+  display: none;
 }
 </style>

@@ -57,7 +57,6 @@ const selectedResult = ref<Result>({} as Result);
 watch(
   () => selectedResultTab.value,
   (newValue) => {
-    console.log(newValue);
     submissionService.getResultBySubmissionIdAndLevel(submissions.value[newValue - 1].id, currentTask.value.showLevel).then((response) => {
       selectedResult.value = response.data;
     });
@@ -69,7 +68,6 @@ const load = (task: Task) => {
 
   submissionService.getSubmissionIdsByUserAndTask(userId.value, task.id).then((response) => {
     submissions.value = response.data;
-    console.log(submissions.value);
 
     //select last tab
     selectedResultTab.value = submissions.value.length;
