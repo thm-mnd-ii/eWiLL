@@ -4,7 +4,8 @@
       <v-app-bar-nav-icon @click.stop="showSideBar = !showSideBar" />
       <v-toolbar-title>
         <router-link to="/">
-          <IconEWiLL />
+          <IconEWiLL class="icon" />
+          <IconFBS class="icon" />
         </router-link>
       </v-toolbar-title>
       <v-spacer />
@@ -17,16 +18,15 @@
       <v-list density="compact" active-class="active" nav>
         <v-list-item to="/" active-class="active" prepend-icon="mdi-human-greeting" title="Willkommen" value="introduction" />
         <v-list-item v-if="admin" to="/home" active-class="active" prepend-icon="mdi-home-variant" title="Startseite" value="home" />
-        <v-list-item v-if="admin" to="/courses" active-class="active" prepend-icon="mdi-file-multiple" title="Alle Kurse" value="courses" />
+        <v-list-item v-if="admin" to="/course" active-class="active" prepend-icon="mdi-file-multiple" title="Alle Kurse" value="course" />
         <v-list-item to="/modeling" active-class="active" prepend-icon="mdi-pencil-ruler" title="Modellierung" value="modeling" />
-        <v-list-item v-if="admin" to="/checker" active-class="active" prepend-icon="mdi-code-greater-than" title="Überprüfung" value="checker" />
-        <v-list-item v-if="admin" to="/testTask" active-class="active" prepend-icon="mdi-file-document-edit" title="Testaufgabe" value="testTask" />
         <v-list-item to="/feedbackReport" active-class="active" prepend-icon="mdi-bug" title="Feedback" value="report" />
         <v-list-item v-if="admin" to="/feedbackOverview" active-class="active" prepend-icon="mdi-view-dashboard-variant-outline" title="Feedback Overview" value="report" />
       </v-list>
     </v-navigation-drawer>
 
     <v-main>
+      <BreadCrumb v-if="showBreadcrumb" :link="router.currentRoute.value.fullPath" />
       <RouterView />
     </v-main>
 
@@ -44,18 +44,48 @@
 </template>
 
 <script setup lang="ts">
-import { RouterLink, RouterView } from "vue-router";
+import { RouterLink, RouterView, useRouter } from "vue-router";
+import { onMounted, ref } from "vue";
 import IconEWiLL from "./components/icons/IconEWiLL.vue";
+import IconFBS from "./components/icons/IconFBS.vue";
 import DropdownUserNav from "./components/modelingTool/DropdownUserNav.vue";
-import { ref } from "vue";
+import BreadCrumb from "@/components/BreadCrumb.vue";
+import { watch } from "vue";
+
+const router = useRouter();
+
+const hideBreadcrumbIn = ["Home", "Modeling", "ViewLogin", "ViewIntroduction", "View404Page", "ViewBugReport", "ViewBugOverview"];
 
 const showSideBar = ref(true);
+const showBreadcrumb = ref(true);
 const admin = ref(localStorage.getItem("user")?.includes("ADMIN"));
 
 const links = [
   { name: "Impressum", url: "/impressum" },
   { name: "Datenschutz", url: "/datenschutz" },
 ];
+
+watch(
+  () => router.currentRoute.value.name,
+  (newVal) => {
+    showBreadcrumb.value = true;
+
+    hideBreadcrumbIn.forEach((route) => {
+      //console.log(`if ${route} == ${newVal}`);
+      if (route == newVal) {
+        showBreadcrumb.value = false;
+      }
+    });
+  }
+);
+
+onMounted(() => {});
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.icon {
+  height: 35px;
+  width: auto;
+  margin-right: 20px;
+}
+</style>

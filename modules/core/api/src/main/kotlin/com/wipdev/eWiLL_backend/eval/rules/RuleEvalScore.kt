@@ -2,11 +2,11 @@ package com.wipdev.eWiLL_backend.eval.rules
 
 class RuleEvalScore {
 
-    var score: Number = 100.0f
+    var score: Float = 100.0f
 
-    var scoreType : ScoreType = ScoreType.PERCENTAGE
+    var scoreType : ScoreType = ScoreType.ERROR_COUNT
 
-    constructor(score: Number, scoreType: ScoreType) {
+    constructor(score: Float, scoreType: ScoreType) {
         this.score = score
         this.scoreType = scoreType
     }
@@ -15,11 +15,4 @@ class RuleEvalScore {
         return "RuleEvalScore(score=$score, scoreType=$scoreType)"
     }
 
-    fun getScore():Float{
-        return when(scoreType){
-            ScoreType.PERCENTAGE -> score.toFloat()
-            ScoreType.ERROR_COUNT -> 100 - score.toFloat()
-            else -> 0f
-        }
-    }
 }

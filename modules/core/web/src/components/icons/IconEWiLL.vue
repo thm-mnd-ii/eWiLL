@@ -7,10 +7,10 @@
         stroke-width=".766622"
         style="font-variant-caps: normal; font-variant-east-asian: normal; font-variant-ligatures: normal; font-variant-numeric: normal"
       />
-      <path d="m68.423798 84.29271 12.218893 27.85566 4.694286-10.70115 4.703588 10.70322 12.218375-27.85566-4.908228 0.0418-7.310147 16.59899-2.253091-5.07514 5.07411-11.56777-4.848283 0.0419-7.349939 16.64446-7.329786-16.68477zm9.397876 2e-3v5.2e-4l2.830319 6.39599 2.811713-6.39599v-5.2e-4z" fill="#ff933b" stroke-width=".0702903" />
-      <path d="m108.95661 91.62896h4.33794l-0.0466 16.08099 8.53149 0.0185 5e-3 4.42199h-12.8282z" fill="#ff923b" stroke-width=".949116" style="font-variant-caps: normal; font-variant-east-asian: normal; font-variant-ligatures: normal; font-variant-numeric: normal" />
+      <path d="m68.423798 84.29271 12.218893 27.85566 4.694286-10.70115 4.703588 10.70322 12.218375-27.85566-4.908228 0.0418-7.310147 16.59899-2.253091-5.07514 5.07411-11.56777-4.848283 0.0419-7.349939 16.64446-7.329786-16.68477zm9.397876 2e-3v5.2e-4l2.830319 6.39599 2.811713-6.39599v-5.2e-4z" fill="#81ba24ff" stroke-width=".0702903" />
+      <path d="m108.95661 91.62896h4.33794l-0.0466 16.08099 8.53149 0.0185 5e-3 4.42199h-12.8282z" fill="#81ba24ff" stroke-width=".949116" style="font-variant-caps: normal; font-variant-east-asian: normal; font-variant-ligatures: normal; font-variant-numeric: normal" />
       <path d="m101.64253 91.7367v4.4297h4.13869v-4.4297zm0 6.14949v14.26425h4.13869v-14.26425z" fill="#34485d" stroke-width="28.5869" />
-      <path d="m124.43066 91.62896h4.33794l-0.0466 16.08099 8.53149 0.0185 5e-3 4.42199h-12.8282z" fill="#ff923b" stroke-width=".949116" style="font-variant-caps: normal; font-variant-east-asian: normal; font-variant-ligatures: normal; font-variant-numeric: normal" />
+      <path d="m124.43066 91.62896h4.33794l-0.0466 16.08099 8.53149 0.0185 5e-3 4.42199h-12.8282z" fill="#81ba24ff" stroke-width=".949116" style="font-variant-caps: normal; font-variant-east-asian: normal; font-variant-ligatures: normal; font-variant-numeric: normal" />
     </g>
   </svg>
 </template>

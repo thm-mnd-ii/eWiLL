@@ -1,5 +1,5 @@
 <template>
-  <v-parallax class="background" src="https://images.unsplash.com/photo-1617957718614-8c23f060c2d0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1332&q=80">
+  <BasicBackground>
     <v-card class="card">
       <v-card-title class="title">
         <span>Zur Verbesserung unseres Dienstes würden wir uns über Feedback freuen</span>
@@ -9,11 +9,11 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer>
-          <v-btn class="btn" @click="sendFeedback">Abschicken</v-btn>
+          <v-btn color="primary-dark" variant="flat" @click="sendFeedback">Abschicken</v-btn>
         </v-spacer>
       </v-card-actions>
     </v-card>
-  </v-parallax>
+  </BasicBackground>
   <v-snackbar v-model="snackbarSuccess" :timeout="2500"> Vielen Dank für dein Feedback!</v-snackbar>
 </template>
 
@@ -21,6 +21,7 @@
 import Feedback from "@/model/Feedback";
 import User from "../model/User";
 import feedbackService from "../services/feedback.service";
+import BasicBackground from "@/components/BasicBackground.vue";
 import { useAuthUserStore } from "@/stores/authUserStore";
 import { ref } from "vue";
 
@@ -42,13 +43,6 @@ const sendFeedback = () => {
 </script>
 
 <style scoped lang="scss">
-.background {
-  height: 100vh;
-  width: 100vw;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
 
 .card {
   width: 700px;
@@ -74,9 +68,5 @@ const sendFeedback = () => {
   grid-template-columns: repeat(1, 1fr);
   align-items: center;
   justify-items: stretch;
-}
-
-.btn {
-  background-color: #ff8f45;
 }
 </style>

@@ -8,10 +8,24 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch } from "vue";
+import { onMounted } from "vue";
+
+const props = defineProps({ dueDateProp: String });
 
 const dueDate = ref();
 const timeDifference = ref();
+
+onMounted(() => {
+  if (props.dueDateProp != undefined) setDueDate(props.dueDateProp);
+});
+
+watch(
+  () => props.dueDateProp,
+  (first, second) => {
+    setDueDate(first!);
+  }
+);
 
 const setDueDate = (dateTime: string) => {
   dueDate.value = dateTime;
@@ -25,6 +39,8 @@ const setDueDate = (dateTime: string) => {
   let currentDate = new Date();
 
   timeDifference.value = (date.getTime() - currentDate.getTime()) / (1000 * 3600 * 24);
+
+  return timeDifference.value;
 };
 
 const getDay = (dateTime: string) => {

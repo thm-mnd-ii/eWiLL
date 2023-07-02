@@ -25,18 +25,13 @@ const router = createRouter({
   routes: [
     {
       path: "/home",
-      name: "home",
+      name: "Home",
       component: HomeView,
     },
     {
       path: "/modeling",
-      name: "modeling",
+      name: "Modeling",
       component: ViewModeling,
-    },
-    {
-      path: "/checker",
-      name: "ViewChecker",
-      component: ViewChecker,
     },
     {
       path: "/impressum",
@@ -59,14 +54,9 @@ const router = createRouter({
       component: ViewProfile,
     },
     {
-      path: "/courses",
+      path: "/course",
       name: "ViewCourses",
       component: ViewCourses,
-    },
-    {
-      path: "/testTask",
-      name: "testTask",
-      component: ViewTestTask,
     },
     {
       path: "/course/:id/signup",

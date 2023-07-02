@@ -1,14 +1,13 @@
 package com.wipdev.eWiLL_backend.services
 
 import com.wipdev.eWiLL_backend.database.tables.Diagram
-import com.wipdev.eWiLL_backend.database.tables.course.Ruleset
 import com.wipdev.eWiLL_backend.database.tables.course.Submission
 import com.wipdev.eWiLL_backend.database.tables.course.SubmissionResult
 import com.wipdev.eWiLL_backend.endpoints.payload.requests.DiagramPL
 import com.wipdev.eWiLL_backend.endpoints.payload.requests.SubmissionRequestPL
-import com.wipdev.eWiLL_backend.eval.DiagramEvalEntry
-import com.wipdev.eWiLL_backend.eval.IDiagramEvaluator
-import com.wipdev.eWiLL_backend.eval.SERMDiagramEvaluator
+import com.wipdev.eWiLL_backend.eval.*
+import com.wipdev.eWiLL_backend.eval.rules.ResultMessage
+import com.wipdev.eWiLL_backend.eval.rules.SubmissionResultWithResultMessages
 import com.wipdev.eWiLL_backend.repository.*
 import com.wipdev.eWiLL_backend.services.serviceInterfaces.IEvaluationService
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,10 +17,6 @@ import java.time.format.DateTimeFormatter
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.stream.Collectors.toList
-import javax.persistence.Column
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
 
 
 @Service
@@ -69,7 +64,7 @@ class EvaluationService : IEvaluationService {
                 runEval(submission, diagram)
             } catch (e: Exception) {
                 val result = SubmissionResult()
-                result.addComment("Error occurred during evaluation, see logs for more details")
+                result.addResultMessage(ResultMessage(ResultLevel.ERROR, "Error occurred during executing evaluation, see logs for more details", -1, "", HighlightLevel.NOTHING))
                 e.printStackTrace()
                 result.correct = false
                 result.score = 0f
@@ -101,7 +96,7 @@ class EvaluationService : IEvaluationService {
                 var result = resultRepository.findBySubmissionId(submission.id!!)
                 if(result == null)
                     result = SubmissionResult()
-                result.addComment("Error occurred during evaluation, see logs for more details")
+                result.addResultMessage(ResultMessage(ResultLevel.DEBUG,"Error occurred during evaluation, see logs for more details",-1,"",HighlightLevel.NOTHING))
                 e.printStackTrace()
                 result.correct = false
                 result.score = 0f
@@ -112,7 +107,7 @@ class EvaluationService : IEvaluationService {
             var result = resultRepository.findBySubmissionId(submission.id!!)
             if(result == null)
                 result = SubmissionResult()
-            result.addComment("Error preparing Evaluation, see logs for more details")
+            result.addResultMessage(ResultMessage(ResultLevel.DEBUG,"Error preparing Evaluation, see logs for more details",-1,"",HighlightLevel.NOTHING))
             e.printStackTrace()
             result.correct = false
             result.score = 0f
@@ -163,6 +158,13 @@ class EvaluationService : IEvaluationService {
         submissionWithDiagram.diagram = submission.getDiagram()?.let { DiagramService.convert(it, configRepository) }
         submissionWithDiagram.attempt = submission.attempt
         return submissionWithDiagram
+    }
+
+    fun getSubmissionResultBySubmissionId(id: Long, level: ResultLevel): SubmissionResultWithResultMessages? {
+        var result = resultRepository.findBySubmissionId(id)!!;
+        var comments = result.getResultMessages().stream().filter { it.resultLevel.ordinal <= level.ordinal }.collect(toList())
+
+        return SubmissionResultWithResultMessages(result.id, result.correct, result.score,comments, result.submissionId)
     }
 
 

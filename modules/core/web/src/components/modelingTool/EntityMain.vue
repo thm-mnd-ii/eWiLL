@@ -338,7 +338,7 @@ const resizer = (e: any) => {
 }
 
 .active {
-  outline: 4px solid #00abe3;
+  outline: 4px solid rgb(var(--v-theme-info));
 }
 
 .resizer {
@@ -346,7 +346,7 @@ const resizer = (e: any) => {
   width: 8px;
   height: 8px;
   border-radius: 4px;
-  background-color: #00abe3;
+  background-color: rgb(var(--v-theme-info));
   z-index: 10;
 }
 

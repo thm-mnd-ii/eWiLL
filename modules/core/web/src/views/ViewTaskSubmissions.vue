@@ -1,6 +1,5 @@
 <template>
   <div class="course">
-    <DialogConfirmVue ref="dialogConfirm"></DialogConfirmVue>
     <v-card>
       <v-card-title class="align-items-center">
         <h3 class="headline mb-0">Abgaben von {{ task?.name }}</h3>
@@ -20,10 +19,13 @@
         </div>
       </v-card-text>
     </v-card>
-    <div class="task_list"><SubmissionsList ref="submissionsList"></SubmissionsList></div>
+    <div class="task_list">
+      <SubmissionsList ref="submissionsList"></SubmissionsList>
+    </div>
   </div>
   <DialogCreateCourse ref="dialogCreateCourse"></DialogCreateCourse>
   <DialogEditTask ref="dialogCreateTask"></DialogEditTask>
+  <DialogConfirmVue ref="dialogConfirm"></DialogConfirmVue>
 </template>
 
 <script setup lang="ts">
@@ -31,28 +33,30 @@ import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useAuthUserStore } from "../stores/authUserStore";
 import { useRouter } from "vue-router";
-import DialogConfirmVue from "../dialog/DialogConfirm.vue";
-import TaskList from "../components/TaskList.vue";
-import CoursePL from "../model/course/CoursePL";
-import taskService from "../services/task.service";
-import courseService from "../services/course.service";
-import DialogCreateCourse from "@/dialog/DialogCreateCourse.vue";
-import DialogEditTask from "@/dialog/DialogEditTask.vue";
+
 import SubmissionsList from "@/components/SubmissionsList.vue";
 import Task from "../model/task/Task";
+
+import taskService from "../services/task.service";
+import courseService from "../services/course.service";
+
+import DialogConfirmVue from "../dialog/DialogConfirm.vue";
+import DialogCreateCourse from "@/dialog/DialogCreateCourse.vue";
+import DialogEditTask from "@/dialog/DialogEditTask.vue";
 
 const route = useRoute();
 const router = useRouter();
 const authUserStore = useAuthUserStore();
-const dialogConfirm = ref<typeof DialogConfirmVue>();
+
 const submissionsList = ref<typeof SubmissionsList>();
-const course = ref<CoursePL>();
 const courseId = ref(Number(route.params.courseId));
 const taskId = ref(Number(route.params.taskId));
 const userId = ref(authUserStore.auth.user?.id);
 const courseRole = ref("");
+
 const dialogCreateCourse = ref<typeof DialogCreateCourse>();
 const dialogCreateTask = ref<typeof DialogEditTask>();
+const dialogConfirm = ref<typeof DialogConfirmVue>();
 
 const task = ref<Task>();
 

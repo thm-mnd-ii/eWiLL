@@ -8,7 +8,7 @@ class DiagramNode {
     var entity : Entity? = null
     var connections : List<DiagramConnection> = emptyList()
 
-    lateinit var otherModelNode: DiagramNode
+    var otherModelNode: DiagramNode? = null
 
 
 

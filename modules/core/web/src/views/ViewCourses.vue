@@ -1,84 +1,33 @@
 <!-- eslint-disable vue/valid-v-slot -->
 <template>
   <div class="container">
-    <v-text-field v-model="search" label="Search" density="compact" prepend-icon="mdi-magnify" variant="underlined" hide-details></v-text-field>
-    <v-row>
-      <v-checkbox v-model="checkboxActive" label="Nur aktive Kurse anzeigen" @change="filterCourseList"></v-checkbox>
-      <v-checkbox v-model="checkboxFriedberg" label="Friedberg" @change="filterCourseList" @click="checkboxGießen = false"></v-checkbox>
-      <v-checkbox v-model="checkboxGießen" label="Gießen" @change="filterCourseList" @click="checkboxFriedberg = false"></v-checkbox>
-      <v-checkbox v-model="checkboxParticipation" label="Teilnahme" @change="filterCourseList"></v-checkbox>
-    </v-row>
-    <v-data-table :headers="headers" :items="displayedCourses" item-value="name" class="elevation-1" :search="search" density="default" height="480px" @click:row="openCourseOrSignUp">
-      <template #item.course.active="{ item }">
-        <v-icon v-if="item.raw.course.active == false" icon="mdi-close-circle" color="#DD0000"></v-icon>
-        <v-icon v-if="item.raw.course.active == true" icon="mdi-check-circle" color="#81BA24"></v-icon>
-      </template>
-      <template #item.member="{ item }">
-        <v-icon v-if="item.raw.member == true" icon="mdi-check-bold" color="#81BA24"></v-icon>
-      </template>
-    </v-data-table>
-    <v-btn id="createCourseBtn" @click="createCourse">Kurs erstellen</v-btn>
+    <CoursesList ref="coursesList"></CoursesList>
+    <v-btn v-if="isAdmin" id="createCourseBtn" color="primary-dark" @click="createCourse">Kurs erstellen</v-btn>
   </div>
   <DialogCreateCourse ref="dialogCreateCourse"></DialogCreateCourse>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import courseService from "../services/course.service";
-import { useAuthUserStore } from "../stores/authUserStore";
 import { useRouter } from "vue-router";
 import DialogCreateCourse from "../dialog/DialogCreateCourse.vue";
-import CourseAndParticipationPL from "@/model/course/CourseAndParticipationPL";
+import CoursesList from "@/components/CoursesList.vue";
+import { useAuthUserStore } from "../stores/authUserStore";
+import GlobalRoles from "@/enums/GlobalRoles";
+
+const authUserStore = useAuthUserStore();
+const router = useRouter();
 
 const dialogCreateCourse = ref<typeof DialogCreateCourse>();
+const coursesList = ref<typeof CoursesList>();
 
-const router = useRouter();
-const authUserStore = useAuthUserStore();
-
-const search = ref("");
-const headers = [
-  { title: "Semester", align: "start", key: "course.semester.name" },
-  { title: "Aktiv", align: "start", key: "course.active" },
-  { title: "Kursname", align: "start", key: "course.name" },
-  { title: "Standort", align: "start", key: "course.location" },
-  { title: "Teilnahme", align: "start", key: "member" },
-];
-
-// Courses lists
-const displayedCourses = ref<CourseAndParticipationPL[]>([]);
-const allCourses = ref<CourseAndParticipationPL[]>([]);
-
-// Checkboxes
-const checkboxActive = ref(false);
-const checkboxFriedberg = ref(false);
-const checkboxGießen = ref(false);
-const checkboxParticipation = ref(false);
+const isAdmin = ref(false);
 
 onMounted(() => {
-  let userId = authUserStore.auth.user?.id;
-  if (userId != undefined) {
-    courseService
-      .getAllCourses(userId)
-      .then((data) => {
-        allCourses.value = data;
-        displayedCourses.value = allCourses.value;
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  } else {
-    console.log("userId is undefined");
-  }
-});
+  coursesList.value?.loadCourses();
 
-const filterCourseList = () => {
-  let filteredList: CourseAndParticipationPL[] = allCourses.value;
-  if (checkboxActive.value) filteredList = filteredList.filter((item) => item.course.active == true);
-  if (checkboxFriedberg.value) filteredList = filteredList.filter((item) => item.course.location == "Friedberg");
-  if (checkboxGießen.value) filteredList = filteredList.filter((item) => item.course.location == "Gießen");
-  if (checkboxParticipation.value) filteredList = filteredList.filter((item) => item.member == true);
-  displayedCourses.value = filteredList;
-};
+  isAdmin.value = authUserStore.user?.roles.includes(GlobalRoles.ROLE_ADMIN)!;
+});
 
 const createCourse = () => {
   if (dialogCreateCourse.value) {
@@ -87,19 +36,14 @@ const createCourse = () => {
     });
   }
 };
-
-const openCourseOrSignUp = (row: any, item: any) => {
-  if (item.item.raw.member == false) router.push("/course/" + item.item.raw.course.id + "/signup");
-  else router.push("/course/" + item.item.raw.course.id);
-};
 </script>
 
 <style scoped lang="scss">
 #createCourseBtn {
-  color: #ffffff;
+  margin: 0 auto;
+  display: block;
   margin-top: 20px;
-  background-color: #81ba24;
-  left: 45%;
+  margin-bottom: 20px;
 }
 
 .container {

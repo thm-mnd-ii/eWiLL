@@ -1,17 +1,24 @@
 package com.wipdev.eWiLL_backend
 
-import com.wipdev.eWiLL_backend.database.tables.course.Course
-import com.wipdev.eWiLL_backend.utils.fbs.FbsClient
-import com.wipdev.eWiLL_backend.repository.CourseRepository
-import com.wipdev.eWiLL_backend.utils.stringsimmilarity.StringFinderUtils
-import com.wipdev.eWiLL_backend.utils.translate.Language
-import com.wipdev.eWiLL_backend.utils.translate.Translator
+import com.wipdev.eWiLL_backend.database.tables.Diagram
+import com.wipdev.eWiLL_backend.endpoints.payload.requests.SubmissionRequestPL
+import com.wipdev.eWiLL_backend.repository.DiagramRepository
+import com.wipdev.eWiLL_backend.repository.ResultRepository
+import com.wipdev.eWiLL_backend.repository.SubmissionRepository
+import com.wipdev.eWiLL_backend.services.EvaluationService
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import java.io.File
 
-
+@SpringBootTest
 class EWiLlBackendApplicationTests {
+
+
+
+
+
+
 
 
     /*Test Translator

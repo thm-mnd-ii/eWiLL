@@ -1,37 +1,68 @@
 <!-- eslint-disable vue/valid-v-slot -->
 <template>
-  <div class="task">
-    <v-card>
-      <v-card-title class="task-header-title">
-        <h3 class="headline mb-0">{{ task.name }}</h3>
+  <DialogEditTask ref="dialogEditTask" />
+
+  <v-card>
+    <v-card-title class="task-header-title">
+      <h3 class="headline mb-0">{{ task.name }}</h3>
+      <v-spacer></v-spacer>
+      <v-btn v-if="courseRole != 'STUDENT'" variant="text" icon="mdi-cog" color="dark-gray" @click="openSettings"></v-btn>
+    </v-card-title>
+    <v-card-text>
+      <p>{{ task.description }}</p>
+      <br />
+      <div class="align-items-center">
+        <v-chip prepend-icon="mdi-account-circle" color="secondary" text-color="white" label>
+          {{ courseRole }}
+        </v-chip>
         <v-spacer></v-spacer>
-        <v-btn v-if="courseRole != 'STUDENT'" variant="text" icon="mdi-cog" color="dark-gray"></v-btn>
-      </v-card-title>
-      <v-card-text>
-        <p>{{ task.description }}</p>
-        <br />
-        <div class="align-items-center">
-          <v-chip prepend-icon="mdi-account-circle" color="secondary" text-color="white" label>
-            {{ courseRole }}
-          </v-chip>
-          <v-spacer></v-spacer>
-          <v-chip v-if="task.maxSubmissions != 999" class="margin-right-5px">Versuche: {{ task.maxSubmissions }}</v-chip>
-          <v-chip v-if="task.maxSubmissions == 999" class="margin-right-5px">Versuche: unbegrenzt</v-chip>
-          <v-chip v-if="task.eliability == 'BONUS'" color="green">Bonus</v-chip>
-          <v-chip v-if="task.eliability == 'MANDATORY'" color="red">Verpflichtend</v-chip>
-          <v-chip v-if="task.eliability == 'OPTIONAL'" color="yellow">Optional</v-chip>
-        </div>
-      </v-card-text>
-    </v-card>
-  </div>
+        <TaskDateVChip ref="taskDateVChip" class="margin-right-5px" :due-date-prop="task.dueDate"></TaskDateVChip>
+        <v-chip v-if="task.maxSubmissions != 999" class="margin-right-5px">Versuche: {{ task.maxSubmissions }}</v-chip>
+        <v-chip v-if="task.maxSubmissions == 999" class="margin-right-5px">Versuche: unbegrenzt</v-chip>
+        <v-chip v-if="task.eliability == 'BONUS'" color="green">Bonus</v-chip>
+        <v-chip v-if="task.eliability == 'MANDATORY'" color="red">Verpflichtend</v-chip>
+        <v-chip v-if="task.eliability == 'OPTIONAL'" color="yellow">Optional</v-chip>
+      </div>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
+import { useRoute } from "vue-router";
 import Task from "../model/task/Task";
+import taskService from "../services/task.service";
+import DialogEditTask from "@/dialog/DialogEditTask.vue";
+import TaskDateVChip from "@/components/TaskDateVChip.vue";
+
+const route = useRoute();
 
 const task = ref<Task>({} as Task);
+const taskId = ref(Number(route.params.taskId));
 const courseRole = ref();
+
+const dialogEditTask = ref<typeof DialogEditTask>();
+const taskDateVChip = ref<typeof TaskDateVChip>();
+
+const emit = defineEmits(["taskUpdated"]);
+
+onMounted(() => {
+  loadTask();
+});
+
+const openSettings = () => {
+  dialogEditTask.value?.openDialog(task.value).then(() => {
+    loadTask();
+    emit("taskUpdated");
+  });
+};
+
+const loadTask = () => {
+  taskService.getTask(taskId.value).then((response) => {
+    task.value = response;
+    taskDateVChip.value?.setDueDate(task.value.dueDate);
+  });
+};
 </script>
 
 <style scoped>
