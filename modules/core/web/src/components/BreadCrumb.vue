@@ -8,13 +8,8 @@ import { ref } from "vue";
 
 import courseService from "../services/course.service";
 import taskService from "../services/task.service";
+import { watch } from "vue";
 
-// items for breadcrumb
-// {
-// title: 'Dashboard',
-//         disabled: false,
-//         href: 'breadcrumbs_dashboard',
-//       },
 const items = ref<Array<{ title: string; disabled: boolean; href: string }>>([
   {
     title: "Home",
@@ -27,6 +22,20 @@ const items = ref<Array<{ title: string; disabled: boolean; href: string }>>([
 const props = defineProps<{
   link: string;
 }>();
+
+watch(
+  () => props.link,
+  () => {
+    items.value = [
+      {
+        title: "Home",
+        disabled: false,
+        href: "/",
+      },
+    ];
+    calculateBreadCrumb();
+  }
+);
 
 // define word replacement
 const wordReplacement = (word: string) => {

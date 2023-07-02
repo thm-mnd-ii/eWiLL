@@ -26,6 +26,7 @@
     </v-navigation-drawer>
 
     <v-main>
+      <BreadCrumb v-if="showBreadcrumb" :link="router.currentRoute.value.fullPath" />
       <RouterView />
     </v-main>
 
@@ -43,19 +44,42 @@
 </template>
 
 <script setup lang="ts">
-import { RouterLink, RouterView } from "vue-router";
-import { ref } from "vue";
+import { RouterLink, RouterView, useRouter } from "vue-router";
+import { onMounted, ref } from "vue";
 import IconEWiLL from "./components/icons/IconEWiLL.vue";
 import IconFBS from "./components/icons/IconFBS.vue";
 import DropdownUserNav from "./components/modelingTool/DropdownUserNav.vue";
+import BreadCrumb from "@/components/BreadCrumb.vue";
+import { watch } from "vue";
+
+const router = useRouter();
+
+const hideBreadcrumbIn = ["Home", "Modeling", "ViewLogin", "ViewIntroduction", "View404Page", "ViewBugReport", "ViewBugOverview"];
 
 const showSideBar = ref(true);
+const showBreadcrumb = ref(true);
 const admin = ref(localStorage.getItem("user")?.includes("ADMIN"));
 
 const links = [
   { name: "Impressum", url: "/impressum" },
   { name: "Datenschutz", url: "/datenschutz" },
 ];
+
+watch(
+  () => router.currentRoute.value.name,
+  (newVal) => {
+    showBreadcrumb.value = true;
+
+    hideBreadcrumbIn.forEach((route) => {
+      //console.log(`if ${route} == ${newVal}`);
+      if (route == newVal) {
+        showBreadcrumb.value = false;
+      }
+    });
+  }
+);
+
+onMounted(() => {});
 </script>
 
 <style scoped lang="scss">

@@ -1,10 +1,9 @@
 <template>
-  <BreadCrumb :link="router.currentRoute.value.fullPath"></BreadCrumb>
   <div class="course">
     <v-card>
       <v-card-title class="align-items-center">
         <h3 class="headline mb-0">{{ course?.name }}</h3>
-        
+
         <v-spacer></v-spacer>
 
         <v-btn v-if="courseRole == 'OWNER'" variant="text" color="dark-gray" @click="openMembersView">
@@ -54,7 +53,6 @@ import courseService from "../services/course.service";
 import DialogConfirmVue from "../dialog/DialogConfirm.vue";
 import DialogCreateCourse from "@/dialog/DialogCreateCourse.vue";
 import DialogEditTask from "@/dialog/DialogEditTask.vue";
-import BreadCrumb from "@/components/BreadCrumb.vue";
 
 const route = useRoute();
 const router = useRouter();

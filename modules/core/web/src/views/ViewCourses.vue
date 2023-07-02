@@ -1,6 +1,5 @@
 <!-- eslint-disable vue/valid-v-slot -->
 <template>
-  <BreadCrumb link="Alle Kurse"></BreadCrumb>
   <div class="container">
     <CoursesList ref="coursesList"></CoursesList>
     <v-btn v-if="isAdmin" id="createCourseBtn" color="primary-dark" @click="createCourse">Kurs erstellen</v-btn>
@@ -13,7 +12,6 @@ import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import DialogCreateCourse from "../dialog/DialogCreateCourse.vue";
 import CoursesList from "@/components/CoursesList.vue";
-import BreadCrumb from "@/components/BreadCrumb.vue";
 import { useAuthUserStore } from "../stores/authUserStore";
 import GlobalRoles from "@/enums/GlobalRoles";
 
