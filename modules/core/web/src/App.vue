@@ -4,7 +4,8 @@
       <v-app-bar-nav-icon @click.stop="showSideBar = !showSideBar" />
       <v-toolbar-title>
         <router-link to="/">
-          <IconEWiLL />
+          <IconEWiLL class="icon" />
+          <IconFBS class="icon" />
         </router-link>
       </v-toolbar-title>
       <v-spacer />
@@ -43,9 +44,10 @@
 
 <script setup lang="ts">
 import { RouterLink, RouterView } from "vue-router";
-import IconEWiLL from "./components/icons/IconEWiLL.vue";
-import DropdownUserNav from "./components/modelingTool/DropdownUserNav.vue";
 import { ref } from "vue";
+import IconEWiLL from "./components/icons/IconEWiLL.vue";
+import IconFBS from "./components/icons/IconFBS.vue";
+import DropdownUserNav from "./components/modelingTool/DropdownUserNav.vue";
 
 const showSideBar = ref(true);
 const admin = ref(localStorage.getItem("user")?.includes("ADMIN"));
@@ -56,4 +58,10 @@ const links = [
 ];
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.icon {
+  height: 35px;
+  width: auto;
+  margin-right: 20px;
+}
+</style>

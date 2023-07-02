@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/valid-v-slot -->
 <template>
   <DialogConfirmVue ref="dialogConfirm"></DialogConfirmVue>
-  <v-parallax class="background" src="https://images.unsplash.com/photo-1617957718614-8c23f060c2d0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1332&q=80">
+  <BasicBackground>
     <v-card class="card">
       <v-card-title class="title"> </v-card-title>
       <v-card-text class="text">
@@ -15,7 +15,7 @@
         </v-data-table>
       </v-card-text>
     </v-card>
-  </v-parallax>
+  </BasicBackground>
 </template>
 
 <script setup lang="ts">
@@ -24,6 +24,7 @@ import Feedback from "../model/Feedback";
 import { ref, onMounted } from "vue";
 import FeedbackStatus from "@/enums/FeedbackStatus";
 import DialogConfirmVue from "@/dialog/DialogConfirm.vue";
+import BasicBackground from "@/components/BasicBackground.vue";
 
 const dialogConfirm = ref<typeof DialogConfirmVue>();
 
@@ -73,14 +74,6 @@ const deleteFeedback = (feedback: Feedback) => {
 </script>
 
 <style scoped lang="scss">
-.background {
-  height: 100vh;
-  width: 100vw;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 .card {
   width: 90vw;
   overflow-x: auto;
@@ -109,10 +102,6 @@ const deleteFeedback = (feedback: Feedback) => {
 
   max-height: 80vh;
   overflow: auto;
-}
-
-.btn {
-  background-color: #ff8f45;
 }
 
 .dataTable {

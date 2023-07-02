@@ -1,5 +1,5 @@
 <template>
-  <v-parallax class="background">
+  <BasicBackground> 
     <v-card class="card">
       <v-card-title class="title">
         <span>Herzlich willkommen...</span>
@@ -13,23 +13,14 @@
         </v-spacer>
       </v-card-actions>
     </v-card>
-  </v-parallax>
+  </BasicBackground>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import BasicBackground from '@/components/BasicBackground.vue';
+</script>
 
 <style scoped lang="scss">
-.background {
-  height: 100vh;
-  width: 100vw;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  // gradient from primary dark to primary light
-  background: rgb(var(--v-theme-primary-dark));
-  background: linear-gradient(150deg, rgb(var(--v-theme-primary-dark)) 25%, rgb(var(--v-theme-primary-light)) 120%);
-}
 
 .card {
   width: 700px;
