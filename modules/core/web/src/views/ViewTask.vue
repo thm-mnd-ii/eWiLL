@@ -5,29 +5,7 @@
   <DialogConfirm ref="dialogConfirm" />
 
   <div class="task">
-    <v-card>
-      <v-card-title class="task-header-title">
-        <h3 class="headline mb-0">{{ task.name }}</h3>
-        <v-spacer></v-spacer>
-        <v-btn v-if="courseRole != 'STUDENT'" variant="text" icon="mdi-cog" color="dark-gray" @click="openSettings"></v-btn>
-      </v-card-title>
-      <v-card-text>
-        <p>{{ task.description }}</p>
-        <br />
-        <div class="align-items-center">
-          <v-chip prepend-icon="mdi-account-circle" color="secondary" text-color="white" label>
-            {{ courseRole }}
-          </v-chip>
-          <v-spacer></v-spacer>
-          <TaskDateVChip ref="taskDateVChip" class="margin-right-5px" :due-date-prop="task.dueDate"></TaskDateVChip>
-          <v-chip v-if="task.maxSubmissions != 999" class="margin-right-5px">Versuche: {{ task.maxSubmissions }}</v-chip>
-          <v-chip v-if="task.maxSubmissions == 999" class="margin-right-5px">Versuche: unbegrenzt</v-chip>
-          <v-chip v-if="task.eliability == 'BONUS'" color="green">Bonus</v-chip>
-          <v-chip v-if="task.eliability == 'MANDATORY'" color="red">Verpflichtend</v-chip>
-          <v-chip v-if="task.eliability == 'OPTIONAL'" color="yellow">Optional</v-chip>
-        </div>
-      </v-card-text>
-    </v-card>
+    <TaskVCard @task-updated="loadTask"></TaskVCard>
 
     <div v-if="courseRole != 'STUDENT'" class="switchRole">
       <!-- btn switch to student mode -->
@@ -104,9 +82,9 @@ import CourseRoles from "@/enums/CourseRoles";
 import ResultLevels from "@/enums/ResultLevels";
 
 import TaskSubmissionsResultsTabs from "@/components/TaskSubmissionsResultsTabs.vue";
-import TaskDateVChip from "@/components/TaskDateVChip.vue";
+import TaskVCard from "@/components/TaskVCard.vue";
+
 const taskSubmissionsResultsTabs = ref<typeof TaskSubmissionsResultsTabs>();
-const taskDateVChip = ref<typeof TaskDateVChip>();
 
 const route = useRoute();
 const router = useRouter();
@@ -176,16 +154,9 @@ const loadElements = (role: CourseRoles) => {
   }
 };
 
-const openSettings = () => {
-  dialogEditTask.value?.openDialog(task.value).then(() => {
-    loadTask();
-  });
-};
-
 const loadTask = () => {
   taskService.getTask(taskId.value).then((response) => {
     task.value = response;
-    taskDateVChip.value?.setDueDate(task.value.dueDate);
     if (courseRole.value != "STUDENT") loadSolutionModel();
   });
 };
