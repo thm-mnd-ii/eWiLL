@@ -1,13 +1,15 @@
 <!-- eslint-disable vue/valid-v-slot -->
 <template>
+  <DialogShowFullDiagram ref="dialogShowFullDiagram" />
+
   <div class="container">
     <v-text-field v-model="search" class="search-bar" label="Search" density="compact" prepend-icon="mdi-magnify" variant="underlined" hide-details></v-text-field>
     <v-row>
       <v-checkbox v-model="onlyLatestSubmission" label="Nur die letzte Abgabe eines Studenten zeigen" @change="filterList"></v-checkbox>
     </v-row>
     <v-data-table :headers="headers" :items="listItems" class="elevation-1" density="default" height="480px" :search="search">
-      <template #item.submission.diagram="{}">
-        <v-btn append-icon="mdi-presentation">Preview</v-btn>
+      <template #item.submission.diagram="{ item }">
+        <v-btn append-icon="mdi-presentation" @click="openDiagram(item.value.submission.diagram)">Preview</v-btn>
       </template>
     </v-data-table>
   </div>
@@ -15,13 +17,23 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import submissionService from "../services/submission.service";
-import Submission from "../model/submission/Submission";
+import { useDiagramStore } from "@/stores/diagramStore";
+
+import submissionService from "@/services/submission.service";
 import courseService from "@/services/course.service";
 import taskService from "@/services/task.service";
-import Task from "../model/task/Task";
-import Member from "../model/course/Member";
-import SubmissionListItem from "../model/submission/SubmissionsListItem";
+
+import Task from "@/model/task/Task";
+import Member from "@/model/course/Member";
+import SubmissionListItem from "@/model/submission/SubmissionsListItem";
+import Diagram from "@/model/diagram/Diagram";
+import Submission from "@/model/submission/Submission";
+
+import DialogShowFullDiagram from "@/dialog/DialogShowFullDiagram.vue";
+
+const dialogShowFullDiagram = ref<typeof DialogShowFullDiagram>();
+
+const diagramStore = useDiagramStore();
 
 const search = ref("");
 const onlyLatestSubmission = ref();
@@ -84,6 +96,12 @@ const filterList = () => {
   } else {
     loadSubmissions(task.value!.id);
   }
+};
+
+const openDiagram = (diagram: Diagram) => {
+  console.log(diagram);
+  diagramStore.loadDiagram(diagram);
+  dialogShowFullDiagram.value?.openDialog("");
 };
 
 defineExpose({
