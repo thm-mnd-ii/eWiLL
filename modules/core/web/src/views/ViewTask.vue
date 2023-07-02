@@ -57,7 +57,7 @@
         </v-card>
       </div>
       <div v-if="courseRole == 'STUDENT'" class="grid-right">
-        <v-btn class="submit-btn" color="dark-gray" variant="flat" :disabled="submissionCount >= task.maxSubmissions" @click="submitDiagram">
+        <v-btn class="submit-btn" color="dark-gray" variant="flat" :disabled="submissionCount >= task.maxSubmissions || isDue" @click="submitDiagram">
           <div v-if="!subBtnProgress">
             <span>prüfen</span>
           </div>
@@ -82,7 +82,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useAuthUserStore } from "../stores/authUserStore";
 import courseService from "../services/course.service";
@@ -137,6 +137,17 @@ const subBtnProgress = ref<boolean>(false);
 
 //const submissions = ref();
 const submissionCount = ref(0);
+
+const isDue = ref(false);
+
+watch(
+  () => task.value.dueDate,
+  (newVal) => {
+    if (newVal) {
+      isDue.value = taskDateVChip.value?.setDueDate(newVal) < 0;
+    }
+  }
+);
 
 onMounted(() => {
   init();
