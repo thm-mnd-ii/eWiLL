@@ -34,11 +34,6 @@ const router = createRouter({
       component: ViewModeling,
     },
     {
-      path: "/checker",
-      name: "ViewChecker",
-      component: ViewChecker,
-    },
-    {
       path: "/impressum",
       name: "ViewImpressum",
       component: ViewImpressum,
@@ -62,11 +57,6 @@ const router = createRouter({
       path: "/course",
       name: "ViewCourses",
       component: ViewCourses,
-    },
-    {
-      path: "/testTask",
-      name: "testTask",
-      component: ViewTestTask,
     },
     {
       path: "/course/:id/signup",

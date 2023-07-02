@@ -13,7 +13,7 @@
         <p>Hier siehst du alle Kurse die dir zur Verfügung stehen. Du kannst dich in jeden Kurs einschreiben und die Kursinhalte nutzen.</p>
       </v-card-text>
       <v-card-actions class="card-action">
-        <v-btn to="/courses">ZU DEN KURSEN</v-btn>
+        <v-btn to="/course">ZU DEN KURSEN</v-btn>
       </v-card-actions>
     </v-card>
 
@@ -36,7 +36,7 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-btn to="/courses">ZU MEINEN KURSEN</v-btn>
+        <v-btn to="/course">ZU MEINEN KURSEN</v-btn>
       </v-card-actions>
     </v-card>
 
@@ -46,7 +46,7 @@
       <v-card-subtitle class="card-subtitle">Dein ganz persönlicher Bereich zum Modellieren</v-card-subtitle>
       <v-card-text class="card-text">Der Playground stellt dir verschiedene Modellierungsarten zu Verfügung. Im aktuellen Entwicklungsstand besteht nur die Möglichkeit SERM Modelle zu erstellen. Du kannst eine belibige Anzahl an Modellen Speicher und sie von überall aufrufen und bearbeiten.</v-card-text>
       <v-card-actions class="card-action">
-        <v-btn to="/courses">ZUM PLAYGROUND</v-btn>
+        <v-btn to="/modeling">ZUM PLAYGROUND</v-btn>
       </v-card-actions>
     </v-card>
 
@@ -63,7 +63,7 @@
         </v-card>
       </v-card-text>
       <v-card-actions>
-        <v-btn to="/courses">ZUM DASHBOARD</v-btn>
+        <v-btn to="/dashboard">ZUM DASHBOARD</v-btn>
       </v-card-actions>
     </v-card>
   </div>

@@ -144,7 +144,7 @@ const deleteCourse = () => {
           .then(() => {
             courseDialog.value = false;
             resolvePromise.value(course.value.id);
-            router.push("/courses");
+            router.push("/course");
           })
           .catch((error) => {
             console.log(error);
