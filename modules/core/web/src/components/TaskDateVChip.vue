@@ -39,6 +39,8 @@ const setDueDate = (dateTime: string) => {
   let currentDate = new Date();
 
   timeDifference.value = (date.getTime() - currentDate.getTime()) / (1000 * 3600 * 24);
+
+  return timeDifference.value;
 };
 
 const getDay = (dateTime: string) => {

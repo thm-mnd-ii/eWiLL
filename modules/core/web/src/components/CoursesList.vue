@@ -10,11 +10,11 @@
     </v-row>
     <v-data-table :headers="headers" :items="displayedCourses" item-value="name" class="elevation-1" :search="search" density="default" height="480px" @click:row="openCourseOrSignUp">
       <template #item.course.active="{ item }">
-        <v-icon v-if="item.raw.course.active == false" icon="mdi-close-circle" color="#DD0000"></v-icon>
-        <v-icon v-if="item.raw.course.active == true" icon="mdi-check-circle" color="#81BA24"></v-icon>
+        <v-icon v-if="item.raw.course.active == false" icon="mdi-close-circle" color="error"></v-icon>
+        <v-icon v-if="item.raw.course.active == true" icon="mdi-check-circle" color="success"></v-icon>
       </template>
       <template #item.member="{ item }">
-        <v-icon v-if="item.raw.member == true" icon="mdi-check-bold" color="#81BA24"></v-icon>
+        <v-icon v-if="item.raw.member == true" icon="mdi-check-bold" color="success"></v-icon>
       </template>
     </v-data-table>
   </div>
@@ -93,13 +93,5 @@ defineExpose({
 
 .search-bar {
   margin-bottom: 20px;
-}
-
-#createCourseBtn {
-  color: #ffffff;
-  margin-top: 20px;
-  background-color: #81ba24;
-  position: absolute;
-  left: 38%;
 }
 </style>

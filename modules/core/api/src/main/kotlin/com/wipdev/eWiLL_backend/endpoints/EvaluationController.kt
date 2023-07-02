@@ -21,9 +21,9 @@ class EvaluationController {
 
     @PostMapping("/submit")
     @ResponseBody
-    fun submit(@RequestBody submissionRequestPL: SubmissionRequestPL): Long? =
-        service.submit(submissionRequestPL)
-
+    fun submit(@RequestBody submissionRequestPL: SubmissionRequestPL): Long?{
+        return service.submit(submissionRequestPL)
+    }
 
 
     @GetMapping("/result/{submissionId}/{level}")

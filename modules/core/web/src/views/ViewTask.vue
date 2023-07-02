@@ -1,11 +1,18 @@
 <!-- eslint-disable vue/valid-v-slot -->
 <template>
+  <TaskDateVChip ref="taskDateVChip" class="hide" :due-date-prop="task.dueDate"></TaskDateVChip>
+
   <DialogShowFullDiagram ref="dialogShowFullDiagram" />
   <DialogEditTask ref="dialogEditTask" />
   <DialogConfirm ref="dialogConfirm" />
 
   <div class="task">
-    <TaskVCard @task-updated="loadTask"></TaskVCard>
+    <TaskVCard ref="taskVCard" @task-updated="loadTask"></TaskVCard>
+
+    <div v-if="courseRole != 'STUDENT'" class="switchRole">
+      <!-- btn switch to student mode -->
+      <v-btn class="switch-btn" color="info" variant="flat" @click="loadElements(CourseRoles.STUDENT)">Zur Studentenansicht wechseln</v-btn>
+    </div>
 
     <div class="task-main">
       <div class="grid-left">
@@ -28,7 +35,14 @@
         </v-card>
       </div>
       <div v-if="courseRole == 'STUDENT'" class="grid-right">
-        <v-btn class="submit-btn" color="dark-gray" variant="flat" :disabled="submissionCount >= task.maxSubmissions" @click="submitDiagram">prüfen</v-btn>
+        <v-btn class="submit-btn" color="dark-gray" variant="flat" :disabled="submissionCount >= task.maxSubmissions || isDue" @click="submitDiagram">
+          <div v-if="!subBtnProgress">
+            <span>prüfen</span>
+          </div>
+          <div v-if="subBtnProgress">
+            <v-progress-circular indeterminate></v-progress-circular>
+          </div>
+        </v-btn>
         <br />
         <div class="task-trials-caption font-weight-medium">
           <span>Auswertungsergebnisse</span>
@@ -46,7 +60,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useAuthUserStore } from "../stores/authUserStore";
 import courseService from "../services/course.service";
@@ -66,9 +80,14 @@ import { useDiagramStore } from "@/stores/diagramStore";
 import { storeToRefs } from "pinia";
 import ModelingTool from "@/components/ModelingTool.vue";
 import submissionService from "@/services/submission.service";
+import CourseRoles from "@/enums/CourseRoles";
+import ResultLevels from "@/enums/ResultLevels";
+import TaskDateVChip from "@/components/TaskDateVChip.vue";
 
 import TaskSubmissionsResultsTabs from "@/components/TaskSubmissionsResultsTabs.vue";
 import TaskVCard from "@/components/TaskVCard.vue";
+
+const taskDateVChip = ref<typeof TaskDateVChip>();
 
 const taskSubmissionsResultsTabs = ref<typeof TaskSubmissionsResultsTabs>();
 
@@ -94,23 +113,52 @@ const diagrams = ref<Diagram[]>([]);
 const selectedDiagramId = ref<number>();
 const selectedDiagram = ref<Diagram>();
 
+const subBtnProgress = ref<boolean>(false);
+
 //const submissions = ref();
 const submissionCount = ref(0);
 
+const isDue = ref(false);
+
+// TODO: refactor in service and delete hidden component
+watch(
+  () => task.value.dueDate,
+  (newVal) => {
+    if (newVal) {
+      isDue.value = taskDateVChip.value?.setDueDate(newVal) < 0;
+    }
+  }
+);
+
 onMounted(() => {
-  courseService.getUserRoleInCourse(userId.value!, courseId.value).then((response) => {
-    if (response == "NONE") {
+  init();
+});
+
+const init = () => {
+  courseService.getUserRoleInCourse(userId.value!, courseId.value).then((role) => {
+    if (role == CourseRoles.NONE) {
       router.push("/course/" + route.params.courseId + "/signup");
     } else {
-      courseRole.value = response;
-      loadTask();
-      loadCategories();
-      diagramStore.createNewDiagram();
-      if (courseRole.value != "STUDENT") loadNumberSubmissions();
-      if (courseRole.value == "STUDENT") loadSubmissions();
+      loadElements(role);
     }
   });
-});
+};
+
+const loadElements = (role: CourseRoles) => {
+  courseRole.value = role;
+  loadTask();
+  loadCategories();
+  diagramStore.createNewDiagram();
+  if (courseRole.value == CourseRoles.STUDENT) {
+    selectedCategoryId.value = undefined;
+    selectedDiagramId.value = undefined;
+    diagrams.value = [];
+    categories.value = [];
+    loadSubmissions();
+  } else if (courseRole.value == CourseRoles.OWNER || courseRole.value == CourseRoles.TUTOR) {
+    loadNumberSubmissions();
+  }
+};
 
 const loadTask = () => {
   taskService.getTask(taskId.value).then((response) => {
@@ -144,19 +192,39 @@ const showSelectedDiagram = (diagramId: number) => {
 };
 
 const submitDiagram = () => {
-  if (selectedDiagramId.value != undefined) {
+  if (selectedDiagramId.value == undefined) {
+    dialogConfirm.value?.openDialog("Abgabe", "Bitte wählen Sie ein Diagramm aus.", "OK");
+  } else {
     dialogConfirm.value?.openDialog("Abgabe: " + selectedDiagram.value!.name, "Möchten Sie das Diagram wirklich einreichen?", "Einreichen").then((result: boolean) => {
       if (result) {
         const submitPL = {} as SubmitPL;
         submitPL.diagramId = selectedDiagramId.value!;
         submitPL.taskId = taskId.value;
         submitPL.userId = userId.value;
-        evaluationService.submitDiagram(submitPL).then(() => {
-          loadSubmissions();
+        evaluationService.submitDiagram(submitPL).then((submissionId) => {
+          subBtnProgress.value = true;
+
+          waitUntilSubmissionIsEvaluated(submissionId.data).then(() => {
+            subBtnProgress.value = false;
+            loadSubmissions();
+          });
         });
       }
     });
   }
+};
+
+const waitUntilSubmissionIsEvaluated = (submissionId: number) => {
+  return new Promise((resolve) => {
+    const interval = setInterval(() => {
+      evaluationService.getSubmissionById(submissionId, ResultLevels.NOTHING).then((response) => {
+        if (response.status == 200) {
+          clearInterval(interval);
+          resolve(response.data);
+        }
+      });
+    }, 1000);
+  });
 };
 
 const loadCategories = () => {
@@ -226,15 +294,6 @@ const loadNumberSubmissions = () => {
   width: 100%;
 }
 
-.task-trials-tabs {
-  margin: 20px 0;
-  width: 100%;
-}
-
-.task-trials-text {
-  min-height: 100px;
-}
-
 .modeling-container {
   width: 100%;
   height: 350px;
@@ -253,5 +312,15 @@ const loadNumberSubmissions = () => {
 
 .margin-right-5px {
   margin-right: 5px;
+}
+
+.switchRole {
+  display: flex;
+  justify-content: center;
+  margin: 10px 20px;
+}
+
+.hide {
+  display: none;
 }
 </style>

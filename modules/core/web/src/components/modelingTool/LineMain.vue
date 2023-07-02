@@ -122,7 +122,7 @@ watch(props, () => {
 }
 
 .svgContainer > line:hover {
-  stroke: #00abe3;
+  stroke: rgb(var(--v-theme-info));
 }
 
 .lineWidget {
