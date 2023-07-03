@@ -7,7 +7,7 @@
   <DialogConfirm ref="dialogConfirm" />
 
   <div class="task">
-    <TaskVCard ref="taskVCard" @task-updated="loadTask"></TaskVCard>
+    <TaskVCard :courseRole="courseRole" @task-updated="loadTask"></TaskVCard>
 
     <div v-if="courseRole != 'STUDENT'" class="switchRole">
       <!-- btn switch to student mode -->

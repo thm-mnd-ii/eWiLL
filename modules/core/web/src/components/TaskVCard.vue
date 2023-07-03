@@ -46,7 +46,15 @@ const taskDateVChip = ref<typeof TaskDateVChip>();
 
 const emit = defineEmits(["taskUpdated"]);
 
+const props = defineProps({
+  courseRole: {
+    type: String,
+    required: true,
+  },
+});
+
 onMounted(() => {
+  courseRole.value = props.courseRole;
   loadTask();
 });
 
