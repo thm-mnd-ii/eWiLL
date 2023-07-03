@@ -6,14 +6,14 @@
     <v-card-title class="task-header-title">
       <h3 class="headline mb-0">{{ task.name }}</h3>
       <v-spacer></v-spacer>
-      <v-btn v-if="courseRole != 'STUDENT'" variant="text" icon="mdi-cog" color="dark-gray" @click="openSettings"></v-btn>
+      <v-btn v-if="props.courseRole != 'STUDENT'" variant="text" icon="mdi-cog" color="dark-gray" @click="openSettings"></v-btn>
     </v-card-title>
     <v-card-text>
       <p>{{ task.description }}</p>
       <br />
       <div class="align-items-center">
         <v-chip prepend-icon="mdi-account-circle" color="secondary" text-color="white" label>
-          {{ courseRole }}
+          {{ props.courseRole }}
         </v-chip>
         <v-spacer></v-spacer>
         <TaskDateVChip ref="taskDateVChip" class="margin-right-5px" :due-date-prop="task.dueDate"></TaskDateVChip>
@@ -39,7 +39,6 @@ const route = useRoute();
 
 const task = ref<Task>({} as Task);
 const taskId = ref(Number(route.params.taskId));
-const courseRole = ref();
 
 const dialogEditTask = ref<typeof DialogEditTask>();
 const taskDateVChip = ref<typeof TaskDateVChip>();
@@ -54,7 +53,6 @@ const props = defineProps({
 });
 
 onMounted(() => {
-  courseRole.value = props.courseRole;
   loadTask();
 });
 

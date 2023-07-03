@@ -18,7 +18,7 @@
         </v-form>
       </v-card-text>
       <v-card-actions class="card-actions">
-        <v-btn v-if="!newTask" class="btn-red" @click="deleteTask">Aufgabe löschen</v-btn>
+        <v-btn v-if="!newTask" color="error" variant="flat" @click="deleteTask">Aufgabe löschen</v-btn>
         <v-spacer></v-spacer>
         <v-btn color="error" variant="flat" @click="_cancel"> Abbrechen </v-btn>
         <v-btn color="success" variant="flat" @click="_confirm"> Speichern </v-btn>
@@ -40,6 +40,7 @@ import { useRoute } from "vue-router";
 import taskService from "@/services/task.service";
 import router from "@/router";
 import DialogConfirmVue from "../dialog/DialogConfirm.vue";
+import ResultLevel from "@/enums/ResultLevel";
 
 const arrayMaxSubmissions = Array.from(Array(100).keys());
 
@@ -63,12 +64,12 @@ const liabilities = ref<any[]>([
   { name: "Bonus", enum: "BONUS" },
   { name: "Optional", enum: "OPTIONAL" },
 ]);
-const resultLevels = new Map<number, string>([
-  [0, "NOTHING"],
-  [1, "BASIC"],
-  [2, "INFO"],
-  [3, "DEBUG"],
-  [4, "ERROR"],
+const resultLevel = new Map<number, ResultLevel>([
+  [0, ResultLevel.NOTHING],
+  [1, ResultLevel.BASIC],
+  [2, ResultLevel.INFO],
+  [3, ResultLevel.DEBUG],
+  [4, ResultLevel.ERROR],
 ]);
 
 const taskForm = ref<any>();
@@ -80,7 +81,7 @@ const nameRules = ref<any>([(v: string) => !!v || "Name ist erforderlich"]);
 const descriptionRules = ref<any>([(v: string) => !!v || "Beschreibung ist erforderlich"]);
 const modelRules = ref<any>([(v: string) => !!v || "Musterdiagramm ist erforderlich"]);
 const regex = /^([0-2][0-9]|3[0-1])\.(0[1-9]|1[0-2])\.\d{4} ([01][0-9]|2[0-3]):[0-5][0-9]$/;
-const dueDateRules = ref<any>([(v: string) => !!v && regex.test(v) || "Ungültiges Datum dd.mm.yyyy hh:mm"]);
+const dueDateRules = ref<any>([(v: string) => (!!v && regex.test(v)) || "Ungültiges Datum dd.mm.yyyy hh:mm"]);
 const liabilityRules = ref<any>([(v: string) => !!v || "Verpflichtung ist erforderlich"]);
 
 // empty, or should be a valid date and in the future
@@ -131,7 +132,7 @@ const openDialog = (task?: Task) => {
     currentTask.value.courseId = Number(route.params.id);
     currentTask.value.mediaType = "MODEL";
     currentTask.value.rulesetId = 0;
-    currentTask.value.showLevel = "NOTHING";
+    currentTask.value.showLevel = ResultLevel.NOTHING;
     newTask.value = true;
   }
 
@@ -193,11 +194,11 @@ const updateMaxSubmissionsOnCurrentTask = (submissions: any) => {
 };
 
 const updateShowLevel = (value: any) => {
-  currentTask.value.showLevel = resultLevels.get(value)!;
+  currentTask.value.showLevel = resultLevel.get(value)!;
 };
 
 const loadShowLevel = (level: string) => {
-  resultLevels.forEach((value, key) => {
+  resultLevel.forEach((value, key) => {
     if (value == level) sliderPosition.value = key;
   });
 };
@@ -215,7 +216,7 @@ defineExpose({
   grid-gap: 10px;
 }
 
-.card-actions{
+.card-actions {
   padding: 1rem;
 }
 </style>
