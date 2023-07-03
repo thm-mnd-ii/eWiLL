@@ -7,6 +7,7 @@ import com.wipdev.eWiLL_backend.endpoints.payload.requests.DiagramPL
 import com.wipdev.eWiLL_backend.endpoints.payload.requests.SubmissionRequestPL
 import com.wipdev.eWiLL_backend.eval.*
 import com.wipdev.eWiLL_backend.eval.rules.ResultMessage
+import com.wipdev.eWiLL_backend.eval.rules.ResultMessageType
 import com.wipdev.eWiLL_backend.eval.rules.SubmissionResultWithResultMessages
 import com.wipdev.eWiLL_backend.repository.*
 import com.wipdev.eWiLL_backend.services.serviceInterfaces.IEvaluationService
@@ -64,7 +65,7 @@ class EvaluationService : IEvaluationService {
                 runEval(submission, diagram)
             } catch (e: Exception) {
                 val result = SubmissionResult()
-                result.addResultMessage(ResultMessage(ResultLevel.ERROR, "Error occurred during executing evaluation, see logs for more details", -1, "", HighlightLevel.NOTHING))
+                result.addResultMessage(ResultMessage(ResultLevel.ERROR, "Error occurred during executing evaluation, see logs for more details", -1, "", HighlightLevel.NOTHING, ResultMessageType.Other))
                 e.printStackTrace()
                 result.correct = false
                 result.score = 0f
@@ -96,7 +97,7 @@ class EvaluationService : IEvaluationService {
                 var result = resultRepository.findBySubmissionId(submission.id!!)
                 if(result == null)
                     result = SubmissionResult()
-                result.addResultMessage(ResultMessage(ResultLevel.DEBUG,"Error occurred during evaluation, see logs for more details",-1,"",HighlightLevel.NOTHING))
+                result.addResultMessage(ResultMessage(ResultLevel.DEBUG,"Error occurred during evaluation, see logs for more details",-1,"",HighlightLevel.NOTHING,ResultMessageType.Other))
                 e.printStackTrace()
                 result.correct = false
                 result.score = 0f
@@ -107,7 +108,7 @@ class EvaluationService : IEvaluationService {
             var result = resultRepository.findBySubmissionId(submission.id!!)
             if(result == null)
                 result = SubmissionResult()
-            result.addResultMessage(ResultMessage(ResultLevel.DEBUG,"Error preparing Evaluation, see logs for more details",-1,"",HighlightLevel.NOTHING))
+            result.addResultMessage(ResultMessage(ResultLevel.DEBUG,"Error preparing Evaluation, see logs for more details",-1,"",HighlightLevel.NOTHING,ResultMessageType.Other))
             e.printStackTrace()
             result.correct = false
             result.score = 0f

@@ -23,22 +23,22 @@ class EntityCheckNameRuleEvaluator : IRuleEvaluator {
             val possibleNames = Dictionary.getPossibleNames(entityName!!)
             if(!StringFinderUtils.isPresent(entityName,possibleNames)){
                 messages.add(ResultMessage(ResultLevel.BASIC,"Entity name $entityName is not correct.",node.entity!!.id!!,"",
-                    HighlightLevel.INCORRECT))
-                messages.add(ResultMessage(ResultLevel.INFO,"Possible names are: ${possibleNames.joinToString()}",node.entity!!.id!!,entityName,HighlightLevel.SUGGESTION))
+                    HighlightLevel.INCORRECT,ResultMessageType.Entity))
+                messages.add(ResultMessage(ResultLevel.INFO,"Possible names are: ${possibleNames.joinToString()}",node.entity!!.id!!,entityName,HighlightLevel.SUGGESTION,ResultMessageType.Entity))
                 errors++
             }else{
                 val otherNode = diagramData!!.getNodeByName(entityName)
                 if(otherNode == null){
                     messages.add(ResultMessage(ResultLevel.BASIC,"Entity name $entityName is not present in the solution.",node.entity!!.id!!,"",
-                        HighlightLevel.INCORRECT))
-                    messages.add(ResultMessage(ResultLevel.INFO,"Possible names are: ${possibleNames.joinToString()}",node.entity!!.id!!,entityName,HighlightLevel.SUGGESTION))
+                        HighlightLevel.INCORRECT,   ResultMessageType.Entity))
+                    messages.add(ResultMessage(ResultLevel.INFO,"Possible names are: ${possibleNames.joinToString()}",node.entity!!.id!!,entityName,HighlightLevel.SUGGESTION,  ResultMessageType.Entity))
                     errors++
                     continue
                 }
                 node.otherModelNode = otherNode
                 node.otherModelNode!!.otherModelNode = node
-                messages.add(ResultMessage(ResultLevel.BASIC,"Entity name $entityName is correct.",node.entity!!.id!!,"",HighlightLevel.CORRECT))
-                messages.add(ResultMessage(ResultLevel.DEBUG,"It maps to ${node.otherModelNode!!.entity!!.entityName}",node.entity!!.id!!,"",HighlightLevel.CORRECT))
+                messages.add(ResultMessage(ResultLevel.BASIC,"Entity name $entityName is correct.",node.entity!!.id!!,"",HighlightLevel.CORRECT,ResultMessageType.Entity))
+                messages.add(ResultMessage(ResultLevel.DEBUG,"It maps to ${node.otherModelNode!!.entity!!.entityName}",node.entity!!.id!!,"",HighlightLevel.CORRECT,ResultMessageType.Entity))
             }
         }
 

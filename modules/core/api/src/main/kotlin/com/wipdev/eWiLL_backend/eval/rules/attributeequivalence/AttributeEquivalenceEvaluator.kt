@@ -21,30 +21,30 @@ class AttributeEquivalenceEvaluator: IRuleEvaluator {
                 var foundAttibute: Attribute? = null
                 if(entity.otherModelNode == null){
                     messages.add(ResultMessage(ResultLevel.DEBUG,"Skipping Entity ${entity.entity!!.entityName} cause it does not exist.",entity.entity!!.id!!,"",
-                        HighlightLevel.INCORRECT))
+                        HighlightLevel.INCORRECT,ResultMessageType.Other))
                     errors++
                     continue
                 }
                 for(att in entity.otherModelNode!!.entity!!.attributes!!){
                     if(StringFinderUtils.isPresent(att.name!!,possibleNames)){
                         messages.add(ResultMessage(ResultLevel.BASIC,"Attribute ${att.name} is correct",entity.entity!!.id!!,att.name!!,
-                            HighlightLevel.CORRECT))
+                            HighlightLevel.CORRECT,ResultMessageType.Attribute))
                         found = true
                         foundAttibute = att
                     }
                 }
                 if(!found){
-                    messages.add(ResultMessage(ResultLevel.BASIC,"Attribute ${attribute.name} is not correct",entity.entity!!.id!!,attribute.name!!,HighlightLevel.INCORRECT))
-                    messages.add(ResultMessage(ResultLevel.INFO,"Possible names are: ${possibleNames.joinToString()}",entity.entity!!.id!!,attribute.name!!,HighlightLevel.SUGGESTION))
+                    messages.add(ResultMessage(ResultLevel.BASIC,"Attribute ${attribute.name} is not correct",entity.entity!!.id!!,attribute.name!!,HighlightLevel.INCORRECT,ResultMessageType.Attribute))
+                    messages.add(ResultMessage(ResultLevel.INFO,"Possible names are: ${possibleNames.joinToString()}",entity.entity!!.id!!,attribute.name!!,HighlightLevel.SUGGESTION,ResultMessageType.Attribute))
                     errors++
                 }else{
                     //Check for type
                     if(attribute.type != foundAttibute!!.type){
-                        messages.add(ResultMessage(ResultLevel.BASIC,"Attribute ${attribute.name} has correct name but wrong type.",entity.entity!!.id!!,attribute.name!!,HighlightLevel.INCORRECT))
-                        messages.add(ResultMessage(ResultLevel.INFO,"Correct type is ${foundAttibute.type}",entity.entity!!.id!!,attribute.name!!,HighlightLevel.SUGGESTION))
+                        messages.add(ResultMessage(ResultLevel.BASIC,"Attribute ${attribute.name} has correct name but wrong type.",entity.entity!!.id!!,attribute.name!!,HighlightLevel.INCORRECT,ResultMessageType.Attribute))
+                        messages.add(ResultMessage(ResultLevel.INFO,"Correct type is ${foundAttibute.type}",entity.entity!!.id!!,attribute.name!!,HighlightLevel.SUGGESTION,ResultMessageType.Attribute))
                         errors++
                     }else{
-                        messages.add(ResultMessage(ResultLevel.BASIC,"Attribute ${attribute.name} has correct name and type.",entity.entity!!.id!!,attribute.name!!,HighlightLevel.CORRECT))
+                        messages.add(ResultMessage(ResultLevel.BASIC,"Attribute ${attribute.name} has correct name and type.",entity.entity!!.id!!,attribute.name!!,HighlightLevel.CORRECT,ResultMessageType.Attribute))
                     }
                 }
 
