@@ -19,9 +19,12 @@
             <!-- <p v-for="comment in selectedResult.comments" :key="comment.message">{{ comment.message }}</p> -->
             <v-data-table :group-by="groupBy" :headers="headers" :items="selectedResult.comments" :sort-by="sortBy" class="elevation-1" item-value="name">
               <template #item.highlightLevel="{ item }">
-                <v-chip label :color="getHighlightLevelColor(item.value.highlightLevel)">
-                  {{ item.value.highlightLevel }}
-                </v-chip>
+                <!-- <v-chip :color="getHighlightLevelColor(item.value.highlightLevel)"> -->
+                <v-icon v-if="item.value.highlightLevel == 'SUGGESTION'" size="large" :color="getHighlightLevelColor(item.value.highlightLevel)">mdi-information</v-icon>
+                <v-icon v-if="item.value.highlightLevel == 'INCORRECT'" size="large" :color="getHighlightLevelColor(item.value.highlightLevel)">mdi-close-circle</v-icon>
+                <v-icon v-if="item.value.highlightLevel == 'CORRECT'" size="large" :color="getHighlightLevelColor(item.value.highlightLevel)">mdi-check-circle</v-icon>
+                <!-- {{ item.value.highlightLevel }} -->
+                <!-- </v-chip> -->
               </template>
             </v-data-table>
           </v-card-text>
@@ -65,11 +68,12 @@ const selectedResult = ref<Result>({} as Result);
 const sortBy = ref<{ key: string; order: string }[]>([{ key: "resultLevel", order: "asc" }]);
 const groupBy = ref<{ key: string; order: string }[]>([]);
 const headers = ref([
+  { title: "Status", key: "highlightLevel", groupable: true },
   { title: "Info", key: "message", groupable: true },
   { title: "EntityId", key: "affectedEntityId", groupable: true },
   { title: "Attribut", key: "affectedAttributeName", groupable: true },
   { title: "Level", key: "resultLevel", groupable: true },
-  { title: "Status", key: "highlightLevel", groupable: true },
+  { title: "Info Type", key: "resultMessageType", groupable: true },
 ]);
 
 watch(
@@ -109,6 +113,8 @@ const getHighlightLevelColor = (highlightLevel: string) => {
     return "red";
   } else if (highlightLevel == "CORRECT") {
     return "green";
+  } else if (highlightLevel == "SUGGESTION") {
+    return "blue";
   } else {
     return "gray";
   }
