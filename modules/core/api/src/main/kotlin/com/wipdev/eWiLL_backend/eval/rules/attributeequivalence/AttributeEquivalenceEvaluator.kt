@@ -17,8 +17,11 @@ class AttributeEquivalenceEvaluator: IRuleEvaluator {
         for(entity in diagramEvalPL.bestSolutionDiagram.nodes) {
             for (attribute in entity.entity!!.attributes!!) {
                var possibleNames = Dictionary.getPossibleNames(attribute.name!!)
+                if(attribute.name!!.lowercase() == "id" || attribute.name!!.lowercase() == "nr" || attribute.name!!.lowercase() == "number"){
+                    possibleNames = arrayOf("id","ID","Id","iD","nr","Nr","NR","number","Number","NUMBER","id_","ID_","Id_","iD_","nr_","Nr_","NR_","number_","Number_","NUMBER_");
+                }
                 var found = false
-                var foundAttibute: Attribute? = null
+                var foundAttribute: Attribute? = null
                 if(entity.otherModelNode == null){
                     messages.add(ResultMessage(FeedbackLevel.DEBUG,"Skipping Entity ${entity.entity!!.entityName} cause it does not exist.",entity.entity!!.id!!,"",
                         StatusLevel.INCORRECT,ResultMessageType.Other))
@@ -27,10 +30,10 @@ class AttributeEquivalenceEvaluator: IRuleEvaluator {
                 }
                 for(att in entity.otherModelNode!!.entity!!.attributes!!){
                     if(StringFinderUtils.isPresent(att.name!!,possibleNames)){
-                        messages.add(ResultMessage(FeedbackLevel.BASIC,"Attribute ${att.name} is correct",entity.entity!!.id!!,att.name!!,
+                        messages.add(ResultMessage(FeedbackLevel.DEBUG,"Attribute ${att.name} is correct",entity.entity!!.id!!,att.name!!,
                             StatusLevel.CORRECT,ResultMessageType.Attribute))
                         found = true
-                        foundAttibute = att
+                        foundAttribute = att
                     }
                 }
                 if(!found){
@@ -39,12 +42,12 @@ class AttributeEquivalenceEvaluator: IRuleEvaluator {
                     errors++
                 }else{
                     //Check for type
-                    if(attribute.type != foundAttibute!!.type){
+                    if(attribute.type != foundAttribute!!.type){
                         messages.add(ResultMessage(FeedbackLevel.BASIC,"Attribute ${attribute.name} has correct name but wrong type.",entity.entity!!.id!!,attribute.name!!,StatusLevel.INCORRECT,ResultMessageType.Attribute))
-                        messages.add(ResultMessage(FeedbackLevel.INFO,"Correct type is ${foundAttibute.type}",entity.entity!!.id!!,attribute.name!!,StatusLevel.SUGGESTION,ResultMessageType.Attribute))
+                        messages.add(ResultMessage(FeedbackLevel.DEBUG,"Correct type is ${foundAttribute.type}",entity.entity!!.id!!,attribute.name!!,StatusLevel.SUGGESTION,ResultMessageType.Attribute))
                         errors++
                     }else{
-                        messages.add(ResultMessage(FeedbackLevel.BASIC,"Attribute ${attribute.name} has correct name and type.",entity.entity!!.id!!,attribute.name!!,StatusLevel.CORRECT,ResultMessageType.Attribute))
+                        messages.add(ResultMessage(FeedbackLevel.DEBUG,"Attribute ${attribute.name} has correct name and type.",entity.entity!!.id!!,attribute.name!!,StatusLevel.CORRECT,ResultMessageType.Attribute))
                     }
                 }
 

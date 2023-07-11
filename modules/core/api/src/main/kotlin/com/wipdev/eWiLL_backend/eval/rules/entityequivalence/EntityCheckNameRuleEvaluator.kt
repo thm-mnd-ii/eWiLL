@@ -57,7 +57,7 @@ class EntityCheckNameRuleEvaluator : IRuleEvaluator {
         }
 
 
-        val missingEntities = foundEntities.size - diagramEvalPL.bestSolutionDiagram.nodes.size
+        val missingEntities = diagramEvalPL.bestSolutionDiagram.nodes.size-foundEntities.size
         if(missingEntities > 0 ){
             messages.add(
                 ResultMessage(
@@ -106,14 +106,7 @@ class EntityCheckNameRuleEvaluator : IRuleEvaluator {
             }
         }
         val totalEntities = diagramEvalPL.bestSolutionDiagram.nodes.size
-        val score =
-            Math.max(0f,(totalEntities.toFloat() - missingEntities.toFloat()) / totalEntities.toFloat() -
-                    (
-                            if(wrongTypedEntityCount >0 || unnecessaryEntitiesCount >0)
-                                    (wrongTypedEntityCount + unnecessaryEntitiesCount) / totalEntities.toFloat()
-                            else 0f
-                            )
-            )
+        val score = (totalEntities - missingEntities - wrongTypedEntityCount - unnecessaryEntitiesCount).toFloat() / totalEntities.toFloat()
 
         return RuleEvalResult(RuleEvalScore(score, ScoreType.PERCENTAGE), messages, rule.ruleType, rule.id)
 

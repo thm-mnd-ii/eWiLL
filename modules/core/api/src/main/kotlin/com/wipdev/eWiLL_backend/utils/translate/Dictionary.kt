@@ -8,20 +8,20 @@ class Dictionary {
         fun getPossibleNames(name: String): Array<String> {
             var list = mutableListOf<String>()
             list.add(name)
-            Translator.translate(name, defaultLanguage)?.data!!.translations!!.translatedText?.let { list.add(it);list.add(
+            Translator.translate(name, defaultLanguage)?.data!!.translations!!.translatedText?.let { list.add(it);list.addAll(
                 getPlural(it)
             );list.add(getSingular(it)) }
 
             //Add plurals and signulars
-            list.add(getPlural(name))
+            list.addAll(getPlural(name))
             list.add(getSingular(name))
 
             return list.toTypedArray()
 
         }
 
-        fun getPlural(name: String): String {
-            return name + "s"
+        fun getPlural(name: String): Array<String> {
+            return arrayOf(name + "s", name + "es", name + "ies", name + "e")
         }
 
         fun getSingular(name: String): String {

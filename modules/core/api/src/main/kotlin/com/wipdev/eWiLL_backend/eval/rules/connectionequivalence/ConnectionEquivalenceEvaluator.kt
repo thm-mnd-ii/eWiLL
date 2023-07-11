@@ -33,7 +33,7 @@ class ConnectionEquivalenceEvaluator: IRuleEvaluator {
                         StatusLevel.SUGGESTION,ResultMessageType.Connection,connection.to.entity!!.id!!))
                     errors++
                 }else{
-                    messages.add(ResultMessage(FeedbackLevel.BASIC,"Connection ${diagramConnection.from.entity!!.entityName} to ${diagramConnection.to.entity!!.entityName} has correct type ",diagramConnection.from.entity!!.id!!,"",StatusLevel.CORRECT,ResultMessageType.Connection,connection.to.entity!!.id!!))
+                    messages.add(ResultMessage(FeedbackLevel.DEBUG,"Connection ${diagramConnection.from.entity!!.entityName} to ${diagramConnection.to.entity!!.entityName} has correct type ",diagramConnection.from.entity!!.id!!,"",StatusLevel.CORRECT,ResultMessageType.Connection,connection.to.entity!!.id!!))
                 }
             }else{
                 messages.add(ResultMessage(FeedbackLevel.INFO,"Connection ${diagramConnection.from.entity!!.entityName} to ${diagramConnection.to.entity!!.entityName} is not present ",diagramConnection.from.entity!!.id!!,"",StatusLevel.INCORRECT,ResultMessageType.Connection,diagramConnection.to.entity!!.id!!))
@@ -41,6 +41,18 @@ class ConnectionEquivalenceEvaluator: IRuleEvaluator {
                 errors++
             }
         }
+        //Check for connections present in the model but not in the solutuion
+        for(diagramConnection in diagramEvalPL.diagramData!!.connections){
+            if(diagramConnection.from.otherModelNode == null || diagramConnection.to.otherModelNode == null){
+                continue
+            }
+            var connection = findConnection(diagramConnection,diagramEvalPL)
+            if(connection == null){
+                messages.add(ResultMessage(FeedbackLevel.INFO,"Connection ${diagramConnection.from.entity!!.entityName} to ${diagramConnection.to.entity!!.entityName} is present in the model but not in the solution ",diagramConnection.from.entity!!.id!!,"",StatusLevel.INCORRECT,ResultMessageType.Connection,diagramConnection.to.entity!!.id!!))
+                errors++
+            }
+        }
+
         return RuleEvalResult(RuleEvalScore((diagramEvalPL.bestSolutionDiagram.connections.size.toFloat()-errors)/diagramEvalPL.bestSolutionDiagram.connections.size.toFloat(), ScoreType.PERCENTAGE),messages,rule.ruleType,rule.id)
     }
 
