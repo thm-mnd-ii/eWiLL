@@ -149,10 +149,10 @@ const getPositionFactor = (position: any, entityWidth: number) => {
 };
 
 const spreadDuplicateLines = (calculatedLines: Line[]) => {
-  // TODO: refactor for better readability. Combine duplicatedStartEntitys and duplicateEndEntitys and use a function to check if the entity is a start or end entity
+  // TODO: refactor for better readability. Combine duplicateStartEntitys and duplicateEndEntitys and use a function to check if the entity is a start or end entity
 
   // show duplicate start entitys which start at the same position
-  let duplicatedStartEntitys = diagramStore.diagram.connections.filter((connection: Connection) => {
+  let duplicateStartEntitys = diagramStore.diagram.connections.filter((connection: Connection) => {
     return (
       diagramStore.diagram.connections.filter((connection2: Connection) => {
         return connection.startEntity == connection2.startEntity && connection.startEntityPosition == connection2.startEntityPosition;
@@ -161,7 +161,7 @@ const spreadDuplicateLines = (calculatedLines: Line[]) => {
   });
 
   // show duplicate end entitys which end at the same position
-  let duplicatedEndEntitys = diagramStore.diagram.connections.filter((connection: Connection) => {
+  let duplicateEndEntitys = diagramStore.diagram.connections.filter((connection: Connection) => {
     return (
       diagramStore.diagram.connections.filter((connection2: Connection) => {
         return connection.endEntity == connection2.endEntity && connection.endEntityPosition == connection2.endEntityPosition;
@@ -170,53 +170,33 @@ const spreadDuplicateLines = (calculatedLines: Line[]) => {
   });
 
   //group duplicate start entitys by startEntity and startEntityPosition without using reduce
-  let groupedDuplicatedStartEntitys = [] as Connection[][];
-  duplicatedStartEntitys.forEach((connection: Connection) => {
-    let group = groupedDuplicatedStartEntitys.find((group: Connection[]) => {
+  let groupedDuplicateStartEntitys = [] as Connection[][];
+  duplicateStartEntitys.forEach((connection: Connection) => {
+    let group = groupedDuplicateStartEntitys.find((group: Connection[]) => {
       return group[0].startEntity == connection.startEntity && group[0].startEntityPosition == connection.startEntityPosition;
     });
     if (group != undefined) {
       group.push(connection);
     } else {
-      groupedDuplicatedStartEntitys.push([connection]);
+      groupedDuplicateStartEntitys.push([connection]);
     }
   });
 
   //group duplicate end entitys by endEntity and endEntityPosition without using reduce
-  let groupedDuplicatedEndEntitys = [] as Connection[][];
-  duplicatedEndEntitys.forEach((connection: Connection) => {
-    let group = groupedDuplicatedEndEntitys.find((group: Connection[]) => {
+  let groupedDuplicateEndEntitys = [] as Connection[][];
+  duplicateEndEntitys.forEach((connection: Connection) => {
+    let group = groupedDuplicateEndEntitys.find((group: Connection[]) => {
       return group[0].endEntity == connection.endEntity && group[0].endEntityPosition == connection.endEntityPosition;
     });
     if (group != undefined) {
       group.push(connection);
     } else {
-      groupedDuplicatedEndEntitys.push([connection]);
+      groupedDuplicateEndEntitys.push([connection]);
     }
   });
 
-  // calculateGradients
-  groupedDuplicatedStartEntitys = calculateGradients(groupedDuplicatedStartEntitys, calculatedLines);
-  groupedDuplicatedEndEntitys = calculateGradients(groupedDuplicatedEndEntitys, calculatedLines);
-
-  // order groupedDuplicatedStartEntitys by gradient
-  groupedDuplicatedStartEntitys.forEach((group: Connection[]) => {
-    group.sort((a: Connection, b: Connection) => {
-      if (a.gradient == undefined || b.gradient == undefined) return 0;
-      return a.gradient - b.gradient;
-    });
-  });
-
-  // order groupedDuplicatedEndEntitys by gradient
-  groupedDuplicatedEndEntitys.forEach((group: Connection[]) => {
-    group.sort((a: Connection, b: Connection) => {
-      if (a.gradient == undefined || b.gradient == undefined) return 0;
-      return b.gradient - a.gradient;
-    });
-  });
-
   // calculate offset for each duplicate 10px
-  groupedDuplicatedStartEntitys.forEach((group: Connection[]) => {
+  groupedDuplicateStartEntitys.forEach((group: Connection[]) => {
     group.forEach((connection: Connection, index2) => {
       const sumOfLines = group.length;
 
@@ -231,7 +211,7 @@ const spreadDuplicateLines = (calculatedLines: Line[]) => {
   });
 
   // calculate offset for each duplicate 10px
-  groupedDuplicatedEndEntitys.forEach((group: Connection[]) => {
+  groupedDuplicateEndEntitys.forEach((group: Connection[]) => {
     group.forEach((connection: Connection, index2) => {
       const sumOfLines = group.length;
 
@@ -246,22 +226,6 @@ const spreadDuplicateLines = (calculatedLines: Line[]) => {
   });
 
   return calculatedLines;
-};
-
-const calculateGradients = (groupedEntitys: Connection[][], calculatedLines: Line[]) => {
-  groupedEntitys.forEach((group: Connection[]) => {
-    group.forEach((connection: Connection) => {
-      let calculatedLine = calculatedLines.find((line: Line) => {
-        return line.id == diagramStore.diagram.connections.indexOf(connection);
-      });
-      if (calculatedLine != undefined && calculatedLine.y1 != undefined && calculatedLine.y2 != undefined && calculatedLine.x1 != undefined && calculatedLine.x2 != undefined) {
-        // calculate the slope of the line
-        connection.gradient = (calculatedLine.y2 - calculatedLine.y1) / (calculatedLine.x2 - calculatedLine.x1);
-      }
-    });
-  });
-
-  return groupedEntitys;
 };
 </script>
 

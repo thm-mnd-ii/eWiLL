@@ -1,7 +1,5 @@
 package com.wipdev.eWiLL_backend.database.tables.course
 
-import com.wipdev.eWiLL_backend.eval.rules.ResultMessage
-import org.hibernate.annotations.Type
 import javax.persistence.*
 
 @Entity
@@ -12,32 +10,36 @@ class SubmissionResult {
     @Column(name = "id", nullable = false)
     var id: Long? = null
 
-    @Column(name = "correct", nullable = false)
-    var correct: Boolean? = false
+    @Column(name = "correct", nullable = true)
+    var correct: Boolean? = null
 
-    @Column(name = "score", nullable = false)
-    var score: Float? = 0f
+    @Column(name = "score", nullable = true)
+    var score: Number? = null
 
-    @Type(type = "com.wipdev.eWiLL_backend.database.tables.utils.JsonbUserType")
-    @Column(name = "comment", nullable = true, columnDefinition = "jsonb", length = 100000)
-    private var comments: List<Any>? = null
+    @Column(name = "comment", nullable = true)
+    var comment: String? = null
 
-
-    @Column(name = "submissionId", nullable = false)
-    var submissionId: Long? = null
-
-
-
-    fun getResultMessages(): List<ResultMessage> {
-        return comments!!.map { ResultMessage.fromJsonString(it.toString()) }
+    override fun toString(): String {
+        return "SumbissionResult(id=$id, correct=$correct, score=$score, comment=$comment)"
     }
 
-    fun addResultMessage(message: ResultMessage) {
-        comments = if (comments == null) {
-            listOf(message.toJsonString())
-        } else {
-            comments!!.plus(message.toJsonString())
-        }
+    override fun hashCode(): Int {
+        var result = id?.hashCode() ?: 0
+        result = 31 * result + (correct?.hashCode() ?: 0)
+        result = 31 * result + (score?.hashCode() ?: 0)
+        result = 31 * result + (comment?.hashCode() ?: 0)
+        return result
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as SubmissionResult
+
+        if (id != other.id) return false
+        if (correct != other.correct) return false
+        if (score != other.score) return false
+        return comment == other.comment
+    }
 }

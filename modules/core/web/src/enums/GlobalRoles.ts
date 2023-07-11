@@ -1,6 +1,6 @@
 enum GlobalRoles {
-  "ROLE_ADMIN" = "ROLE_ADMIN",
-  "ROLE_USER" = "ROLE_USER",
+    User = 0,
+    Admin = 1,
 }
 
 export default GlobalRoles;

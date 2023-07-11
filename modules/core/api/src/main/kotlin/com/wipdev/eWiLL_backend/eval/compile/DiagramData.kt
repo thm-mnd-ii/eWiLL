@@ -22,8 +22,7 @@ class DiagramData {
 
 
 
-    fun getNodeByName(name: String?): DiagramNode? {
-        if(name == null) return null
+    fun getNodeByName(name: String): DiagramNode? {
         return nodes.firstOrNull { it.entity!!.entityName == name }
     }
 

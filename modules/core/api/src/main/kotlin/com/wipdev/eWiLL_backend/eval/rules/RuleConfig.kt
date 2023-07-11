@@ -1,6 +1,12 @@
 package com.wipdev.eWiLL_backend.eval.rules
 
-abstract class RuleConfig{
+class RuleConfig{
     var ruleId : Int? = null
-    fun getConfig() : Map<String,Any>? = null
+    var config : Map<String,Any>? = null
+    constructor(ruleId: Int?, config: Map<String, Any>?) {
+        this.ruleId = ruleId
+        this.config = config
+    }
+
+
 }

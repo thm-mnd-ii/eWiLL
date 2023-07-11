@@ -4,13 +4,11 @@ import com.wipdev.eWiLL_backend.database.tables.Category
 import com.wipdev.eWiLL_backend.endpoints.payload.requests.CategoryPL
 import com.wipdev.eWiLL_backend.services.CategoryService
 import com.wipdev.eWiLL_backend.services.DiagramService
-import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 
 @RequestMapping("/api/category")
 @RestController
-@Tag(name = "Category", description = "Category API used for managing diagram \"Folders\"")
 class CategoryController {
 
     @Autowired

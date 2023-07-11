@@ -1,5 +1,5 @@
 <template>
-  <BasicBackground>
+  <v-parallax class="background" src="https://images.unsplash.com/photo-1617957718614-8c23f060c2d0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1332&q=80">
     <v-card class="login-container">
       <v-tooltip
         ><p>Zur Anmeldung benötigen Sie ihre persönlichen THM-Zugangsdaten.</p>
@@ -22,12 +22,10 @@
         <v-alert v-if="errorMessage.length != 0" icon="mdi-alert" :text="errorMessage" type="error" variant="outlined"></v-alert>
       </v-card-text>
     </v-card>
-  </BasicBackground>
+  </v-parallax>
 </template>
 
 <script setup lang="ts">
-import BasicBackground from '@/components/BasicBackground.vue';
-
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthUserStore } from "../stores/authUserStore";
@@ -54,28 +52,26 @@ const localLogin = () => {
       password: passwordInput.value,
     };
 
-    authUserStore
-      .login(user)
-      .then(() => {
+    authUserStore.login(user).then(
+      () => {
         setTimeout(() => {
           router.push("/");
         }, 1000);
-      })
-      .catch((error) => {
+      },
+      (error) => {
         loading.value = false;
         console.log(error);
-        if (error.response && error.response.status === 401) {
+        if (error.response.status == 401) {
           errorMessage.value = "Benutzername oder Passwort ist falsch";
-        } else if (error.response && error.response.status === 500) {
+        } else if (error.response.status == 500) {
           errorMessage.value = "Server Error";
-        } else if (error.response && error.response.status === 404) {
+        } else if (error.response.status == 404) {
           errorMessage.value = "Server nicht erreichbar";
-        } else if (error.response && error.response.status === 429) {
-          errorMessage.value = "Zu viele Anfragen";
         } else {
           errorMessage.value = "Unbekannter Fehler";
         }
-      });
+      }
+    );
   } else {
     loading.value = false;
     errorMessage.value = "Bitte füllen Sie alle Felder aus";
@@ -84,6 +80,13 @@ const localLogin = () => {
 </script>
 
 <style scoped lang="scss">
+.background {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .login-container {
   width: 430px;
   margin: auto;

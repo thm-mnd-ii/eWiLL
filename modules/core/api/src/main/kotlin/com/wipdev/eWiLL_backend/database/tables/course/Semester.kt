@@ -1,6 +1,6 @@
-package com.wipdev.eWiLL_backend.database.tables.course
+package com.wipdev.eWiLL_backend.database.tables.course;
 
-import javax.persistence.*
+import javax.persistence.*;
 
 @Entity
 @Table(name = "semester")

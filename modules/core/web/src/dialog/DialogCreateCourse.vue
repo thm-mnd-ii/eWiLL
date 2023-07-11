@@ -2,28 +2,28 @@
   <v-dialog v-model="courseDialog" width="70%">
     <v-card>
       <v-card-title>
-        <span v-if="newCourse">Neuen Kurs erstellen</span>
-        <span v-if="!newCourse">Kurs bearbeiten: {{ course.name }}</span>
+        <span v-if="newCourse" class="text-h5">Neuen Kurs erstellen</span>
+        <span v-if="!newCourse" class="text-h5">Kurs bearbeiten: {{ course.name }}</span>
       </v-card-title>
       <v-form ref="form" v-model="valid" @submit.prevent>
         <v-card-text>
           <v-row>
             <v-col>
-              <v-text-field v-model="course.name" color="primary" variant="underlined" label="Name" :rules="[(v) => !!v || 'Item is required']" required></v-text-field>
-              <v-text-field v-model="course.description" color="primary" variant="underlined" label="Beschreibung" :rules="[(v) => !!v || 'Item is required']" required></v-text-field>
-              <v-text-field v-model="course.keyPassword" color="primary" variant="underlined" label="Passwort" :rules="[(v) => !!v || 'Item is required']" required></v-text-field>
+              <v-text-field v-model="course.name" color="#81ba24" variant="underlined" label="Name" :rules="[(v) => !!v || 'Item is required']" required></v-text-field>
+              <v-text-field v-model="course.description" color="#81ba24" variant="underlined" label="Beschreibung" :rules="[(v) => !!v || 'Item is required']" required></v-text-field>
+              <v-text-field v-model="course.keyPassword" color="#81ba24" variant="underlined" label="Passwort" :rules="[(v) => !!v || 'Item is required']" required></v-text-field>
             </v-col>
             <v-col>
-              <v-select v-model="course.semester" color="primary" variant="underlined" label="Semester" :rules="[(v) => !!v || 'Item is required']" required :items="semesters" item-title="name" return-object></v-select>
-              <v-select v-model="course.location" color="primary" variant="underlined" label="Standort" :items="['Friedberg', 'Gießen']" :rules="[(v) => !!v || 'Item is required']" required></v-select>
+              <v-select v-model="course.semester" color="#81ba24" variant="underlined" label="Semester" :rules="[(v) => !!v || 'Item is required']" required :items="semesters" item-title="name" return-object></v-select>
+              <v-select v-model="course.location" color="#81ba24" variant="underlined" label="Standort" :items="['Friedberg', 'Gießen']" :rules="[(v) => !!v || 'Item is required']" required></v-select>
             </v-col>
           </v-row>
         </v-card-text>
-        <v-card-actions class="card-actions">
-          <v-btn v-if="!newCourse" color="error" variant="flat" @click="deleteCourse">Kurs löschen</v-btn>
+        <v-card-actions>
+          <v-btn v-if="!newCourse" class="btn-red" @click="deleteCourse">Kurs löschen</v-btn>
           <v-spacer></v-spacer>
-          <v-btn color="error" variant="flat" @click="_cancel"> Abbrechen </v-btn>
-          <v-btn color="primary" variant="flat" type="submit" @click="_confirm"> Speichern </v-btn>
+          <v-btn class="btn-red" @click="_cancel"> Abbrechen </v-btn>
+          <v-btn id="btn-confirm" type="submit" @click="_confirm"> Speichern </v-btn>
         </v-card-actions>
       </v-form>
     </v-card>
@@ -144,7 +144,7 @@ const deleteCourse = () => {
           .then(() => {
             courseDialog.value = false;
             resolvePromise.value(course.value.id);
-            router.push("/course");
+            router.push("/courses");
           })
           .catch((error) => {
             console.log(error);
@@ -167,7 +167,13 @@ defineExpose({
 </script>
 
 <style scoped>
-.card-actions {
-  padding: 1rem;
+#btn-confirm {
+  background-color: #81ba24;
+  color: #ffffff;
+}
+
+.btn-red {
+  background-color: #db3e1f;
+  color: #ffffff;
 }
 </style>

@@ -71,7 +71,7 @@ const createLine = () => {
   left: -15px;
   width: 15px;
   height: v-bind("cssVarEntityHeight");
-  background-color: rgb(var(--v-theme-error), 0.8);
+  background-color: #e30000e8;
 }
 .dockingPoint.right {
   /* TODO */

@@ -1,48 +1,35 @@
 package com.wipdev.eWiLL_backend.eval.rules.entityequivalence
 
-import com.wipdev.eWiLL_backend.eval.HighlightLevel
-import com.wipdev.eWiLL_backend.eval.ResultLevel
 import com.wipdev.eWiLL_backend.eval.compile.DiagramEvalPL
 import com.wipdev.eWiLL_backend.eval.rules.*
-import com.wipdev.eWiLL_backend.utils.translate.Dictionary
+import com.wipdev.eWiLL_backend.eval.utils.Dictionary
 import com.wipdev.eWiLL_backend.utils.stringsimmilarity.StringFinderUtils
 
 class EntityCheckNameRuleEvaluator : IRuleEvaluator {
 
 
 
-    override fun eval(diagramEvalPL: DiagramEvalPL, rule: Rule): RuleEvalResult {
+    override fun eval(diagramEvalPL: DiagramEvalPL, rule: Rule, ruleConfig: RuleConfig): RuleEvalResult {
         var diagramData = diagramEvalPL.diagramData
         var solutionDiagramData = diagramEvalPL.solutionDiagramData
 
         diagramEvalPL.bestSolutionDiagram =  solutionDiagramData!![0] //TODO get best solution diagram not just the first one
-        var messages = mutableListOf<ResultMessage>()
+        var stringBuilder = StringBuilder()
         var errors = 0
         for(node in diagramEvalPL.bestSolutionDiagram.nodes){
             val entityName = node.entity?.entityName
             val possibleNames = Dictionary.getPossibleNames(entityName!!)
             if(!StringFinderUtils.isPresent(entityName,possibleNames)){
-                messages.add(ResultMessage(ResultLevel.BASIC,"Entity name $entityName is not correct.",node.entity!!.id!!,"",
-                    HighlightLevel.INCORRECT,ResultMessageType.Entity))
-                messages.add(ResultMessage(ResultLevel.INFO,"Possible names are: ${possibleNames.joinToString()}",node.entity!!.id!!,entityName,HighlightLevel.SUGGESTION,ResultMessageType.Entity))
+                stringBuilder.append("Entity name $entityName is not correct. Possible names are: ${possibleNames.joinToString()}")//TODO Not expose every possible name
                 errors++
             }else{
-                val otherNode = diagramData!!.getNodeByName(entityName)
-                if(otherNode == null){
-                    messages.add(ResultMessage(ResultLevel.BASIC,"Entity name $entityName is not present in the solution.",node.entity!!.id!!,"",
-                        HighlightLevel.INCORRECT,   ResultMessageType.Entity))
-                    messages.add(ResultMessage(ResultLevel.INFO,"Possible names are: ${possibleNames.joinToString()}",node.entity!!.id!!,entityName,HighlightLevel.SUGGESTION,  ResultMessageType.Entity))
-                    errors++
-                    continue
-                }
-                node.otherModelNode = otherNode
-                node.otherModelNode!!.otherModelNode = node
-                messages.add(ResultMessage(ResultLevel.BASIC,"Entity name $entityName is correct.",node.entity!!.id!!,"",HighlightLevel.CORRECT,ResultMessageType.Entity))
-                messages.add(ResultMessage(ResultLevel.DEBUG,"It maps to ${node.otherModelNode!!.entity!!.entityName}",node.entity!!.id!!,"",HighlightLevel.CORRECT,ResultMessageType.Entity))
+                node.otherModelNode = diagramData!!.getNodeByName(StringFinderUtils.getPresent(entityName,possibleNames)!!)!!
+                node.otherModelNode.otherModelNode = node
             }
         }
+        stringBuilder.append(diagramEvalPL.bestSolutionDiagram.nodes-errors+"/"+diagramEvalPL.bestSolutionDiagram.nodes+" entities have correct names")
 
-        return RuleEvalResult(RuleEvalScore((diagramEvalPL.bestSolutionDiagram.nodes.size.toFloat()-errors)/diagramEvalPL.bestSolutionDiagram.nodes.size.toFloat(), ScoreType.PERCENTAGE),messages,rule.ruleType,rule.id)
+        return RuleEvalResult(RuleEvalScore(errors, ScoreType.ERROR_COUNT),stringBuilder.toString(),rule.ruleType,rule.id)
 
 
     }

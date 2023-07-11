@@ -13,7 +13,7 @@
 
       <v-text-field v-model="key" label="Einschreibeschlüssel" class="textfield" variant="solo"></v-text-field>
       <v-card-actions>
-        <v-btn class="button" color="warning" @click="signup">Einschreiben</v-btn>
+        <v-btn class="button" @click="signup">Einschreiben</v-btn>
       </v-card-actions>
     </v-card>
   </div>

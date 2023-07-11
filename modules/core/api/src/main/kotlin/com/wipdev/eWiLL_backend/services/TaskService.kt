@@ -21,6 +21,8 @@ class TaskService : ITaskService {
     @Autowired
     lateinit var diagramService: DiagramService
 
+    @Autowired
+    lateinit var ruleSetRepository: RulesetRepository
 
 
     override fun getAll(courseId: Long): List<Task> {
@@ -32,30 +34,14 @@ class TaskService : ITaskService {
     }
 
 
-
     override fun create(courseId: Long, task: Task): Task {
         task.id = null
-        val model = diagramService.getById(task.solutionModelId!!)
-        model.id = null
-        model.name = task.name+" - solution model"
-        model.ownerId = -1
-        val newDiagramId = diagramService.create(model)
-        task.solutionModelId = newDiagramId
         return  taskRepository.save(task)
     }
 
     override fun update(id: Long, task: Task): Task {
         val assignmentEntity = taskRepository.findById(id).get()
         task.id = assignmentEntity.id
-        if(task.solutionModelId != null && task.solutionModelId != assignmentEntity.solutionModelId){
-            val model = diagramService.getById(task.solutionModelId!!)
-            model.id = null
-            model.ownerId = -1
-            model.name +="(Kopie)"
-
-            val newDiagramId = diagramService.create(model)
-            task.solutionModelId = newDiagramId
-        }
         taskRepository.save(task)
         return task
     }
@@ -66,7 +52,9 @@ class TaskService : ITaskService {
         return assignment
     }
 
-
+    override fun createRuleset(ruleset: Ruleset): Long? {
+        return ruleSetRepository.save(ruleset).id
+    }
 
 
 
@@ -80,8 +68,7 @@ class TaskService : ITaskService {
             task.courseId,
             diagramService.getById(task.solutionModelId!!),
             task.rulesetId,
-            task.eLiability,
-            task.showLevel
+            task.eLiability
         )
 
     }
@@ -97,7 +84,6 @@ class TaskService : ITaskService {
         task.rulesetId = taskPL.rulesetId
         task.courseId = taskPL.courseId
         task.eLiability = taskPL.ELiability
-        task.showLevel = taskPL.showLevel
 
         return task
 

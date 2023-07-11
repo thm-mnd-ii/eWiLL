@@ -24,7 +24,7 @@ class StringFinderUtils {
         private fun isPresent(text:String, possible:String, matchingValue : Double):Boolean{
             return getSimilarity(text,possible) >= matchingValue
         }
-        fun getSimilarity(text:String, possible:String):Double{
+        public fun getSimilarity(text:String, possible:String):Double{
            //Check in percentage how much both strings are simmilar
             val textLength = text.length
             val possibleLength = possible.length

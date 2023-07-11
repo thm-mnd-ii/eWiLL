@@ -1,25 +1,13 @@
 <template>
   <div class="course">
+    <DialogConfirmVue ref="dialogConfirm"></DialogConfirmVue>
     <v-card>
       <v-card-title class="align-items-center">
         <h3 class="headline mb-0">{{ course?.name }}</h3>
-
         <v-spacer></v-spacer>
-
-        <v-btn v-if="courseRole == 'OWNER'" variant="text" color="dark-gray" @click="openMembersView">
-          <v-icon size="x-large">mdi-account-group</v-icon>
-          <v-tooltip activator="parent" location="bottom">Teilnehmer</v-tooltip>
-        </v-btn>
-
-        <v-btn variant="text" color="dark-gray" @click="leaveCourse">
-          <v-icon size="x-large">mdi-logout-variant</v-icon>
-          <v-tooltip activator="parent" location="bottom">Kurs Verlassen</v-tooltip>
-        </v-btn>
-
-        <v-btn v-if="courseRole == 'OWNER'" variant="text" color="dark-gray" @click="editCourse">
-          <v-icon size="x-large">mdi-cog</v-icon>
-          <v-tooltip activator="parent" location="bottom">Kurs bearbeiten</v-tooltip>
-        </v-btn>
+        <v-btn variant="text" icon="mdi-account-group" color="dark-gray" @click="openMembersView"></v-btn>
+        <v-btn variant="text" icon="mdi-logout-variant" color="dark-gray" @click="leaveCourse"></v-btn>
+        <v-btn v-if="courseRole == 'OWNER'" variant="text" icon="mdi-cog" color="dark-gray" @click="editCourse"></v-btn>
       </v-card-title>
       <v-card-text>
         <p>{{ course?.description }}</p>
@@ -31,11 +19,8 @@
         </div>
       </v-card-text>
     </v-card>
-    <div class="task_list">
-      <TaskList ref="taskList"></TaskList>
-    </div>
+    <div class="task_list"><TaskList ref="taskList"></TaskList></div>
   </div>
-  <DialogConfirmVue ref="dialogConfirm"></DialogConfirmVue>
   <DialogCreateCourse ref="dialogCreateCourse"></DialogCreateCourse>
   <DialogEditTask ref="dialogCreateTask"></DialogEditTask>
 </template>
@@ -45,26 +30,23 @@ import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useAuthUserStore } from "../stores/authUserStore";
 import { useRouter } from "vue-router";
-
+import DialogConfirmVue from "../dialog/DialogConfirm.vue";
 import TaskList from "../components/TaskList.vue";
 import CoursePL from "../model/course/CoursePL";
 import courseService from "../services/course.service";
-
-import DialogConfirmVue from "../dialog/DialogConfirm.vue";
 import DialogCreateCourse from "@/dialog/DialogCreateCourse.vue";
 import DialogEditTask from "@/dialog/DialogEditTask.vue";
+import { onBeforeMount } from "vue";
 
 const route = useRoute();
 const router = useRouter();
 const authUserStore = useAuthUserStore();
-
+const dialogConfirm = ref<typeof DialogConfirmVue>();
 const taskList = ref<typeof TaskList>();
 const course = ref<CoursePL>();
 const courseId = ref(Number(route.params.id));
 const userId = ref(authUserStore.auth.user?.id);
 const courseRole = ref("");
-
-const dialogConfirm = ref<typeof DialogConfirmVue>();
 const dialogCreateCourse = ref<typeof DialogCreateCourse>();
 const dialogCreateTask = ref<typeof DialogEditTask>();
 
@@ -103,17 +85,13 @@ const leaveCourse = () => {
 
 const editCourse = () => {
   if (dialogCreateCourse.value) {
-    dialogCreateCourse.value.openDialog(courseId.value).then(() => {
-      courseService.getCourse(courseId.value).then((response) => {
-        course.value = response.data;
-      });
-    });
+    dialogCreateCourse.value.openDialog(courseId.value).then(() => {});
   }
 };
 
 const createTask = () => {
   if (dialogCreateTask.value) {
-    dialogCreateTask.value.openDialog().then(() => {
+    dialogCreateTask.value.openDialog().then((created: boolean) => {
       taskList.value!.loadTasks(courseId.value);
     });
   }

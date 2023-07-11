@@ -1,29 +1,32 @@
 <template>
-  <BasicBackground>
+  <v-parallax class="background" src="https://images.unsplash.com/photo-1617957718614-8c23f060c2d0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1332&q=80">
     <v-card class="card">
       <v-card-title class="title">
-        <span>
-          <IconEWiLL class="icon" />
-        </span>
-        <br />
         <span>404</span>
+
+        <!-- <span> <IconEWiLL /> </span> -->
       </v-card-title>
       <v-card-text class="text"> UH OH! Verirrt? </v-card-text>
       <v-card-actions>
         <v-spacer>
-          <v-btn color="primary-dark" variant="flat" to="/">Hier geht es zurück nach Hause</v-btn>
+          <v-btn class="btn" to="/">Hier geht es zurück nach Hause</v-btn>
         </v-spacer>
       </v-card-actions>
     </v-card>
-  </BasicBackground>
+  </v-parallax>
 </template>
 
-<script setup lang="ts">
-import BasicBackground from "@/components/BasicBackground.vue";
-import IconEWiLL from "@/components/icons/IconEWiLL.vue";
-</script>
+<script setup lang="ts"></script>
 
 <style scoped lang="scss">
+.background {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .card {
   width: 700px;
   margin: auto;
@@ -50,9 +53,7 @@ import IconEWiLL from "@/components/icons/IconEWiLL.vue";
   justify-items: stretch;
 }
 
-.icon {
-  //svg size
-  width: 200px;
-  height: auto;
+.btn {
+  background-color: #ff8f45;
 }
 </style>

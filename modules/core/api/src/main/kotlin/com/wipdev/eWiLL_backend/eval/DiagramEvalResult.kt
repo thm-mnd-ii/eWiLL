@@ -14,37 +14,35 @@ class DiagramEvalResult(private var ruleEvalResults: List<RuleEvalResult>) {
 
     //In percentage
     fun calculateScore(): DiagramEvalResult {
-
+        var score = 0f
         var percentageSum = 0f
+        var percentageCount = 0
         ruleEvalResults.forEach {
-            println(it.score.score)
             if (it.score.scoreType == ScoreType.PERCENTAGE) {
-                percentageSum += it.score.score * 100
-            } else if (it.score.scoreType == ScoreType.ERROR_COUNT) {
-                percentageSum += (100 - it.score.score)
+                percentageSum += it.score.score.toFloat()
+                percentageCount++
             }
         }
 
-        this.score = percentageSum / ruleEvalResults.size
-        return this
+        if (percentageCount != 0) {
+            score += percentageSum / percentageCount
+        }
+        ruleEvalResults.forEach {
+            if (it.score.scoreType == ScoreType.ERROR_COUNT) {
+                score -= it.score.score.toInt()
+            }
+        }
+        this.score = score
+
+        return this;
     }
 
-    fun getResult(submissionId: Long): SubmissionResult {
+    fun getResult():SubmissionResult{
         val submissionResult = SubmissionResult()
-
         submissionResult.correct = score >= 100
         submissionResult.score = score
-        for (ruleEvalResult in ruleEvalResults) {
-            for (resultMessage in ruleEvalResult.messages) {
-                submissionResult.addResultMessage(resultMessage)
-            }
-        }
-        submissionResult.submissionId = submissionId
+        submissionResult.comment = ruleEvalResults.joinToString("\n") { it.message ?: "" }
         return submissionResult
-    }
-
-    override fun toString(): String {
-        return "DiagramEvalResult(score=$score, ruleEvalResults=$ruleEvalResults)"
     }
 }
 

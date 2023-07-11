@@ -80,27 +80,27 @@ const createLine = () => {
   top: -30px;
   border-style: solid;
   border-width: 0 10px 20px 10px;
-  border-color: transparent transparent rgb(var(--v-theme-info), 0.6) transparent;
+  border-color: transparent transparent #00aae374 transparent;
 }
 .dockingPoint.left {
   top: v-bind("cssVarDistanceTop");
   left: -30px;
   border-style: solid;
   border-width: 10px 20px 10px 0;
-  border-color: transparent rgb(var(--v-theme-info), 0.6) transparent transparent;
+  border-color: transparent #00aae374 transparent transparent;
 }
 .dockingPoint.right {
   top: v-bind("cssVarDistanceTop");
   right: -30px;
   border-style: solid;
   border-width: 10px 0 10px 20px;
-  border-color: transparent transparent transparent rgb(var(--v-theme-info), 0.6);
+  border-color: transparent transparent transparent #00aae374;
 }
 .dockingPoint.bottom {
   left: v-bind("cssVarDistanceLeft");
   bottom: -30px;
   border-style: solid;
   border-width: 20px 10px 0 10px;
-  border-color: rgb(var(--v-theme-info), 0.6) transparent transparent transparent;
+  border-color: #00aae374 transparent transparent transparent;
 }
 </style>

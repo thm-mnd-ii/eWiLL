@@ -2,17 +2,12 @@ package com.wipdev.eWiLL_backend.eval.rules
 
 class RuleEvalScore {
 
-    var score: Float = 100.0f
+    var score: Number = 100.0f
 
-    var scoreType : ScoreType = ScoreType.ERROR_COUNT
+    var scoreType : ScoreType = ScoreType.PERCENTAGE
 
-    constructor(score: Float, scoreType: ScoreType) {
+    constructor(score: Number, scoreType: ScoreType) {
         this.score = score
         this.scoreType = scoreType
     }
-
-    override fun toString(): String {
-        return "RuleEvalScore(score=$score, scoreType=$scoreType)"
-    }
-
 }

@@ -275,7 +275,7 @@ const openExportDialog = () => {
 }
 
 .deleteBtnActive {
-  background-color: rgb(var(--v-theme-error));
+  background-color: red;
 }
 
 #saveAsNewBtn {

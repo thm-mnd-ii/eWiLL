@@ -1,7 +1,6 @@
 package com.wipdev.eWiLL_backend.database.tables
 
 import com.wipdev.eWiLL_backend.MediaType
-import com.wipdev.eWiLL_backend.eval.ResultLevel
 import org.hibernate.Hibernate
 import javax.persistence.*
 
@@ -40,12 +39,8 @@ data class Task(
     @Column(name = "rulesetId", nullable = false)
     var rulesetId: Long? = null,
 
-    @Column(name="maxSubmissions", nullable = true)
-    var maxSubmissions: Int? = 999,
-
-    @Column(name="showLevel")
-    @Enumerated(EnumType.STRING)
-    var showLevel: ResultLevel? = ResultLevel.BASIC,
+    @Column(name="maxSubmissions", nullable = false)
+    var maxSubmissions: Int? = 999
 ) {
 
 
