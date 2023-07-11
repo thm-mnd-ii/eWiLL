@@ -56,21 +56,4 @@ class FeedbackController {
     fun getFeedback(): List<Feedback> {
         return feedbackService.findAll()
     }
-
-    @DeleteMapping("/delete/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    fun deleteFeedback(@PathVariable id: Long) {
-        feedbackService.delete(id)
-    }
-
-    @GetMapping("/statuses")
-    fun getStatuses(): Array<EFeedbackStatus> {
-        return EFeedbackStatus.values()
-    }
-
-    @PostMapping("/update/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    fun updateFeedback(@PathVariable id: Long, @RequestBody feedbackPl: FeedbackPl) {
-        feedbackService.update(id, feedbackPl)
-    }
 }
