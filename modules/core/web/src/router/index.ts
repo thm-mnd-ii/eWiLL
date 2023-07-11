@@ -1,13 +1,11 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/ViewHome.vue";
 import ViewModeling from "../views/ViewModeling.vue";
-import ViewChecker from "../views/ViewChecker.vue";
 import ViewImpressum from "../views/ViewImpressum.vue";
 import ViewDatenschutz from "../views/ViewDatenschutz.vue";
 import ViewLogin from "../views/ViewLogin.vue";
 import ViewProfile from "../views/ViewProfile.vue";
 import ViewCourses from "../views/ViewCourses.vue";
-import ViewTestTask from "../views/ViewTestTask.vue";
 import ViewCourseSignup from "../views/ViewCourseSignup.vue";
 import ViewCourse from "../views/ViewCourse.vue";
 import ViewTask from "../views/ViewTask.vue";
@@ -16,6 +14,7 @@ import View404Page from "../views/View404Page.vue";
 import FeedbackReport from "../views/ViewFeedbackReport.vue";
 import FeedbackOverview from "../views/ViewFeedbackOverview.vue";
 import ViewMembers from "../views/ViewMembers.vue";
+import ViewTaskSubmissions from "../views/ViewTaskSubmissions.vue";
 
 import authService from "@/services/auth.service";
 
@@ -24,18 +23,13 @@ const router = createRouter({
   routes: [
     {
       path: "/home",
-      name: "home",
+      name: "Home",
       component: HomeView,
     },
     {
       path: "/modeling",
-      name: "modeling",
+      name: "Modeling",
       component: ViewModeling,
-    },
-    {
-      path: "/checker",
-      name: "ViewChecker",
-      component: ViewChecker,
     },
     {
       path: "/impressum",
@@ -58,14 +52,9 @@ const router = createRouter({
       component: ViewProfile,
     },
     {
-      path: "/courses",
+      path: "/course",
       name: "ViewCourses",
       component: ViewCourses,
-    },
-    {
-      path: "/testTask",
-      name: "testTask",
-      component: ViewTestTask,
     },
     {
       path: "/course/:id/signup",
@@ -105,8 +94,13 @@ const router = createRouter({
     {
       path: "/course/:courseId/members",
       name: "ViewMembers",
-      component: ViewMembers
-    }
+      component: ViewMembers,
+    },
+    {
+      path: "/course/:courseId/task/:taskId/submissions",
+      name: "ViewTaskSubmissions",
+      component: ViewTaskSubmissions,
+    },
   ],
 });
 
@@ -116,15 +110,23 @@ router.beforeEach(async (to, from, next) => {
   const loggedIn = localStorage.getItem("user");
 
   const nonAdminPages = [
-    "/modeling",
-    "/login",
-    "/impressum",
-    "/datenschutz",
-    "/404",
-    "/",
-    "/feedbackReport",
+    "Home",
+    "Modeling",
+    "ViewImpressum",
+    "ViewDatenschutz",
+    "ViewLogin",
+    "ViewCourses",
+    "ViewCourseSignup",
+    "ViewCourse",
+    "ViewTask",
+    "ViewIntroduction",
+    "View404Page",
+    "FeedbackReport",
+    "ViewMembers",
+    "ViewTaskSubmissions",
+    "ViewBugReport",
   ];
-  const adminRequired = !nonAdminPages.includes(to.path);
+  const adminRequired = !nonAdminPages.includes(to.name as string);
   const role = localStorage.getItem("role");
   const admin = role?.includes("ADMIN");
 

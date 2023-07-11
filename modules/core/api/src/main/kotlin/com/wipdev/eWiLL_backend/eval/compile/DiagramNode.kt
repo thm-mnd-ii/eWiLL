@@ -8,7 +8,7 @@ class DiagramNode {
     var entity : Entity? = null
     var connections : List<DiagramConnection> = emptyList()
 
-    lateinit var otherModelNode: DiagramNode
+    var otherModelNode: DiagramNode? = null
 
 
 
@@ -31,6 +31,11 @@ class DiagramNode {
 
     fun getPreviousNodes(): List<DiagramNode> {
         return getFromConnections().map { it.from }
+    }
+
+
+    public fun getEntityName(): String? {
+        return entity!!.entityName
     }
 
 

@@ -1,7 +1,5 @@
 package com.wipdev.eWiLL_backend.eval.compile
 
-import com.wipdev.eWiLL_backend.endpoints.payload.requests.Entity
-
 
 class DiagramConnection (
 

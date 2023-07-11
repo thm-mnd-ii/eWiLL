@@ -1,8 +1,11 @@
+import Comment from "./Comment"
+
 interface Result {
     id: number;
     correct: boolean;
     score: number;
-    comment: string;
+    comments: Comment[];
+    submissionId: number;
   }
   
   export default Result;

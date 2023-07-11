@@ -6,14 +6,9 @@ WORKDIR /build
 COPY modules/core/web /build/modules/core/web 
 RUN cd /build/modules/core/web && npm install && npm run build
 
-
-
-
 FROM maven:3.6.0-jdk-13-alpine AS build
 
 WORKDIR /build
-
-
 
 #Build api with maven
 COPY modules/core/api /build/modules/core/api
