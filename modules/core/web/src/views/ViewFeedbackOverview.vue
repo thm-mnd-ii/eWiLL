@@ -13,14 +13,6 @@
             <v-btn @click="deleteFeedback(item.props.title)">Delete</v-btn>
           </template>
         </v-data-table>
-        <v-data-table class="dataTable" :headers="headers" :items="feedbacks">
-          <template #item.status="{ item }">
-            <v-select v-model="item.props.title.status" :hide-details="false" variant="plain" :items="feedbackStatuses" @update:model-value="changeStatus(item.props.title)"></v-select>
-          </template>
-          <template #item.actions="{ item }">
-            <v-btn @click="deleteFeedback(item.props.title)">Delete</v-btn>
-          </template>
-        </v-data-table>
       </v-card-text>
     </v-card>
   </BasicBackground>
