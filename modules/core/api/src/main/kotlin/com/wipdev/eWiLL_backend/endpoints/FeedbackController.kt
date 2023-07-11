@@ -59,9 +59,9 @@ class FeedbackController {
     }
 
     @PostMapping("/update/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    fun updateFeedback(@PathVariable id: Long, @RequestBody feedbackPl: FeedbackPl) {
-        feedbackService.update(id, feedbackPl)
+    @ResponseBody
+    fun getFeedback(): List<Feedback> {
+        return feedbackService.findAll()
     }
 
 }

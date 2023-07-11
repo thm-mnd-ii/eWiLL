@@ -10,8 +10,6 @@ import com.wipdev.eWiLL_backend.repository.*
 import com.wipdev.eWiLL_backend.services.serviceInterfaces.IEvaluationService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -117,9 +115,54 @@ class EvaluationService: IEvaluationService {
 
     }
 
-    override fun getEvalResult(id: Long?): SubmissionResult? = resultRepository.findById(id!!).get()
-    fun getSubmissionIds(userId: Long, taskId: Long): List<Long> {
-        return submissionRepository.findAllByUserIdAndTaskId(userId, taskId)
+    private fun getDateTimeString(): String? {
+        val currentDateTime = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        return currentDateTime.format(formatter)
+    }
+
+    override fun getNewestSubmission(userId: Long, taskId: Long): SubmissionWithDiagram {
+        return getAsSubmissionWithDiagram(
+            submissionRepository.findFirstByUserIdAndTaskIdOrderByDateDesc(userId, taskId)!!
+        )
+    }
+
+
+    override fun getSubmissionResultBySubmissionId(id: Long?): SubmissionResult? =
+        resultRepository.findBySubmissionId(id!!)
+
+
+    fun getSubmissions(userId: Long, taskId: Long): List<SubmissionWithDiagram> {
+        return submissionRepository.findAllByUserIdAndTaskId(userId, taskId).stream()
+            .map { getAsSubmissionWithDiagram(it) }.collect(toList())
+    }
+
+    fun getNewestSubmissionsByTaskId(taskId: Long): List<SubmissionWithDiagram> {
+        return submissionRepository.getNewestSubmissionsByTaskId(taskId).stream()
+            .map { getAsSubmissionWithDiagram(it) }.collect(toList())
+    }
+
+    fun getSubmissionsByTaskId(taskId: Long): List<SubmissionWithDiagram> {
+        return submissionRepository.getSubmissionsByTaskId(taskId).stream().map { getAsSubmissionWithDiagram(it) }
+            .collect(toList())
+    }
+
+    private fun getAsSubmissionWithDiagram(submission: Submission): SubmissionWithDiagram {
+        val submissionWithDiagram = SubmissionWithDiagram()
+        submissionWithDiagram.id = submission.id
+        submissionWithDiagram.userId = submission.userId
+        submissionWithDiagram.taskId = submission.taskId
+        submissionWithDiagram.date = submission.date
+        submissionWithDiagram.diagram = submission.getDiagram()?.let { DiagramService.convert(it, configRepository) }
+        submissionWithDiagram.attempt = submission.attempt
+        return submissionWithDiagram
+    }
+
+    fun getSubmissionResultBySubmissionId(id: Long, level: ResultLevel): SubmissionResultWithResultMessages? {
+        var result = resultRepository.findBySubmissionId(id)!!;
+        var comments = result.getResultMessages().stream().filter { it.resultLevel.ordinal <= level.ordinal }.collect(toList())
+
+        return SubmissionResultWithResultMessages(result.id, result.correct, result.score,comments, result.submissionId)
     }
 
 
