@@ -7,7 +7,7 @@
   <DialogConfirm ref="dialogConfirm" />
 
   <div class="task">
-    <TaskVCard ref="taskVCard" @task-updated="loadTask"></TaskVCard>
+    <TaskVCard :course-role="courseRole" @task-updated="loadTask"></TaskVCard>
 
     <div v-if="courseRole != 'STUDENT'" class="switchRole">
       <!-- btn switch to student mode -->
@@ -81,7 +81,7 @@ import { storeToRefs } from "pinia";
 import ModelingTool from "@/components/ModelingTool.vue";
 import submissionService from "@/services/submission.service";
 import CourseRoles from "@/enums/CourseRoles";
-import ResultLevels from "@/enums/ResultLevels";
+import ResultLevel from "@/enums/ResultLevel";
 import TaskDateVChip from "@/components/TaskDateVChip.vue";
 
 import TaskSubmissionsResultsTabs from "@/components/TaskSubmissionsResultsTabs.vue";
@@ -217,7 +217,7 @@ const submitDiagram = () => {
 const waitUntilSubmissionIsEvaluated = (submissionId: number) => {
   return new Promise((resolve) => {
     const interval = setInterval(() => {
-      evaluationService.getSubmissionById(submissionId, ResultLevels.NOTHING).then((response) => {
+      evaluationService.getSubmissionById(submissionId, ResultLevel.NOTHING).then((response) => {
         if (response.status == 200) {
           clearInterval(interval);
           resolve(response.data);

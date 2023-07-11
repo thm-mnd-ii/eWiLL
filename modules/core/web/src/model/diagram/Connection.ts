@@ -7,6 +7,7 @@ interface Connection {
   endEntity?: number;
   endEntityPosition?: ConnectorPosition;
   style?: CardinalityType;
+  gradient?: number;
 }
 
 export default Connection;

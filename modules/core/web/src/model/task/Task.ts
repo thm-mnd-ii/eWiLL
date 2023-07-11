@@ -1,3 +1,5 @@
+import ResultLevel from "@/enums/ResultLevel";
+
 interface Task {
     id: number;
     name: string;
@@ -9,7 +11,7 @@ interface Task {
     rulesetId: number;
     eliability: string;
     maxSubmissions: number;
-    showLevel: string;
+    showLevel: ResultLevel;
     
   }
   

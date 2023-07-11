@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/valid-v-slot -->
 <template>
   <v-card class="task-trials-tabs">
     <v-tabs v-model="selectedResultTab" bg-color="teal-darken-3" slider-color="teal-lighten-3">
@@ -15,7 +16,17 @@
             <v-chip v-if="!selectedResult.correct" color="red">Score: {{ selectedResult.score }}</v-chip>
             <br />
             <br />
-            <p v-for="comment in selectedResult.comments" :key="comment.message">{{ comment.message }}</p>
+            <!-- <p v-for="comment in selectedResult.comments" :key="comment.message">{{ comment.message }}</p> -->
+            <v-data-table :group-by="groupBy" :headers="headers" :items="selectedResult.comments" :sort-by="sortBy" class="elevation-1" item-value="name">
+              <template #item.highlightLevel="{ item }">
+                <!-- <v-chip :color="getHighlightLevelColor(item.value.highlightLevel)"> -->
+                <v-icon v-if="item.value.highlightLevel == 'SUGGESTION'" size="large" :color="getHighlightLevelColor(item.value.highlightLevel)">mdi-information</v-icon>
+                <v-icon v-if="item.value.highlightLevel == 'INCORRECT'" size="large" :color="getHighlightLevelColor(item.value.highlightLevel)">mdi-close-circle</v-icon>
+                <v-icon v-if="item.value.highlightLevel == 'CORRECT'" size="large" :color="getHighlightLevelColor(item.value.highlightLevel)">mdi-check-circle</v-icon>
+                <!-- {{ item.value.highlightLevel }} -->
+                <!-- </v-chip> -->
+              </template>
+            </v-data-table>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -54,6 +65,17 @@ const dialogShowFullDiagram = ref<typeof DialogShowFullDiagram>();
 const submissions = ref<Submission[]>([] as Submission[]);
 const selectedResult = ref<Result>({} as Result);
 
+const sortBy = ref<{ key: string; order: string }[]>([{ key: "resultLevel", order: "asc" }]);
+const groupBy = ref<{ key: string; order: string }[]>([]);
+const headers = ref([
+  { title: "Status", key: "highlightLevel", groupable: true },
+  { title: "Info", key: "message", groupable: true },
+  { title: "EntityId", key: "affectedEntityId", groupable: true },
+  { title: "Attribut", key: "affectedAttributeName", groupable: true },
+  { title: "Level", key: "resultLevel", groupable: true },
+  { title: "Info Type", key: "resultMessageType", groupable: true },
+]);
+
 watch(
   () => selectedResultTab.value,
   (newValue) => {
@@ -71,12 +93,31 @@ const load = (task: Task) => {
 
     //select last tab
     selectedResultTab.value = submissions.value.length;
+
+    //if first submission, load result for first submission
+    if (submissions.value.length == 1) {
+      submissionService.getResultBySubmissionIdAndLevel(submissions.value[submissions.value.length - 1].id, currentTask.value.showLevel).then((response) => {
+        selectedResult.value = response.data;
+      });
+    }
   });
 };
 
 const showDiagramWithMistakes = () => {
   diagramStore.loadDiagram(submissions.value[selectedResultTab.value - 1].diagram as Diagram);
   dialogShowFullDiagram.value?.openDialog("");
+};
+
+const getHighlightLevelColor = (highlightLevel: string) => {
+  if (highlightLevel == "INCORRECT") {
+    return "red";
+  } else if (highlightLevel == "CORRECT") {
+    return "green";
+  } else if (highlightLevel == "SUGGESTION") {
+    return "blue";
+  } else {
+    return "gray";
+  }
 };
 
 defineExpose({
@@ -96,5 +137,15 @@ defineExpose({
 
 .margin-right-5px {
   margin-right: 5px;
+}
+
+.table {
+  width: 100%;
+
+  tr {
+    td {
+      padding: 5px;
+    }
+  }
 }
 </style>

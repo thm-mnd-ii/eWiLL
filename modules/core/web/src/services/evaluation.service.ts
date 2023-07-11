@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import SubmitPL from "@/model/SubmitPL";
-import ResultLevels from "@/enums/ResultLevels";
+import ResultLevel from "@/enums/ResultLevel";
 import Result from "@/model/submission/Result";
 
 class EvaluationService {
@@ -16,7 +16,7 @@ class EvaluationService {
 
   getSubmissionById(
     submissionId: number,
-    level: ResultLevels
+    level: ResultLevel
   ): Promise<AxiosResponse<Result>> {
     return axios.get("/api/evaluation/v2/result/" + submissionId + "/" + level);
   }
