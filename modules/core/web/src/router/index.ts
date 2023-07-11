@@ -96,13 +96,13 @@ const router = createRouter({
     {
       path: "/course/:courseId/members",
       name: "ViewMembers",
-      component: ViewMembers
+      component: ViewMembers,
     },
     {
       path: "/course/:courseId/task/:taskId/submissions",
       name: "ViewTaskSubmissions",
-      component: ViewTaskSubmissions
-    }
+      component: ViewTaskSubmissions,
+    },
   ],
 });
 
@@ -112,15 +112,22 @@ router.beforeEach(async (to, from, next) => {
   const loggedIn = localStorage.getItem("user");
 
   const nonAdminPages = [
-    "/modeling",
-    "/login",
-    "/impressum",
-    "/datenschutz",
-    "/404",
-    "/",
-    "/feedbackReport",
+    "Home",
+    "Modeling",
+    "ViewImpressum",
+    "ViewDatenschutz",
+    "ViewLogin",
+    "ViewCourses",
+    "ViewCourseSignup",
+    "ViewCourse",
+    "ViewTask",
+    "ViewIntroduction",
+    "View404Page",
+    "FeedbackReport",
+    "ViewMembers",
+    "ViewTaskSubmissions",
   ];
-  const adminRequired = !nonAdminPages.includes(to.path);
+  const adminRequired = !nonAdminPages.includes(to.name as string);
   const role = localStorage.getItem("role");
   const admin = role?.includes("ADMIN");
 
