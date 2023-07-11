@@ -5,6 +5,7 @@ import com.wipdev.eWiLL_backend.database.tables.course.CourseUserRole
 import com.wipdev.eWiLL_backend.database.tables.course.ECourseRole
 import com.wipdev.eWiLL_backend.endpoints.payload.CourseEntry
 import com.wipdev.eWiLL_backend.endpoints.payload.CourseUser
+import com.wipdev.eWiLL_backend.endpoints.payload.CourseUser
 import com.wipdev.eWiLL_backend.repository.CourseRepository
 import com.wipdev.eWiLL_backend.repository.CourseRoleRepository
 import com.wipdev.eWiLL_backend.repository.UserRepository

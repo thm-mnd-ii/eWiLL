@@ -1,6 +1,7 @@
 package com.wipdev.eWiLL_backend.endpoints
 
 import com.wipdev.eWiLL_backend.database.tables.EFeedbackStatus
+import com.wipdev.eWiLL_backend.database.tables.EFeedbackStatus
 import com.wipdev.eWiLL_backend.database.tables.course.Feedback
 import com.wipdev.eWiLL_backend.endpoints.payload.requests.FeedbackPl
 import com.wipdev.eWiLL_backend.services.FeedbackService
@@ -18,8 +19,10 @@ class FeedbackController {
 
     @Autowired
     lateinit var feedbackService : FeedbackService
+    lateinit var feedbackService : FeedbackService
 
     @PostMapping("/create")
+    fun createFeedback(@RequestBody feedbackPl: FeedbackPl) {
     fun createFeedback(@RequestBody feedbackPl: FeedbackPl) {
         val feedback = Feedback()
         feedback.id = null
@@ -32,7 +35,19 @@ class FeedbackController {
         val formattedDateTime = currentDateTime.format(formatter)
         feedback.timeStamp = formattedDateTime
         feedbackService.save(feedback)
+        feedback.id = null
+        feedback.text = feedbackPl.text
+        feedback.firstName = feedbackPl.firstName
+        feedback.lastName = feedbackPl.lastName
+        feedback.status = EFeedbackStatus.NotReviewed
+        val currentDateTime = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        val formattedDateTime = currentDateTime.format(formatter)
+        feedback.timeStamp = formattedDateTime
+        feedbackService.save(feedback)
     }
+
+
 
 
 
@@ -54,9 +69,29 @@ class FeedbackController {
     }
 
     @PostMapping("/update/{id}")
+    @ResponseBody
+    fun getFeedback(): List<Feedback> {
+        return feedbackService.findAll()
+    }
+
+    @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    fun deleteFeedback(@PathVariable id: Long) {
+        feedbackService.delete(id)
+    }
+
+    @GetMapping("/statuses")
+    fun getStatuses(): Array<EFeedbackStatus> {
+        return EFeedbackStatus.values()
+    }
+
+    @PostMapping("/update/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     fun updateFeedback(@PathVariable id: Long, @RequestBody feedbackPl: FeedbackPl) {
         feedbackService.update(id, feedbackPl)
+    fun updateFeedback(@PathVariable id: Long, @RequestBody feedbackPl: FeedbackPl) {
+        feedbackService.update(id, feedbackPl)
     }
+
 
 }

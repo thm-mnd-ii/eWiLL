@@ -112,6 +112,13 @@ const setModelAndCategory = () => {
   });
 };
 
+const setModelAndCategory = () => {
+  diagramService.getDiagramById(currentTask.value.solutionModelId).then((response) => {
+    selectedCategoryId.value = response.data.categoryId;
+    updateDiagrams(selectedCategoryId.value!);
+  });
+};
+
 // #############################
 // Promis
 const resolvePromise: any = ref(undefined);

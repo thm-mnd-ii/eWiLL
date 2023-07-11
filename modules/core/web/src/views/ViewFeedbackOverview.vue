@@ -1,10 +1,19 @@
 <!-- eslint-disable vue/valid-v-slot -->
+<!-- eslint-disable vue/valid-v-slot -->
 <template>
   <DialogConfirmVue ref="dialogConfirm"></DialogConfirmVue>
   <BasicBackground>
     <v-card class="card">
       <v-card-title class="title"> </v-card-title>
       <v-card-text class="text">
+        <v-data-table class="dataTable" :headers="headers" :items="feedbacks">
+          <template #item.status="{ item }">
+            <v-select v-model="item.props.title.status" :hide-details="false" variant="plain" :items="feedbackStatuses" @update:model-value="changeStatus(item.props.title)"></v-select>
+          </template>
+          <template #item.actions="{ item }">
+            <v-btn @click="deleteFeedback(item.props.title)">Delete</v-btn>
+          </template>
+        </v-data-table>
         <v-data-table class="dataTable" :headers="headers" :items="feedbacks">
           <template #item.status="{ item }">
             <v-select v-model="item.props.title.status" :hide-details="false" variant="plain" :items="feedbackStatuses" @update:model-value="changeStatus(item.props.title)"></v-select>
@@ -39,9 +48,23 @@ const headers = ref([
   { title: "Status", key: "status" },
   { title: "Actions", key: "actions", sortable: false },
 ]);
+const feedbackStatuses = ref<FeedbackStatus[]>();
+
+const headers = ref([
+  { title: "F-ID", key: "id" },
+  { title: "Username", key: "firstName" },
+  { title: "Feedback", key: "text" },
+  { title: "TimeStamp", key: "timeStamp" },
+  { title: "Status", key: "status" },
+  { title: "Actions", key: "actions", sortable: false },
+]);
 
 onMounted(() => {
   getFeedbacks();
+
+  feedbackService.getStatuses().then((response) => {
+    feedbackStatuses.value = response.data;
+  });
 
   feedbackService.getStatuses().then((response) => {
     feedbackStatuses.value = response.data;
@@ -51,6 +74,12 @@ onMounted(() => {
 const getFeedbacks = () => {
   feedbackService.getFeedbacks().then((response) => {
     feedbacks.value = response.data;
+  });
+};
+
+const changeStatus = (feedback: Feedback) => {
+  feedbackService.updateFeedback(feedback).then(() => {
+    getFeedbacks();
   });
 };
 
@@ -71,10 +100,23 @@ const deleteFeedback = (feedback: Feedback) => {
     });
   }
 };
+
+const deleteFeedback = (feedback: Feedback) => {
+  if (dialogConfirm.value) {
+    dialogConfirm.value.openDialog(`Lösche Feedback mit der ID: ${feedback.id}`, "Willst du das Feedback wirklich löschen?").then((result: boolean) => {
+      if (result) {
+        feedbackService.deleteFeedback(feedback.id).then(() => {
+          getFeedbacks();
+        });
+      }
+    });
+  }
+};
 </script>
 
 <style scoped lang="scss">
 .card {
+  width: 90vw;
   width: 90vw;
   overflow-x: auto;
   margin: auto;
@@ -100,6 +142,7 @@ const deleteFeedback = (feedback: Feedback) => {
   align-items: center;
   justify-items: stretch;
 
+  max-height: 80vh;
   max-height: 80vh;
   overflow: auto;
 }

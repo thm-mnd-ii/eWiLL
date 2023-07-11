@@ -9,12 +9,7 @@ class TaskService {
         .then((response) => {
           resolve(response.data);
         })
-        .catch((error) => {
-          console.log(error);
-          reject;
-        });
-    });
-  }
+    }
 
   getAllTasks(courseId: number): Promise<Task[]> {
     return new Promise<Task[]>((resolve, reject) => {

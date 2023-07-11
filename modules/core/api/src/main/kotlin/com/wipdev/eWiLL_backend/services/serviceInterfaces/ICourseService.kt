@@ -16,6 +16,7 @@ interface ICourseService {
 
     fun getCourseByUserId(id: Long): List<Course>
     fun getStudentsByCourseId(id: Long): List<CourseUser>
+    fun getStudentsByCourseId(id: Long): List<CourseUser>
     fun joinCourse(id: Long, keyPass: String, userId: Long): CourseUserRole
     fun leaveCourse(id: Long, userId: Long): Course
     fun hasKeyPass(id: Long): Boolean

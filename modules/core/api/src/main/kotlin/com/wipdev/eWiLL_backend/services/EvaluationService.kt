@@ -13,8 +13,6 @@ import com.wipdev.eWiLL_backend.repository.*
 import com.wipdev.eWiLL_backend.services.serviceInterfaces.IEvaluationService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.stream.Collectors.toList
@@ -118,6 +116,8 @@ class EvaluationService : IEvaluationService {
 
     }
 
+    override fun getEvalResult(id: Long?): SubmissionResult? = resultRepository.findById(id!!).get()
+
     private fun getDateTimeString(): String? {
         val currentDateTime = LocalDateTime.now()
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
@@ -181,7 +181,6 @@ class EvaluationService : IEvaluationService {
         var diagram: DiagramPL? = null
 
         var attempt: Int? = null
-
 
     }
 

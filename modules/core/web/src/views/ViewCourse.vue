@@ -53,6 +53,7 @@ import courseService from "../services/course.service";
 import DialogConfirmVue from "../dialog/DialogConfirm.vue";
 import DialogCreateCourse from "@/dialog/DialogCreateCourse.vue";
 import DialogEditTask from "@/dialog/DialogEditTask.vue";
+import { onBeforeMount } from "vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -69,6 +70,20 @@ const dialogCreateCourse = ref<typeof DialogCreateCourse>();
 const dialogCreateTask = ref<typeof DialogEditTask>();
 
 onMounted(() => {
+  courseService.getUserRoleInCourse(userId.value!, courseId.value).then((response) => {
+    if (response == "NONE") {
+      router.push(route.path + "/signup");
+    } else {
+      courseRole.value = response;
+      courseService.getCourse(courseId.value).then((response) => {
+        course.value = response.data;
+        if (taskList.value) {
+          taskList.value.loadTasks(courseId.value);
+        }
+      });
+    }
+  });
+});
   courseService.getUserRoleInCourse(userId.value!, courseId.value).then((response) => {
     if (response == "NONE") {
       router.push(route.path + "/signup");
@@ -117,6 +132,10 @@ const createTask = () => {
       taskList.value!.loadTasks(courseId.value);
     });
   }
+};
+
+const openMembersView = () => {
+  router.push(route.path + "/members");
 };
 
 const openMembersView = () => {

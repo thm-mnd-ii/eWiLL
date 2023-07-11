@@ -5,6 +5,7 @@
   <DialogShowFullDiagram ref="dialogShowFullDiagram" />
   <DialogEditTask ref="dialogEditTask" />
   <DialogConfirm ref="dialogConfirm" />
+  <DialogConfirm ref="dialogConfirm" />
 
   <div class="task">
     <TaskVCard :course-role="courseRole" @task-updated="loadTask"></TaskVCard>
@@ -17,6 +18,8 @@
     <div class="task-main">
       <div class="grid-left">
         <v-form>
+          <v-select v-model="selectedCategoryId" label="Kategorie" variant="underlined" :items="categories" item-title="name" :disabled="courseRole != 'STUDENT'" item-value="id" @update:model-value="updateDiagrams"></v-select>
+          <v-select v-model="selectedDiagramId" label="Diagram" variant="underlined" :items="diagrams" item-title="name" item-value="id" :disabled="courseRole != 'STUDENT'" @update:model-value="showSelectedDiagram"></v-select>
           <v-select v-model="selectedCategoryId" label="Kategorie" variant="underlined" :items="categories" item-title="name" :disabled="courseRole != 'STUDENT'" item-value="id" @update:model-value="updateDiagrams"></v-select>
           <v-select v-model="selectedDiagramId" label="Diagram" variant="underlined" :items="diagrams" item-title="name" item-value="id" :disabled="courseRole != 'STUDENT'" @update:model-value="showSelectedDiagram"></v-select>
         </v-form>
@@ -70,11 +73,13 @@ import Task from "../model/task/Task";
 import SubmitPL from "../model/SubmitPL";
 import DialogEditTask from "@/dialog/DialogEditTask.vue";
 import DialogConfirm from "@/dialog/DialogConfirm.vue";
+import DialogConfirm from "@/dialog/DialogConfirm.vue";
 
 import Category from "@/model/diagram/Category";
 import Diagram from "@/model/diagram/Diagram";
 import DialogShowFullDiagram from "@/dialog/DialogShowFullDiagram.vue";
 import diagramService from "@/services/diagram.service";
+import evaluationService from "@/services/evaluation.service";
 import evaluationService from "@/services/evaluation.service";
 import { useDiagramStore } from "@/stores/diagramStore";
 import { storeToRefs } from "pinia";
@@ -93,6 +98,7 @@ const taskSubmissionsResultsTabs = ref<typeof TaskSubmissionsResultsTabs>();
 
 const route = useRoute();
 const router = useRouter();
+const router = useRouter();
 const authUserStore = useAuthUserStore();
 const diagramStore = useDiagramStore();
 const modelingToolKey = storeToRefs(diagramStore).key;
@@ -105,6 +111,7 @@ const userId = ref(authUserStore.auth.user?.id!);
 
 const dialogEditTask = ref<typeof DialogEditTask>();
 const dialogShowFullDiagram = ref<typeof DialogShowFullDiagram>();
+const dialogConfirm = ref<typeof DialogConfirm>();
 const dialogConfirm = ref<typeof DialogConfirm>();
 
 const categories = ref<Category[]>([]);
@@ -187,6 +194,7 @@ const updateDiagrams = (categoryId: number) => {
 };
 
 const showSelectedDiagram = (diagramId: number) => {
+  selectedDiagram.value = diagrams.value.find((d) => d.id == diagramId);
   selectedDiagram.value = diagrams.value.find((d) => d.id == diagramId);
   diagramStore.loadDiagram(diagrams.value.find((d) => d.id == diagramId) as Diagram);
 };
