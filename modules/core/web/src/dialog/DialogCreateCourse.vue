@@ -30,7 +30,6 @@
     <v-snackbar v-model="snackbarFail" :timeout="2500"> Kurs konnte nicht erstellt werden, bitte versuchen Sie es erneut </v-snackbar>
   </v-dialog>
   <DialogConfirmVue ref="dialogConfirm"></DialogConfirmVue>
-  <DialogConfirmVue ref="dialogConfirm"></DialogConfirmVue>
 </template>
 
 <script setup lang="ts">
@@ -171,5 +170,4 @@ defineExpose({
 .card-actions {
   padding: 1rem;
 }
-
 </style>

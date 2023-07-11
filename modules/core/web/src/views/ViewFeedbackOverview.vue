@@ -1,5 +1,4 @@
 <!-- eslint-disable vue/valid-v-slot -->
-<!-- eslint-disable vue/valid-v-slot -->
 <template>
   <DialogConfirmVue ref="dialogConfirm"></DialogConfirmVue>
   <BasicBackground>
@@ -89,7 +88,6 @@ const deleteFeedback = (feedback: Feedback) => {
 <style scoped lang="scss">
 .card {
   width: 90vw;
-  width: 90vw;
   overflow-x: auto;
   margin: auto;
   padding: 20px;
@@ -114,7 +112,6 @@ const deleteFeedback = (feedback: Feedback) => {
   align-items: center;
   justify-items: stretch;
 
-  max-height: 80vh;
   max-height: 80vh;
   overflow: auto;
 }

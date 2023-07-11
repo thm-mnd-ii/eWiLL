@@ -15,11 +15,6 @@
       <template #item.dueDate="{ item }">
         <TaskDateVChip :due-date-prop="item.raw.dueDate"></TaskDateVChip>
       </template>
-      <template #item.eliability="{ item }">
-        <v-chip v-if="item.raw.eliability == 'MANDATORY'" color="red">Verpflichtend</v-chip>
-        <v-chip v-if="item.raw.eliability == 'OPTIONAL'" color="yellow">Optional</v-chip>
-        <v-chip v-if="item.raw.eliability == 'BONUS'" color="green">Bonus</v-chip>
-      </template>
     </v-data-table>
   </div>
 </template>

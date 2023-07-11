@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/evaluation/v2")
 @RestController
 @Tag(name = "Submission Controller", description = "Checker API")
-@Tag(name = "Submission Controller", description = "Checker API")
 class EvaluationController {
 
     @Autowired

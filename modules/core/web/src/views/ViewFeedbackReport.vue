@@ -6,7 +6,6 @@
       </v-card-title>
       <v-card-text class="text">
         <v-textarea v-model="feedback.text"></v-textarea>
-        <v-textarea v-model="feedback.text"></v-textarea>
       </v-card-text>
       <v-card-actions>
         <v-spacer>
@@ -42,7 +41,6 @@ const sendFeedback = () => {
 
     feedbackService.createFeedback(feedback.value).then(() => {
       snackbarSuccess.value = true;
-      feedback.value = {} as Feedback;
       feedback.value = {} as Feedback;
     });
   });

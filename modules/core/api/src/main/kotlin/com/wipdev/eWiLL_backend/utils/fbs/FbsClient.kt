@@ -105,16 +105,6 @@ class FbsClient {
         var alias: String? = ""
         var globalRole: String? = ""
         var name: String? = ""
-    class FbsUser {
-        var id: Int? = 0
-        var prename: String? = ""
-        var surname: String? = ""
-        var email: String? = ""
-        var username: String? = ""
-        var password: String? = ""
-        var alias: String? = ""
-        var globalRole: String? = ""
-        var name: String? = ""
 
         override fun toString(): String {
             return "FbsUser(id=$id, prename='$prename', surname='$surname', email='$email', username='$username', password='$password', alias='$alias', globalRole='$globalRole', name='$name')"
