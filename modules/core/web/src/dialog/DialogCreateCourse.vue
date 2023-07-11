@@ -42,16 +42,12 @@ import semesterService from "../services/semester.service";
 import Semester from "../model/Semester";
 import DialogConfirmVue from "../dialog/DialogConfirm.vue";
 import { useRouter } from "vue-router";
-import DialogConfirmVue from "../dialog/DialogConfirm.vue";
-import { useRouter } from "vue-router";
 
 const courseDialog = ref<boolean>(false);
 const dialogTitle = ref<string>("");
 
 const dialogConfirm = ref<typeof DialogConfirmVue>();
-const dialogConfirm = ref<typeof DialogConfirmVue>();
 const authUserStore = useAuthUserStore();
-const router = useRouter();
 const router = useRouter();
 
 const semesters = ref<Semester[]>([]);

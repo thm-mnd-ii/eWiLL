@@ -48,16 +48,6 @@ const headers = ref([
   { title: "Status", key: "status" },
   { title: "Actions", key: "actions", sortable: false },
 ]);
-const feedbackStatuses = ref<FeedbackStatus[]>();
-
-const headers = ref([
-  { title: "F-ID", key: "id" },
-  { title: "Username", key: "firstName" },
-  { title: "Feedback", key: "text" },
-  { title: "TimeStamp", key: "timeStamp" },
-  { title: "Status", key: "status" },
-  { title: "Actions", key: "actions", sortable: false },
-]);
 
 onMounted(() => {
   getFeedbacks();
@@ -81,24 +71,6 @@ const changeStatus = (feedback: Feedback) => {
   feedbackService.updateFeedback(feedback).then(() => {
     getFeedbacks();
   });
-};
-
-const changeStatus = (feedback: Feedback) => {
-  feedbackService.updateFeedback(feedback).then(() => {
-    getFeedbacks();
-  });
-};
-
-const deleteFeedback = (feedback: Feedback) => {
-  if (dialogConfirm.value) {
-    dialogConfirm.value.openDialog(`Lösche Feedback mit der ID: ${feedback.id}`, "Willst du das Feedback wirklich löschen?").then((result: boolean) => {
-      if (result) {
-        feedbackService.deleteFeedback(feedback.id).then(() => {
-          getFeedbacks();
-        });
-      }
-    });
-  }
 };
 
 const deleteFeedback = (feedback: Feedback) => {

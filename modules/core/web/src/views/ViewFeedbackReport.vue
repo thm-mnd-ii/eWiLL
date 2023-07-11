@@ -21,18 +21,12 @@
 <script setup lang="ts">
 import Feedback from "@/model/Feedback";
 import User from "../model/User";
-import Feedback from "@/model/Feedback";
-import User from "../model/User";
 import feedbackService from "../services/feedback.service";
 import BasicBackground from "@/components/BasicBackground.vue";
 import { useAuthUserStore } from "@/stores/authUserStore";
 import { ref } from "vue";
 
 const authUserStore = useAuthUserStore();
-
-const feedback = ref<Feedback>({} as Feedback);
-const authUserStore = useAuthUserStore();
-
 const feedback = ref<Feedback>({} as Feedback);
 const snackbarSuccess = ref(false);
 
@@ -42,14 +36,15 @@ const sendFeedback = () => {
   feedback.value.lastName = user.email;
 
   feedbackService.createFeedback(feedback.value).then(() => {
-  const user: User = authUserStore.user as User;
-  feedback.value.firstName = user.username;
-  feedback.value.lastName = user.email;
+    const user: User = authUserStore.user as User;
+    feedback.value.firstName = user.username;
+    feedback.value.lastName = user.email;
 
-  feedbackService.createFeedback(feedback.value).then(() => {
-    snackbarSuccess.value = true;
-    feedback.value = {} as Feedback;
-    feedback.value = {} as Feedback;
+    feedbackService.createFeedback(feedback.value).then(() => {
+      snackbarSuccess.value = true;
+      feedback.value = {} as Feedback;
+      feedback.value = {} as Feedback;
+    });
   });
 };
 </script>

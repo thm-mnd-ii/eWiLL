@@ -4,12 +4,11 @@ import axios from "axios";
 class TaskService {
   getTask(id: number): Promise<Task> {
     return new Promise<Task>((resolve, reject) => {
-      axios
-        .get("/api/tasks/" + id)
-        .then((response) => {
-          resolve(response.data);
-        })
-    }
+      axios.get("/api/tasks/" + id).then((response) => {
+        resolve(response.data);
+      });
+    });
+  }
 
   getAllTasks(courseId: number): Promise<Task[]> {
     return new Promise<Task[]>((resolve, reject) => {
