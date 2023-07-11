@@ -17,8 +17,8 @@
     <v-navigation-drawer v-if="$router.currentRoute.value.name != 'ViewLogin'" v-model="showSideBar" width="220" expand-on-hover rail>
       <v-list density="compact" active-class="active" nav>
         <v-list-item to="/" active-class="active" prepend-icon="mdi-human-greeting" title="Willkommen" value="introduction" />
-        <v-list-item v-if="admin" to="/home" active-class="active" prepend-icon="mdi-home-variant" title="Startseite" value="home" />
-        <v-list-item v-if="admin" to="/course" active-class="active" prepend-icon="mdi-file-multiple" title="Alle Kurse" value="course" />
+        <v-list-item to="/home" active-class="active" prepend-icon="mdi-home-variant" title="Startseite" value="home" />
+        <v-list-item to="/course" active-class="active" prepend-icon="mdi-file-multiple" title="Alle Kurse" value="course" />
         <v-list-item to="/modeling" active-class="active" prepend-icon="mdi-pencil-ruler" title="Modellierung" value="modeling" />
         <v-list-item to="/feedbackReport" active-class="active" prepend-icon="mdi-bug" title="Feedback" value="report" />
         <v-list-item v-if="admin" to="/feedbackOverview" active-class="active" prepend-icon="mdi-view-dashboard-variant-outline" title="Feedback Overview" value="report" />

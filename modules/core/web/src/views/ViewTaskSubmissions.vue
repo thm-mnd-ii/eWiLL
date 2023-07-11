@@ -43,6 +43,7 @@ import courseService from "../services/course.service";
 import DialogConfirmVue from "../dialog/DialogConfirm.vue";
 import DialogCreateCourse from "@/dialog/DialogCreateCourse.vue";
 import DialogEditTask from "@/dialog/DialogEditTask.vue";
+import CourseRoles from "@/enums/CourseRoles";
 
 const route = useRoute();
 const router = useRouter();
@@ -62,9 +63,13 @@ const task = ref<Task>();
 
 onMounted(() => {
   courseService.getUserRoleInCourse(userId.value!, courseId.value).then((response) => {
-    if (response == "NONE") {
+    if (response == CourseRoles.NONE) {
       router.push(route.path + "/signup");
-    } else {
+    } else if (response == CourseRoles.STUDENT) {
+      // cutoff /submission from route.path
+
+      router.push(route.path.slice(0, route.path.lastIndexOf("/")));
+    } else if (response == CourseRoles.OWNER || response == CourseRoles.TUTOR) {
       courseRole.value = response;
       submissionsList.value!.loadSubmissions(taskId.value);
       taskService.getTask(taskId.value).then((response) => {
