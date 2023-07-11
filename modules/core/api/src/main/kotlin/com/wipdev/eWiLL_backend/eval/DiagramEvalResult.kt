@@ -17,7 +17,6 @@ class DiagramEvalResult(private var ruleEvalResults: List<RuleEvalResult>) {
 
         var percentageSum = 0f
         ruleEvalResults.forEach {
-            println(it.score.score)
             if (it.score.scoreType == ScoreType.PERCENTAGE) {
                 percentageSum += it.score.score * 100
             } else if (it.score.scoreType == ScoreType.ERROR_COUNT) {

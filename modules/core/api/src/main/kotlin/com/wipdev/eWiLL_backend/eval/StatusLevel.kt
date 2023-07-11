@@ -1,5 +1,5 @@
 package com.wipdev.eWiLL_backend.eval
 
-enum class HighlightLevel {
+enum class StatusLevel {
     CORRECT,INCORRECT,NOTHING,SUGGESTION
 }

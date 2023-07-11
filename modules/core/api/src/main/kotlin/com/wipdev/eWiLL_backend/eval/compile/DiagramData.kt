@@ -1,6 +1,7 @@
 package com.wipdev.eWiLL_backend.eval.compile
 
 import com.wipdev.eWiLL_backend.endpoints.payload.requests.DiagramPL
+import com.wipdev.eWiLL_backend.utils.stringsimmilarity.StringFinderUtils
 
 class DiagramData {
 
@@ -25,6 +26,9 @@ class DiagramData {
     fun getNodeByName(name: String?): DiagramNode? {
         if(name == null) return null
         return nodes.firstOrNull { it.entity!!.entityName == name }
+    }
+    fun getNodeByPossibleNames(possibleNames:Array<String>,matchingValue:Double,ignoreCase:Boolean): DiagramNode? {
+        return nodes.firstOrNull { StringFinderUtils.isPresent(it.entity!!.entityName!!,possibleNames,matchingValue,ignoreCase) }
     }
 
     private fun getNodeById(id: Long): DiagramNode? {

@@ -1,5 +1,5 @@
 package com.wipdev.eWiLL_backend.eval
 
-enum class ResultLevel {
+enum class FeedbackLevel {
     NOTHING,BASIC,INFO,DEBUG,ERROR
 }

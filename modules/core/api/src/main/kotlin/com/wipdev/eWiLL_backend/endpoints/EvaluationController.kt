@@ -1,9 +1,7 @@
 package com.wipdev.eWiLL_backend.endpoints
 
-import com.wipdev.eWiLL_backend.database.tables.course.Submission
-import com.wipdev.eWiLL_backend.database.tables.course.SubmissionResult
 import com.wipdev.eWiLL_backend.endpoints.payload.requests.SubmissionRequestPL
-import com.wipdev.eWiLL_backend.eval.ResultLevel
+import com.wipdev.eWiLL_backend.eval.FeedbackLevel
 import com.wipdev.eWiLL_backend.eval.rules.SubmissionResultWithResultMessages
 import com.wipdev.eWiLL_backend.services.EvaluationService
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -28,7 +26,7 @@ class EvaluationController {
 
     @GetMapping("/result/{submissionId}/{level}")
     @ResponseBody
-    fun getResultByLevel(@PathVariable submissionId: Long,@PathVariable level: ResultLevel): SubmissionResultWithResultMessages?{
+    fun getResultByLevel(@PathVariable submissionId: Long,@PathVariable level: FeedbackLevel): SubmissionResultWithResultMessages?{
 
         return service.getSubmissionResultBySubmissionId(submissionId,level)
     }
