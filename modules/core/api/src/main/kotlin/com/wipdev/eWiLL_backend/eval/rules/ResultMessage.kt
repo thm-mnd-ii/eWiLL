@@ -10,9 +10,12 @@ class ResultMessage() {
     var message: String? = null
     var resultMessageType = ResultMessageType.Entity
     var affectedEntityId: Long = -1
+    var affectedEntityName :String = ""
     var affectedAttributeName: String = ""
     var connectedToId = -1L
     var statusLevel: StatusLevel = StatusLevel.NOTHING
+
+
 
 
 
@@ -21,9 +24,11 @@ class ResultMessage() {
         feedbackLevel: FeedbackLevel,
         message: String?,
         affectedEntityId: Long,
+        affectedEntityName: String,
         affectedAttributeName: String,
         statusLevel: StatusLevel,
-        resultMessageType: ResultMessageType
+        resultMessageType: ResultMessageType,
+
     ) : this() {
         this.feedbackLevel = feedbackLevel
         this.message = message
@@ -31,6 +36,8 @@ class ResultMessage() {
         this.affectedAttributeName = affectedAttributeName
         this.statusLevel = statusLevel
         this.resultMessageType = resultMessageType
+        this.connectedToId = -1
+        this.affectedEntityName = affectedEntityName
     }
     constructor(
         feedbackLevel: FeedbackLevel,

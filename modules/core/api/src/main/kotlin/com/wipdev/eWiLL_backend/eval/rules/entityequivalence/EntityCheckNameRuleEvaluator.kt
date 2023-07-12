@@ -29,6 +29,7 @@ class EntityCheckNameRuleEvaluator : IRuleEvaluator {
                         FeedbackLevel.INFO,
                         "Entity $entityName is not present in the solution.",
                         node.entity!!.id!!,
+                        node.entity!!.entityName!!,
                         "",
                         StatusLevel.INCORRECT,
                         ResultMessageType.Entity
@@ -45,6 +46,7 @@ class EntityCheckNameRuleEvaluator : IRuleEvaluator {
                             FeedbackLevel.DEBUG,
                             "Entity ${node.entity!!.entityName} is type ${node.entity!!.type} but should be ${otherNode.entity!!.type} from ${otherNode.entity!!.entityName}.",
                             node.entity!!.id!!,
+                            node.entity!!.entityName!!,
                             "",
                             StatusLevel.INCORRECT,
                             ResultMessageType.Entity
@@ -61,7 +63,7 @@ class EntityCheckNameRuleEvaluator : IRuleEvaluator {
         if(missingEntities > 0 ){
             messages.add(
                 ResultMessage(
-                    FeedbackLevel.BASIC, "$missingEntities entities are missing in the solution.", -1, "",
+                    FeedbackLevel.BASIC, "$missingEntities entities are missing in the solution.", -1,"", "",
                     StatusLevel.INCORRECT, ResultMessageType.Entity
                 )
             )
@@ -70,7 +72,7 @@ class EntityCheckNameRuleEvaluator : IRuleEvaluator {
         if(wrongTypedEntityCount > 0){
             messages.add(
                 ResultMessage(
-                    FeedbackLevel.BASIC, "$wrongTypedEntityCount entities are of wrong type.", -1, "",
+                    FeedbackLevel.BASIC, "$wrongTypedEntityCount entities are of wrong type.", -1,"", "",
                     StatusLevel.INCORRECT, ResultMessageType.Entity
                 )
             )
@@ -82,7 +84,7 @@ class EntityCheckNameRuleEvaluator : IRuleEvaluator {
                 unnecessaryEntities.add(node.entity!!)
                 messages.add(
                     ResultMessage(
-                        FeedbackLevel.DEBUG, "Entity ${node.entity!!.entityName} is not required.", node.entity!!.id!!, "",
+                        FeedbackLevel.DEBUG, "Entity ${node.entity!!.entityName} is not required.", node.entity!!.id!!,node.entity!!.entityName!!, "",
                         StatusLevel.INCORRECT, ResultMessageType.Entity
                     )
                 )
@@ -92,14 +94,14 @@ class EntityCheckNameRuleEvaluator : IRuleEvaluator {
         if(unnecessaryEntitiesCount>0){
             messages.add(
                 ResultMessage(
-                    FeedbackLevel.BASIC, "$unnecessaryEntitiesCount entities are present but not required.", -1, "",
+                    FeedbackLevel.BASIC, "$unnecessaryEntitiesCount entities are present but not required.", -1,"", "",
                     StatusLevel.INCORRECT, ResultMessageType.Entity
                 )
             )
             for(entity in unnecessaryEntities){
                 messages.add(
                     ResultMessage(
-                        FeedbackLevel.INFO, "Entity ${entity.entityName} is not required.", entity.id!!, "",
+                        FeedbackLevel.INFO, "Entity ${entity.entityName} is not required.", entity.id!!,entity.entityName!!, "",
                         StatusLevel.INCORRECT, ResultMessageType.Entity
                     )
                 )
