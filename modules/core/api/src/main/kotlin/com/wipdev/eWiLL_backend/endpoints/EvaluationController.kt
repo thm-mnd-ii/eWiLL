@@ -19,28 +19,36 @@ class EvaluationController {
 
     @PostMapping("/submit")
     @ResponseBody
-    fun submit(@RequestBody submissionRequestPL: SubmissionRequestPL): Long?{
+    fun submit(@RequestBody submissionRequestPL: SubmissionRequestPL): Long? {
         return service.submit(submissionRequestPL)
     }
 
 
     @GetMapping("/result/{submissionId}/{level}")
     @ResponseBody
-    fun getResultByLevel(@PathVariable submissionId: Long,@PathVariable level: FeedbackLevel): SubmissionResultWithResultMessages?{
+    fun getResultByLevel(
+        @PathVariable submissionId: Long,
+        @PathVariable level: FeedbackLevel
+    ): SubmissionResultWithResultMessages? {
 
-        return service.getSubmissionResultBySubmissionId(submissionId,level)
+        return service.getSubmissionResultBySubmissionId(submissionId, level)
     }
-
 
 
     @GetMapping("/submissionIds/{userId}/{taskId}")
     @ResponseBody
-    fun getSubmission(@PathVariable userId: Long, @PathVariable taskId: Long): List<EvaluationService.SubmissionWithDiagram> =
+    fun getSubmission(
+        @PathVariable userId: Long,
+        @PathVariable taskId: Long
+    ): List<EvaluationService.SubmissionWithDiagram> =
         service.getSubmissions(userId, taskId)
 
     @GetMapping("/submission/newest/{userId}/{taskId}")
     @ResponseBody
-    fun getNewestSubmission(@PathVariable userId: Long, @PathVariable taskId: Long): EvaluationService.SubmissionWithDiagram =
+    fun getNewestSubmission(
+        @PathVariable userId: Long,
+        @PathVariable taskId: Long
+    ): EvaluationService.SubmissionWithDiagram =
         service.getNewestSubmission(userId, taskId)
 
     @GetMapping("/submission/newest/{taskId}")

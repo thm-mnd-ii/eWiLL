@@ -40,10 +40,10 @@ data class Task(
     @Column(name = "rulesetId", nullable = false)
     var rulesetId: Long? = null,
 
-    @Column(name="maxSubmissions", nullable = true)
+    @Column(name = "maxSubmissions", nullable = true)
     var maxSubmissions: Int? = 999,
 
-    @Column(name="showLevel")
+    @Column(name = "showLevel")
     @Enumerated(EnumType.STRING)
     var showLevel: FeedbackLevel? = FeedbackLevel.BASIC,
 ) {

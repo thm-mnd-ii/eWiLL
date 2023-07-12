@@ -26,60 +26,62 @@ class TestController {
     lateinit var resultRepository: ResultRepository
 
     @GetMapping("/runEvalTests")
-    fun runEvalOnTest(){
+    fun runEvalOnTest() {
         val startTime = System.currentTimeMillis()
-        val sampleSize = 20;
-        val diagramIds =getDiagramsWithHighestId(sampleSize)
+        val sampleSize = 20
+        val diagramIds = getDiagramsWithHighestId(sampleSize)
         //listOf<Long>(264)//
         val taskId = 268L
         val userId = 2L
         println("Starting Evaluation on $sampleSize diagrams")
-        val submissionIds = runEvalOnDiagrams(diagramIds.plus(264),taskId,userId)
+        val submissionIds = runEvalOnDiagrams(diagramIds.plus(264), taskId, userId)
         val endTime = System.currentTimeMillis()
         val time = endTime - startTime
         println("Async Time: $time")
         println("Waiting for results")
     }
 
-    fun getIsADone(submissionId:Long):Boolean{
+    fun getIsADone(submissionId: Long): Boolean {
         println("SUBMISSION ID: $submissionId")
-        if(resultRepository.findBySubmissionId(submissionId) == null){
+        if (resultRepository.findBySubmissionId(submissionId) == null) {
             return false
         }
         return resultRepository.findBySubmissionId(submissionId)!!.getResultMessages().isNotEmpty()
 
     }
-    fun runEvalOnDiagrams(diagramIds: List<Long?>, taskId:Long, userId:Long): MutableList<Long> {
+
+    fun runEvalOnDiagrams(diagramIds: List<Long?>, taskId: Long, userId: Long): MutableList<Long> {
         //Run submit on all diagrams
         val ids = mutableListOf<Long>()
-        for(diagramId in diagramIds){
-            val submissionRequestPL = SubmissionRequestPL(diagramId!!,taskId,userId)
+        for (diagramId in diagramIds) {
+            val submissionRequestPL = SubmissionRequestPL(diagramId!!, taskId, userId)
             val id = evaluationService.submit(submissionRequestPL)!!
             ids.add(id)
         }
         return ids
     }
 
-    fun getDiagramsWithHighestId(amount:Int):List<Long?>{
+    fun getDiagramsWithHighestId(amount: Int): List<Long?> {
         val diagrams = diagramRepository.findAll()
         val sorted = diagrams.sortedByDescending { it.id }
         val ids = sorted.map { it.id }
-        return ids.subList(0,amount).stream().collect(java.util.stream.Collectors.toList())
+        return ids.subList(0, amount).stream().collect(java.util.stream.Collectors.toList())
     }
-    fun loadDiagramsToDatabase(path:String,categoryToLoadTo:Long,ownerOR :Long) = File(path).useLines { lines ->
+
+    fun loadDiagramsToDatabase(path: String, categoryToLoadTo: Long, ownerOR: Long) = File(path).useLines { lines ->
         lines.forEach {
-            var split = it.split("\\t".toRegex())
+            val split = it.split("\\t".toRegex())
             split.forEach(::print)
             println()
-            var id = split[0]
-            var categoryId = categoryToLoadTo
-            var configId = split[2]
-            var connections = split[3]
-            var entities = split[4]
-            var name = split[5]
-            var ownerId = ownerOR
+            val id = split[0]
+            val categoryId = categoryToLoadTo
+            val configId = split[2]
+            val connections = split[3]
+            val entities = split[4]
+            val name = split[5]
+            val ownerId = ownerOR
 
-            var diagram = Diagram()
+            val diagram = Diagram()
             diagram.id = id.toLong()
             diagram.categoryId = categoryId
             diagram.configId = configId.toLong()

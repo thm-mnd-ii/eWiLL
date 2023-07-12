@@ -31,12 +31,11 @@ class TaskController {
 
     @PutMapping("/{taskId}")
     @ResponseBody
-    fun update(@PathVariable taskId :Long?,@RequestBody task: Task) = taskId?.let { service.update(it, task) }
+    fun update(@PathVariable taskId: Long?, @RequestBody task: Task) = taskId?.let { service.update(it, task) }
 
 
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: Long) = service.delete(id)
-
 
 
 }

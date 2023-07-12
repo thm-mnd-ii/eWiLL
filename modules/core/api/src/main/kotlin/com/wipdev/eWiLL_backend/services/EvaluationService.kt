@@ -65,13 +65,23 @@ class EvaluationService : IEvaluationService {
                 runEval(submission, diagram)
             } catch (e: Exception) {
                 val result = SubmissionResult()
-                result.addResultMessage(ResultMessage(FeedbackLevel.ERROR, "Error occurred during executing evaluation, see logs for more details", -1, "", StatusLevel.NOTHING, ResultMessageType.Other))
+                result.addResultMessage(
+                    ResultMessage(
+                        FeedbackLevel.ERROR,
+                        "Error occurred during executing evaluation, see logs for more details",
+                        -1,
+                        "",
+                        "",
+                        StatusLevel.NOTHING,
+                        ResultMessageType.Other
+                    )
+                )
                 e.printStackTrace()
                 result.correct = false
                 result.score = 0f
                 result.submissionId = submission.id
                 resultRepository.save(result)
-            }finally {
+            } finally {
                 println("Evaluation finished")
             }
         }
@@ -95,9 +105,19 @@ class EvaluationService : IEvaluationService {
 
             } catch (e: Exception) {
                 var result = resultRepository.findBySubmissionId(submission.id!!)
-                if(result == null)
+                if (result == null)
                     result = SubmissionResult()
-                result.addResultMessage(ResultMessage(FeedbackLevel.DEBUG,"Error occurred during evaluation, see logs for more details",-1,"",StatusLevel.NOTHING,ResultMessageType.Other))
+                result.addResultMessage(
+                    ResultMessage(
+                        FeedbackLevel.DEBUG,
+                        "Error occurred during evaluation, see logs for more details",
+                        -1,
+                        "",
+                        "",
+                        StatusLevel.NOTHING,
+                        ResultMessageType.Other
+                    )
+                )
                 e.printStackTrace()
                 result.correct = false
                 result.score = 0f
@@ -106,9 +126,19 @@ class EvaluationService : IEvaluationService {
             }
         } catch (e: Exception) {
             var result = resultRepository.findBySubmissionId(submission.id!!)
-            if(result == null)
+            if (result == null)
                 result = SubmissionResult()
-            result.addResultMessage(ResultMessage(FeedbackLevel.DEBUG,"Error preparing Evaluation, see logs for more details",-1,"",StatusLevel.NOTHING,ResultMessageType.Other))
+            result.addResultMessage(
+                ResultMessage(
+                    FeedbackLevel.DEBUG,
+                    "Error preparing Evaluation, see logs for more details",
+                    -1,
+                    "",
+                    "",
+                    StatusLevel.NOTHING,
+                    ResultMessageType.Other
+                )
+            )
             e.printStackTrace()
             result.correct = false
             result.score = 0f
@@ -162,10 +192,17 @@ class EvaluationService : IEvaluationService {
     }
 
     fun getSubmissionResultBySubmissionId(id: Long, level: FeedbackLevel): SubmissionResultWithResultMessages? {
-        var result = resultRepository.findBySubmissionId(id)!!;
-        var comments = result.getResultMessages().stream().filter { it.feedbackLevel.ordinal <= level.ordinal }.collect(toList())
+        val result = resultRepository.findBySubmissionId(id)!!
+        val comments =
+            result.getResultMessages().stream().filter { it.feedbackLevel.ordinal <= level.ordinal }.collect(toList())
 
-        return SubmissionResultWithResultMessages(result.id, result.correct, result.score,comments, result.submissionId)
+        return SubmissionResultWithResultMessages(
+            result.id,
+            result.correct,
+            result.score,
+            comments,
+            result.submissionId
+        )
     }
 
 

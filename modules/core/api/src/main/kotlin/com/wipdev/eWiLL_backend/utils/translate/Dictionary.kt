@@ -6,11 +6,13 @@ class Dictionary {
     companion object {
         private val defaultLanguage = Language.English//TODO get default language from user
         fun getPossibleNames(name: String): Array<String> {
-            var list = mutableListOf<String>()
+            val list = mutableListOf<String>()
             list.add(name)
-            Translator.translate(name, defaultLanguage)?.data!!.translations!!.translatedText?.let { list.add(it);list.addAll(
+            Translator.translate(name, defaultLanguage)?.data!!.translations!!.translatedText?.let {
+                list.add(it);list.addAll(
                 getPlural(it)
-            );list.add(getSingular(it)) }
+            );list.add(getSingular(it))
+            }
 
             //Add plurals and signulars
             list.addAll(getPlural(name))

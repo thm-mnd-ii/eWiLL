@@ -5,31 +5,45 @@ import kotlin.math.min
 
 class StringFinderUtils {
 
-    companion object{
-        fun isPresent(text:String,possibles:Array<String>, matchingValue : Double = 1.0,ignoreCase : Boolean = false):Boolean{
-            for (possible in possibles){
+    companion object {
+        fun isPresent(
+            text: String,
+            possibles: Array<String>,
+            matchingValue: Double = 1.0,
+            ignoreCase: Boolean = false
+        ): Boolean {
+            for (possible in possibles) {
                 val case = if (ignoreCase) text.lowercase() else text
                 val textCase = if (ignoreCase) possible.lowercase() else possible
-                if (isPresent(textCase,case,matchingValue)){
+                if (isPresent(textCase, case, matchingValue)) {
                     return true
                 }
             }
             return false
         }
-        fun getPresent(text:String,possibles:Array<String>, matchingValue : Double = 1.0,ignoreCase: Boolean = false):String?{
-            for (possible in possibles){
-                if (isPresent(text,possible,matchingValue)){
+
+        fun getPresent(
+            text: String,
+            possibles: Array<String>,
+            matchingValue: Double = 1.0,
+            ignoreCase: Boolean = false
+        ): String? {
+            for (possible in possibles) {
+                if (isPresent(text, possible, matchingValue)) {
                     return possible
                 }
             }
             return null
         }
-        private fun isPresent(text:String, possible:String, matchingValue : Double):Boolean{
-            return getSimilarity(text,possible) >= matchingValue
+
+        private fun isPresent(text: String, possible: String, matchingValue: Double): Boolean {
+            return getSimilarity(text, possible) >= matchingValue
         }
-        fun getSimilarity(text:String, possible:String):Double{
-            return findSimilarity(text,possible)
+
+        fun getSimilarity(text: String, possible: String): Double {
+            return findSimilarity(text, possible)
         }
+
         private fun getLevenshteinDistance(X: String, Y: String): Int {
             val m = X.length
             val n = Y.length
@@ -44,8 +58,10 @@ class StringFinderUtils {
             for (i in 1..m) {
                 for (j in 1..n) {
                     cost = if (X[i - 1] == Y[j - 1]) 0 else 1
-                    T[i][j] = min(min(T[i - 1][j] + 1, T[i][j - 1] + 1),
-                        T[i - 1][j - 1] + cost)
+                    T[i][j] = min(
+                        min(T[i - 1][j] + 1, T[i][j - 1] + 1),
+                        T[i - 1][j - 1] + cost
+                    )
                 }
             }
             return T[m][n]

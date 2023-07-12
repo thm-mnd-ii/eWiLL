@@ -1,7 +1,7 @@
 package com.wipdev.eWiLL_backend.eval.rules
 
-import com.wipdev.eWiLL_backend.eval.StatusLevel
 import com.wipdev.eWiLL_backend.eval.FeedbackLevel
+import com.wipdev.eWiLL_backend.eval.StatusLevel
 import io.swagger.v3.core.util.Json
 
 
@@ -10,14 +10,10 @@ class ResultMessage() {
     var message: String? = null
     var resultMessageType = ResultMessageType.Entity
     var affectedEntityId: Long = -1
-    var affectedEntityName :String = ""
+    var affectedEntityName: String = ""
     var affectedAttributeName: String = ""
     var connectedToId = -1L
     var statusLevel: StatusLevel = StatusLevel.NOTHING
-
-
-
-
 
 
     constructor(
@@ -29,7 +25,7 @@ class ResultMessage() {
         statusLevel: StatusLevel,
         resultMessageType: ResultMessageType,
 
-    ) : this() {
+        ) : this() {
         this.feedbackLevel = feedbackLevel
         this.message = message
         this.affectedEntityId = affectedEntityId
@@ -39,6 +35,7 @@ class ResultMessage() {
         this.connectedToId = -1
         this.affectedEntityName = affectedEntityName
     }
+
     constructor(
         feedbackLevel: FeedbackLevel,
         message: String?,

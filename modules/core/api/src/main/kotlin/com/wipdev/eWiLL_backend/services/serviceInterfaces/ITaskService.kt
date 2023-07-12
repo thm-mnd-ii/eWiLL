@@ -1,7 +1,6 @@
 package com.wipdev.eWiLL_backend.services.serviceInterfaces
 
 import com.wipdev.eWiLL_backend.database.tables.Task
-import com.wipdev.eWiLL_backend.database.tables.course.Ruleset
 import org.springframework.stereotype.Service
 
 @Service

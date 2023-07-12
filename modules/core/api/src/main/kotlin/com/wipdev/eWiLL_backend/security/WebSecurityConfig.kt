@@ -15,14 +15,14 @@ import org.springframework.security.web.SecurityFilterChain
 
 
 @Configuration
-@EnableGlobalMethodSecurity( prePostEnabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 class WebSecurityConfig {
 
     @Autowired
     lateinit var userDetailsServiceImpl: UserDetailsServiceImpl
 
     @Autowired
-    var unauthorizedHandler : AuthEntryPointJwt? = null
+    var unauthorizedHandler: AuthEntryPointJwt? = null
 
     @Bean
     fun authenticationJwtTokenFilter(): AuthTokenFilter {
@@ -31,7 +31,7 @@ class WebSecurityConfig {
 
     @Bean
     @Throws(Exception::class)
-    fun filterChain( http: HttpSecurity): SecurityFilterChain? {
+    fun filterChain(http: HttpSecurity): SecurityFilterChain? {
         http.cors().and().csrf().disable()
             .authorizeRequests()
             .anyRequest().permitAll()
@@ -40,7 +40,7 @@ class WebSecurityConfig {
 
     @Bean
     fun authenticationProvider(): DaoAuthenticationProvider {
-        val authenticationProvider  = DaoAuthenticationProvider()
+        val authenticationProvider = DaoAuthenticationProvider()
         authenticationProvider.setUserDetailsService(userDetailsServiceImpl)
         authenticationProvider.setPasswordEncoder(passwordEncoder())
 

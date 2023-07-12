@@ -22,8 +22,9 @@ class JwtUtils {
 
     fun generateJwtToken(authentication: Authentication): String {
         val userPrincipal = authentication.principal as UserDetailsImpl
-        return Jwts.builder().setSubject(userPrincipal.username).setIssuedAt(Date()).setExpiration(Date(Date().time + jwtExpirationMs))
-            .signWith( jwtSecret,SignatureAlgorithm.HS512).compact()
+        return Jwts.builder().setSubject(userPrincipal.username).setIssuedAt(Date())
+            .setExpiration(Date(Date().time + jwtExpirationMs))
+            .signWith(jwtSecret, SignatureAlgorithm.HS512).compact()
     }
 
     fun getUserNameFromJwtToken(token: String): String {

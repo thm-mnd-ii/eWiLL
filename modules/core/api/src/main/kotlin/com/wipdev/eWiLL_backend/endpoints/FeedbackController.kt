@@ -17,7 +17,7 @@ import java.time.format.DateTimeFormatter
 class FeedbackController {
 
     @Autowired
-    lateinit var feedbackService : FeedbackService
+    lateinit var feedbackService: FeedbackService
 
     @PostMapping("/create")
     fun createFeedback(@RequestBody feedbackPl: FeedbackPl) {
@@ -33,7 +33,6 @@ class FeedbackController {
         feedback.timeStamp = formattedDateTime
         feedbackService.save(feedback)
     }
-
 
 
     @PostMapping("/get")

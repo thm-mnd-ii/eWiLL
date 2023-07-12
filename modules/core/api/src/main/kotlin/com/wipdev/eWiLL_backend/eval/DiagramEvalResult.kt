@@ -23,7 +23,7 @@ class DiagramEvalResult(private var ruleEvalResults: List<RuleEvalResult>) {
                 percentageSum += (100 - it.score.score)
             }
         }
-        println(ruleEvalResults.joinToString { it.toString() } + " " + percentageSum +"/"+ ruleEvalResults.size + " = " + percentageSum / ruleEvalResults.size)
+        println(ruleEvalResults.joinToString { it.toString() } + " " + percentageSum + "/" + ruleEvalResults.size + " = " + percentageSum / ruleEvalResults.size)
         this.score = percentageSum / ruleEvalResults.size
         return this
     }

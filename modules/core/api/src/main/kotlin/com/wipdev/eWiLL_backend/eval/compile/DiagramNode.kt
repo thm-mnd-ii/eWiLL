@@ -5,14 +5,13 @@ import com.wipdev.eWiLL_backend.endpoints.payload.requests.Entity
 class DiagramNode {
 
     var diagramData: DiagramData
-    var entity : Entity? = null
-    var connections : List<DiagramConnection> = emptyList()
+    var entity: Entity? = null
+    var connections: List<DiagramConnection> = emptyList()
 
     var otherModelNode: DiagramNode? = null
 
 
-
-    constructor(entity: Entity,diagramData: DiagramData) {
+    constructor(entity: Entity, diagramData: DiagramData) {
         this.entity = entity
         this.diagramData = diagramData
     }
@@ -34,7 +33,7 @@ class DiagramNode {
     }
 
 
-    public fun getEntityName(): String? {
+    fun getEntityName(): String? {
         return entity!!.entityName
     }
 

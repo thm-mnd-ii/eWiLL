@@ -5,7 +5,7 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "Diagram")
-data class Diagram (
+data class Diagram(
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", nullable = true)

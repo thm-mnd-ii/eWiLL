@@ -22,11 +22,11 @@ class DiagramService : IDiagramService {
     @Autowired
     private lateinit var diagramConfigRepository: DiagramConfigRepository
     override fun getAll(): List<DiagramPL> {
-        return diagramRepository.findAll().map { convert(it,diagramConfigRepository) }
+        return diagramRepository.findAll().map { convert(it, diagramConfigRepository) }
     }
 
     override fun getById(id: Long): DiagramPL {
-        return convert(diagramRepository.findById(id).get(),diagramConfigRepository)
+        return convert(diagramRepository.findById(id).get(), diagramConfigRepository)
     }
 
     //@Transactional
@@ -39,7 +39,7 @@ class DiagramService : IDiagramService {
 
     @Transactional
     override fun update(id: Long, diagramPL: DiagramPL): DiagramPL {
-        val diagram=diagramRepository.findById(id).get()
+        val diagram = diagramRepository.findById(id).get()
         val diagramChanged = convert(diagramPL)
         diagram.name = diagramChanged.name
         diagram.configId = diagramChanged.configId
@@ -49,27 +49,27 @@ class DiagramService : IDiagramService {
 
         diagramRepository.save(diagram)
 
-        return convert(diagram,diagramConfigRepository)
+        return convert(diagram, diagramConfigRepository)
     }
 
     override fun delete(id: Long): DiagramPL {
         val diagram = diagramRepository.findById(id).get()
         diagramRepository.delete(diagram)
-        return convert(diagram,diagramConfigRepository)
+        return convert(diagram, diagramConfigRepository)
     }
 
     override fun getAllByCategoryId(id: Long): List<DiagramPL> {
-        return diagramRepository.findAllByCategoryId(id).map { convert(it,diagramConfigRepository) }
+        return diagramRepository.findAllByCategoryId(id).map { convert(it, diagramConfigRepository) }
     }
 
     override fun getByUserId(userId: Long): List<DiagramPL> {
-        return diagramRepository.findAllByOwnerId(userId).map { convert(it,diagramConfigRepository) }
+        return diagramRepository.findAllByOwnerId(userId).map { convert(it, diagramConfigRepository) }
     }
 
 
     companion object {
 
-        fun convert(diagram: Diagram,configRepository:DiagramConfigRepository): DiagramPL {
+        fun convert(diagram: Diagram, configRepository: DiagramConfigRepository): DiagramPL {
 
             return DiagramPL(
                 diagram.id,
@@ -81,6 +81,7 @@ class DiagramService : IDiagramService {
                 diagram.categoryId ?: 0//Default Category is 0
             )
         }
+
         private fun parseConnections(connections: String?): List<Connection> {
             return Json.mapper().readValue(connections, Array<Connection>::class.java).toList()
 
@@ -102,8 +103,6 @@ class DiagramService : IDiagramService {
         }
 
     }
-
-
 
 
 }

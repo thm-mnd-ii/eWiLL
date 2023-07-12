@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*
 @Tag(name = "Media Type", description = "Media Type API, a component of the Diagram API")
 class MediaTypeController {
 
-    @GetMapping()
+    @GetMapping
     @ResponseBody
     fun getMediaTypes(): Array<MediaType> {
         return MediaType.values()
