@@ -89,5 +89,26 @@
         "translatedText" : "batch number"
       }
     }
+  },
+  "RootEntity" : {
+    "data" : {
+      "translations" : {
+        "translatedText" : "RootEntity"
+      }
+    }
+  },
+  "EndEntity" : {
+    "data" : {
+      "translations" : {
+        "translatedText" : "EndEntity"
+      }
+    }
+  },
+  "MiddleEntity" : {
+    "data" : {
+      "translations" : {
+        "translatedText" : "MiddleEntity"
+      }
+    }
   }
 }

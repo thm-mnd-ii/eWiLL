@@ -1,57 +1,61 @@
 package com.wipdev.eWiLL_backend.eval.rules
 
-import com.wipdev.eWiLL_backend.eval.HighlightLevel
-import com.wipdev.eWiLL_backend.eval.ResultLevel
+import com.wipdev.eWiLL_backend.eval.FeedbackLevel
+import com.wipdev.eWiLL_backend.eval.StatusLevel
 import io.swagger.v3.core.util.Json
 
 
 class ResultMessage() {
-    var resultLevel: ResultLevel = ResultLevel.BASIC
+    var feedbackLevel: FeedbackLevel = FeedbackLevel.BASIC
     var message: String? = null
     var resultMessageType = ResultMessageType.Entity
     var affectedEntityId: Long = -1
+    var affectedEntityName: String = ""
     var affectedAttributeName: String = ""
     var connectedToId = -1L
-    var highlightLevel: HighlightLevel = HighlightLevel.NOTHING
-
-
+    var statusLevel: StatusLevel = StatusLevel.NOTHING
 
 
     constructor(
-        resultLevel: ResultLevel,
+        feedbackLevel: FeedbackLevel,
         message: String?,
         affectedEntityId: Long,
+        affectedEntityName: String,
         affectedAttributeName: String,
-        highlightLevel: HighlightLevel,
-        resultMessageType: ResultMessageType
-    ) : this() {
-        this.resultLevel = resultLevel
+        statusLevel: StatusLevel,
+        resultMessageType: ResultMessageType,
+
+        ) : this() {
+        this.feedbackLevel = feedbackLevel
         this.message = message
         this.affectedEntityId = affectedEntityId
         this.affectedAttributeName = affectedAttributeName
-        this.highlightLevel = highlightLevel
+        this.statusLevel = statusLevel
         this.resultMessageType = resultMessageType
+        this.connectedToId = -1
+        this.affectedEntityName = affectedEntityName
     }
+
     constructor(
-        resultLevel: ResultLevel,
+        feedbackLevel: FeedbackLevel,
         message: String?,
         affectedEntityId: Long,
         affectedAttributeName: String,
-        highlightLevel: HighlightLevel,
+        statusLevel: StatusLevel,
         resultMessageType: ResultMessageType,
         connectedToId: Long
     ) : this() {
-        this.resultLevel = resultLevel
+        this.feedbackLevel = feedbackLevel
         this.message = message
         this.affectedEntityId = affectedEntityId
         this.affectedAttributeName = affectedAttributeName
-        this.highlightLevel = highlightLevel
+        this.statusLevel = statusLevel
         this.resultMessageType = resultMessageType
         this.connectedToId = connectedToId
     }
 
     override fun toString(): String {
-        return "ResultMessage(resultLevel=$resultLevel, message=$message, affectedEntityId=$affectedEntityId, affectedAttributeName='$affectedAttributeName', highlightLevel=$highlightLevel, resultMessageType=$resultMessageType)"
+        return "ResultMessage(resultLevel=$feedbackLevel, message=$message, affectedEntityId=$affectedEntityId, affectedAttributeName='$affectedAttributeName', highlightLevel=$statusLevel, resultMessageType=$resultMessageType)"
     }
 
     fun toJsonString(): String {

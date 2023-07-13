@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 
-@RestController()
+@RestController
 @RequestMapping("/api/semester")
 @Tag(name = "Semester", description = "Semester API used for course management")
 class SemesterController {
@@ -16,7 +16,7 @@ class SemesterController {
 
     @GetMapping("/{id}")
     @ResponseBody
-    fun getSemester( @PathVariable id: Long) = semesterService.getSemester(id)
+    fun getSemester(@PathVariable id: Long) = semesterService.getSemester(id)
 
     @GetMapping
     @ResponseBody

@@ -8,7 +8,7 @@ import com.wipdev.eWiLL_backend.endpoints.payload.CourseUser
 import org.springframework.http.ResponseEntity
 
 interface ICourseService {
-    fun getAll(userId:Long): List<CourseEntry>
+    fun getAll(userId: Long): List<CourseEntry>
     fun getById(id: Long): Course
     fun create(course: Course): Course
     fun update(id: Long, course: Course): Course
@@ -21,7 +21,13 @@ interface ICourseService {
     fun hasKeyPass(id: Long): Boolean
     fun removeAllButOwner(id: Long): Course
     fun archiveCourse(id: Long): Course
-    fun changeUserRole(courseId: Long,userId:Long, role: ECourseRole,executorUserId:Long): ResponseEntity<CourseUserRole>
+    fun changeUserRole(
+        courseId: Long,
+        userId: Long,
+        role: ECourseRole,
+        executorUserId: Long
+    ): ResponseEntity<CourseUserRole>
+
     fun getUserRoleInCourse(courseId: Long, userId: Long): ECourseRole?
 
 

@@ -16,8 +16,6 @@ class DiagramController {
     lateinit var iDiagramService: DiagramService
 
 
-
-
     @GetMapping("/{id}")
     fun getById(@PathVariable id: Long) = iDiagramService.getById(id)
 

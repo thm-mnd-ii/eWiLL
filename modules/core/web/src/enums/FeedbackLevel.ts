@@ -1,4 +1,4 @@
-enum ResultLevel {
+enum FeedbackLevel {
   "NOTHING" = "NOTHING",
   "BASIC" = "BASIC",
   "INFO" = "INFO",
@@ -6,4 +6,4 @@ enum ResultLevel {
   "ERROR" = "ERROR",
 }
 
-export default ResultLevel;
+export default FeedbackLevel;

@@ -27,7 +27,6 @@ class SubmissionResult {
     var submissionId: Long? = null
 
 
-
     fun getResultMessages(): List<ResultMessage> {
         return comments!!.map { ResultMessage.fromJsonString(it.toString()) }
     }

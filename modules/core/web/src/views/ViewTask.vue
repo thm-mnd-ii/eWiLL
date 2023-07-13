@@ -81,7 +81,7 @@ import { storeToRefs } from "pinia";
 import ModelingTool from "@/components/ModelingTool.vue";
 import submissionService from "@/services/submission.service";
 import CourseRoles from "@/enums/CourseRoles";
-import ResultLevel from "@/enums/ResultLevel";
+import FeedbackLevel from "@/enums/FeedbackLevel";
 import TaskDateVChip from "@/components/TaskDateVChip.vue";
 
 import TaskSubmissionsResultsTabs from "@/components/TaskSubmissionsResultsTabs.vue";
@@ -217,7 +217,7 @@ const submitDiagram = () => {
 const waitUntilSubmissionIsEvaluated = (submissionId: number) => {
   return new Promise((resolve) => {
     const interval = setInterval(() => {
-      evaluationService.getSubmissionById(submissionId, ResultLevel.NOTHING).then((response) => {
+      evaluationService.getSubmissionById(submissionId, FeedbackLevel.NOTHING).then((response) => {
         if (response.status == 200) {
           clearInterval(interval);
           resolve(response.data);

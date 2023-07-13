@@ -1,10 +1,7 @@
 package com.wipdev.eWiLL_backend.services
 
 import com.wipdev.eWiLL_backend.database.tables.Task
-import com.wipdev.eWiLL_backend.database.tables.course.Ruleset
 import com.wipdev.eWiLL_backend.endpoints.payload.requests.TaskPL
-
-import com.wipdev.eWiLL_backend.repository.RulesetRepository
 import com.wipdev.eWiLL_backend.repository.TaskRepository
 import com.wipdev.eWiLL_backend.services.serviceInterfaces.ITaskService
 import org.springframework.beans.factory.annotation.Autowired
@@ -22,7 +19,6 @@ class TaskService : ITaskService {
     lateinit var diagramService: DiagramService
 
 
-
     override fun getAll(courseId: Long): List<Task> {
         return taskRepository.findAllByCourseId(courseId)
     }
@@ -36,21 +32,21 @@ class TaskService : ITaskService {
         task.id = null
         val model = diagramService.getById(task.solutionModelId!!)
         model.id = null
-        model.name = task.name+" - solution model"
+        model.name = task.name + " - solution model"
         model.ownerId = -1
         val newDiagramId = diagramService.create(model)
         task.solutionModelId = newDiagramId
-        return  taskRepository.save(task)
+        return taskRepository.save(task)
     }
 
     override fun update(id: Long, task: Task): Task {
         val assignmentEntity = taskRepository.findById(id).get()
         task.id = assignmentEntity.id
-        if(task.solutionModelId != null && task.solutionModelId != assignmentEntity.solutionModelId){
+        if (task.solutionModelId != null && task.solutionModelId != assignmentEntity.solutionModelId) {
             val model = diagramService.getById(task.solutionModelId!!)
             model.id = null
             model.ownerId = -1
-            model.name +="(Kopie)"
+            model.name += "(Kopie)"
 
             val newDiagramId = diagramService.create(model)
             task.solutionModelId = newDiagramId
@@ -64,9 +60,6 @@ class TaskService : ITaskService {
         taskRepository.deleteById(id)
         return assignment
     }
-
-
-
 
 
     fun convert(task: Task): TaskPL {
@@ -86,7 +79,7 @@ class TaskService : ITaskService {
     }
 
 
-    fun convert(taskPL: TaskPL,solutionModelId : Long?): Task {
+    fun convert(taskPL: TaskPL, solutionModelId: Long?): Task {
         val task = Task()
         task.name = taskPL.name
         task.description = taskPL.description

@@ -65,14 +65,14 @@ const dialogShowFullDiagram = ref<typeof DialogShowFullDiagram>();
 const submissions = ref<Submission[]>([] as Submission[]);
 const selectedResult = ref<Result>({} as Result);
 
-const sortBy = ref<{ key: string; order: string }[]>([{ key: "resultLevel", order: "asc" }]);
+const sortBy = ref<{ key: string; order: string }[]>([{ key: "feedbackLevel", order: "asc" }]);
 const groupBy = ref<{ key: string; order: string }[]>([]);
 const headers = ref([
-  { title: "Status", key: "highlightLevel", groupable: true },
+  { title: "Status", key: "feedbackLevel", groupable: true },
   { title: "Info", key: "message", groupable: true },
-  { title: "EntityId", key: "affectedEntityId", groupable: true },
+  { title: "Entity", key: "affectedEntityName", groupable: true },
   { title: "Attribut", key: "affectedAttributeName", groupable: true },
-  { title: "Level", key: "resultLevel", groupable: true },
+  { title: "Level", key: "statusLevel", groupable: true },
   { title: "Info Type", key: "resultMessageType", groupable: true },
 ]);
 
