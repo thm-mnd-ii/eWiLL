@@ -1,8 +1,8 @@
-enum HighlightLevel {
+enum StatusLevel {
   "CORRECT" = "CORRECT",
   "INCORRECT" = "INCORRECT",
   "NOTHING" = "NOTHING",
   "SUGGESTION" = "SUGGESTION",
 }
 
-export default HighlightLevel;
+export default StatusLevel;

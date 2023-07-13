@@ -6,21 +6,22 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
 
-class UserDetailsImpl(val id:Long,username:String,val email:String,authorities:MutableCollection<GrantedAuthority>):UserDetails {
-
-    private var username:String = username
-    private var authorities:MutableCollection<GrantedAuthority> = authorities
-
+class UserDetailsImpl(
+    val id: Long,
+    private var username: String,
+    val email: String,
+    private var authorities: MutableCollection<GrantedAuthority>
+) : UserDetails {
 
 
     //build
-    companion object{
+    companion object {
         fun build(user: User): UserDetailsImpl {
-            val authorities:MutableList<GrantedAuthority> = ArrayList()
-            user.roles.forEach{
+            val authorities: MutableList<GrantedAuthority> = ArrayList()
+            user.roles.forEach {
                 authorities.add(SimpleGrantedAuthority(it.name!!.name))
             }
-            return UserDetailsImpl(user.id!!,user.username,user.email,authorities)
+            return UserDetailsImpl(user.id!!, user.username, user.email, authorities)
         }
 
     }

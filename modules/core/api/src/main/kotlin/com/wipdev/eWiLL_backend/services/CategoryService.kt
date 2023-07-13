@@ -15,7 +15,7 @@ class CategoryService : ICategoryService {
 
 
     override fun createCategory(category: CategoryPL): Category {
-        return categoryRepository.save(Category(category.name,category.userid))
+        return categoryRepository.save(Category(category.name, category.userid))
     }
 
     override fun deleteCategory(id: Long): Category {

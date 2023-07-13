@@ -12,17 +12,17 @@ class Feedback {
     var id: Long? = null
 
 
-    @Column(name="text", nullable = true, length = 100000)
+    @Column(name = "text", nullable = true, length = 100000)
     var text: String? = null
 
-    @Column(name="firstName", nullable = true)
+    @Column(name = "firstName", nullable = true)
     var firstName: String? = null
 
-    @Column(name="lastName", nullable = true)
+    @Column(name = "lastName", nullable = true)
     var lastName: String? = null
 
-    @Column(name="times", nullable = true)
-    var timeStamp:String? = null
+    @Column(name = "times", nullable = true)
+    var timeStamp: String? = null
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = true)

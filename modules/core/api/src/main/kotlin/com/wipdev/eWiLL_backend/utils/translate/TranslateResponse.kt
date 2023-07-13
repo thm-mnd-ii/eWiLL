@@ -1,23 +1,23 @@
 package com.wipdev.eWiLL_backend.utils.translate
 
 class TranslateResponse {
-/*
-{
-  "data": {
-    "translations": {
-      "translatedText": "¡Hola Mundo!"
+    /*
+    {
+      "data": {
+        "translations": {
+          "translatedText": "¡Hola Mundo!"
+        }
+      }
     }
-  }
-}
- */
+     */
 
-    var data : Data? = null
+    var data: Data? = null
 
     class Data {
-        var translations : Translations? = null
+        var translations: Translations? = null
 
         class Translations {
-            var translatedText : String? = null
+            var translatedText: String? = null
             override fun toString(): String {
                 return "Translations(translated_text=$translatedText)"
             }

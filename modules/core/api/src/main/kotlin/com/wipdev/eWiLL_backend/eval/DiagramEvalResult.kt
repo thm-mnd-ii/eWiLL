@@ -17,14 +17,13 @@ class DiagramEvalResult(private var ruleEvalResults: List<RuleEvalResult>) {
 
         var percentageSum = 0f
         ruleEvalResults.forEach {
-            println(it.score.score)
             if (it.score.scoreType == ScoreType.PERCENTAGE) {
                 percentageSum += it.score.score * 100
             } else if (it.score.scoreType == ScoreType.ERROR_COUNT) {
                 percentageSum += (100 - it.score.score)
             }
         }
-
+        println(ruleEvalResults.joinToString { it.toString() } + " " + percentageSum + "/" + ruleEvalResults.size + " = " + percentageSum / ruleEvalResults.size)
         this.score = percentageSum / ruleEvalResults.size
         return this
     }

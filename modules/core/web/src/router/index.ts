@@ -1,13 +1,11 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/ViewHome.vue";
 import ViewModeling from "../views/ViewModeling.vue";
-import ViewChecker from "../views/ViewChecker.vue";
 import ViewImpressum from "../views/ViewImpressum.vue";
 import ViewDatenschutz from "../views/ViewDatenschutz.vue";
 import ViewLogin from "../views/ViewLogin.vue";
 import ViewProfile from "../views/ViewProfile.vue";
 import ViewCourses from "../views/ViewCourses.vue";
-import ViewTestTask from "../views/ViewTestTask.vue";
 import ViewCourseSignup from "../views/ViewCourseSignup.vue";
 import ViewCourse from "../views/ViewCourse.vue";
 import ViewTask from "../views/ViewTask.vue";

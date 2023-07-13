@@ -4,7 +4,7 @@ class RuleEvalScore {
 
     var score: Float = 100.0f
 
-    var scoreType : ScoreType = ScoreType.ERROR_COUNT
+    var scoreType: ScoreType = ScoreType.ERROR_COUNT
 
     constructor(score: Float, scoreType: ScoreType) {
         this.score = score

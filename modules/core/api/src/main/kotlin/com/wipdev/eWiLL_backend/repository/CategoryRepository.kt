@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository
 @Repository
 interface CategoryRepository : CrudRepository<Category, Long> {
 
-    fun findAllByUserId(user_id : Long?): List<Category>
+    fun findAllByUserId(user_id: Long?): List<Category>
 
 
 }

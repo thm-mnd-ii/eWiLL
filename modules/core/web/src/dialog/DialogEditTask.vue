@@ -40,7 +40,7 @@ import { useRoute } from "vue-router";
 import taskService from "@/services/task.service";
 import router from "@/router";
 import DialogConfirmVue from "../dialog/DialogConfirm.vue";
-import ResultLevel from "@/enums/ResultLevel";
+import FeedbackLevel from "@/enums/FeedbackLevel";
 
 const arrayMaxSubmissions = Array.from(Array(100).keys());
 
@@ -64,12 +64,12 @@ const liabilities = ref<any[]>([
   { name: "Bonus", enum: "BONUS" },
   { name: "Optional", enum: "OPTIONAL" },
 ]);
-const resultLevel = new Map<number, ResultLevel>([
-  [0, ResultLevel.NOTHING],
-  [1, ResultLevel.BASIC],
-  [2, ResultLevel.INFO],
-  [3, ResultLevel.DEBUG],
-  [4, ResultLevel.ERROR],
+const feedbackLevel = new Map<number, FeedbackLevel>([
+  [0, FeedbackLevel.NOTHING],
+  [1, FeedbackLevel.BASIC],
+  [2, FeedbackLevel.INFO],
+  [3, FeedbackLevel.DEBUG],
+  [4, FeedbackLevel.ERROR],
 ]);
 
 const taskForm = ref<any>();
@@ -132,7 +132,7 @@ const openDialog = (task?: Task) => {
     currentTask.value.courseId = Number(route.params.id);
     currentTask.value.mediaType = "MODEL";
     currentTask.value.rulesetId = 0;
-    currentTask.value.showLevel = ResultLevel.NOTHING;
+    currentTask.value.showLevel = FeedbackLevel.NOTHING;
     newTask.value = true;
   }
 
@@ -194,11 +194,11 @@ const updateMaxSubmissionsOnCurrentTask = (submissions: any) => {
 };
 
 const updateShowLevel = (value: any) => {
-  currentTask.value.showLevel = resultLevel.get(value)!;
+  currentTask.value.showLevel = feedbackLevel.get(value)!;
 };
 
 const loadShowLevel = (level: string) => {
-  resultLevel.forEach((value, key) => {
+  feedbackLevel.forEach((value, key) => {
     if (value == level) sliderPosition.value = key;
   });
 };
