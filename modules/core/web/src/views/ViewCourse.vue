@@ -86,7 +86,7 @@ onMounted(() => {
 
 const leaveCourse = () => {
   if (dialogConfirm.value) {
-    dialogConfirm.value.openDialog(`Verlasse Kurs: ${course.value?.name}`, "Willst du den Kurs wirklich verlassen?").then((result: boolean) => {
+    dialogConfirm.value.openDialog(`Verlasse Kurs: ${course.value?.name}`, "Willst du den Kurs wirklich verlassen?", "Verlassen").then((result: boolean) => {
       if (result) {
         courseService
           .leaveCourse(courseId.value, userId.value)
