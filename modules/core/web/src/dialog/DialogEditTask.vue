@@ -34,7 +34,7 @@ import Task from "@/model/task/Task";
 import Category from "@/model/diagram/Category";
 import Diagram from "@/model/diagram/Diagram";
 import diagramService from "@/services/diagram.service";
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import { useAuthUserStore } from "@/stores/authUserStore";
 import { useRoute } from "vue-router";
 import taskService from "@/services/task.service";
@@ -87,11 +87,6 @@ const liabilityRules = ref<any>([(v: string) => !!v || "Verpflichtung ist erford
 // empty, or should be a valid date and in the future
 // const dueDateRules = ref<any>([(v: string) => !v || (new Date(v) > new Date() && !isNaN(new Date(v).getTime())) || "Ungültiges Datum"]);
 
-onMounted(() => {
-  let userId = authUserStore.auth.user?.id!;
-  getCategories(userId);
-});
-
 const getCategories = (uId: number) => {
   diagramService.getCategories(uId).then((response) => {
     categories.value = response.data;
@@ -105,10 +100,17 @@ const updateDiagrams = (categoryId: number) => {
   });
 };
 
-const setModelAndCategory = () => {
+// Necessary since the solution model is not owned by the user
+const updateDiagramsIncludingSolutionModel = () => {
   diagramService.getDiagramById(currentTask.value.solutionModelId).then((response) => {
     selectedCategoryId.value = response.data.categoryId;
-    updateDiagrams(selectedCategoryId.value!);
+    let solutionModel = response.data;
+
+    diagramService.getDiagramsByUserId(authUserStore.auth.user?.id as number).then((response) => {
+      selectedDiagramId.value = undefined;
+      diagrams.value = response.data.filter((d) => d.categoryId == selectedCategoryId.value);
+      diagrams.value.push(solutionModel);
+    });
   });
 };
 
@@ -118,14 +120,17 @@ const resolvePromise: any = ref(undefined);
 const rejectPromise: any = ref(undefined);
 
 const openDialog = (task?: Task) => {
+  diagrams.value = [];
   editTaskDialog.value = true;
+  let userId = authUserStore.auth.user?.id!;
+  getCategories(userId);
 
   if (task) {
     editTitle.value = "Aufgabe bearbeiten";
     currentTask.value = task;
     newTask.value = false;
-    setModelAndCategory();
     loadShowLevel(task.showLevel);
+    updateDiagramsIncludingSolutionModel();
   } else {
     editTitle.value = "Neue Aufgabe erstellen";
     currentTask.value = {} as Task;
