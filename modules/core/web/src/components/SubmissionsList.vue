@@ -11,6 +11,13 @@
       <template #item.submission.diagram="{ item }">
         <v-btn append-icon="mdi-presentation" @click="openDiagram(item.value.submission.diagram)">Preview</v-btn>
       </template>
+      <template #item.result.score="{ item }">
+        <v-chip>{{ item.value.result.score }}</v-chip>
+      </template>
+      <template #item.result.correct="{ item }">
+        <v-icon v-if="item.value.result.correct == true" icon="mdi-check-circle" color="success"></v-icon>
+        <v-icon v-if="item.value.result.correct == false" icon="mdi-close-circle" color="red"></v-icon>
+      </template>
     </v-data-table>
   </div>
 </template>
@@ -49,6 +56,8 @@ const headers = [
   { title: "Diagram", align: "start", key: "submission.diagram" },
   { title: "Versuch", align: "start", key: "submission.attempt" },
   { title: "Datum", align: "start", key: "submission.date" },
+  { title: "Score", align: "start", key: "result.score" },
+  { title: "Korrekt", align: "start", key: "result.correct" },
 ];
 
 const loadSubmissions = (taskid: number) => {
@@ -86,7 +95,11 @@ const combineSubmissionsWithStudents = () => {
     let item = {} as SubmissionListItem;
     item.submission = submission;
     item.member = students.value!.get(submission.userId)!;
-    listItems.value.push(item);
+
+    submissionService.getResultBySubmissionIdAndLevel(submission.id, "INFO").then((response) => {
+      item.result = response.data;
+      listItems.value.push(item);
+    });
   });
 };
 
