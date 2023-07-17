@@ -2,6 +2,7 @@ package com.wipdev.eWiLL_backend.eval.rules.connectionequivalence
 
 import com.wipdev.eWiLL_backend.eval.FeedbackLevel
 import com.wipdev.eWiLL_backend.eval.StatusLevel
+import com.wipdev.eWiLL_backend.eval.compile.ConnectionType
 import com.wipdev.eWiLL_backend.eval.compile.DiagramConnection
 import com.wipdev.eWiLL_backend.eval.compile.DiagramEvalPL
 import com.wipdev.eWiLL_backend.eval.rules.*
@@ -72,7 +73,7 @@ class ConnectionEquivalenceEvaluator : IRuleEvaluator {
                     messages.add(
                         ResultMessage(
                             FeedbackLevel.INFO,
-                            "Correct type is ${connection.type}",
+                            "Correct type is ${ConnectionType.fromInt(connection.type)}",
                             diagramConnection.from.entity!!.id!!,
                             "",
                             StatusLevel.SUGGESTION,

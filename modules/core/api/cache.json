@@ -110,5 +110,40 @@
         "translatedText" : "MiddleEntity"
       }
     }
+  },
+  "Baum" : {
+    "data" : {
+      "translations" : {
+        "translatedText" : "Baum"
+      }
+    }
+  },
+  "Baumschule" : {
+    "data" : {
+      "translations" : {
+        "translatedText" : "nursery"
+      }
+    }
+  },
+  "Lagerfeuer" : {
+    "data" : {
+      "translations" : {
+        "translatedText" : "campfire"
+      }
+    }
+  },
+  "Hauptschule" : {
+    "data" : {
+      "translations" : {
+        "translatedText" : "secondary schools"
+      }
+    }
+  },
+  "Schüler" : {
+    "data" : {
+      "translations" : {
+        "translatedText" : "Pupils"
+      }
+    }
   }
 }
