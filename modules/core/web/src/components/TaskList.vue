@@ -46,6 +46,7 @@ const headers = [
 const listItems = ref<TaskAndPassed[]>([]);
 
 const loadTasks = (courseId: number) => {
+  listItems.value = [];
   saveCourseId.value = courseId;
   taskService
     .getAllTasks(courseId)
