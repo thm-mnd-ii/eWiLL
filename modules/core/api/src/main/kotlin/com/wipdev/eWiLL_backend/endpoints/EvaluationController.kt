@@ -60,4 +60,9 @@ class EvaluationController {
     @ResponseBody
     fun getSubmissionsByTaskId(@PathVariable taskId: Long): List<EvaluationService.SubmissionWithDiagram> =
         service.getSubmissionsByTaskId(taskId)
+
+    @GetMapping("hasPassed/{userId}/{taskId}")
+    @ResponseBody
+    fun hasPassed(@PathVariable userId: Long, @PathVariable taskId: Long): Boolean =
+        service.hasPassed(userId, taskId)
 }
