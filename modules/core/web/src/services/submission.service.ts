@@ -21,6 +21,10 @@ class SubmissionService{
     getResultBySubmissionIdAndLevel(submissionId: number, level: string){
         return axios.get("/api/evaluation/v2/result/" + submissionId + "/" + level)
     }
+
+    getPassedByTaskAndUser(taskId: number, userId: number){
+        return axios.get("/api/evaluation/v2/hasPassed/" + userId + "/" + taskId)
+    }
 }
 
 export default new SubmissionService();
