@@ -2,6 +2,7 @@ package com.wipdev.eWiLL_backend.eval.rules.connectionequivalence
 
 import com.wipdev.eWiLL_backend.eval.FeedbackLevel
 import com.wipdev.eWiLL_backend.eval.StatusLevel
+import com.wipdev.eWiLL_backend.eval.compile.ConnectionType
 import com.wipdev.eWiLL_backend.eval.compile.DiagramConnection
 import com.wipdev.eWiLL_backend.eval.compile.DiagramEvalPL
 import com.wipdev.eWiLL_backend.eval.rules.*
@@ -9,6 +10,8 @@ import com.wipdev.eWiLL_backend.utils.stringsimmilarity.StringFinderUtils
 import com.wipdev.eWiLL_backend.utils.translate.Dictionary
 
 class ConnectionEquivalenceEvaluator : IRuleEvaluator {
+
+    val stringSimmilarity = 0.8
     override fun eval(diagramEvalPL: DiagramEvalPL, rule: Rule): RuleEvalResult {
         val messages = mutableListOf<ResultMessage>()
         var errors = 0
@@ -72,7 +75,7 @@ class ConnectionEquivalenceEvaluator : IRuleEvaluator {
                     messages.add(
                         ResultMessage(
                             FeedbackLevel.INFO,
-                            "Correct type is ${connection.type}",
+                            "Correct type is ${ConnectionType.fromInt(connection.type)}",
                             diagramConnection.from.entity!!.id!!,
                             "",
                             StatusLevel.SUGGESTION,
@@ -146,9 +149,13 @@ class ConnectionEquivalenceEvaluator : IRuleEvaluator {
 
         for (connection in diagramEvalPL.diagramData!!.connections) {
             if (StringFinderUtils.isPresent(
-                    connection.from.entity?.entityName!!,
-                    possibleNamesFrom!!
-                ) && StringFinderUtils.isPresent(connection.to.entity?.entityName!!, possibleNamesTo!!)
+                    connection.from.entity?.entityName!!, possibleNamesFrom!!, stringSimmilarity, true
+                ) && StringFinderUtils.isPresent(
+                    connection.to.entity?.entityName!!,
+                    possibleNamesTo!!,
+                    stringSimmilarity,
+                    true
+                )
             ) {
                 return connection
             }

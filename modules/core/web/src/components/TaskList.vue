@@ -2,18 +2,18 @@
 <template>
   <div class="container">
     <v-text-field v-model="search" class="search-bar" label="Search" density="compact" prepend-icon="mdi-magnify" variant="underlined" hide-details></v-text-field>
-    <v-data-table :headers="headers" :items="allTasks" item-value="name" class="elevation-1" density="default" height="480px" :search="search" @click:row="openTask">
-      <template #item.status="{ item }">
-        <v-icon v-if="item.raw.status == false" icon="mdi-close-circle" color="error"></v-icon>
-        <v-icon v-if="item.raw.status == true" icon="mdi-check-circle" color="success"></v-icon>
+    <v-data-table :headers="headers" :items="listItems" item-value="name" class="elevation-1" density="default" height="480px" :search="search" @click:row="openTask">
+      <template #item.passed="{ item }">
+        <v-icon v-if="item.raw.passed == false" icon="mdi-close-circle" color="error"></v-icon>
+        <v-icon v-if="item.raw.passed == true" icon="mdi-check-circle" color="success"></v-icon>
       </template>
-      <template #item.eliability="{ item }">
-        <v-chip v-if="item.raw.eliability == 'MANDATORY'" color="red">Verpflichtend</v-chip>
-        <v-chip v-if="item.raw.eliability == 'OPTIONAL'" color="yellow">Optional</v-chip>
-        <v-chip v-if="item.raw.eliability == 'BONUS'" color="green">Bonus</v-chip>
+      <template #item.task.eliability="{ item }">
+        <v-chip v-if="item.raw.task.eliability == 'MANDATORY'" color="red">Verpflichtend</v-chip>
+        <v-chip v-if="item.raw.task.eliability == 'OPTIONAL'" color="yellow">Optional</v-chip>
+        <v-chip v-if="item.raw.task.eliability == 'BONUS'" color="green">Bonus</v-chip>
       </template>
-      <template #item.dueDate="{ item }">
-        <TaskDateVChip :due-date-prop="item.raw.dueDate"></TaskDateVChip>
+      <template #item.task.dueDate="{ item }">
+        <TaskDateVChip :due-date-prop="item.raw.task.dueDate"></TaskDateVChip>
       </template>
     </v-data-table>
   </div>
@@ -22,29 +22,42 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import { useAuthUserStore } from "../stores/authUserStore";
 import Task from "../model/task/Task";
+import TaskAndPassed from "@/model/task/TaskAndPassed";
 import taskService from "../services/task.service";
 import TaskDateVChip from "./TaskDateVChip.vue";
+import submissionService from "@/services/submission.service";
+
+const authUserStore = useAuthUserStore();
+const userId = ref(authUserStore.auth.user?.id);
 
 const router = useRouter();
 const search = ref("");
 const saveCourseId = ref(0);
 
 const headers = [
-  { title: "Name", align: "start", key: "name" },
-  { title: "Abgabeart", align: "start", key: "eliability" },
-  { title: "Abgabeende", align: "start", key: "dueDate" },
-  { title: "Bestanden", align: "start", key: "status" },
+  { title: "Name", align: "start", key: "task.name" },
+  { title: "Abgabeart", align: "start", key: "task.eliability" },
+  { title: "Abgabeende", align: "start", key: "task.dueDate" },
+  { title: "Bestanden", align: "start", key: "passed" },
 ];
 
-const allTasks = ref<Task[]>([]);
+const listItems = ref<TaskAndPassed[]>([]);
 
 const loadTasks = (courseId: number) => {
   saveCourseId.value = courseId;
   taskService
     .getAllTasks(courseId)
     .then((data) => {
-      allTasks.value = data;
+      data.forEach((task: Task) => {
+        submissionService.getPassedByTaskAndUser(task.id, userId.value!).then((response) => {
+          let item = {} as TaskAndPassed;
+          item.task = task;
+          item.passed = response.data;
+          listItems.value.push(item);
+        });
+      });
     })
     .catch((error) => {
       console.log(error);
@@ -52,7 +65,7 @@ const loadTasks = (courseId: number) => {
 };
 
 const openTask = (row: any, item: any) => {
-  router.push("/course/" + saveCourseId.value + "/task/" + item.item.raw.id);
+  router.push("/course/" + saveCourseId.value + "/task/" + item.item.raw.task.id);
 };
 
 defineExpose({

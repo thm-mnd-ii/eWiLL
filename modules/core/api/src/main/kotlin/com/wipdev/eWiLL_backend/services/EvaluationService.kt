@@ -205,6 +205,11 @@ class EvaluationService : IEvaluationService {
         )
     }
 
+    fun hasPassed(userId: Long, taskId: Long): Boolean {
+        val submissionsByUser = submissionRepository.findAllByUserIdAndTaskId(userId, taskId)
+        return submissionsByUser.stream().anyMatch { resultRepository.findBySubmissionId(it.id!!)!!.correct!! }
+    }
+
 
     class SubmissionWithDiagram {
         var id: Long? = null
