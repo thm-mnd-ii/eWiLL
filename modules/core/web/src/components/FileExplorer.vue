@@ -141,7 +141,7 @@ const moveToOverview = () => {
 const categoryClicked = (category: Category) => {
   if (deleteActive.value) {
     if (dialogConfirm.value) {
-      dialogConfirm.value.openDialog(`Lösche: ${category.name}`, "Willst du die Kategorie wirklich löschen? Wenn du sie löscht, werden auch alle Diagramme gelöscht, die in dieser Kategorie sind.").then((result: boolean) => {
+      dialogConfirm.value.openDialog(`Lösche: ${category.name}`, "Willst du den Ordner wirklich löschen? Wenn du ihn löschst, werden auch alle Diagramme entfernt, die in diesem Ordner sind.").then((result: boolean) => {
         if (result) {
           diagramService.deleteCategory(category).then(() => {
             updateFiles();

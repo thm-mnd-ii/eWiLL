@@ -6,7 +6,7 @@
           <div>
             <v-text-field v-model="currentTask.name" label="Name" :rules="nameRules" variant="underlined" color="primary"></v-text-field>
             <v-textarea v-model="currentTask.description" label="Beschreibung" :rules="descriptionRules" variant="underlined" color="primary"></v-textarea>
-            <v-select v-model="selectedCategoryId" label="Kategorie" :rules="modelRules" variant="underlined" :items="categories" item-title="name" item-value="id" color="primary" @update:model-value="updateDiagrams"></v-select>
+            <v-select v-model="selectedCategoryId" label="Ordner" :rules="modelRules" variant="underlined" :items="categories" item-title="name" item-value="id" color="primary" @update:model-value="updateDiagrams"></v-select>
             <v-select v-model="currentTask.solutionModelId" label="Musterdiagram" :rules="modelRules" variant="underlined" :items="diagrams" item-title="name" item-value="id" color="primary"></v-select>
           </div>
           <div>

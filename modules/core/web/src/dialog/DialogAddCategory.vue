@@ -2,7 +2,7 @@
   <v-dialog v-model="createCategoryDialog" width="500px">
     <v-card>
       <v-card-title>
-        <span class="text-h5">Create Category</span>
+        <span class="text-h5">Neuen Ordner erstellen</span>
       </v-card-title>
       <v-card-text>
         <v-form ref="form" v-model="valid">
@@ -71,7 +71,7 @@ const createCategory = () => {
         })
         .catch((error) => {
           console.log(error);
-          alert("Kategorie konnte nicht gespeichert werden");
+          alert("Ordner konnte nicht gespeichert werden");
         });
     }
   });
