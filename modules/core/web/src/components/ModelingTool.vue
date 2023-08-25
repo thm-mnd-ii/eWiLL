@@ -44,13 +44,17 @@ const entities = storeToRefs(diagramStore);
 const minWidth = computed(() => diagramStore.getMinWidth() + 200);
 const minHeight = computed(() => diagramStore.getMinHeight() + 200);
 
-// const newAnkerPoint = ref<Connection>({});
-
 onMounted(() => {
   updateLines();
   updateArea();
 
   toolManagementStore.diagramDiv = modelingContainer.value as HTMLElement;
+
+  if (modelingContainer.value != null) {
+    modelingContainer.value.addEventListener("contextmenu", (ev) => {
+      ev.preventDefault();
+    });
+  }
 });
 
 diagramStore.$subscribe(() => {

@@ -1,7 +1,7 @@
 <template>
   <div ref="root" class="objectContainer" :class="{ active: isActive }" @mouseover="props.isEditable ? (hover = true) : null" @mouseleave="hover = false">
     <div v-if="hover" class="click-area"></div>
-    <span v-if="!isEditable" class="text unselectable" @dblclick="makeTextEditable">{{ entity.entityName }}</span>
+    <span v-if="!isEditable" class="text unselectable" @dblclick="makeTextEditable"> {{ entity.entityName }}</span>
     <textarea v-if="isEditable" v-model="entity.entityName" class="textedit" rows="1" @dblclick="makeTextEditable" @keyup.enter="handleEnter"></textarea>
 
     <!-- eslint-disable vue/no-v-html -->
@@ -13,18 +13,18 @@
         <div v-if="isResizable" @mousedown="resizer($event)" class="resizer sw"></div> 
         <div v-if="isResizable" class="resizer se" @mousedown="resizer($event)"></div> -->
 
-    <div v-if="hover && !isResizable && !toolManagementStore.showIncomingAnkerPoints">
+    <div v-if="hover && !isSelected && !toolManagementStore.showIncomingAnkerPoints">
       <OutgoingAnkerPoint v-for="anker in outgoingAnkerPoint" :key="anker" :position="anker" :entity="props.entity" />
     </div>
 
     <div v-if="toolManagementStore.showIncomingAnkerPoints && toolManagementStore.newConnection.startEntity != props.entity.id">
       <IncomingAnkerPoint v-for="anker in incomingAnkerPoint" :key="anker" :position="anker" :entity="props.entity" />
     </div>
-    <EntityWidget v-if="isResizable" :entity="props.entity" />
+    <EntityWidget v-if="isSelected" :entity="props.entity" />
 
-    <IconEntity v-if="props.entity.type == EntityTyp.ENTITY" class="entity" @dblclick="activateEntity" @mousedown="mousedown($event)" />
-    <IconRelationshiptyp v-if="props.entity.type == EntityTyp.RELATIONSHIP" class="entity" @dblclick="activateEntity" @mousedown="mousedown($event)" />
-    <IconEntityRelationshiptyp v-if="props.entity.type == EntityTyp.ENTITYRELATIONSHIP" class="entity" @dblclick="activateEntity" @mousedown="mousedown($event)" />
+    <IconEntity v-if="props.entity.type == EntityTyp.ENTITY" class="entity" @dblclick="activateEntity" @click.right="activateEntity" @mousedown="mousedown($event)" />
+    <IconRelationshiptyp v-if="props.entity.type == EntityTyp.RELATIONSHIP" class="entity" @dblclick="activateEntity" @click.right="activateEntity" @mousedown="mousedown($event)" />
+    <IconEntityRelationshiptyp v-if="props.entity.type == EntityTyp.ENTITYRELATIONSHIP" class="entity" @dblclick="activateEntity" @click.right="activateEntity" @mousedown="mousedown($event)" />
   </div>
 </template>
 
@@ -183,7 +183,7 @@ const activateEntity = () => {
   }
 };
 
-const isResizable = computed(() => {
+const isSelected = computed(() => {
   return toolManagementStore.selectedEntity === entity;
 });
 

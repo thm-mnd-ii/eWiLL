@@ -53,6 +53,7 @@ const showLineStyles = ref(false);
 
 const deleteLine = () => {
   diagramStore.diagram.connections.splice(props.line.id, 1);
+  toolManagementStore.selectedLine = null;
   diagramStore.saveHistory();
 };
 
