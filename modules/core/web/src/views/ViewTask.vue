@@ -17,7 +17,7 @@
     <div class="task-main">
       <div class="grid-left">
         <v-form>
-          <v-select v-model="selectedCategoryId" label="Kategorie" variant="underlined" :items="categories" item-title="name" :disabled="courseRole != 'STUDENT'" item-value="id" @update:model-value="updateDiagrams"></v-select>
+          <v-select v-model="selectedCategoryId" label="Ordner" variant="underlined" :items="categories" item-title="name" :disabled="courseRole != 'STUDENT'" item-value="id" @update:model-value="updateDiagrams"></v-select>
           <v-select v-model="selectedDiagramId" label="Diagram" variant="underlined" :items="diagrams" item-title="name" item-value="id" :disabled="courseRole != 'STUDENT'" @update:model-value="showSelectedDiagram"></v-select>
         </v-form>
 

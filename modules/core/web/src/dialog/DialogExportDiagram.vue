@@ -6,7 +6,7 @@
       </v-card-title>
       <v-card-text>
         <v-form ref="form">
-          <v-select v-model="exportCategory" :rules="[(v: any) => !!v || 'Item is required']" :items="['PNG']" item-title="name" item-value="id" label="Kategorie*" required></v-select>
+          <v-select v-model="exportCategory" :rules="[(v: any) => !!v || 'Item is required']" :items="['PNG']" item-title="name" item-value="id" label="Ordner*" required></v-select>
         </v-form>
       </v-card-text>
       <v-card-actions>
