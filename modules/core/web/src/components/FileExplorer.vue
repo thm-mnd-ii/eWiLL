@@ -10,7 +10,7 @@
       <v-divider></v-divider>
       <v-card-actions class="btn-menue">
         <div>
-          <v-btn icon="mdi-new-box" class="explorerBtn" :disabled="deleteActive" @click="createNewDiagram"></v-btn>
+          <v-btn icon="mdi-new-box" class="explorerBtn" :disabled="deleteActive" @click="deleteCurrentDiagram"></v-btn>
         </div>
         <div>
           <v-btn icon="mdi-content-save" class="explorerBtn" :disabled="deleteActive" @click="saveDialogButtonClick"></v-btn>
@@ -206,8 +206,8 @@ const saveDialogButtonClick = () => {
   });
 };
 
-const createNewDiagram = () => {
-  dialogConfirm.value?.openDialog("Neues Diagramm", 'Willst du ein neues Diagramm erstellen? Wenn du auf "Erstellen" klickst wird möglicherweise der aktuelle Stand deines Diagrams gelöscht.', "Erstellen").then((result: boolean) => {
+const deleteCurrentDiagram = () => {
+  dialogConfirm.value?.openDialog("Diagramm zurücksetzen", 'Willst du deinen bisherigen Fortschritt löschen? Wenn du auf "Zurücksetzen" klickst, wird das gesamte Diagramm zurückgesetzt und du kannst von Grund auf neu anfangen.', "Zurücksetzen").then((result: boolean) => {
     if (result) {
       diagramStore.createNewDiagram();
     }
