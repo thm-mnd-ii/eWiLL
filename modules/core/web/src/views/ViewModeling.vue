@@ -1,4 +1,13 @@
 <template>
+  <v-snackbar v-model="snackbarSuccess" :timeout="2500"> Diagramm erfolgreich eingereicht </v-snackbar>
+  <DialogConfirm ref="dialogConfirm" />
+  <div v-if="activeTask != undefined" class="task-floater">
+    <span>Aktuelle Aufgabe: {{ activeTask?.name }}</span
+    ><br />
+    <span>Aus Kurs: {{ activeCourse?.name }}</span
+    ><br />
+    <v-btn @click="submitDiagram">Einreichen</v-btn>
+  </div>
   <div class="container">
     <div class="navigation">
       <v-system-bar color="white" elevation="1" window>
@@ -51,10 +60,24 @@ import ToolBox from "@/components/modelingTool/ToolBox.vue";
 
 import { useDiagramStore } from "../stores/diagramStore";
 import { storeToRefs } from "pinia";
+import { useToolManagementStore } from "@/stores/toolManagementStore";
+import { useAuthUserStore } from "../stores/authUserStore";
+
+import evaluationService from "@/services/evaluation.service";
+
+import DialogConfirm from "@/dialog/DialogConfirm.vue";
+import SubmitPL from "@/model/SubmitPL";
+
+const dialogConfirm = ref<typeof DialogConfirm>();
+const snackbarSuccess = ref(false);
 
 const diagramStore = useDiagramStore();
+const toolManagementStore = useToolManagementStore();
+const authUserStore = useAuthUserStore();
 
 const modelingToolKey = storeToRefs(diagramStore).key;
+const activeCourse = toolManagementStore.activeCourse;
+const activeTask = toolManagementStore.activeTask;
 
 const currentTime = ref<Date>(new Date());
 setInterval(() => {
@@ -85,6 +108,20 @@ const currentDateTime = computed(() => {
   });
   return `${weekday}, ${day}. ${month} ${year} ${time}`;
 });
+
+const submitDiagram = () => {
+  dialogConfirm.value?.openDialog("Abgabe: " + diagramStore.diagram.name, "Möchten Sie das Diagram wirklich für die Aufgabe " + activeTask?.name + "des Kurses " + activeCourse?.name + " einreichen?", "Einreichen").then((result: boolean) => {
+    if (result) {
+      const submitPL = {} as SubmitPL;
+      submitPL.diagramId = diagramStore.diagram.id;
+      submitPL.taskId = activeTask!.id;
+      submitPL.userId = authUserStore.auth.user?.id!;
+      evaluationService.submitDiagram(submitPL).then(() => {
+        snackbarSuccess.value = true;
+      });
+    }
+  });
+};
 </script>
 
 <style scoped lang="scss">
@@ -124,6 +161,12 @@ const currentDateTime = computed(() => {
 .right-bar {
   grid-area: right;
   // background-color: #d1aaaa;
+}
+
+.task-floater {
+  position: absolute;
+  bottom: 300px;
+  z-index: 99;
 }
 
 // .file-explorer {

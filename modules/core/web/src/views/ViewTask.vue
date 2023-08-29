@@ -15,7 +15,11 @@
     </div>
 
     <div class="task-main">
-      <div class="grid-left">
+      <div>
+        <div class="grid-left">
+          <v-btn v-if="selectedDiagramId == undefined" text-align="center" color="dark-gray" variant="flat" :disabled="submissionCount >= task.maxSubmissions || isDue" @click="createDiagramAndCategoryIfNotPresent">Diagramm erstellen & bearbeiten</v-btn>
+          <v-btn v-if="selectedDiagramId != undefined" color="dark-gray" variant="flat" :disabled="submissionCount >= task.maxSubmissions || isDue" @click="loadViewModellingWithDiagram">Diagramm bearbeiten</v-btn>
+        </div>
         <v-form>
           <v-select v-model="selectedCategoryId" label="Ordner" variant="underlined" :items="categories" item-title="name" :disabled="courseRole != 'STUDENT'" item-value="id" @update:model-value="updateDiagrams"></v-select>
           <v-select v-model="selectedDiagramId" label="Diagram" variant="underlined" :items="diagrams" item-title="name" item-value="id" :disabled="courseRole != 'STUDENT'" @update:model-value="showSelectedDiagram"></v-select>
@@ -78,6 +82,7 @@ import diagramService from "@/services/diagram.service";
 import evaluationService from "@/services/evaluation.service";
 import { useDiagramStore } from "@/stores/diagramStore";
 import { storeToRefs } from "pinia";
+import { useToolManagementStore } from "@/stores/toolManagementStore";
 import ModelingTool from "@/components/ModelingTool.vue";
 import submissionService from "@/services/submission.service";
 import CourseRoles from "@/enums/CourseRoles";
@@ -86,6 +91,10 @@ import TaskDateVChip from "@/components/TaskDateVChip.vue";
 
 import TaskSubmissionsResultsTabs from "@/components/TaskSubmissionsResultsTabs.vue";
 import TaskVCard from "@/components/TaskVCard.vue";
+import DiagramType from "@/enums/DiagramType";
+import Entity from "@/model/diagram/Entity";
+import Connection from "@/model/diagram/Connection";
+import Course from "@/model/course/Course";
 
 const taskDateVChip = ref<typeof TaskDateVChip>();
 
@@ -95,6 +104,7 @@ const route = useRoute();
 const router = useRouter();
 const authUserStore = useAuthUserStore();
 const diagramStore = useDiagramStore();
+const toolManagementStore = useToolManagementStore();
 const modelingToolKey = storeToRefs(diagramStore).key;
 
 const task = ref<Task>({} as Task);
@@ -252,6 +262,70 @@ const loadNumberSubmissions = () => {
     submissionCount.value = response.data.length;
   });
 };
+
+// This was done really quick and dirty because it should be done in the backend, but has to be done here temporary
+// TODO: Rewrite this cancer when the backend is ready
+const createDiagramAndCategoryIfNotPresent = () => {
+  courseService.getCourse(courseId.value).then((course) => {
+    let courseName = course.data.name;
+
+    categoryService.getByUserId(userId.value).then((categories) => {
+      let courseCategory: Category | undefined;
+      categories.forEach((category) => {
+        if (category.name == courseName) {
+          courseCategory = category;
+        }
+      });
+      if (courseCategory == undefined) {
+        diagramService.postCategory(courseName, userId.value).then((newCategory) => {
+          courseCategory = newCategory.data;
+        });
+      }
+      diagramService.getDiagramsByUserId(userId.value).then((userDiagrams) => {
+        let taskDiagramPresent = false;
+        userDiagrams.data.forEach((diagram) => {
+          if (diagram.name == task.value.name && diagram.categoryId == courseCategory?.id) {
+            toolManagementStore.activeTask = task.value;
+            diagramStore.loadDiagram(diagram);
+            courseService.getCourse(courseId.value).then((course) => {
+              toolManagementStore.activeCourse = course.data;
+              router.push("/modeling");
+            });
+            //Apparently the return doesnt end the function so I need this flag
+            taskDiagramPresent = true;
+            return;
+          }
+        });
+        if (!taskDiagramPresent) {
+          let tmpDiagram: Diagram = {} as Diagram;
+          let tmpEntity: Entity[] = [];
+          let tmpConnections: Connection[] = [];
+          tmpDiagram.name = task.value.name;
+          tmpDiagram.ownerId = userId.value;
+          tmpDiagram.categoryId = courseCategory!.id;
+          tmpDiagram.entities = tmpEntity;
+          tmpDiagram.connections = tmpConnections;
+          diagramService.postDiagram(tmpDiagram).then((diagram) => {
+            toolManagementStore.activeTask = task.value;
+            diagramStore.loadDiagram(diagram.data);
+            courseService.getCourse(courseId.value).then((course) => {
+              toolManagementStore.activeCourse = course.data;
+              router.push("/modeling");
+            });
+          });
+        }
+      });
+    });
+  });
+};
+
+const loadViewModellingWithDiagram = () => {
+  toolManagementStore.activeTask = task.value;
+  courseService.getCourse(courseId.value).then((course) => {
+    toolManagementStore.activeCourse = course.data;
+    router.push("/modeling");
+  });
+};
 </script>
 
 <style scoped>
@@ -285,6 +359,10 @@ const loadNumberSubmissions = () => {
   align-items: center;
 
   width: 100%;
+}
+
+.grid-left {
+  text-align: center;
 }
 
 .task-trials-caption {

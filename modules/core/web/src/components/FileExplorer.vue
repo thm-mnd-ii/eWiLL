@@ -94,6 +94,9 @@ const authUserStore = useAuthUserStore();
 
 onMounted(() => {
   updateFiles();
+  if (diagramStore.diagram.id != undefined) {
+    activeDiagramId.value = diagramStore.diagram.id;
+  }
 });
 
 const updateFiles = () => {
