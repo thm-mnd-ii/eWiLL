@@ -91,10 +91,6 @@ import TaskDateVChip from "@/components/TaskDateVChip.vue";
 
 import TaskSubmissionsResultsTabs from "@/components/TaskSubmissionsResultsTabs.vue";
 import TaskVCard from "@/components/TaskVCard.vue";
-import DiagramType from "@/enums/DiagramType";
-import Entity from "@/model/diagram/Entity";
-import Connection from "@/model/diagram/Connection";
-import Course from "@/model/course/Course";
 
 const taskDateVChip = ref<typeof TaskDateVChip>();
 
@@ -266,56 +262,47 @@ const loadNumberSubmissions = () => {
 // This was done really quick and dirty because it should be done in the backend, but has to be done here temporary
 // TODO: Rewrite this cancer when the backend is ready
 const createDiagramAndCategoryIfNotPresent = () => {
+  console.log("createDiagramAndCategoryIfNotPresent");
+  
   courseService.getCourse(courseId.value).then((course) => {
     let courseName = course.data.name;
 
     categoryService.getByUserId(userId.value).then((categories) => {
       let courseCategory: Category | undefined;
-      categories.forEach((category) => {
-        if (category.name == courseName) {
-          courseCategory = category;
-        }
-      });
-      if (courseCategory == undefined) {
+      courseCategory = categories.find((category) => category.name == courseName);
+
+      if (courseCategory === undefined) {
         diagramService.postCategory(courseName, userId.value).then((newCategory) => {
           courseCategory = newCategory.data;
+          createDiagram(courseCategory);
         });
+      } else {
+        createDiagram(courseCategory);
       }
-      diagramService.getDiagramsByUserId(userId.value).then((userDiagrams) => {
-        let taskDiagramPresent = false;
-        userDiagrams.data.forEach((diagram) => {
-          if (diagram.name == task.value.name && diagram.categoryId == courseCategory?.id) {
-            toolManagementStore.activeTask = task.value;
-            diagramStore.loadDiagram(diagram);
-            courseService.getCourse(courseId.value).then((course) => {
-              toolManagementStore.activeCourse = course.data;
-              router.push("/modeling");
-            });
-            //Apparently the return doesnt end the function so I need this flag
-            taskDiagramPresent = true;
-            return;
-          }
-        });
-        if (!taskDiagramPresent) {
-          let tmpDiagram: Diagram = {} as Diagram;
-          let tmpEntity: Entity[] = [];
-          let tmpConnections: Connection[] = [];
-          tmpDiagram.name = task.value.name;
-          tmpDiagram.ownerId = userId.value;
-          tmpDiagram.categoryId = courseCategory!.id;
-          tmpDiagram.entities = tmpEntity;
-          tmpDiagram.connections = tmpConnections;
-          diagramService.postDiagram(tmpDiagram).then((diagram) => {
-            toolManagementStore.activeTask = task.value;
-            diagramStore.loadDiagram(diagram.data);
-            courseService.getCourse(courseId.value).then((course) => {
-              toolManagementStore.activeCourse = course.data;
-              router.push("/modeling");
-            });
-          });
-        }
-      });
     });
+  });
+};
+
+const createDiagram = (category: Category) => {
+  diagramService.getDiagramsByUserId(userId.value).then((userDiagrams) => {
+    let taskDiagram = userDiagrams.data.find((diagram) => diagram.name == task.value.name && diagram.categoryId == category.id);
+    if (taskDiagram === undefined) {
+      diagramStore.createNewDiagram();
+      diagramStore.diagram.name = task.value.name;
+      diagramStore.diagram.categoryId = category.id;
+
+      diagramService.postDiagram(diagramStore.diagram).then((diagram) => {
+        toolManagementStore.activeTask = task.value;
+        diagramStore.loadDiagram(diagram.data);
+        courseService.getCourse(courseId.value).then((course) => {
+          toolManagementStore.activeCourse = course.data;
+          router.push("/modeling");
+        });
+      });
+      return;
+    } else {
+      diagramStore.loadDiagram(taskDiagram);
+    }
   });
 };
 

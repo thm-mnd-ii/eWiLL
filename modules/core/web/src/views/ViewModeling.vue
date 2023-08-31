@@ -1,14 +1,21 @@
 <template>
   <v-snackbar v-model="snackbarSuccess" :timeout="2500"> Diagramm erfolgreich eingereicht </v-snackbar>
   <DialogConfirm ref="dialogConfirm" />
-  <div v-if="activeTask != undefined" class="task-floater">
-    <span>Aktuelle Aufgabe: {{ activeTask?.name }}</span
-    ><br />
-    <span>Aus Kurs: {{ activeCourse?.name }}</span
-    ><br />
-    <v-btn @click="submitDiagram">Einreichen</v-btn>
-  </div>
+
   <div class="container">
+    <v-card v-if="activeTask != undefined" class="task-floater" elevation="3">
+      <v-card-title>Abgabe</v-card-title>
+      <v-card-subtitle>
+        <span>Aktuelle Aufgabe: {{ activeTask?.name }}</span
+        ><br />
+        <span>Aus Kurs: {{ activeCourse?.name }}</span
+        ><br />
+      </v-card-subtitle>
+      <v-card-actions>
+        <v-btn @click="submitDiagram">Einreichen</v-btn>
+      </v-card-actions>
+    </v-card>
+
     <div class="navigation">
       <v-system-bar color="white" elevation="1" window>
         <span v-if="diagramStore.diagram.name != ''">
@@ -31,10 +38,6 @@
         </span> -->
 
         <v-spacer></v-spacer>
-
-        <!-- <v-icon icon="mdi-wifi-strength-4"></v-icon>
-        <v-icon icon="mdi-signal" class="ms-2"></v-icon>
-        <v-icon icon="mdi-battery" class="ms-2"></v-icon> -->
 
         <span class="ms-2">{{ currentDateTime }}</span>
       </v-system-bar>
@@ -61,19 +64,17 @@ import ToolBox from "@/components/modelingTool/ToolBox.vue";
 import { useDiagramStore } from "../stores/diagramStore";
 import { storeToRefs } from "pinia";
 import { useToolManagementStore } from "@/stores/toolManagementStore";
-import { useAuthUserStore } from "../stores/authUserStore";
+import { useRouter } from "vue-router";
 
-import evaluationService from "@/services/evaluation.service";
 
 import DialogConfirm from "@/dialog/DialogConfirm.vue";
-import SubmitPL from "@/model/SubmitPL";
 
 const dialogConfirm = ref<typeof DialogConfirm>();
 const snackbarSuccess = ref(false);
 
+const router = useRouter();
 const diagramStore = useDiagramStore();
 const toolManagementStore = useToolManagementStore();
-const authUserStore = useAuthUserStore();
 
 const modelingToolKey = storeToRefs(diagramStore).key;
 const activeCourse = toolManagementStore.activeCourse;
@@ -112,13 +113,8 @@ const currentDateTime = computed(() => {
 const submitDiagram = () => {
   dialogConfirm.value?.openDialog("Abgabe: " + diagramStore.diagram.name, "Möchten Sie das Diagram wirklich für die Aufgabe " + activeTask?.name + "des Kurses " + activeCourse?.name + " einreichen?", "Einreichen").then((result: boolean) => {
     if (result) {
-      const submitPL = {} as SubmitPL;
-      submitPL.diagramId = diagramStore.diagram.id;
-      submitPL.taskId = activeTask!.id;
-      submitPL.userId = authUserStore.auth.user?.id!;
-      evaluationService.submitDiagram(submitPL).then(() => {
-        snackbarSuccess.value = true;
-      });
+      //navigate to ViewTask
+      router.push({ name: "ViewTask", params: { courseId: activeCourse?.id, taskId: activeTask?.id } });
     }
   });
 };
@@ -165,8 +161,9 @@ const submitDiagram = () => {
 
 .task-floater {
   position: absolute;
-  bottom: 300px;
-  z-index: 99;
+  top: 20px;
+  right: 25px;
+  z-index: 10;
 }
 
 // .file-explorer {

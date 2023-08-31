@@ -52,7 +52,7 @@ export const useDiagramStore = defineStore("diagram", {
     },
     getMinWidth() {
       let minWidth = 0;
-      if (this.diagram.entities.length != 0) {
+      if (this.diagram.entities && this.diagram.entities.length != 0) {
         this.diagram.entities.forEach((entity) => {
           minWidth = Math.max(minWidth, entity.left + entity.width);
           return minWidth;
