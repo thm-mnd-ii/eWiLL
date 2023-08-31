@@ -263,14 +263,13 @@ const loadNumberSubmissions = () => {
 // TODO: Rewrite this cancer when the backend is ready
 const createDiagramAndCategoryIfNotPresent = () => {
   console.log("createDiagramAndCategoryIfNotPresent");
-  
+
   courseService.getCourse(courseId.value).then((course) => {
     let courseName = course.data.name;
 
     categoryService.getByUserId(userId.value).then((categories) => {
       let courseCategory: Category | undefined;
       courseCategory = categories.find((category) => category.name == courseName);
-
       if (courseCategory === undefined) {
         diagramService.postCategory(courseName, userId.value).then((newCategory) => {
           courseCategory = newCategory.data;
@@ -287,21 +286,21 @@ const createDiagram = (category: Category) => {
   diagramService.getDiagramsByUserId(userId.value).then((userDiagrams) => {
     let taskDiagram = userDiagrams.data.find((diagram) => diagram.name == task.value.name && diagram.categoryId == category.id);
     if (taskDiagram === undefined) {
+      console.log(taskDiagram);
       diagramStore.createNewDiagram();
       diagramStore.diagram.name = task.value.name;
       diagramStore.diagram.categoryId = category.id;
+      diagramStore.diagram.ownerId = userId.value;
 
-      diagramService.postDiagram(diagramStore.diagram).then((diagram) => {
-        toolManagementStore.activeTask = task.value;
-        diagramStore.loadDiagram(diagram.data);
-        courseService.getCourse(courseId.value).then((course) => {
-          toolManagementStore.activeCourse = course.data;
-          router.push("/modeling");
+      diagramService.postDiagram(diagramStore.diagram).then((diagramId) => {
+        diagramService.getDiagramById(diagramId.data).then((diagram) => {
+          diagramStore.loadDiagram(diagram.data);
+          loadViewModellingWithDiagram();
         });
       });
-      return;
     } else {
       diagramStore.loadDiagram(taskDiagram);
+      loadViewModellingWithDiagram();
     }
   });
 };
