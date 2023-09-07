@@ -75,6 +75,7 @@ import diagramService from "../services/diagram.service";
 import { useDiagramStore } from "../stores/diagramStore";
 import { useAuthUserStore } from "../stores/authUserStore";
 import { onMounted, ref } from "vue";
+import { useToolManagementStore } from "@/stores/toolManagementStore";
 
 const dialogConfirm = ref<typeof DialogConfirmVue>();
 const dialogSave = ref<typeof DialogSaveDiagramVue>();
@@ -91,9 +92,16 @@ const deleteActive = ref(false);
 
 const diagramStore = useDiagramStore();
 const authUserStore = useAuthUserStore();
+const toolManagementStore = useToolManagementStore();
 
 onMounted(() => {
-  updateFiles();
+  updateFiles()?.then(() => {
+    selectActiveCourse();
+  });
+
+  if (diagramStore.diagram.id != undefined) {
+    activeDiagramId.value = diagramStore.diagram.id;
+  }
 });
 
 const updateFiles = () => {
@@ -130,6 +138,16 @@ const updateFiles = () => {
         reject();
       });
   });
+};
+
+const selectActiveCourse = () => {
+  if (toolManagementStore.activeCourse != null) {
+    let category: Category | undefined = Array.from(map.value.keys()).find((key) => key.name === toolManagementStore.activeCourse?.name);
+
+    if (category != undefined) {
+      selectCategory(category);
+    }
+  }
 };
 
 const moveToOverview = () => {

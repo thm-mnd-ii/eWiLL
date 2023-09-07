@@ -41,9 +41,6 @@ const lineList: Line[] = reactive([]);
 
 const entities = storeToRefs(diagramStore);
 
-const minWidth = computed(() => diagramStore.getMinWidth() + 200);
-const minHeight = computed(() => diagramStore.getMinHeight() + 200);
-
 onMounted(() => {
   updateLines();
   updateArea();
@@ -74,8 +71,11 @@ const unselectAll = () => {
 const updateArea = () => {
   if (modelingContainer.value == null) return;
 
-  modelingContainer.value.style.width = minWidth.value + "px";
-  modelingContainer.value.style.height = minHeight.value + "px";
+  const minWidth = diagramStore.getMinWidth() + 200;
+  const minHeight = diagramStore.getMinHeight() + 200;
+
+  modelingContainer.value.style.width = minWidth + "px";
+  modelingContainer.value.style.height = minHeight + "px";
 };
 
 const updateLines = () => {

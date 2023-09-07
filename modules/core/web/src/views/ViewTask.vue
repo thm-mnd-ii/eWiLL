@@ -15,7 +15,11 @@
     </div>
 
     <div class="task-main">
-      <div class="grid-left">
+      <div>
+        <div class="grid-left">
+          <v-btn v-if="selectedDiagramId == undefined" text-align="center" color="dark-gray" variant="flat" :disabled="submissionCount >= task.maxSubmissions || isDue" @click="createDiagramAndCategoryIfNotPresent">Diagramm erstellen & bearbeiten</v-btn>
+          <v-btn v-if="selectedDiagramId != undefined" color="dark-gray" variant="flat" :disabled="submissionCount >= task.maxSubmissions || isDue" @click="loadViewModellingWithDiagram">Diagramm bearbeiten</v-btn>
+        </div>
         <v-form>
           <v-select v-model="selectedCategoryId" label="Ordner" variant="underlined" :items="categories" item-title="name" :disabled="courseRole != 'STUDENT'" item-value="id" @update:model-value="updateDiagrams"></v-select>
           <v-select v-model="selectedDiagramId" label="Diagram" variant="underlined" :items="diagrams" item-title="name" item-value="id" :disabled="courseRole != 'STUDENT'" @update:model-value="showSelectedDiagram"></v-select>
@@ -78,6 +82,7 @@ import diagramService from "@/services/diagram.service";
 import evaluationService from "@/services/evaluation.service";
 import { useDiagramStore } from "@/stores/diagramStore";
 import { storeToRefs } from "pinia";
+import { useToolManagementStore } from "@/stores/toolManagementStore";
 import ModelingTool from "@/components/ModelingTool.vue";
 import submissionService from "@/services/submission.service";
 import CourseRoles from "@/enums/CourseRoles";
@@ -95,6 +100,7 @@ const route = useRoute();
 const router = useRouter();
 const authUserStore = useAuthUserStore();
 const diagramStore = useDiagramStore();
+const toolManagementStore = useToolManagementStore();
 const modelingToolKey = storeToRefs(diagramStore).key;
 
 const task = ref<Task>({} as Task);
@@ -144,19 +150,22 @@ const init = () => {
   });
 };
 
-const loadElements = (role: CourseRoles) => {
+const loadElements = async (role: CourseRoles) => {
   courseRole.value = role;
-  loadTask();
-  loadCategories();
-  diagramStore.createNewDiagram();
+  await loadTask();
+  await loadCategories();
+
   if (courseRole.value == CourseRoles.STUDENT) {
+    diagramStore.createNewDiagram();
     selectedCategoryId.value = undefined;
     selectedDiagramId.value = undefined;
     diagrams.value = [];
     categories.value = [];
-    loadSubmissions();
+
+    await loadDiagramIfExists();
+    await loadSubmissions();
   } else if (courseRole.value == CourseRoles.OWNER || courseRole.value == CourseRoles.TUTOR) {
-    loadNumberSubmissions();
+    await loadNumberSubmissions();
   }
 };
 
@@ -179,16 +188,22 @@ const openFullDiagram = () => {
   dialogShowFullDiagram.value?.openDialog("");
 };
 
-const updateDiagrams = (categoryId: number) => {
-  diagramService.getDiagramsByUserId(authUserStore.auth.user?.id as number).then((response) => {
-    selectedDiagramId.value = undefined;
+const updateDiagrams = async (categoryId: number, resetSelection: boolean = true) => {
+  await diagramService.getDiagramsByUserId(authUserStore.auth.user?.id as number).then((response) => {
+    if (resetSelection) selectedDiagramId.value = undefined;
     diagrams.value = response.data.filter((d) => d.categoryId == categoryId);
   });
 };
 
 const showSelectedDiagram = (diagramId: number) => {
   selectedDiagram.value = diagrams.value.find((d) => d.id == diagramId);
-  diagramStore.loadDiagram(diagrams.value.find((d) => d.id == diagramId) as Diagram);
+
+  let diagram = diagrams.value.find((d) => d.id == diagramId) as Diagram;
+  if (diagram != undefined) {
+    diagramStore.loadDiagram(diagram);
+  } else {
+    console.log("Diagram not found");
+  }
 };
 
 const submitDiagram = () => {
@@ -233,6 +248,32 @@ const loadCategories = () => {
   });
 };
 
+const loadDiagramIfExists = () => {
+  courseService.getCourse(courseId.value).then((course) => {
+    let courseName = course.data.name;
+    let diagramName = task.value.name;
+
+    categoryService.getByUserId(userId.value).then((categories) => {
+      let diagramCategory: Category | undefined;
+      diagramCategory = categories.find((category) => category.name == courseName);
+
+      if (diagramCategory != undefined) {
+        diagramService.getDiagramsByUserId(userId.value).then(async (userDiagrams) => {
+          let taskDiagram = userDiagrams.data.find((diagram) => diagram.name == diagramName && diagram.categoryId == diagramCategory!.id);
+
+          if (taskDiagram != undefined) {
+            selectedCategoryId.value = diagramCategory?.id;
+            await updateDiagrams(diagramCategory?.id as number, false);
+
+            selectedDiagramId.value = taskDiagram.id;
+            showSelectedDiagram(taskDiagram.id);
+          }
+        });
+      }
+    });
+  });
+};
+
 const loadSolutionModel = () => {
   diagramService.getDiagramById(task.value.solutionModelId).then((response) => {
     const categoryId = response.data.categoryId;
@@ -250,6 +291,57 @@ const openViewTaskSubmissions = () => {
 const loadNumberSubmissions = () => {
   submissionService.getSubmissionsByTask(taskId.value).then((response) => {
     submissionCount.value = response.data.length;
+  });
+};
+
+// This was done really quick and dirty because it should be done in the backend, but has to be done here temporary
+// TODO: Rewrite this cancer when the backend is ready
+const createDiagramAndCategoryIfNotPresent = () => {
+  courseService.getCourse(courseId.value).then((course) => {
+    let courseName = course.data.name;
+
+    categoryService.getByUserId(userId.value).then((categories) => {
+      let courseCategory: Category | undefined;
+      courseCategory = categories.find((category) => category.name == courseName);
+      if (courseCategory === undefined) {
+        diagramService.postCategory(courseName, userId.value).then((newCategory) => {
+          courseCategory = newCategory.data;
+          createDiagram(courseCategory);
+        });
+      } else {
+        createDiagram(courseCategory);
+      }
+    });
+  });
+};
+
+const createDiagram = (category: Category) => {
+  diagramService.getDiagramsByUserId(userId.value).then((userDiagrams) => {
+    let taskDiagram = userDiagrams.data.find((diagram) => diagram.name == task.value.name && diagram.categoryId == category.id);
+    if (taskDiagram === undefined) {
+      diagramStore.createNewDiagram();
+      diagramStore.diagram.name = task.value.name;
+      diagramStore.diagram.categoryId = category.id;
+      diagramStore.diagram.ownerId = userId.value;
+
+      diagramService.postDiagram(diagramStore.diagram).then((diagramId) => {
+        diagramService.getDiagramById(diagramId.data).then((diagram) => {
+          diagramStore.loadDiagram(diagram.data);
+          loadViewModellingWithDiagram();
+        });
+      });
+    } else {
+      diagramStore.loadDiagram(taskDiagram);
+      loadViewModellingWithDiagram();
+    }
+  });
+};
+
+const loadViewModellingWithDiagram = () => {
+  toolManagementStore.activeTask = task.value;
+  courseService.getCourse(courseId.value).then((course) => {
+    toolManagementStore.activeCourse = course.data;
+    router.push("/modeling");
   });
 };
 </script>
@@ -285,6 +377,10 @@ const loadNumberSubmissions = () => {
   align-items: center;
 
   width: 100%;
+}
+
+.grid-left {
+  text-align: center;
 }
 
 .task-trials-caption {
