@@ -7,6 +7,8 @@ import Connection from "@/model/diagram/Connection";
 
 import { useDiagramStore } from "./diagramStore";
 import ConnectorPosition from "@/enums/ConnectorPosition";
+import Task from "@/model/task/Task";
+import CoursePL from "@/model/course/CoursePL";
 
 interface State {
   showModalAddAttributes: boolean;
@@ -16,6 +18,8 @@ interface State {
   showIncomingAnkerPoints: boolean;
   newConnection: Connection;
   diagramDiv: HTMLElement | null;
+  activeTask: Task | null;
+  activeCourse: CoursePL | null;
 }
 
 export const useToolManagementStore = defineStore("tool-management", {
@@ -27,6 +31,8 @@ export const useToolManagementStore = defineStore("tool-management", {
     showIncomingAnkerPoints: false,
     newConnection: {} as Connection,
     diagramDiv: null,
+    activeTask: null,
+    activeCourse: null,
   }),
   getters: {},
   actions: {

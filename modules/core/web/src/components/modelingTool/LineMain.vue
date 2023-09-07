@@ -1,9 +1,9 @@
 <template>
-  <LineWidget v-if="visible" :line="props.line" class="lineWidget" :style="{ top: (props.line.y1 + props.line.y2) / 2 + 'px', left: (props.line.x1 + props.line.x2) / 2 + 'px' }" />
+  <LineWidget v-if="visible" :line="props.line" class="lineWidget" :style="{ top: (props.line.y1 + props.line.y2) / 2 + 5 + 'px', left: (props.line.x1 + props.line.x2) / 2 - 35 + 'px' }" />
 
   <svg ref="root" class="svgContainer hide">
-    <line id="svgLine" class="reshow" stroke-width="2.5px" stroke="#000000" x1="0" y1="0" x2="0" y2="0" @click="activateLine" />
-    <line id="svgSupportLine" class="reshow" fill="none" stroke-width="2.6px" stroke="none" stroke-opacity="0" x1="0" y1="0" marker-end="url(#arrowhead)" y2="0" x2="0" @click="activateLine" />
+    <line id="svgLine" class="reshow" stroke-width="2.5px" stroke="#000000" x1="0" y1="0" x2="0" y2="0" @click="activateLine" @click.right="activateLine" />
+    <line id="svgSupportLine" class="reshow" fill="none" stroke-width="2.6px" stroke="none" stroke-opacity="0" x1="0" y1="0" marker-end="url(#arrowhead)" y2="0" x2="0" @click="activateLine" @click.right="activateLine" />
   </svg>
 </template>
 
@@ -24,7 +24,7 @@ const root = ref<SVGElement | null>(null);
 const toolManagementStore = useToolManagementStore();
 
 const activateLine = () => {
-  if (toolManagementStore.selectedLine == props.line) {
+  if (toolManagementStore.selectedLine?.id == props.line.id) {
     toolManagementStore.selectedLine = null;
   } else {
     toolManagementStore.selectedLine = props.line;
@@ -32,7 +32,7 @@ const activateLine = () => {
 };
 
 let visible = computed(() => {
-  return toolManagementStore.selectedLine == props.line;
+  return toolManagementStore.selectedLine?.id == props.line.id;
 });
 
 //const hover = ref(false)
@@ -127,7 +127,7 @@ watch(props, () => {
 
 .lineWidget {
   position: absolute;
-  z-index: 2;
+  z-index: 5;
 }
 
 /* Hide Parent to reshow only svgLine */

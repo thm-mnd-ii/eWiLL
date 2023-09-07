@@ -14,7 +14,7 @@
       <v-card-text>
         <v-form ref="form" v-model="valid" class="save-diagram-form">
           <v-text-field v-model="diagramName" :rules="[(v) => !!v || 'Item is required']" label="Name*" required></v-text-field>
-          <v-select v-model="diagramCategory" :rules="[(v) => !!v || 'Item is required']" :items="categoryNames" item-title="name" item-value="id" label="Kategorie*" required></v-select>
+          <v-select v-model="diagramCategory" :rules="[(v) => !!v || 'Item is required']" :items="categoryNames" item-title="name" item-value="id" label="Ordner*" required></v-select>
           <v-btn cols="12" sm="6" md="4" icon="mdi-folder-plus" @click="openCategoryDialog"></v-btn>
         </v-form>
         <small>*indicates required field</small>
@@ -35,7 +35,6 @@ import diagramService from "../services/diagram.service";
 import { useDiagramStore } from "../stores/diagramStore";
 import { useAuthUserStore } from "../stores/authUserStore";
 import DialogAddCategoryVue from "./DialogAddCategory.vue";
-import { on } from "stream";
 
 const diagramStore = useDiagramStore();
 const authUserStore = useAuthUserStore();

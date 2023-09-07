@@ -10,7 +10,7 @@
       <v-divider></v-divider>
       <v-card-actions class="btn-menue">
         <div>
-          <v-btn icon="mdi-new-box" class="explorerBtn" :disabled="deleteActive" @click="createNewDiagram"></v-btn>
+          <v-btn icon="mdi-new-box" class="explorerBtn" :disabled="deleteActive" @click="deleteCurrentDiagram"></v-btn>
         </div>
         <div>
           <v-btn icon="mdi-content-save" class="explorerBtn" :disabled="deleteActive" @click="saveDialogButtonClick"></v-btn>
@@ -75,6 +75,7 @@ import diagramService from "../services/diagram.service";
 import { useDiagramStore } from "../stores/diagramStore";
 import { useAuthUserStore } from "../stores/authUserStore";
 import { onMounted, ref } from "vue";
+import { useToolManagementStore } from "@/stores/toolManagementStore";
 
 const dialogConfirm = ref<typeof DialogConfirmVue>();
 const dialogSave = ref<typeof DialogSaveDiagramVue>();
@@ -91,9 +92,16 @@ const deleteActive = ref(false);
 
 const diagramStore = useDiagramStore();
 const authUserStore = useAuthUserStore();
+const toolManagementStore = useToolManagementStore();
 
 onMounted(() => {
-  updateFiles();
+  updateFiles()?.then(() => {
+    selectActiveCourse();
+  });
+
+  if (diagramStore.diagram.id != undefined) {
+    activeDiagramId.value = diagramStore.diagram.id;
+  }
 });
 
 const updateFiles = () => {
@@ -132,6 +140,16 @@ const updateFiles = () => {
   });
 };
 
+const selectActiveCourse = () => {
+  if (toolManagementStore.activeCourse != null) {
+    let category: Category | undefined = Array.from(map.value.keys()).find((key) => key.name === toolManagementStore.activeCourse?.name);
+
+    if (category != undefined) {
+      selectCategory(category);
+    }
+  }
+};
+
 const moveToOverview = () => {
   categoriesViewActive.value = true;
   activeCategorie.value = null;
@@ -141,7 +159,7 @@ const moveToOverview = () => {
 const categoryClicked = (category: Category) => {
   if (deleteActive.value) {
     if (dialogConfirm.value) {
-      dialogConfirm.value.openDialog(`Lösche: ${category.name}`, "Willst du die Kategorie wirklich löschen? Wenn du sie löscht, werden auch alle Diagramme gelöscht, die in dieser Kategorie sind.").then((result: boolean) => {
+      dialogConfirm.value.openDialog(`Lösche: ${category.name}`, "Willst du den Ordner wirklich löschen? Wenn du ihn löschst, werden auch alle Diagramme entfernt, die in diesem Ordner sind.").then((result: boolean) => {
         if (result) {
           diagramService.deleteCategory(category).then(() => {
             updateFiles();
@@ -206,8 +224,8 @@ const saveDialogButtonClick = () => {
   });
 };
 
-const createNewDiagram = () => {
-  dialogConfirm.value?.openDialog("Neues Diagramm", 'Willst du ein neues Diagramm erstellen? Wenn du auf "Erstellen" klickst wird möglicherweise der aktuelle Stand deines Diagrams gelöscht.', "Erstellen").then((result: boolean) => {
+const deleteCurrentDiagram = () => {
+  dialogConfirm.value?.openDialog("Diagramm zurücksetzen", 'Willst du deinen bisherigen Fortschritt löschen? Wenn du auf "Zurücksetzen" klickst, wird das gesamte Diagramm zurückgesetzt und du kannst von Grund auf neu anfangen.', "Zurücksetzen").then((result: boolean) => {
     if (result) {
       diagramStore.createNewDiagram();
     }

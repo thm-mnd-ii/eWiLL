@@ -1,5 +1,21 @@
 <template>
+  <v-snackbar v-model="snackbarSuccess" :timeout="2500"> Diagramm erfolgreich eingereicht </v-snackbar>
+  <DialogConfirm ref="dialogConfirm" />
+
   <div class="container">
+    <v-card v-if="activeTask != undefined" class="task-floater" elevation="3">
+      <v-card-title>Abgabe</v-card-title>
+      <v-card-subtitle>
+        <span>Aktuelle Aufgabe: {{ activeTask?.name }}</span
+        ><br />
+        <span>Aus Kurs: {{ activeCourse?.name }}</span
+        ><br />
+      </v-card-subtitle>
+      <v-card-actions>
+        <v-btn @click="submitDiagram">Einreichen</v-btn>
+      </v-card-actions>
+    </v-card>
+
     <div class="navigation">
       <v-system-bar color="white" elevation="1" window>
         <span v-if="diagramStore.diagram.name != ''">
@@ -22,10 +38,6 @@
         </span> -->
 
         <v-spacer></v-spacer>
-
-        <!-- <v-icon icon="mdi-wifi-strength-4"></v-icon>
-        <v-icon icon="mdi-signal" class="ms-2"></v-icon>
-        <v-icon icon="mdi-battery" class="ms-2"></v-icon> -->
 
         <span class="ms-2">{{ currentDateTime }}</span>
       </v-system-bar>
@@ -51,25 +63,49 @@ import ToolBox from "@/components/modelingTool/ToolBox.vue";
 
 import { useDiagramStore } from "../stores/diagramStore";
 import { storeToRefs } from "pinia";
+import { useToolManagementStore } from "@/stores/toolManagementStore";
+import { useRouter, onBeforeRouteLeave } from "vue-router";
 
+import DialogConfirm from "@/dialog/DialogConfirm.vue";
+import diagramService from "@/services/diagram.service";
+
+const dialogConfirm = ref<typeof DialogConfirm>();
+const snackbarSuccess = ref(false);
+
+const router = useRouter();
 const diagramStore = useDiagramStore();
+const toolManagementStore = useToolManagementStore();
 
 const modelingToolKey = storeToRefs(diagramStore).key;
+const activeCourse = toolManagementStore.activeCourse;
+const activeTask = toolManagementStore.activeTask;
 
 const currentTime = ref<Date>(new Date());
 setInterval(() => {
   currentTime.value = new Date();
 }, 1000);
 
-const warnBeforeUnload = () => {
-  window.addEventListener("beforeunload", (event) => {
-    event.preventDefault();
-  });
-};
+onBeforeRouteLeave((to, from, next) => {
+  if (diagramStore.saved) {
+    next();
+  } else {
+    const message = "Dein Modell wurde noch nicht gespeichert. Willst du die Seite wirklich verlassen?";
+    if (window.confirm(message)) {
+      next();
+    } else {
+      next(false);
+    }
+  }
+});
 
 onMounted(() => {
-  warnBeforeUnload();
+  window.addEventListener("beforeunload", handleBeforeUnload);
 });
+
+const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+  event.preventDefault();
+  event.returnValue = "";
+};
 
 // current weekday day date year time seconds in european format
 const currentDateTime = computed(() => {
@@ -85,6 +121,29 @@ const currentDateTime = computed(() => {
   });
   return `${weekday}, ${day}. ${month} ${year} ${time}`;
 });
+
+const submitDiagram = () => {
+  dialogConfirm.value?.openDialog("Abgabe: " + diagramStore.diagram.name, "Möchten Sie das Diagram wirklich für die Aufgabe " + activeTask?.name + "des Kurses " + activeCourse?.name + " einreichen?", "Einreichen").then((result: boolean) => {
+    if (result) {
+      //save diagram
+      diagramService
+        .putDiagram(diagramStore.diagram)
+        .then(() => {
+          toolManagementStore.activeCourse = null;
+          toolManagementStore.activeTask = null;
+
+          diagramStore.saved = true;
+          router.push({ name: "ViewTask", params: { courseId: activeCourse?.id, taskId: activeTask?.id } });
+        })
+        .catch(() => {
+          alert("Diagramm konnte nicht gespeichert werden");
+        });
+
+      // //navigate to ViewTask
+      // router.push({ name: "ViewTask", params: { courseId: activeCourse?.id, taskId: activeTask?.id } });
+    }
+  });
+};
 </script>
 
 <style scoped lang="scss">
@@ -124,6 +183,13 @@ const currentDateTime = computed(() => {
 .right-bar {
   grid-area: right;
   // background-color: #d1aaaa;
+}
+
+.task-floater {
+  position: absolute;
+  top: 20px;
+  right: 25px;
+  z-index: 10;
 }
 
 // .file-explorer {

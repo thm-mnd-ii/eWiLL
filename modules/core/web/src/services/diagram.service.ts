@@ -4,8 +4,7 @@ import Category from "../model/diagram/Category";
 import authHeader from "./auth-header";
 
 class DiagramService {
-
-  getDiagramById(id: number){
+  getDiagramById(id: number) {
     return axios.get("/api/diagram/" + id);
   }
 
@@ -31,12 +30,14 @@ class DiagramService {
     return axios.get("/api/category/user/" + userId, { headers: authHeader() });
   }
 
-  postCategory(name: string, userid: number) {
+  postCategory(name: string, userid: number): Promise<AxiosResponse<Category>> {
     return axios.post("/api/category", { name: name, userid: userid });
   }
 
   deleteCategory(category: Category) {
-    return axios.delete("/api/category/" + category.id, { headers: authHeader() });
+    return axios.delete("/api/category/" + category.id, {
+      headers: authHeader(),
+    });
   }
 
   getDiagramsWithCategory(
