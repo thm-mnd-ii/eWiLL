@@ -64,7 +64,7 @@ import ToolBox from "@/components/modelingTool/ToolBox.vue";
 import { useDiagramStore } from "../stores/diagramStore";
 import { storeToRefs } from "pinia";
 import { useToolManagementStore } from "@/stores/toolManagementStore";
-import { useRouter } from "vue-router";
+import { useRouter, onBeforeRouteLeave } from "vue-router";
 
 import DialogConfirm from "@/dialog/DialogConfirm.vue";
 import diagramService from "@/services/diagram.service";
@@ -85,15 +85,27 @@ setInterval(() => {
   currentTime.value = new Date();
 }, 1000);
 
-const warnBeforeUnload = () => {
-  window.addEventListener("beforeunload", (event) => {
-    event.preventDefault();
-  });
-};
+onBeforeRouteLeave((to, from, next) => {
+  if (diagramStore.saved) {
+    next();
+  } else {
+    const message = "Dein Modell wurde noch nicht gespeichert. Willst du die Seite wirklich verlassen?";
+    if (window.confirm(message)) {
+      next();
+    } else {
+      next(false);
+    }
+  }
+});
 
 onMounted(() => {
-  warnBeforeUnload();
+  window.addEventListener("beforeunload", handleBeforeUnload);
 });
+
+const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+  event.preventDefault();
+  event.returnValue = "";
+};
 
 // current weekday day date year time seconds in european format
 const currentDateTime = computed(() => {
