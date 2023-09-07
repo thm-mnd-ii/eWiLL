@@ -132,6 +132,7 @@ const submitDiagram = () => {
           toolManagementStore.activeCourse = null;
           toolManagementStore.activeTask = null;
 
+          diagramStore.saved = true;
           router.push({ name: "ViewTask", params: { courseId: activeCourse?.id, taskId: activeTask?.id } });
         })
         .catch(() => {
