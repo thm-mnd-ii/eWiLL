@@ -66,8 +66,8 @@ import { storeToRefs } from "pinia";
 import { useToolManagementStore } from "@/stores/toolManagementStore";
 import { useRouter } from "vue-router";
 
-
 import DialogConfirm from "@/dialog/DialogConfirm.vue";
+import diagramService from "@/services/diagram.service";
 
 const dialogConfirm = ref<typeof DialogConfirm>();
 const snackbarSuccess = ref(false);
@@ -113,8 +113,21 @@ const currentDateTime = computed(() => {
 const submitDiagram = () => {
   dialogConfirm.value?.openDialog("Abgabe: " + diagramStore.diagram.name, "Möchten Sie das Diagram wirklich für die Aufgabe " + activeTask?.name + "des Kurses " + activeCourse?.name + " einreichen?", "Einreichen").then((result: boolean) => {
     if (result) {
-      //navigate to ViewTask
-      router.push({ name: "ViewTask", params: { courseId: activeCourse?.id, taskId: activeTask?.id } });
+      //save diagram
+      diagramService
+        .putDiagram(diagramStore.diagram)
+        .then(() => {
+          toolManagementStore.activeCourse = null;
+          toolManagementStore.activeTask = null;
+
+          router.push({ name: "ViewTask", params: { courseId: activeCourse?.id, taskId: activeTask?.id } });
+        })
+        .catch(() => {
+          alert("Diagramm konnte nicht gespeichert werden");
+        });
+
+      // //navigate to ViewTask
+      // router.push({ name: "ViewTask", params: { courseId: activeCourse?.id, taskId: activeTask?.id } });
     }
   });
 };
