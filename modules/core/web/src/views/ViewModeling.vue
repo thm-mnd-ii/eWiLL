@@ -1,6 +1,5 @@
 <template>
   <v-snackbar v-model="snackbarSuccess" :timeout="2500"> Diagramm erfolgreich eingereicht </v-snackbar>
-  <DialogConfirm ref="dialogConfirm" />
 
   <div class="container">
     <v-card v-if="activeTask != undefined" class="task-floater" elevation="3">
@@ -12,7 +11,7 @@
         ><br />
       </v-card-subtitle>
       <v-card-actions>
-        <v-btn @click="submitDiagram">Einreichen</v-btn>
+        <v-btn @click="submitDiagram">Zurück zur Abgabe</v-btn>
       </v-card-actions>
     </v-card>
 
@@ -66,10 +65,8 @@ import { storeToRefs } from "pinia";
 import { useToolManagementStore } from "@/stores/toolManagementStore";
 import { useRouter, onBeforeRouteLeave } from "vue-router";
 
-import DialogConfirm from "@/dialog/DialogConfirm.vue";
 import diagramService from "@/services/diagram.service";
 
-const dialogConfirm = ref<typeof DialogConfirm>();
 const snackbarSuccess = ref(false);
 
 const router = useRouter();
@@ -123,26 +120,22 @@ const currentDateTime = computed(() => {
 });
 
 const submitDiagram = () => {
-  dialogConfirm.value?.openDialog("Abgabe: " + diagramStore.diagram.name, "Möchten Sie das Diagram wirklich für die Aufgabe " + activeTask?.name + "des Kurses " + activeCourse?.name + " einreichen?", "Einreichen").then((result: boolean) => {
-    if (result) {
-      //save diagram
-      diagramService
-        .putDiagram(diagramStore.diagram)
-        .then(() => {
-          toolManagementStore.activeCourse = null;
-          toolManagementStore.activeTask = null;
+  //save diagram
+  diagramService
+    .putDiagram(diagramStore.diagram)
+    .then(() => {
+      toolManagementStore.activeCourse = null;
+      toolManagementStore.activeTask = null;
 
-          diagramStore.saved = true;
-          router.push({ name: "ViewTask", params: { courseId: activeCourse?.id, taskId: activeTask?.id } });
-        })
-        .catch(() => {
-          alert("Diagramm konnte nicht gespeichert werden");
-        });
+      diagramStore.saved = true;
+      router.push({ name: "ViewTask", params: { courseId: activeCourse?.id, taskId: activeTask?.id } });
+    })
+    .catch(() => {
+      alert("Diagramm konnte nicht gespeichert werden");
+    });
 
-      // //navigate to ViewTask
-      // router.push({ name: "ViewTask", params: { courseId: activeCourse?.id, taskId: activeTask?.id } });
-    }
-  });
+  // //navigate to ViewTask
+  // router.push({ name: "ViewTask", params: { courseId: activeCourse?.id, taskId: activeTask?.id } });
 };
 </script>
 
