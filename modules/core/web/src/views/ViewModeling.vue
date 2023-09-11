@@ -1,6 +1,6 @@
 <template>
   <v-snackbar v-model="snackbarSuccess" :timeout="2500"> Diagramm erfolgreich eingereicht </v-snackbar>
-
+  
   <div class="container">
     <v-card v-if="activeTask != undefined" class="task-floater" elevation="3">
       <v-card-title>Abgabe</v-card-title>
