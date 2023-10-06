@@ -10,5 +10,5 @@ class HomeController {
     fun home(): String = "index.html"
 
     @GetMapping("{_:^(?!index\\.html|api).*\$}")
-    fun index(): String = "index.html" 
+    fun index(): String = "index.html"
 }
