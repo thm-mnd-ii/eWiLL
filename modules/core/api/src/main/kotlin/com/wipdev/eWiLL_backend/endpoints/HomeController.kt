@@ -9,6 +9,6 @@ class HomeController {
     @GetMapping("/")
     fun home(): String = "index.html"
 
-    @GetMapping("/{path:[^api].*}")
-    fun index(@PathVariable path: String): String = "index.html"
+    @GetMapping("{_:^(?!index\\.html|api).*\$}")
+    fun index(): String = "index.html"
 }
