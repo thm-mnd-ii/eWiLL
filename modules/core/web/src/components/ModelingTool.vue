@@ -1,13 +1,18 @@
 <template>
-  <div class="container" :class="{ 'not-clickable': !props.isEditable }">
+ <div class="container" :class="{ 'not-clickable': !props.isEditable }" @contextmenu="showContextMenu">
     <ModalAddAttributes />
     <div ref="modelingContainer" class="modelingContainer" @click.self="unselectAll">
       <EntityMain v-for="entity in entities.diagram.value.entities" :key="entity.id" class="entity" :entity="entity" :is-editable="props.isEditable" />
-
       <LineMain v-for="line in lineList" :key="line.id" :line="line" />
-
       <!-- Definiert global das aussehen der Pfeile -->
       <ArrowDefinitionVue class="svgMarker"></ArrowDefinitionVue>
+      <!-- Context menu -->
+      <div v-if="isContextMenuVisible" class="context-menu" :style="{ left: contextMenuPosition.x, top: contextMenuPosition.y }">
+        <div><IconEntity @mousedown="addElement($event, EntityType.ENTITY)" class="context-menu-item"  /></div>
+        <div><IconRelationshiptyp @mousedown="addElement($event, EntityType.RELATIONSHIP)"  class="context-menu-item" /></div>
+       <div> <IconEntityRelationshiptyp  @mousedown="addElement($event, EntityType.ENTITYRELATIONSHIP)" class="context-menu-item" /></div>
+       
+      </div>
     </div>
   </div>
 </template>
@@ -15,17 +20,22 @@
 <script setup lang="ts">
 import EntityMain from "./modelingTool/EntityMain.vue";
 import LineMain from "./modelingTool/LineMain.vue";
-
 import ArrowDefinitionVue from "./modelingTool/ArrowDefinition.vue";
 import ModalAddAttributes from "../dialog/DialogAddAttributes.vue";
-
-import { onMounted, reactive, computed, ref } from "vue";
+import { ref } from "vue";
+import { onMounted, reactive, computed } from "vue";
 import { useDiagramStore } from "../stores/diagramStore";
 import { useToolManagementStore } from "../stores/toolManagementStore";
-import { storeToRefs } from "pinia";
-
 import Connection from "../model/diagram/Connection";
 import Line from "../model/diagram/Line";
+import { defineProps } from "vue";
+import { storeToRefs } from "pinia";
+import IconEntity from "@/components/icons/IconEntitytyp.vue";
+import IconRelationshiptyp from "@/components/icons/IconRelationshiptyp.vue";
+import IconEntityRelationshiptyp from "@/components/icons/IconEntityRelationshiptyp.vue";
+import EntityType from "@/enums/EntityType";
+const isContextMenuVisible = ref(false);
+const contextMenuPosition = ref({ x: '0px', y: '0px' });
 
 const diagramStore = useDiagramStore();
 const toolManagementStore = useToolManagementStore();
@@ -68,6 +78,24 @@ const unselectAll = () => {
   toolManagementStore.resetConnection();
 };
 
+const addElement = (e: { clientY: number; clientX: number }, type: EntityType) => {
+  if (diagramStore.diagram.entities.length == 0) {
+    diagramStore.diagram.entities.push({ id: 1, type: type, entityName: "New Entity", attributes: [], top: e.clientY - 100, left: e.clientX - 50, width: 100 });
+    diagramStore.saveHistory();
+    return;
+  }
+
+  const ids = diagramStore.diagram.entities.map((entity: { id: any }) => {
+    return entity.id;
+  });
+  const max = Math.max(...ids);
+  const nextID = max + 1;
+
+  diagramStore.diagram.entities.push({ id: nextID, type: type, entityName: "New Entity", attributes: [], top: e.clientY - 100, left: e.clientX - 50, width: 100 });
+
+  diagramStore.saveHistory();
+};
+
 const updateArea = () => {
   if (modelingContainer.value == null) return;
 
@@ -79,7 +107,7 @@ const updateArea = () => {
 };
 
 const updateLines = () => {
-  // TODO: find a better way to check if connections is undefined
+  // TODO: find a better way to check if connections are undefined
   if (diagramStore.diagram.connections === undefined) return;
 
   let calculatedLines: Line[] = [];
@@ -106,7 +134,7 @@ const calculateLine = (connection: Connection): Line | undefined => {
   let startEntity = diagramStore.diagram.entities.find((entity: { id: number }) => entity.id == connection.startEntity);
   let endEntity = diagramStore.diagram.entities.find((entity: { id: number }) => entity.id == connection.endEntity);
 
-  // if startEntity or endEntity is undefined, return empty line
+
   if (startEntity === undefined || endEntity === undefined) return;
 
   let startEntityWidth = startEntity.width;
@@ -146,7 +174,7 @@ const getPositionFactor = (position: any, entityWidth: number) => {
       positionFactor.x = 0;
       break;
     default:
-      throw "Unhandled position from anker.";
+      throw "Unhandled position from anchor.";
   }
 
   return positionFactor;
@@ -155,8 +183,8 @@ const getPositionFactor = (position: any, entityWidth: number) => {
 const spreadDuplicateLines = (calculatedLines: Line[]) => {
   // TODO: refactor for better readability. Combine duplicatedStartEntitys and duplicateEndEntitys and use a function to check if the entity is a start or end entity
 
-  // show duplicate start entitys which start at the same position
-  let duplicatedStartEntitys = diagramStore.diagram.connections.filter((connection: Connection) => {
+  // show duplicate start entities which start at the same position
+  let duplicatedStartEntities = diagramStore.diagram.connections.filter((connection: Connection) => {
     return (
       diagramStore.diagram.connections.filter((connection2: Connection) => {
         return connection.startEntity == connection2.startEntity && connection.startEntityPosition == connection2.startEntityPosition;
@@ -164,8 +192,8 @@ const spreadDuplicateLines = (calculatedLines: Line[]) => {
     );
   });
 
-  // show duplicate end entitys which end at the same position
-  let duplicatedEndEntitys = diagramStore.diagram.connections.filter((connection: Connection) => {
+  // show duplicate end entities which end at the same position
+  let duplicatedEndEntities = diagramStore.diagram.connections.filter((connection: Connection) => {
     return (
       diagramStore.diagram.connections.filter((connection2: Connection) => {
         return connection.endEntity == connection2.endEntity && connection.endEntityPosition == connection2.endEntityPosition;
@@ -173,46 +201,46 @@ const spreadDuplicateLines = (calculatedLines: Line[]) => {
     );
   });
 
-  //group duplicate start entitys by startEntity and startEntityPosition without using reduce
-  let groupedDuplicatedStartEntitys = [] as Connection[][];
-  duplicatedStartEntitys.forEach((connection: Connection) => {
-    let group = groupedDuplicatedStartEntitys.find((group: Connection[]) => {
+  //group duplicate start entities by startEntity and startEntityPosition without using reduce
+  let groupedDuplicatedStartEntities = [] as Connection[][];
+  duplicatedStartEntities.forEach((connection: Connection) => {
+    let group = groupedDuplicatedStartEntities.find((group: Connection[]) => {
       return group[0].startEntity == connection.startEntity && group[0].startEntityPosition == connection.startEntityPosition;
     });
     if (group != undefined) {
       group.push(connection);
     } else {
-      groupedDuplicatedStartEntitys.push([connection]);
+      groupedDuplicatedStartEntities.push([connection]);
     }
   });
 
-  //group duplicate end entitys by endEntity and endEntityPosition without using reduce
-  let groupedDuplicatedEndEntitys = [] as Connection[][];
-  duplicatedEndEntitys.forEach((connection: Connection) => {
-    let group = groupedDuplicatedEndEntitys.find((group: Connection[]) => {
+  //group duplicate end entities by endEntity and endEntityPosition without using reduce
+  let groupedDuplicatedEndEntities = [] as Connection[][];
+  duplicatedEndEntities.forEach((connection: Connection) => {
+    let group = groupedDuplicatedEndEntities.find((group: Connection[]) => {
       return group[0].endEntity == connection.endEntity && group[0].endEntityPosition == connection.endEntityPosition;
     });
     if (group != undefined) {
       group.push(connection);
     } else {
-      groupedDuplicatedEndEntitys.push([connection]);
+      groupedDuplicatedEndEntities.push([connection]);
     }
   });
 
   // calculateGradients
-  groupedDuplicatedStartEntitys = calculateGradients(groupedDuplicatedStartEntitys, calculatedLines);
-  groupedDuplicatedEndEntitys = calculateGradients(groupedDuplicatedEndEntitys, calculatedLines);
+  groupedDuplicatedStartEntities = calculateGradients(groupedDuplicatedStartEntities, calculatedLines);
+  groupedDuplicatedEndEntities = calculateGradients(groupedDuplicatedEndEntities, calculatedLines);
 
-  // order groupedDuplicatedStartEntitys by gradient
-  groupedDuplicatedStartEntitys.forEach((group: Connection[]) => {
+  // order groupedDuplicatedStartEntities by gradient
+  groupedDuplicatedStartEntities.forEach((group: Connection[]) => {
     group.sort((a: Connection, b: Connection) => {
       if (a.gradient == undefined || b.gradient == undefined) return 0;
       return a.gradient - b.gradient;
     });
   });
 
-  // order groupedDuplicatedEndEntitys by gradient
-  groupedDuplicatedEndEntitys.forEach((group: Connection[]) => {
+  // order groupedDuplicatedEndEntities by gradient
+  groupedDuplicatedEndEntities.forEach((group: Connection[]) => {
     group.sort((a: Connection, b: Connection) => {
       if (a.gradient == undefined || b.gradient == undefined) return 0;
       return b.gradient - a.gradient;
@@ -220,7 +248,7 @@ const spreadDuplicateLines = (calculatedLines: Line[]) => {
   });
 
   // calculate offset for each duplicate 10px
-  groupedDuplicatedStartEntitys.forEach((group: Connection[]) => {
+ groupedDuplicatedStartEntities.forEach((group: Connection[]) => {
     group.forEach((connection: Connection, index2) => {
       const sumOfLines = group.length;
 
@@ -228,14 +256,14 @@ const spreadDuplicateLines = (calculatedLines: Line[]) => {
         return line.id == diagramStore.diagram.connections.indexOf(connection);
       });
       if (calculatedLine != undefined && calculatedLine.y1 != undefined) {
-        // spread arround y1
+        // spread around y1
         calculatedLine.y1 = calculatedLine.y1 + (index2 - (sumOfLines - 1) / 2) * 10;
       }
     });
   });
 
   // calculate offset for each duplicate 10px
-  groupedDuplicatedEndEntitys.forEach((group: Connection[]) => {
+  groupedDuplicatedEndEntities.forEach((group: Connection[]) => {
     group.forEach((connection: Connection, index2) => {
       const sumOfLines = group.length;
 
@@ -243,7 +271,7 @@ const spreadDuplicateLines = (calculatedLines: Line[]) => {
         return line.id == diagramStore.diagram.connections.indexOf(connection);
       });
       if (calculatedLine != undefined && calculatedLine.y2 != undefined) {
-        // spread arround y2
+        // spread around y2
         calculatedLine.y2 = calculatedLine.y2 + (index2 - (sumOfLines - 1) / 2) * 10;
       }
     });
@@ -252,8 +280,8 @@ const spreadDuplicateLines = (calculatedLines: Line[]) => {
   return calculatedLines;
 };
 
-const calculateGradients = (groupedEntitys: Connection[][], calculatedLines: Line[]) => {
-  groupedEntitys.forEach((group: Connection[]) => {
+const calculateGradients = (groupedEntities: Connection[][], calculatedLines: Line[]) => {
+  groupedEntities.forEach((group: Connection[]) => {
     group.forEach((connection: Connection) => {
       let calculatedLine = calculatedLines.find((line: Line) => {
         return line.id == diagramStore.diagram.connections.indexOf(connection);
@@ -265,7 +293,33 @@ const calculateGradients = (groupedEntitys: Connection[][], calculatedLines: Lin
     });
   });
 
-  return groupedEntitys;
+  return groupedEntities;
+};
+
+const showContextMenu = (event: MouseEvent) => {
+  event.preventDefault();
+  isContextMenuVisible.value = true;
+  contextMenuPosition.value = { x: event.clientX + "px", y: event.clientY + "px" };
+};
+// Close the context menu when clicking anywhere else
+const closeContextMenu = (event: MouseEvent) => {
+  if (isContextMenuVisible.value) {
+    isContextMenuVisible.value = false;
+  }
+};
+
+onMounted(() => {
+  window.addEventListener("click", closeContextMenu);
+});
+const handleContextMenuItem = (item: string) => {
+  if (item === "dog") {
+    // Handle the "Dog" selection
+  } else if (item === "cat") {
+    // Handle the "Cat" selection
+  } else if (item === "mouse") {
+    // Handle the "Mouse" selection
+  }
+  isContextMenuVisible.value = false;
 };
 </script>
 
@@ -303,5 +357,32 @@ const calculateGradients = (groupedEntitys: Connection[][], calculatedLines: Lin
   pointer-events: none;
   cursor: default;
   z-index: 10;
+}
+
+.context-menu {
+  position: fixed;
+  background-color: white;
+  border: 1px solid #ccc;
+  z-index: 1000;
+  min-width: 100px;
+  max-width: 200px;
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+  padding: 8px;
+  cursor: pointer;
+}
+
+.context-menu div {
+  padding: 5px;
+  cursor: pointer;
+}
+
+.context-menu-item {
+  padding: 4px 0;
+  transition: background-color 0.2s;
+  cursor: pointer;
+}
+
+.context-menu-item:hover {
+  background-color: #f0f0f0;
 }
 </style>
