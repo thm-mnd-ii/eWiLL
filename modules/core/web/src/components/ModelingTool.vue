@@ -8,12 +8,32 @@
       <ArrowDefinitionVue class="svgMarker"></ArrowDefinitionVue>
       <!-- Context menu -->
       <div v-if="isContextMenuVisible" class="context-menu" :style="{ left: contextMenuPosition.x, top: contextMenuPosition.y }">
-        <div><IconEntity @mousedown="addElement($event, EntityType.ENTITY)" class="context-menu-item"  /></div>
-        <div><IconRelationshiptyp @mousedown="addElement($event, EntityType.RELATIONSHIP)"  class="context-menu-item" /></div>
-       <div> <IconEntityRelationshiptyp  @mousedown="addElement($event, EntityType.ENTITYRELATIONSHIP)" class="context-menu-item" /></div>
+       
+       
+        <v-list>
+  <v-list-item class="custom-list-item">
+    <v-list-item-title>
+      <IconEntity class="context-menu-item" @mousedown="addElement($event, EntityType.ENTITY)" />
+    </v-list-item-title>
+  </v-list-item>
+  <v-list-item class="custom-list-item">
+    <v-list-item-title>
+      <IconRelationshiptyp class="context-menu-item" @mousedown="addElement($event, EntityType.RELATIONSHIP)" />
+    </v-list-item-title>
+  </v-list-item>
+  <v-list-item class="custom-list-item">
+    <v-list-item-title>
+      <IconEntityRelationshiptyp class="context-menu-item" @mousedown="addElement($event, EntityType.ENTITYRELATIONSHIP)" />
+    </v-list-item-title>
+  </v-list-item>
+</v-list>
+
+       
+        
        
       </div>
     </div>
+
   </div>
 </template>
 
@@ -23,7 +43,7 @@ import LineMain from "./modelingTool/LineMain.vue";
 import ArrowDefinitionVue from "./modelingTool/ArrowDefinition.vue";
 import ModalAddAttributes from "../dialog/DialogAddAttributes.vue";
 import { ref } from "vue";
-import { onMounted, reactive, computed } from "vue";
+import { onMounted, reactive } from "vue";
 import { useDiagramStore } from "../stores/diagramStore";
 import { useToolManagementStore } from "../stores/toolManagementStore";
 import Connection from "../model/diagram/Connection";
@@ -34,17 +54,17 @@ import IconEntity from "@/components/icons/IconEntitytyp.vue";
 import IconRelationshiptyp from "@/components/icons/IconRelationshiptyp.vue";
 import IconEntityRelationshiptyp from "@/components/icons/IconEntityRelationshiptyp.vue";
 import EntityType from "@/enums/EntityType";
-const isContextMenuVisible = ref(false);
-const contextMenuPosition = ref({ x: '0px', y: '0px' });
 
-const diagramStore = useDiagramStore();
-const toolManagementStore = useToolManagementStore();
 
 // props
 const props = defineProps<{
   isEditable: boolean;
 }>();
 
+const diagramStore = useDiagramStore();
+const toolManagementStore = useToolManagementStore();
+const isContextMenuVisible = ref(false);
+const contextMenuPosition = ref({ x: '0px', y: '0px' });
 const modelingContainer = ref<HTMLElement | null>(null);
 
 const lineList: Line[] = reactive([]);
@@ -78,9 +98,31 @@ const unselectAll = () => {
   toolManagementStore.resetConnection();
 };
 
-const addElement = (e: { clientY: number; clientX: number }, type: EntityType) => {
+const addElement = (e: MouseEvent, type: EntityType) => {
+  const container = modelingContainer.value;
+  
+  if (!container) return; // Make sure the container is available.
+
+  // Calculate the container's position and any scrolling offsets.
+  const containerRect = container.getBoundingClientRect();
+  const scrollLeft = container.scrollLeft;
+  const scrollTop = container.scrollTop;
+
+  // Calculate the position relative to the container.
+  const positionX = e.clientX - containerRect.left + scrollLeft;
+  const positionY = e.clientY - containerRect.top + scrollTop;
+
+  // Insert the element using the corrected position.
   if (diagramStore.diagram.entities.length == 0) {
-    diagramStore.diagram.entities.push({ id: 1, type: type, entityName: "New Entity", attributes: [], top: e.clientY - 100, left: e.clientX - 50, width: 100 });
+    diagramStore.diagram.entities.push({
+      id: 1,
+      type: type,
+      entityName: "New Entity",
+      attributes: [],
+      top: positionY ,  // Adjust the position based on the container
+      left: positionX ,  // Adjust the position based on the container
+      width: 100
+    });
     diagramStore.saveHistory();
     return;
   }
@@ -91,7 +133,7 @@ const addElement = (e: { clientY: number; clientX: number }, type: EntityType) =
   const max = Math.max(...ids);
   const nextID = max + 1;
 
-  diagramStore.diagram.entities.push({ id: nextID, type: type, entityName: "New Entity", attributes: [], top: e.clientY - 100, left: e.clientX - 50, width: 100 });
+  diagramStore.diagram.entities.push({ id: nextID, type: type, entityName: "New Entity", attributes: [], top: positionY , left: positionX , width: 100 });
 
   diagramStore.saveHistory();
 };
@@ -302,7 +344,7 @@ const showContextMenu = (event: MouseEvent) => {
   contextMenuPosition.value = { x: event.clientX + "px", y: event.clientY + "px" };
 };
 // Close the context menu when clicking anywhere else
-const closeContextMenu = (event: MouseEvent) => {
+const closeContextMenu = () => {
   if (isContextMenuVisible.value) {
     isContextMenuVisible.value = false;
   }
@@ -311,16 +353,7 @@ const closeContextMenu = (event: MouseEvent) => {
 onMounted(() => {
   window.addEventListener("click", closeContextMenu);
 });
-const handleContextMenuItem = (item: string) => {
-  if (item === "dog") {
-    // Handle the "Dog" selection
-  } else if (item === "cat") {
-    // Handle the "Cat" selection
-  } else if (item === "mouse") {
-    // Handle the "Mouse" selection
-  }
-  isContextMenuVisible.value = false;
-};
+
 </script>
 
 <style scoped lang="scss">
@@ -341,11 +374,6 @@ const handleContextMenuItem = (item: string) => {
   max-height: 2000px;
   background-color: lavender;
   z-index: 1;
-}
-
-.toolbox > * {
-  margin: 10px;
-  cursor: copy;
 }
 
 .svgMarker {
@@ -385,4 +413,9 @@ const handleContextMenuItem = (item: string) => {
 .context-menu-item:hover {
   background-color: #f0f0f0;
 }
+.custom-list-item {
+  width: 120px; 
+ 
+}
+
 </style>
