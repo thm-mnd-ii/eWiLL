@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHashHistory, createWebHistory } from "vue-router";
 import HomeView from "../views/ViewHome.vue";
 import ViewModeling from "../views/ViewModeling.vue";
 import ViewImpressum from "../views/ViewImpressum.vue";
@@ -19,7 +19,7 @@ import ViewTaskSubmissions from "../views/ViewTaskSubmissions.vue";
 import authService from "@/services/auth.service";
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(),
   routes: [
     {
       path: "/home",
@@ -100,6 +100,7 @@ const router = createRouter({
       path: "/course/:courseId/task/:taskId/submissions",
       name: "ViewTaskSubmissions",
       component: ViewTaskSubmissions,
+      
     },
   ],
 });
