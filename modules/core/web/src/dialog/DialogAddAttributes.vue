@@ -8,9 +8,7 @@
 
       <v-card-text class="card-text">
         <v-form class="imput-form">
-          <v-select v-model="selectedAttributeType" lable="Typ Auswählen" variant="solo" :items="attributeTypes" item-title="key" item-value="attribute" :hide-details="true"></v-select>
-          <v-text-field v-model="newAttributeName" lable="Attribut Name" variant="solo" required :hide-details="true" @keydown.enter="addAttribute" />
-
+          <v-text-field v-model="newAttributeName" label="Attribut Name" variant="solo" required :hide-details="true" @keydown.enter="addAttribute" />
           <v-btn class="btn" color="success" @click="addAttribute">Hinzufügen</v-btn>
         </v-form>
 
@@ -19,8 +17,9 @@
             <v-card :elevation="2" class="attributes">
               <v-icon size="large" icon="mdi-arrow-up-down" color=""></v-icon>
 
-              <v-select v-model="element.type" lable="Typ Auswählen" variant="filled" class="input" :items="attributeTypes" item-title="key" item-value="attribute" :hide-details="true"> </v-select>
-              <v-text-field v-model="element.name" lable="Attribut Name" variant="filled" class="input" required :hide-details="true" />
+              <v-checkbox v-model="element.pkey" >PK</v-checkbox>
+              <v-checkbox v-model="element.fkey" >FK</v-checkbox>
+              <v-text-field v-model="element.name" label="Attribut Name" variant="filled" class="input" required :hide-details="true" />
 
               <v-icon size="large" icon="mdi-delete" color="error" @click="deleteAttribute(element)"></v-icon>
             </v-card>
@@ -36,12 +35,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref } from "vue";
 import draggable from "vuedraggable";
 import { useToolManagementStore } from "../stores/toolManagementStore";
 import { useDiagramStore } from "@/stores/diagramStore";
 
-import AttributeType from "../enums/AttributeType";
 import Attribute from "../model/diagram/Attribute";
 
 const toolManagementStore = useToolManagementStore();
@@ -50,24 +48,11 @@ const diagramStore = useDiagramStore();
 const drag: any = ref();
 const dialog = ref<boolean>(false);
 const newAttributeName = ref<string>("");
-const selectedAttributeType = ref<AttributeType>(AttributeType.Attribute);
 
 toolManagementStore.$subscribe((mutation, state) => {
   if (state.showModalAddAttributes != undefined) {
     dialog.value = state.showModalAddAttributes;
   }
-});
-
-const attributeTypes = computed(() => {
-  const keys = Object.keys(AttributeType).filter((k) => typeof AttributeType[k as any] === "number");
-  const values = keys.map((k) => AttributeType[k as any]);
-  const types: { key?: string; attribute?: number }[] = [];
-  //values in array of objects
-  keys.forEach((key, index) => {
-    types[index] = { key: key, attribute: parseInt(values[index]) };
-  });
-
-  return types;
 });
 
 const deleteAttribute = (attribute: Attribute) => {
@@ -88,11 +73,12 @@ const addAttribute = () => {
   }
 
   if (toolManagementStore.selectedEntity != undefined) {
-    toolManagementStore.selectedEntity.attributes.push({ type: selectedAttributeType.value, name: newAttributeName.value });
-
+    toolManagementStore.selectedEntity.attributes.push({
+    name: newAttributeName.value,
+    pkey: false,
+    fkey: false
+}); 
     newAttributeName.value = "";
-    selectedAttributeType.value = AttributeType.Attribute;
-
     diagramStore.saveHistory();
   }
 };
@@ -119,13 +105,13 @@ const closeModal = () => {
 .imput-form {
   margin-bottom: 10px;
   display: grid;
-  grid-template-columns: 2fr 4fr;
+  grid-template-columns: auto;
   align-items: center;
   justify-items: center;
   grid-gap: 10px 20px;
 
   .btn {
-    grid-column: 1 / 3;
+    grid-column: 1 / 2;
   }
 
   * {
@@ -137,17 +123,22 @@ const closeModal = () => {
   padding: 5px 0px;
   margin: 10px 0px;
   width: 100%;
-  height: auto;
+  height: 80px;
   background-color: white;
-  display: grid;
-  grid-template-columns: 1fr 4fr 7fr 1fr 0.2fr;
+  display: flex;
   align-items: center;
   justify-items: center;
 
-  * {
-    width: 100%;
-    padding: 0px 5px;
+  .v-text-field {
+    width: 50%;
+    margin: 5px;
   }
+  .v-checkbox {
+    margin: -20px;
+    padding: 20px 0 0 10px;
+    justify-items: center;
+  }
+
 }
 
 .ghost {
