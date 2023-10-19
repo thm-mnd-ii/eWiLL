@@ -14,6 +14,26 @@
             <v-select v-model="currentTask.eliability" :rules="liabilityRules" :items="liabilities" label="Verpflichtung" variant="underlined" color="primary" item-title="name" item-value="enum"></v-select>
             <v-select v-model="maxSubmissions" :items="arrayMaxSubmissions" label="Versuche" variant="underlined" color="primary" hint="0 = unbegrenzt" placeholder="0 = unbegrenzt" @update:model-value="updateMaxSubmissionsOnCurrentTask"></v-select>
             <v-slider v-model="sliderPosition" :min="0" :max="2" :step="1" thumb-label label="Feedback Level" color="primary" hint="0 = Kein Feedback, 1 = Hinweis auf Fehler, 2 = Lösungsvorschläge" persistent-hint @update:model-value="updateShowLevel"></v-slider>
+
+            <v-container>
+              <v-row>
+                <v-col cols="12" md="4" class="level-col">
+                  <v-menu transition="slide-y-transition">
+                    <template #activator="{ props }">
+                      <v-btn color="primary" v-bind="props" class="lvl-btn"> Level <v-icon icon="mdi-menu-down" /> </v-btn>
+                    </template>
+                    <v-list>
+                      <v-list-item v-for="(item, i) in level" :key="i" @click="levelReckognition(item)">
+                        <v-list-item-title class="dropdown-item">{{ item }}</v-list-item-title>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
+                </v-col>
+                <v-col cols="12" md="4" class="automatic-col">
+                  <v-btn :disabled="isDisabled" class="automatic-btn" variant="plain"> Automatisch erkennen </v-btn>
+                </v-col>
+              </v-row>
+            </v-container>
           </div>
         </v-form>
       </v-card-text>
@@ -58,7 +78,7 @@ const currentTask = ref<Task>({} as Task);
 const maxSubmissions = ref();
 const categories = ref<Category[]>([]);
 const diagrams = ref<Diagram[]>([]);
-
+const level = ["einfach", "mittel", "schwer"];
 const liabilities = ref<any[]>([
   { name: "Verpflichtend", enum: "MANDATORY" },
   { name: "Bonus", enum: "BONUS" },
@@ -72,6 +92,7 @@ const feedbackLevel = new Map<number, FeedbackLevel>([
   [4, FeedbackLevel.ERROR],
 ]);
 
+const isDisabled = ref<boolean>(true);
 const taskForm = ref<any>();
 const valid = ref(false);
 const selectedCategoryId = ref<number>();
@@ -207,6 +228,19 @@ const loadShowLevel = (level: string) => {
     if (value == level) sliderPosition.value = key;
   });
 };
+/*place holder for the level-Reckognition Function*/
+const levelReckognition = (value: any) => {
+  if (value == "einfach") {
+    sliderPosition.value = 0;
+    console.log("test", value);
+  } else if (value == "mittel") {
+    sliderPosition.value = 1;
+    console.log("test", value);
+  } else if (value == "schwer") {
+    sliderPosition.value = 2;
+    console.log("test", value);
+  }
+};
 
 // define expose
 defineExpose({
@@ -223,5 +257,37 @@ defineExpose({
 
 .card-actions {
   padding: 1rem;
+}
+.float-container {
+  display: inline-flex;
+
+  padding: 20px;
+}
+.dropdown-item {
+  cursor: pointer;
+  padding: 10px;
+  transition: background-color 0.2s;
+}
+
+.dropdown-item:hover {
+  background-color: #eee;
+}
+.lvl-btn {
+  width: 500px;
+}
+.automatic-btn {
+  width: 100%;
+  white-space: normal;
+}
+@media screen and (min-width: 768px) {
+  .automatisch-btn {
+    max-width: 300px;
+  }
+}
+.level-col {
+  margin-right: 50px;
+}
+
+.automatic-col {
 }
 </style>
