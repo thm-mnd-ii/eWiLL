@@ -12,7 +12,7 @@
         <v-btn append-icon="mdi-presentation" @click="openDiagram(item.value.submission.diagram)">Preview</v-btn>
       </template>
       <template #item.result.score="{ item }">
-        <v-chip>{{ item.value.result.score }}</v-chip>
+        <v-chip color="colors" :style="{ color: colors(item) }"> {{ item.value.result.score }}</v-chip>
       </template>
       <template #item.result.correct="{ item }">
         <v-icon v-if="item.value.result.correct == true" icon="mdi-check-circle" color="success"></v-icon>
@@ -80,6 +80,16 @@ const loadLatestSubmissions = () => {
     submissions.value = response.data;
     combineSubmissionsWithStudents();
   });
+};
+
+const colors = (item: number) => {
+  if (item < 50) {
+    return "red";
+  } else if (item < 100) {
+    return "yellow";
+  } else {
+    return "green";
+  }
 };
 
 const loadUsers = () => {
