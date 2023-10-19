@@ -22,3 +22,18 @@ FROM openjdk:17-alpine
 COPY --from=build /build/modules/core/api/target/api.jar /usr/local/api.jar
 EXPOSE 8080
 ENTRYPOINT ["java","-jar","/usr/local/api.jar"]
+
+
+# run py
+# FROM python:3.5-alpine
+#  ENV PYTHONUNBUFFERED 1  
+ 
+#  RUN apk update && \
+#      apk add --virtual build-deps gcc python-dev musl-dev && \
+#      apk add postgresql-dev bash
+ 
+#  RUN mkdir \build\modules\core\django_py
+# ADD build/modules\core/django_py/requirements.txt /config/
+#  RUN pip install -r \build\modules\core\django_py/requirements.txt
+#  RUN mkdir /src
+#  WORKDIR /src
