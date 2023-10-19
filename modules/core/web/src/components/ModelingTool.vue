@@ -1,56 +1,50 @@
 <template>
-  
- <div class="container" :class="{ 'not-clickable': !props.isEditable }" @contextmenu="showContextMenu">
+  <div class="container" :class="{ 'not-clickable': !props.isEditable }">
     <ModalAddAttributes />
-    <div ref="modelingContainer" class="modelingContainer" @click.self="unselectAll">
+    <div ref="modelingContainer" class="modelingContainer" @click.self="unselectAll" @click.right="showContextMenu">
       <EntityMain v-for="entity in entities.diagram.value.entities" :key="entity.id" class="entity" :entity="entity" :is-editable="props.isEditable" />
       <LineMain v-for="line in lineList" :key="line.id" :line="line" />
       <!-- Definiert global das aussehen der Pfeile -->
       <ArrowDefinitionVue class="svgMarker"></ArrowDefinitionVue>
+
       <!-- Context menu -->
-      <div  v-if="isContextMenuVisible" class="context-menu" :style="{ left: contextMenuPosition.x, top: contextMenuPosition.y }">
-       
-      
+      <Transition>
+        <v-card v-if="isContextMenuVisible" class="mx-auto context-menu" width="170" :style="{ left: contextMenuPosition.x, top: contextMenuPosition.y }">
+          <v-list v-model:opened="openGroups">
+            <v-list-group value="elements">
+              <template #activator="{ props }">
+                <v-list-item v-bind="props" title="Elemente"></v-list-item>
+              </template>
 
-    <v-card  width="165.167">
-      <template v-slot:title>
-        Elemente <v-icon icon="mdi-menu-down"></v-icon>
-      </template>
-
-      <v-list>
-  <v-list-item class="custom-list-item">
-    <v-list-item-title>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="52.9586 182.183 61.91 31.75" @mousedown="addElement($event, EntityType.ENTITY)" >
-        <path d="m53.058594 182.2832v0.70118 30.85156h61.705076v-31.55274h-61.705076zm1.40039 1.40039h58.904296v28.75196h-58.904296v-28.75196z" fill="#000000" />
-  </svg>
-    </v-list-item-title>
-  </v-list-item>
-  <v-list-item class="custom-list-item">
-    <v-list-item-title>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="87.3453 830.214 233.4 119.5" @mousedown="addElement($event, EntityType.RELATIONSHIP)" >
-        <path
-      d="m90.087891 830.31445-2.642579 2.65039v113.96094l2.642579 2.64453h227.923829l2.64258-2.64453v-113.96094l-2.64258-2.65039h-227.923829zm2.65039 5.29297h47.482419l-47.482419 48.14844v-48.14844zm54.919919 0h112.51758l53.83594 54.58985-54.08203 54.08007h-112.02539l-54.087894-54.08007 53.841794-54.58985zm119.94922 0h47.76172v48.43164l-47.76172-48.43164zm47.76172 60.7168v47.95312h-47.95312l47.95312-47.95312zm-222.630859 0.27344 47.679689 47.67968h-47.679689v-47.67968z"
-      fill="#000000"
-    />
-      </svg>
-    </v-list-item-title>
-  </v-list-item>
-  <v-list-item class="custom-list-item">
-    <v-list-item-title>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="141.89 718.091 233.4 119.5" @mousedown="addElement($event, EntityType.ENTITYRELATIONSHIP)" >
-        <path d="m141.99023 718.19141v2.64257 116.61133h233.2168v-119.2539h-233.2168zm5.29297 5.29297h47.7461l-47.7461 48.4082v-48.4082zm55.17774 0h167.45312v108.66796h-167.72656l-53.81836-53.82031 54.0918-54.84765zm-55.17774 61.24804 47.41992 47.41992h-47.41992v-47.41992z" fill="#000000" />
-  </svg>
-    </v-list-item-title>
-  </v-list-item>
-</v-list>
-    </v-card>
-
-       
-        
-       
-      </div>
+              <v-list-item class="custom-list-item" @mousedown="addElement($event, EntityType.ENTITY)">
+                <v-list-item-title>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="52.9586 182.183 61.91 31.75">
+                    <path d="m53.058594 182.2832v0.70118 30.85156h61.705076v-31.55274h-61.705076zm1.40039 1.40039h58.904296v28.75196h-58.904296v-28.75196z" fill="#000000" />
+                  </svg>
+                </v-list-item-title>
+              </v-list-item>
+              <v-list-item class="custom-list-item" @mousedown="addElement($event, EntityType.RELATIONSHIP)">
+                <v-list-item-title>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="87.3453 830.214 233.4 119.5">
+                    <path
+                      d="m90.087891 830.31445-2.642579 2.65039v113.96094l2.642579 2.64453h227.923829l2.64258-2.64453v-113.96094l-2.64258-2.65039h-227.923829zm2.65039 5.29297h47.482419l-47.482419 48.14844v-48.14844zm54.919919 0h112.51758l53.83594 54.58985-54.08203 54.08007h-112.02539l-54.087894-54.08007 53.841794-54.58985zm119.94922 0h47.76172v48.43164l-47.76172-48.43164zm47.76172 60.7168v47.95312h-47.95312l47.95312-47.95312zm-222.630859 0.27344 47.679689 47.67968h-47.679689v-47.67968z"
+                      fill="#000000"
+                    />
+                  </svg>
+                </v-list-item-title>
+              </v-list-item>
+              <v-list-item class="custom-list-item" @mousedown="addElement($event, EntityType.ENTITYRELATIONSHIP)">
+                <v-list-item-title>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="141.89 718.091 233.4 119.5">
+                    <path d="m141.99023 718.19141v2.64257 116.61133h233.2168v-119.2539h-233.2168zm5.29297 5.29297h47.7461l-47.7461 48.4082v-48.4082zm55.17774 0h167.45312v108.66796h-167.72656l-53.81836-53.82031 54.0918-54.84765zm-55.17774 61.24804 47.41992 47.41992h-47.41992v-47.41992z" fill="#000000" />
+                  </svg>
+                </v-list-item-title>
+              </v-list-item>
+            </v-list-group>
+          </v-list>
+        </v-card>
+      </Transition>
     </div>
-
   </div>
 </template>
 
@@ -69,17 +63,19 @@ import { defineProps } from "vue";
 import { storeToRefs } from "pinia";
 import EntityType from "@/enums/EntityType";
 
+const diagramStore = useDiagramStore();
+const toolManagementStore = useToolManagementStore();
 
 // props
 const props = defineProps<{
   isEditable: boolean;
 }>();
 
-const diagramStore = useDiagramStore();
-const toolManagementStore = useToolManagementStore();
 const isContextMenuVisible = ref(false);
-const contextMenuPosition = ref({ x: '0px', y: '0px' });
+const openGroups = ref(["elements"]);
+const contextMenuPosition = ref({ x: "0px", y: "0px" });
 const modelingContainer = ref<HTMLElement | null>(null);
+
 // Add this to store the right-click position
 let rightClickPosition = { x: 0, y: 0 };
 const lineList: Line[] = reactive([]);
@@ -96,6 +92,11 @@ onMounted(() => {
       ev.preventDefault();
     });
   }
+
+  // Close the context menu when clicking anywhere else except the menu
+  window.addEventListener("click", (event) => {
+    closeContextMenu(event);
+  });
 });
 
 diagramStore.$subscribe(() => {
@@ -116,10 +117,9 @@ const addElement = (e: MouseEvent, type: EntityType) => {
   const container = modelingContainer.value;
   if (!container) return; // Make sure the container is available.
 
-  
   // Calculate the position relative to the container.
-  const positionX = rightClickPosition.x - container.getBoundingClientRect().left + container.scrollLeft;
-  const positionY = rightClickPosition.y - container.getBoundingClientRect().top + container.scrollTop;
+  const positionX = rightClickPosition.x - container.getBoundingClientRect().left + container.scrollLeft + 5;
+  const positionY = rightClickPosition.y - container.getBoundingClientRect().top + container.scrollTop + 5;
 
   if (diagramStore.diagram.entities.length === 0) {
     diagramStore.diagram.entities.push({
@@ -129,9 +129,10 @@ const addElement = (e: MouseEvent, type: EntityType) => {
       attributes: [],
       top: positionY,
       left: positionX,
-      width: 100
+      width: 100,
     });
     diagramStore.saveHistory();
+    isContextMenuVisible.value = false;
     return;
   }
 
@@ -148,10 +149,11 @@ const addElement = (e: MouseEvent, type: EntityType) => {
     attributes: [],
     top: positionY,
     left: positionX,
-    width: 100
+    width: 100,
   });
 
   diagramStore.saveHistory();
+  isContextMenuVisible.value = false;
 };
 
 const updateArea = () => {
@@ -191,7 +193,6 @@ const calculateLine = (connection: Connection): Line | undefined => {
 
   let startEntity = diagramStore.diagram.entities.find((entity: { id: number }) => entity.id == connection.startEntity);
   let endEntity = diagramStore.diagram.entities.find((entity: { id: number }) => entity.id == connection.endEntity);
-
 
   if (startEntity === undefined || endEntity === undefined) return;
 
@@ -306,7 +307,7 @@ const spreadDuplicateLines = (calculatedLines: Line[]) => {
   });
 
   // calculate offset for each duplicate 10px
- groupedDuplicatedStartEntities.forEach((group: Connection[]) => {
+  groupedDuplicatedStartEntities.forEach((group: Connection[]) => {
     group.forEach((connection: Connection, index2) => {
       const sumOfLines = group.length;
 
@@ -355,26 +356,27 @@ const calculateGradients = (groupedEntities: Connection[][], calculatedLines: Li
 };
 
 const showContextMenu = (event: MouseEvent) => {
-  event.preventDefault();
-  if (toolManagementStore.$state.selectedEntity === null) {
+  // only if no line or entity is clicked
+  if (event.target == modelingContainer.value) {
     isContextMenuVisible.value = true;
-    contextMenuPosition.value = { x: event.clientX + 'px', y: event.clientY + 'px' };
-    
+    contextMenuPosition.value = { x: event.clientX + "px", y: event.clientY + "px" };
+
     // Store the right-click position
     rightClickPosition = { x: event.clientX, y: event.clientY };
   }
 };
+
 // Close the context menu when clicking anywhere else
-const closeContextMenu = () => {
-  if (isContextMenuVisible.value) {
+const closeContextMenu = (event: MouseEvent) => {
+  if (!isContextMenuVisible.value) return;
+
+  const contextMenu = document.querySelector(".context-menu");
+  if (contextMenu === null) return;
+
+  if (!contextMenu.contains(event.target as Node)) {
     isContextMenuVisible.value = false;
   }
 };
-
-onMounted(() => {
-  window.addEventListener("click", closeContextMenu);
-});
-
 </script>
 
 <style scoped lang="scss">
@@ -410,44 +412,30 @@ onMounted(() => {
 
 .context-menu {
   position: fixed;
-  background-color: white;
-  border: 1px solid #ccc;
   z-index: 1000;
-  min-width: 100px;
-  max-width: 200px;
-  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
-  padding: 8px;
   cursor: pointer;
 }
-
-.context-menu div {
-  padding: 5px;
-  cursor: pointer;
-}
-
 
 .custom-list-item {
-  width: 120px; 
- 
-}
-.custom-list-item:hover {
-  background-color: #f0f0f0; /* Background color when hovered */
-  /* Add any other styles you want to change on hover */
-}
-svg {
-  pointer-events: all;
-  * {
-    pointer-events: none !important;
+  padding: 10px 0 0 0;
+
+  &:hover {
+    background-color: #f6f6f6;
+    transition: background-color 0.2s ease-in-out;
+  }
+
+  svg {
+    width: 100px;
   }
 }
-.context-menu-item {
-  padding: 4px 0;
-  transition: background-color 0.2s;
-  cursor: pointer;
+
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
 }
 
-.context-menu-item:hover {
-  background-color: #f0f0f0; /* Background color when hovered */
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
 }
-
 </style>
