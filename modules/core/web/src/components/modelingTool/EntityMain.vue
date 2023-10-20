@@ -84,7 +84,7 @@ const updateAttributes = () => {
 
   props.entity.attributes.forEach((attribute: Attribute) => {
     if (attribute.pkey && attribute.fkey){
-        formattedAttributes.value += "<b><u><i>&" + attribute.name + "</i></u></b>, ";
+        formattedAttributes.value += "<b><u><i>#*" + attribute.name + "</i></u></b>, ";
     } else if (attribute.pkey && !attribute.fkey){
         formattedAttributes.value += "<b><u>#" + attribute.name + "</u></b>, ";
     } else if (!attribute.pkey && attribute.fkey){
