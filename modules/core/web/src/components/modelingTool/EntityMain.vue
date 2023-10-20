@@ -33,7 +33,6 @@ import IconEntityRelationshiptyp from "../icons/IconEntityRelationshiptyp.vue";
 import IconEntity from "../icons/IconEntitytyp.vue";
 import IconRelationshiptyp from "../icons/IconRelationshiptyp.vue";
 import EntityTyp from "../../enums/EntityType";
-import AttributeTyp from "../../enums/AttributeType";
 import OutgoingAnkerPoint from "./OutgoingAnkerPoint.vue";
 import IncomingAnkerPoint from "./IncomingAnkerPoint.vue";
 import EntityWidget from "./EntityWidget.vue";
@@ -84,24 +83,18 @@ const updateAttributes = () => {
   formattedAttributes.value = "";
 
   props.entity.attributes.forEach((attribute: Attribute) => {
-    switch (attribute.type) {
-      case AttributeTyp.PrimaryKey:
+    if (attribute.pkey && attribute.fkey){
+        formattedAttributes.value += "<b><u><i>#*" + attribute.name + "</i></u></b>, ";
+    } else if (attribute.pkey && !attribute.fkey){
         formattedAttributes.value += "<b><u>#" + attribute.name + "</u></b>, ";
-        break;
-
-      case AttributeTyp.ForeignKey:
+    } else if (!attribute.pkey && attribute.fkey){
         formattedAttributes.value += "<i>*" + attribute.name + "</i>, ";
-        break;
-
-      case AttributeTyp.Attribute:
+    } else if (!attribute.pkey && !attribute.fkey){
         formattedAttributes.value += "<span>" + attribute.name + "</span>, ";
-        break;
-
-      default:
-        throw "Not implemented Attribute Typ";
+    } else {
+      throw "Not implemented Attribute Typ";
     }
   });
-
   // cut off ", "
   formattedAttributes.value = formattedAttributes.value.slice(0, -2);
 };

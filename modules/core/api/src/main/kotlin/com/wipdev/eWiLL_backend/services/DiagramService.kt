@@ -21,7 +21,7 @@ class DiagramService : IDiagramService {
 
     @Autowired
     private lateinit var diagramConfigRepository: DiagramConfigRepository
-    override fun getAll(): List<DiagramPL> {
+    override fun getAllDiagramPL(): List<DiagramPL> {
         return diagramRepository.findAll().map { convert(it, diagramConfigRepository) }
     }
 
@@ -66,6 +66,13 @@ class DiagramService : IDiagramService {
         return diagramRepository.findAllByOwnerId(userId).map { convert(it, diagramConfigRepository) }
     }
 
+    fun findAll():List<Diagram>{
+        return diagramRepository.findAll()
+    }
+
+    fun update(diagram: Diagram){
+        diagramRepository.save(diagram)
+    }
 
     companion object {
 

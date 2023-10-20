@@ -1,8 +1,7 @@
-import AttributeType from "../../enums/AttributeType";
-
 interface Attribute {
-  type: AttributeType;
   name: String;
+  pkey: boolean;
+  fkey: boolean;
 }
 
 export default Attribute;
