@@ -1,32 +1,16 @@
 version: '3.8'
 services:
 
-  # db:
-  #     image: postgres:10.3-alpine
-  #     container_name: postgres01
-  # nginx:
-  #     image: nginx:1.13-alpine
-  #     container_name: nginx01
-  #     ports:
-  #       - "8000:8000"
-  #     volumes:
-  #       - ./project:/src
-  #       - D:\Arbeit\eWiLL\modules\core\django_py\nginx\django.conf
-  #     depends_on:
-  #       - web
-  # web:
-  #     build:
-  #       context: .
-  #       dockerfile: modules/core/api/Dockerfile
-  #     container_name: django01
-  #     command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic --noinput && gunicorn hello_django.wsgi -b 0.0.0.0:8000"
-  #     depends_on:
-  #       - db
-  #     volumes:
-  #       - ./project:/src
-  #     expose:
-  #       - "8000"
-  #     restart: always
+
+  django:
+    build: .
+    volumes:
+      - ./modules/core/checker2:/django #Alternativ ./meinOrdner:/derOrdnerausDerDockerfile
+    ports:
+      - 8000:8000
+    image: django:django
+    container_name: django_container
+    command: python manage.py runserver 0.0.0.0:8000
 
 
 
