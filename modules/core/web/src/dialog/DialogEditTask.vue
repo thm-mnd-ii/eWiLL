@@ -20,11 +20,12 @@
                 <v-col cols="12" md="4" class="level-col">
                   <v-menu transition="slide-y-transition">
                     <template #activator="{ props }">
-                      <v-btn color="primary" v-bind="props" class="lvl-btn"> Level <v-icon icon="mdi-menu-down" /> </v-btn>
+                      
+                      <v-btn  color="primary" v-bind="props" class="lvl-btn" > {{ selectedLevel }} <v-icon icon="mdi-menu-down" /> </v-btn>
                     </template>
                     <v-list>
                       <v-list-item v-for="(item, i) in level" :key="i" @click="levelReckognition(item)">
-                        <v-list-item-title class="dropdown-item">{{ item }}</v-list-item-title>
+                        <v-list-item-title v-model="currentTask.level" class="dropdown-item">{{ item }}</v-list-item-title>
                       </v-list-item>
                     </v-list>
                   </v-menu>
@@ -79,6 +80,7 @@ const maxSubmissions = ref();
 const categories = ref<Category[]>([]);
 const diagrams = ref<Diagram[]>([]);
 const level = ["einfach", "mittel", "schwer"];
+const selectedLevel = ref("Level"); 
 const liabilities = ref<any[]>([
   { name: "Verpflichtend", enum: "MANDATORY" },
   { name: "Bonus", enum: "BONUS" },
@@ -172,6 +174,7 @@ const _confirm = () => {
   taskForm.value.validate().then(() => {
     if (valid.value) {
       currentTask.value.mediaType = currentTask.value.mediaType.toUpperCase();
+      currentTask.value.level = selectedLevel.value;
       if (newTask.value) {
         taskService
           .postTask(currentTask.value)
@@ -232,13 +235,16 @@ const loadShowLevel = (level: string) => {
 const levelReckognition = (value: any) => {
   if (value == "einfach") {
     sliderPosition.value = 0;
-    console.log("test", value);
+    selectedLevel.value = "einfach";
+    
   } else if (value == "mittel") {
     sliderPosition.value = 1;
-    console.log("test", value);
+    selectedLevel.value = "mittel";
+    
   } else if (value == "schwer") {
     sliderPosition.value = 2;
-    console.log("test", value);
+    selectedLevel.value = "schwer";
+    
   }
 };
 

@@ -12,6 +12,7 @@ interface Task {
   eliability: string;
   maxSubmissions: number;
   showLevel: FeedbackLevel;
+  level: string;
 }
 
 export default Task;
