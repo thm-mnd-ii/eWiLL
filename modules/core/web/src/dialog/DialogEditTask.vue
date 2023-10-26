@@ -14,12 +14,16 @@
             <v-select v-model="currentTask.eliability" :rules="liabilityRules" :items="liabilities" label="Verpflichtung" variant="underlined" color="primary" item-title="name" item-value="enum"></v-select>
             <v-select v-model="maxSubmissions" :items="arrayMaxSubmissions" label="Versuche" variant="underlined" color="primary" hint="0 = unbegrenzt" placeholder="0 = unbegrenzt" @update:model-value="updateMaxSubmissionsOnCurrentTask"></v-select>
             <v-slider v-model="sliderPosition" :min="0" :max="2" :step="1" thumb-label label="Feedback Level" color="primary" hint="0 = Kein Feedback, 1 = Hinweis auf Fehler, 2 = Lösungsvorschläge" persistent-hint @update:model-value="updateShowLevel"></v-slider>
+           
           </div>
         </v-form>
       </v-card-text>
       <v-card-actions class="card-actions">
+        <v-progress-circular v-if="loading" color="primary" indeterminate size="40"></v-progress-circular>
+    
         <v-btn v-if="!newTask" color="error" variant="flat" @click="deleteTask">Aufgabe löschen</v-btn>
         <v-spacer></v-spacer>
+        
         <v-btn color="error" variant="flat" @click="_cancel"> Abbrechen </v-btn>
         <v-btn color="success" variant="flat" @click="_confirm"> Speichern </v-btn>
       </v-card-actions>
@@ -41,7 +45,7 @@ import taskService from "@/services/task.service";
 import router from "@/router";
 import DialogConfirmVue from "../dialog/DialogConfirm.vue";
 import FeedbackLevel from "@/enums/FeedbackLevel";
-
+import LoadingDialog from './LoadingDialog.vue';
 const arrayMaxSubmissions = Array.from(Array(100).keys());
 
 const authUserStore = useAuthUserStore();
@@ -54,7 +58,7 @@ const snackbarFail = ref(false);
 const editTitle = ref<string>("");
 const newTask = ref(false);
 const currentTask = ref<Task>({} as Task);
-
+const loading = ref(false);
 const maxSubmissions = ref();
 const categories = ref<Category[]>([]);
 const diagrams = ref<Diagram[]>([]);
@@ -115,7 +119,7 @@ const updateDiagramsIncludingSolutionModel = () => {
 };
 
 // #############################
-// Promis
+// Promise
 const resolvePromise: any = ref(undefined);
 const rejectPromise: any = ref(undefined);
 
@@ -148,6 +152,8 @@ const openDialog = (task?: Task) => {
 };
 
 const _confirm = () => {
+  loading.value = true; 
+  
   taskForm.value.validate().then(() => {
     if (valid.value) {
       currentTask.value.mediaType = currentTask.value.mediaType.toUpperCase();
@@ -160,6 +166,11 @@ const _confirm = () => {
           })
           .catch((error) => {
             console.log(error);
+          })
+          .finally(() => {
+            setTimeout(() => {
+              loading.value = false; 
+            }, 2000);
           });
       } else {
         taskService
@@ -170,6 +181,12 @@ const _confirm = () => {
           })
           .catch(() => {
             snackbarFail.value = true;
+          })
+          .finally(() => {
+            
+            setTimeout(() => {
+              loading.value = false; 
+            }, 2000);
           });
       }
     }
