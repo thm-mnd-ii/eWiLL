@@ -15,25 +15,34 @@ import java.util.*
 @Component
 class JwtUtils {
 
-    private var jwtSecret: Key = io.jsonwebtoken.security.Keys.secretKeyFor(SignatureAlgorithm.HS512)
+
 
     @Value("\${app.jwtExpirationMs}")
     private var jwtExpirationMs: Int = 0
+
+    fun getSecretKey(): Key {
+        val keyString = System.getenv("JWT_SECRET")
+        return if(keyString==null){
+            io.jsonwebtoken.security.Keys.secretKeyFor(SignatureAlgorithm.HS256)
+        }else{
+            keyString.toByteArray().let { io.jsonwebtoken.security.Keys.hmacShaKeyFor(it) }
+        }
+    }
 
     fun generateJwtToken(authentication: Authentication): String {
         val userPrincipal = authentication.principal as UserDetailsImpl
         return Jwts.builder().setSubject(userPrincipal.username).setIssuedAt(Date())
             .setExpiration(Date(Date().time + jwtExpirationMs))
-            .signWith(jwtSecret, SignatureAlgorithm.HS512).compact()
+            .signWith(getSecretKey(), SignatureAlgorithm.HS256).compact()
     }
 
     fun getUserNameFromJwtToken(token: String): String {
-        return Jwts.parserBuilder().setSigningKey(jwtSecret).build().parseClaimsJws(token).body.subject
+        return Jwts.parserBuilder().setSigningKey(getSecretKey()).build().parseClaimsJws(token).body.subject
     }
 
     fun validateJwtToken(authToken: String): Boolean {
         try {
-            Jwts.parserBuilder().setSigningKey(jwtSecret).build().parseClaimsJws(authToken)
+            Jwts.parserBuilder().setSigningKey(getSecretKey()).build().parseClaimsJws(authToken)
             return true
         } catch (e: Exception) {
             println("Invalid JWT signature: ${e.message}")
