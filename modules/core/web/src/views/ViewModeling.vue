@@ -1,4 +1,5 @@
-<template>
+<template>  
+  <DialogSaveToLocalStorageVue ref="dialogSaveToLocal"></DialogSaveToLocalStorageVue>
   <v-snackbar v-model="snackbarSuccess" :timeout="2500"> Diagramm erfolgreich eingereicht </v-snackbar>
   
   <div class="container">
@@ -66,6 +67,7 @@ import { useToolManagementStore } from "@/stores/toolManagementStore";
 import { useRouter, onBeforeRouteLeave } from "vue-router";
 
 import diagramService from "@/services/diagram.service";
+import DialogSaveToLocalStorageVue from "@/dialog/DialogSaveToLocalStorage.vue";
 
 const snackbarSuccess = ref(false);
 
@@ -77,6 +79,8 @@ const modelingToolKey = storeToRefs(diagramStore).key;
 const activeCourse = toolManagementStore.activeCourse;
 const activeTask = toolManagementStore.activeTask;
 
+const dialogSaveToLocal = ref<typeof DialogSaveToLocalStorageVue>();
+
 const currentTime = ref<Date>(new Date());
 setInterval(() => {
   currentTime.value = new Date();
@@ -86,14 +90,14 @@ onBeforeRouteLeave((to, from, next) => {
   if (diagramStore.saved) {
     next();
   } else {
-    const message = "Dein Modell wurde noch nicht gespeichert. Willst du die Seite wirklich verlassen?";
-    if (window.confirm(message)) {
-      next();
-    } else {
-      next(false);
-    }
-  }
-});
+    dialogSaveToLocal.value?.openDialog().then((result: boolean) => {
+      if (result) {
+        next();
+      } else {
+        next();
+      }
+    });
+}});
 
 onMounted(() => {
   window.addEventListener("beforeunload", handleBeforeUnload);
