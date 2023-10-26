@@ -17,20 +17,10 @@
 
             <v-container>
               <v-row>
-                <v-col cols="12" md="4" class="level-col">
-                  <v-menu transition="slide-y-transition">
-                    <template #activator="{ props }">
-                      
-                      <v-btn  color="primary" v-bind="props" class="lvl-btn" > {{ selectedLevel }} <v-icon icon="mdi-menu-down" /> </v-btn>
-                    </template>
-                    <v-list>
-                      <v-list-item v-for="(item, i) in level" :key="i" @click="levelReckognition(item)">
-                        <v-list-item-title v-model="currentTask.level" class="dropdown-item">{{ item }}</v-list-item-title>
-                      </v-list-item>
-                    </v-list>
-                  </v-menu>
+                <v-col cols="12" md="6" class="level-col">
+                  <v-select v-model="currentTask.level" :rules="levelrules" label="Level" variant="underlined" :items="level" color="primary" @update:model-value="levelReckognition"></v-select>
                 </v-col>
-                <v-col cols="12" md="4" class="automatic-col">
+                <v-col cols="10" md="4" class="automatic-col">
                   <v-btn :disabled="isDisabled" class="automatic-btn" variant="plain"> Automatisch erkennen </v-btn>
                 </v-col>
               </v-row>
@@ -49,6 +39,7 @@
   </v-dialog>
   <DialogConfirmVue ref="dialogConfirm"></DialogConfirmVue>
 </template>
+
 
 <script setup lang="ts">
 import Task from "@/model/task/Task";
@@ -106,6 +97,7 @@ const modelRules = ref<any>([(v: string) => !!v || "Musterdiagramm ist erforderl
 const regex = /^([0-2][0-9]|3[0-1])\.(0[1-9]|1[0-2])\.\d{4} ([01][0-9]|2[0-3]):[0-5][0-9]$/;
 const dueDateRules = ref<any>([(v: string) => (!!v && regex.test(v)) || "Ungültiges Datum dd.mm.yyyy hh:mm"]);
 const liabilityRules = ref<any>([(v: string) => !!v || "Verpflichtung ist erforderlich"]);
+const levelrules = ref<any>([(v: string) => !!v || "Level ist erforderlich"]);
 
 // empty, or should be a valid date and in the future
 // const dueDateRules = ref<any>([(v: string) => !v || (new Date(v) > new Date() && !isNaN(new Date(v).getTime())) || "Ungültiges Datum"]);
@@ -287,7 +279,7 @@ defineExpose({
 }
 @media screen and (min-width: 768px) {
   .automatisch-btn {
-    max-width: 300px;
+    max-width: 150px;
   }
 }
 .level-col {
@@ -295,5 +287,7 @@ defineExpose({
 }
 
 .automatic-col {
+  margin-top: 10px;
+  height: 100px;
 }
 </style>

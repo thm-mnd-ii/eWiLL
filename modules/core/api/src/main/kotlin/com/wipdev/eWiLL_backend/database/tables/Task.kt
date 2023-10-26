@@ -29,7 +29,7 @@ data class Task(
         @Column(name = "showLevel")
         @Enumerated(EnumType.STRING)
         var showLevel: FeedbackLevel? = FeedbackLevel.BASIC,
-        @Column(name = "level", nullable = true) var level: String? = null,
+        @Column(name = "level", nullable = true) var level: String? = "einfach",
 ) {
 
     override fun equals(other: Any?): Boolean {
