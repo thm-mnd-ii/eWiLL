@@ -134,7 +134,7 @@ router.beforeEach(async (to, from, next) => {
     if (response === true) {
       return true;
     } else {
-      //localStorage.removeItem("user");
+      localStorage.removeItem("user");
       return false;
     }
   });
