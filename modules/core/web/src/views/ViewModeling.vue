@@ -55,7 +55,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount } from "vue";
+import { ref, computed, onMounted } from "vue";
 
 import ModelingTool from "@/components/ModelingTool.vue";
 import FileExplorer from "@/components/FileExplorer.vue";
