@@ -36,10 +36,8 @@ class WebSecurityConfig {
     fun filterChain(http: HttpSecurity): SecurityFilterChain? {
         http.cors().and().csrf().disable()
             .authorizeRequests()
-                .antMatchers("http://localhost:8080/").permitAll()
-                .anyRequest().permitAll()
-            .and()
-                .headers().frameOptions().disable()
+            .anyRequest().permitAll()
+        http.headers().frameOptions().disable()
         return http.build()
     }
 
