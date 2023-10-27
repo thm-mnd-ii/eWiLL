@@ -55,7 +55,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 
 import ModelingTool from "@/components/ModelingTool.vue";
 import FileExplorer from "@/components/FileExplorer.vue";
@@ -80,6 +80,11 @@ const activeCourse = toolManagementStore.activeCourse;
 const activeTask = toolManagementStore.activeTask;
 
 const dialogSaveToLocal = ref<typeof DialogSaveToLocalStorageVue>();
+const getLocalDiagram = localStorage.getItem('diag');
+
+if (getLocalDiagram != null){
+    diagramStore.diagram = JSON.parse(getLocalDiagram);
+  };
 
 const currentTime = ref<Date>(new Date());
 setInterval(() => {
