@@ -20,6 +20,7 @@
           </v-row>
         </v-card-text>
         <v-card-actions class="card-actions">
+          <v-progress-circular v-if="loading" color="primary" indeterminate size="40"></v-progress-circular>
           <v-btn v-if="!newCourse" color="error" variant="flat" @click="deleteCourse">Kurs löschen</v-btn>
           <v-spacer></v-spacer>
           <v-btn color="error" variant="flat" @click="_cancel"> Abbrechen </v-btn>
@@ -56,7 +57,7 @@ const newCourse = ref(true);
 const course = ref<CoursePL>({} as CoursePL);
 
 const snackbarFail = ref(false);
-
+const loading = ref(false);
 // Form
 const valid = ref();
 const courseSemester = ref("");
@@ -99,36 +100,41 @@ const refreshTextFields = () => {
 
 // TODO
 const _confirm = () => {
-  if (valid.value) {
-    // course.active has to be handled by the backend. Needs to be removed because it tempers with the put.
-    course.value.active = true;
-    let userId = authUserStore.auth.user?.id;
-    if (userId != undefined) course.value.owner = userId;
-    if (newCourse.value == true) {
-      courseService
-        .postCourse(course.value)
-        .then((response) => {
-          courseDialog.value = false;
-          resolvePromise.value(response.data.id);
-        })
-        .catch((error) => {
-          snackbarFail.value = true;
-          console.log(error);
-        });
-    } else {
-      console.log(course);
-      courseService
-        .putCourse(course.value)
-        .then((response) => {
-          courseDialog.value = false;
-          resolvePromise.value(response.data.id);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+  loading.value = true;
+  
+  setTimeout(() => {
+    if (valid.value) {
+      course.value.active = true;
+      let userId = authUserStore.auth.user?.id;
+      if (userId != undefined) course.value.owner = userId;
+      if (newCourse.value == true) {
+        courseService
+          .postCourse(course.value)
+          .then((response) => {
+            courseDialog.value = false;
+            resolvePromise.value(response.data.id);
+          })
+          .catch((error) => {
+            snackbarFail.value = true;
+            console.log(error);
+          });
+      } else {
+        console.log(course);
+        courseService
+          .putCourse(course.value)
+          .then((response) => {
+            courseDialog.value = false;
+            resolvePromise.value(response.data.id);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
     }
-  }
+    loading.value = false; 
+  }, 800); 
 };
+
 
 const _cancel = () => {
   courseDialog.value = false;

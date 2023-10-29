@@ -45,7 +45,6 @@ import taskService from "@/services/task.service";
 import router from "@/router";
 import DialogConfirmVue from "../dialog/DialogConfirm.vue";
 import FeedbackLevel from "@/enums/FeedbackLevel";
-import LoadingDialog from './LoadingDialog.vue';
 const arrayMaxSubmissions = Array.from(Array(100).keys());
 
 const authUserStore = useAuthUserStore();
