@@ -1,7 +1,8 @@
 <!-- eslint-disable vue/valid-v-slot -->
 <template>
+  <DialogShowFeedback ref="dialogShowFeedback" />
   <DialogShowFullDiagram ref="dialogShowFullDiagram" />
-
+  
   <div class="container">
     <v-text-field v-model="search" class="search-bar" label="Search" density="compact" prepend-icon="mdi-magnify" variant="underlined" hide-details></v-text-field>
     <v-row>
@@ -12,7 +13,7 @@
         <v-btn append-icon="mdi-presentation" @click="openDiagram(item.value.submission.diagram)">Preview</v-btn>
       </template>
       <template #item.result.score="{ item }">
-        <v-chip  :style="{ background: colors(item), color: 'black' }"> {{ item.value.result.score }}</v-chip>
+        <v-chip v-b-tooltip.hover title="Zeige komplettes Feedback"  :style="{ background: colors(item), color: 'black' }" @click="openFeedback(item.value.result.comments)"> {{ item.value.result.score }}</v-chip>
       </template>
       <template #item.result.correct="{ item }">
         <v-icon v-if="item.value.result.correct == true" icon="mdi-check-circle" color="success"></v-icon>
@@ -37,9 +38,10 @@ import Diagram from "@/model/diagram/Diagram";
 import Submission from "@/model/submission/Submission";
 
 import DialogShowFullDiagram from "@/dialog/DialogShowFullDiagram.vue";
+import DialogShowFeedback from "@/dialog/DialogShowFeedback.vue";
 
 const dialogShowFullDiagram = ref<typeof DialogShowFullDiagram>();
-
+const dialogShowFeedback = ref<typeof DialogShowFeedback>();
 const diagramStore = useDiagramStore();
 
 const search = ref("");
@@ -127,6 +129,27 @@ const openDiagram = (diagram: Diagram) => {
   console.log(diagram);
   diagramStore.loadDiagram(diagram);
   dialogShowFullDiagram.value?.openDialog("");
+};
+const openFeedback = (comments: any) => {
+  var message: string[] = [];
+  const comms = JSON.stringify(comments);
+  const obj = JSON.parse(comms);
+  for (const [index, item] of obj.entries()) {
+    message.push(
+      `Hinweis (${index+1}) : <br>`+
+      `+ feedbackLevel: ${item.feedbackLevel}<br>` +
+      `+ message: ${item.message}<br>` +
+      `+ resultMessageType: ${item.resultMessageType}<br>` +
+      `+ affectedEntityId: ${item.affectedEntityId}<br>` +
+      `+ affectedEntityName: ${item.affectedEntityName}<br>` +
+      `+ affectedAttributeName: ${item.affectedAttributeName}<br>` +
+      `+ connectedToId: ${item.connectedToId}<br>` +
+      `+ statusLevel: ${item.statusLevel} <br> <br>`
+    );
+  }
+  const dialogContent = `${message.join('')}`;
+  dialogShowFeedback.value?.openDialog("Feedback", dialogContent);
+  console.log("content ", comms);
 };
 
 defineExpose({
