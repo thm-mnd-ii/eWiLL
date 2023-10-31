@@ -99,6 +99,7 @@ export const useDiagramStore = defineStore("diagram", {
 
       this.historyIndex = this.history.length;
 
+      localStorage.setItem("diagram", JSON.stringify(this.diagram));
       // console.log("current Index", this.historyIndex);
     },
     undo() {

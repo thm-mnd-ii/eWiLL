@@ -80,11 +80,7 @@ const activeCourse = toolManagementStore.activeCourse;
 const activeTask = toolManagementStore.activeTask;
 
 const dialogSaveToLocal = ref<typeof DialogSaveToLocalStorageVue>();
-const getLocalDiagram = localStorage.getItem('diag');
-
-if (getLocalDiagram != null){
-    diagramStore.diagram = JSON.parse(getLocalDiagram);
-  };
+const getLocalDiagram = localStorage.getItem("diagram");
 
 const currentTime = ref<Date>(new Date());
 setInterval(() => {
@@ -95,16 +91,20 @@ onBeforeRouteLeave((to, from, next) => {
   if (diagramStore.saved) {
     next();
   } else {
-    dialogSaveToLocal.value?.openDialog().then((result: boolean) => {
-      if (result) {
-        next();
-      } else {
-        next();
-      }
-    });
-}});
+    const message = "Dein Modell wurde noch nicht gespeichert. Willst du die Seite wirklich verlassen?";
+    if (window.confirm(message)) {
+      dialogSaveToLocal.value?.initDiagram();
+      next();
+    } else {
+      next(false);
+    }
+  }
+});
 
 onMounted(() => {
+  if (getLocalDiagram != null) {
+    dialogSaveToLocal.value?.openDialog();
+  }
   window.addEventListener("beforeunload", handleBeforeUnload);
 });
 

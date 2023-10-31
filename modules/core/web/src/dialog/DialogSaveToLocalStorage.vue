@@ -3,11 +3,10 @@
   <v-dialog v-model="saveDialog" width="75%">
     <v-card>
       <v-card-title>
-        <span class="text-h5">Möchtest du das Diagramm lokal speichern?</span>
+        <span class="text-h5">Möchtest du dieses Diagramm übernehmen?</span>
       </v-card-title>
 
       <v-card class="preview-container">
-        <h5 class="warning">Bitte beachte, dass das Diagramm dann nur auf deinem Gerät und nicht auf dem Server gespeichert wird.</h5>
           <v-card-title class="task-header-title">
             <h6 class="headline mb-0">Vorschau:</h6>
             <v-spacer></v-spacer>
@@ -21,8 +20,8 @@
         </v-card>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn variant="text" @click="_close"> Schließen </v-btn>
-        <v-btn variant="text" @click="saveDiagram"> Speichern </v-btn>
+        <v-btn variant="text" @click="_newDiagram"> Neu anlegen </v-btn>
+        <v-btn variant="text" @click="_loadDiagram"> Übernehmen </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -32,10 +31,10 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useDiagramStore } from '@/stores/diagramStore';
-import { useAuthUserStore } from "../stores/authUserStore";
 import DialogShowFullDiagramVue from './DialogShowFullDiagram.vue';
 import ModelingTool from "@/components/ModelingTool.vue";
 import { storeToRefs } from "pinia";
+import { useAuthUserStore } from '@/stores/authUserStore';
 
 const saveDialog = ref<boolean>(false);
 const diagramStore = useDiagramStore();
@@ -44,24 +43,48 @@ const authUserStore = useAuthUserStore();
 const modelingToolKey = storeToRefs(diagramStore).key;
 
 const dialogShowFull = ref<typeof DialogShowFullDiagramVue>();
+const getLocalDiagram = localStorage.getItem("diagram");
 
-const saveDiagram = () => {  
+const resolvePromise: any = ref(undefined);
+const rejectPromise: any = ref(undefined);
+
+const _loadDiagram = () => {  
   if (authUserStore.auth.user != null) {
     diagramStore.diagram.ownerId = authUserStore.auth.user?.id;
   } else {
     throw new Error("User is not logged in");
   }
 
-  localStorage.setItem('diag', JSON.stringify(diagramStore.diagram));
+  if (getLocalDiagram != null) {
+    diagramStore.diagram = JSON.parse(getLocalDiagram);
+  }
   _close();
 };
 
-const openFullDiagram = () => {
-  dialogShowFull.value?.openDialog("");
+const _newDiagram = () => {
+  localStorage.removeItem("diagram");
+  initDiagram();
+  _close();
 };
 
-const resolvePromise: any = ref(undefined);
-const rejectPromise: any = ref(undefined);
+const initDiagram = () => {
+  diagramStore.diagram = {
+      id: 0,
+      ownerId: 0,
+      name: "",
+      config: {
+          id: 0,
+          diagramType: 0
+      },
+      entities: [],
+      connections: [],
+      categoryId: 0
+  };
+};
+
+const openFullDiagram = () => {
+  dialogShowFull.value?.openDialog();
+};
 
 const openDialog = () => {
   saveDialog.value = true;
@@ -80,14 +103,12 @@ const _close = () => {
 // define expose
 defineExpose({
   openDialog,
+  initDiagram,
 });
 </script>
 
 <style scoped lang="scss">
 
-.warning {
-  padding: 15px 0 0 15px;
-}
 .task-header-title {
   display: flex;
   align-items: center;
