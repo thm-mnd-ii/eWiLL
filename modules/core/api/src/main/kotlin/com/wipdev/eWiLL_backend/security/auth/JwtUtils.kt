@@ -3,6 +3,7 @@ package com.wipdev.eWiLL_backend.security.auth
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.interfaces.DecodedJWT
+import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import org.springframework.beans.factory.annotation.Value
@@ -20,14 +21,7 @@ class JwtUtils {
     @Value("\${app.jwtExpirationMs}")
     private var jwtExpirationMs: Int = 0
 
-    fun getSecretKey(): Key {
-        val keyString = System.getenv("JWT_SECRET")
-        return if(keyString==null){
-            io.jsonwebtoken.security.Keys.secretKeyFor(SignatureAlgorithm.HS256)
-        }else{
-            keyString.toByteArray().let { io.jsonwebtoken.security.Keys.hmacShaKeyFor(it) }
-        }
-    }
+
 
     fun generateJwtToken(authentication: Authentication): String {
         val userPrincipal = authentication.principal as UserDetailsImpl
@@ -50,16 +44,18 @@ class JwtUtils {
         return false
     }
 
+
+
     companion object {
         fun decodeFBSToken(token: String?): FBSTokenDecodingResult {
-            val decodedJWT: DecodedJWT = JWT.decode(token)
+            val claims:Claims = Jwts.parserBuilder().setSigningKey(getSecretKey()).build().parseClaimsJws(token).body
             return FBSTokenDecodingResult(
-                decodedJWT.getClaim("id").asInt(),
-                decodedJWT.getClaim("username").asString(),
-                decodedJWT.getClaim("courseRoles").asString(),
-                decodedJWT.getClaim("globalRole").asString(),
-                decodedJWT.getClaim("exp").asString(),
-                decodedJWT.getClaim("iat").asString()
+                claims["id"] as Int,
+                claims["username"] as String,
+                claims["courseRoles"] as String,
+                claims["globalRole"] as String,
+                claims["exp"] as String,
+                claims["iat"] as String
             )
         }
 
@@ -73,6 +69,14 @@ class JwtUtils {
             val iat: String
         )
 
+        fun getSecretKey(): Key {
+            val keyString = System.getenv("JWT_SECRET")
+            return if(keyString==null){
+                io.jsonwebtoken.security.Keys.secretKeyFor(SignatureAlgorithm.HS256)
+            }else{
+                keyString.toByteArray().let { io.jsonwebtoken.security.Keys.hmacShaKeyFor(it) }
+            }
+        }
 
     }
 
