@@ -43,7 +43,6 @@ const authUserStore = useAuthUserStore();
 const modelingToolKey = storeToRefs(diagramStore).key;
 
 const dialogShowFull = ref<typeof DialogShowFullDiagramVue>();
-const getLocalDiagram = localStorage.getItem("diagram");
 
 const resolvePromise: any = ref(undefined);
 const rejectPromise: any = ref(undefined);
@@ -53,10 +52,6 @@ const _loadDiagram = () => {
     diagramStore.diagram.ownerId = authUserStore.auth.user?.id;
   } else {
     throw new Error("User is not logged in");
-  }
-
-  if (getLocalDiagram != null) {
-    diagramStore.diagram = JSON.parse(getLocalDiagram);
   }
   _close();
 };

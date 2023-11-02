@@ -82,6 +82,10 @@ const activeTask = toolManagementStore.activeTask;
 const dialogSaveToLocal = ref<typeof DialogSaveToLocalStorageVue>();
 const getLocalDiagram = localStorage.getItem("diagram");
 
+if (getLocalDiagram) {
+    diagramStore.diagram = JSON.parse(getLocalDiagram);
+  }
+
 const currentTime = ref<Date>(new Date());
 setInterval(() => {
   currentTime.value = new Date();
