@@ -58,23 +58,8 @@ const _loadDiagram = () => {
 
 const _newDiagram = () => {
   localStorage.removeItem("diagram");
-  initDiagram();
+  diagramStore.createNewDiagram();
   _close();
-};
-
-const initDiagram = () => {
-  diagramStore.diagram = {
-      id: 0,
-      ownerId: 0,
-      name: "",
-      config: {
-          id: 0,
-          diagramType: 0
-      },
-      entities: [],
-      connections: [],
-      categoryId: 0
-  };
 };
 
 const openFullDiagram = () => {
@@ -98,7 +83,6 @@ const _close = () => {
 // define expose
 defineExpose({
   openDialog,
-  initDiagram,
 });
 </script>
 

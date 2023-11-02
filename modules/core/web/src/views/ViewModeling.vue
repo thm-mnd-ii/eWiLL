@@ -97,7 +97,6 @@ onBeforeRouteLeave((to, from, next) => {
   } else {
     const message = "Dein Modell wurde noch nicht gespeichert. Willst du die Seite wirklich verlassen?";
     if (window.confirm(message)) {
-      dialogSaveToLocal.value?.initDiagram();
       next();
     } else {
       next(false);
