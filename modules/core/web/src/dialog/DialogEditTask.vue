@@ -19,13 +19,14 @@
         </v-form>
       </v-card-text>
       <v-card-actions class="card-actions">
-        <v-progress-circular v-if="loading" color="primary" indeterminate size="40"></v-progress-circular>
+        
     
         <v-btn v-if="!newTask" color="error" variant="flat" @click="deleteTask">Aufgabe löschen</v-btn>
         <v-spacer></v-spacer>
         
         <v-btn color="error" variant="flat" @click="_cancel"> Abbrechen </v-btn>
-        <v-btn color="success" variant="flat" @click="_confirm"> Speichern </v-btn>
+        <v-btn v-if="!loading" color="success" variant="flat" @click="_confirm"> Speichern </v-btn>
+        <v-progress-circular v-if="loading" color="primary" indeterminate size="40"></v-progress-circular>
       </v-card-actions>
     </v-card>
     <v-snackbar v-model="snackbarFail" :timeout="3000"> Ein Fehler ist aufgetreten, bitte versuchen Sie es erneut </v-snackbar>
@@ -164,9 +165,11 @@ const _confirm = () => {
             resolvePromise.value(true);
           })
           .catch((error) => {
-            console.log(error);
+            console.error(error);
+            snackbarFail.value = true;
+            loading.value = false; 
           })
-          .finally(() => {
+          .finally(() => {        
             setTimeout(() => {
               loading.value = false; 
             }, 2000);
@@ -178,8 +181,10 @@ const _confirm = () => {
             editTaskDialog.value = false;
             resolvePromise.value(true);
           })
-          .catch(() => {
+          .catch((error) => {
+            console.error(error);
             snackbarFail.value = true;
+            loading.value = false; // Set loading to false here in case of error
           })
           .finally(() => {
             
@@ -188,7 +193,11 @@ const _confirm = () => {
             }, 2000);
           });
       }
+    } else {
+      loading.value = false; 
     }
+  }).catch(() => {
+    loading.value = false; 
   });
 };
 

@@ -20,10 +20,11 @@
         <small>*indicates required field</small>
       </v-card-text>
       <v-card-actions>
-        <v-progress-circular v-if="loading" color="primary" indeterminate size="40"></v-progress-circular>
+        
         <v-spacer></v-spacer>
         <v-btn variant="text" @click="_close"> Close </v-btn>
-        <v-btn variant="text" @click="saveDiagram"> Save </v-btn>
+        <v-progress-circular v-if="loading" color="primary" indeterminate size="40"></v-progress-circular>
+        <v-btn v-if="!loading" variant="text" @click="saveDiagram"> Save </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -95,6 +96,7 @@ const saveDiagram = () => {
           .catch((error) => {
             console.log(error);
             alert("Diagramm konnte nicht gespeichert werden");
+            loading.value = false;
           }) .finally(() => {
       
       setTimeout(() => {
@@ -102,6 +104,7 @@ const saveDiagram = () => {
       }, 1000);
     });
       } else {
+        loading.value = false;
         alert("Form is not valid");
       }
     });
@@ -119,6 +122,7 @@ const saveDiagram = () => {
           })
           .catch(() => {
             alert("Diagramm konnte nicht gespeichert werden");
+            loading.value = false;
           });
       }
     });

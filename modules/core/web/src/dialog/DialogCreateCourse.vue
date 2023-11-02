@@ -20,11 +20,12 @@
           </v-row>
         </v-card-text>
         <v-card-actions class="card-actions">
-          <v-progress-circular v-if="loading" color="primary" indeterminate size="40"></v-progress-circular>
+   
           <v-btn v-if="!newCourse" color="error" variant="flat" @click="deleteCourse">Kurs löschen</v-btn>
           <v-spacer></v-spacer>
           <v-btn color="error" variant="flat" @click="_cancel"> Abbrechen </v-btn>
-          <v-btn color="primary" variant="flat" type="submit" @click="_confirm"> Speichern </v-btn>
+          <v-btn v-if="!loading" color="primary" variant="flat" type="submit" @click="_confirm"> Speichern </v-btn>
+          <v-progress-circular v-if="loading" color="primary" indeterminate size="40"></v-progress-circular>
         </v-card-actions>
       </v-form>
     </v-card>
@@ -34,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import {watch, ref } from "vue";
 import { useAuthUserStore } from "../stores/authUserStore";
 import courseService from "../services/course.service";
 import CoursePL from "../model/course/CoursePL";
@@ -82,6 +83,25 @@ const openDialog = (courseId: number | undefined) => {
   });
 };
 
+//the watcher  is used to reset the form when opening/closing the dialog. 
+watch(courseDialog, (newVal) => {
+  if (newVal) {
+    // Dialog opened, fetch course data if editing
+    if (!newCourse.value && course.value.id) {
+      initializeDialogForEditingCourse(course.value.id);
+    }
+  } else {
+    // Dialog closed, reset course data
+    resetDialog();
+  }
+});
+
+const resetDialog = () => {
+  course.value = {}as CoursePL; 
+  valid.value = false; 
+
+};
+
 const initializeDialogForNewCourse = () => {
   dialogTitle.value = "Neuen Kurs erstellen";
 };
@@ -99,10 +119,10 @@ const refreshTextFields = () => {
 };
 
 // TODO
-const _confirm = () => {
+const _confirm = async () => {
   loading.value = true;
   
-  setTimeout(() => {
+  
     if (valid.value) {
       course.value.active = true;
       let userId = authUserStore.auth.user?.id;
@@ -131,8 +151,11 @@ const _confirm = () => {
           });
       }
     }
-    loading.value = false; 
-  }, 800); 
+    setTimeout(() => {
+      loading.value = false;
+    }, 1000);
+    
+  
 };
 
 
