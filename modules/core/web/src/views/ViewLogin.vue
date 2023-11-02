@@ -29,7 +29,7 @@
 <script setup lang="ts">
 import BasicBackground from '@/components/BasicBackground.vue';
 
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthUserStore } from "../stores/authUserStore";
 import DialogCompatibilityIssueVue from "@/dialog/DialogCompatibilityIssue.vue";
@@ -57,6 +57,11 @@ onMounted(() => {
   _checkOS();
   _checkBrowser();
   _checkScreenSize();
+  window.addEventListener('resize', _checkScreenSize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', _checkScreenSize);
 });
 
 const _checkBrowser = () => {
