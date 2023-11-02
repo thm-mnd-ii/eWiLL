@@ -4,16 +4,19 @@
       <v-card-title>
         <span class="text-h5">Kompatibilitätsproblem</span>
         <v-card-text class="comp-text">
-          <strong>Leider haben wir festgestellt, dass dein aktuelles Browser- oder Betriebssystem nicht mit unserem Modellierungstool kompatibel ist!</strong>
+          <strong>Leider haben wir festgestellt, dass dein aktuelles Browser- oder Betriebssystem nicht mit unserem Modellierungstool kompatibel ist. 
+            Zusätzlich erfordert unser Tool eine Mindestbildschirmgröße!</strong>
           <br />
           <br />
-          Für die beste Benutzererfahrung und volle Funktionalität stelle bitte sicher, dass du eines der folgenden Desktop-Betriebssysteme und Browser verwendest:
+          Für die beste Benutzererfahrung und volle Funktionalität, stelle bitte sicher, dass du ein unterstütztes Desktop-Betriebssystem und einen
+           kompatiblen Browser benutzt und dass dein Bildschirm die erforderliche Mindestgröße aufweist:
           <br />
         <ul>
             <li><strong>Betriebssysteme:</strong> <i>Windows, macOS, oder Linux</i></li>
             <li><strong>Browser:</strong> <i>Chromium basiert oder Mozilla Firefox</i></li>
+            <li><strong>Mindestbildschirmgröße:</strong> <i>1024 x 300</i></li>
         </ul>
-          Bitte beachte, dass unser Tool <strong>nicht</strong> für die Nutzung auf <strong>mobilen Geräten oder Tablets</strong> optimiert ist.
+          Bitte beachte, dass unser Tool <strong>nicht</strong> für die Nutzung auf <strong>mobilen Geräten oder Tablets</strong> optimiert ist. 
         </v-card-text>
       </v-card-title>
       <v-card-actions>
