@@ -142,6 +142,7 @@ const resolvePromise: any = ref(undefined);
 const rejectPromise: any = ref(undefined);
 
 const openDialog = (selectedDiagramId: number | null) => {
+  loading.value = false; 
   updateCategories();
   
   if (selectedDiagramId == diagramStore.diagram.id) {

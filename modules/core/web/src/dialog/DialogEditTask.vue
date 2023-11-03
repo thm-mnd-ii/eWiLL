@@ -124,6 +124,7 @@ const resolvePromise: any = ref(undefined);
 const rejectPromise: any = ref(undefined);
 
 const openDialog = (task?: Task) => {
+  loading.value = false; 
   diagrams.value = [];
   editTaskDialog.value = true;
   let userId = authUserStore.auth.user?.id!;

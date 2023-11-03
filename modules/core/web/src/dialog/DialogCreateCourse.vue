@@ -67,6 +67,7 @@ const resolvePromise: any = ref(undefined);
 const rejectPromise: any = ref(undefined);
 
 const openDialog = (courseId: number | undefined) => {
+  loading.value = false; 
   initializeSemesters();
   if (courseId == undefined) {
     newCourse.value = true;
