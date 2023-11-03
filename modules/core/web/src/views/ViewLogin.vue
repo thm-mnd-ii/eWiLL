@@ -50,31 +50,28 @@ const supportedBrowser = ref(false);
 const supportedOS = ref(false);
 const supportedScreenSize = ref(false);
 const dialogCompatibility = ref<typeof DialogCompatibilityIssueVue>();
-const minWidth = 1024;
-const minHeight = 298;
+const minWidth = 800;
+const minHeight = 400;
 
 onMounted(() => {
-  _checkOS();
-  _checkBrowser();
-  _checkScreenSize();
-  window.addEventListener('resize', _checkScreenSize);
+  _checkCompability();
+  window.addEventListener('resize', _checkCompability);
 });
 
 onUnmounted(() => {
-  window.removeEventListener('resize', _checkScreenSize);
+  window.removeEventListener('resize', _checkCompability);
 });
 
-const _checkBrowser = () => {
+const _checkCompability = () => {
+  // Browser Check
   const browserRegex = /Firefox|Chrome|Chromium|Edg\//;
   supportedBrowser.value = browserRegex.test(navigator.userAgent);
-};
 
-const _checkOS = () => {
+  // OS Check
   const osRegex = /Windows NT|Macintosh|Linux/;
   supportedOS.value = osRegex.test(navigator.userAgent);
-};
 
-const _checkScreenSize = () => {
+  // Screen Size
   if (window.innerWidth < minWidth || window.innerHeight < minHeight) {
       supportedScreenSize.value = false;
     } else {

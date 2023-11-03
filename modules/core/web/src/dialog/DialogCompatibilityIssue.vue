@@ -14,7 +14,7 @@
         <ul>
             <li><strong>Betriebssysteme:</strong> <i>Windows, macOS, oder Linux</i></li>
             <li><strong>Browser:</strong> <i>Chromium basiert oder Mozilla Firefox</i></li>
-            <li><strong>Mindestbildschirmgröße:</strong> <i>1024 x 300</i></li>
+            <li><strong>Mindestbildschirmgröße:</strong> <i>800 x 400</i></li>
         </ul>
           Bitte beachte, dass unser Tool <strong>nicht</strong> für die Nutzung auf <strong>mobilen Geräten oder Tablets</strong> optimiert ist. 
         </v-card-text>
