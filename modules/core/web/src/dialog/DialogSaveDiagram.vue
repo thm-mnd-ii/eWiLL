@@ -94,6 +94,7 @@ const saveDiagram = () => {
             console.log(error);
             alert("Diagramm konnte nicht gespeichert werden");
           });
+          localStorage.removeItem("diagram");
       } else {
         alert("Form is not valid");
       }
