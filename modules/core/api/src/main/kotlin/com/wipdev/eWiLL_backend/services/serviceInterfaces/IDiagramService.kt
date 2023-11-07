@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service
 
 @Service
 interface IDiagramService {
-    fun getAll(): List<DiagramPL>
+    fun getAllDiagramPL(): List<DiagramPL>
     fun getById(id: Long): DiagramPL
     fun create(diagramPL: DiagramPL): Long?
     fun update(id: Long, diagramPL: DiagramPL): DiagramPL
