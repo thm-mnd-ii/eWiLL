@@ -56,13 +56,17 @@ class AuthController {
             : ResponseEntity<JwtResponse> {
         val fbsClient = FbsClient()
         val response = fbsClient.getLoginLdap(loginRequestPL.username!!, loginRequestPL.password!!, request)
+        var fbsUser = FbsClient.FbsUser()
         if (response!!.statusCode() != 200) {
             if (response.statusCode() != 401)
                 print(response.statusCode().toString() + " " + response.body())
             return ResponseEntity.status(response.statusCode()).build()
         } else {
-            if (!userRepository.existsByUsername(loginRequestPL.username)) {
-                val fbsUser = fbsClient.getUserInformation(response.headers(), request)
+            if (!userRepository.existsByUsername(loginRequestPL.username)|| userRepository.isAnyEmpty(loginRequestPL.username)) {
+                fbsUser = fbsClient.getUserInformation(
+                    response.headers().firstValue("Authorization").get(),
+                    request.getHeader("X-Forwarded-For")
+                )
                 println(fbsUser)
                 createUserData(fbsUser)
             }
@@ -73,7 +77,7 @@ class AuthController {
             UsernamePasswordAuthenticationToken(loginRequestPL.username, "")
         )
         SecurityContextHolder.getContext().authentication = authentication
-        val jwt = jwtUtils.generateJwtToken(authentication)
+        val jwt = jwtUtils.generateJwtToken(authentication, fbsUser.id!!, fbsUser.username!!)
         val userDetails = authentication.principal as UserDetailsImpl
         val roles = userDetails.authorities.map { it.authority }
         return ResponseEntity.ok(JwtResponse(jwt, userDetails.id, userDetails.username, userDetails.email, roles))

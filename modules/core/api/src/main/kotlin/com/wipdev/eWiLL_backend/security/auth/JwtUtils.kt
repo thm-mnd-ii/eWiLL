@@ -1,8 +1,6 @@
 package com.wipdev.eWiLL_backend.security.auth
 
 
-import com.auth0.jwt.JWT
-import com.auth0.jwt.interfaces.DecodedJWT
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
@@ -23,20 +21,23 @@ class JwtUtils {
 
 
 
-    fun generateJwtToken(authentication: Authentication): String {
-        val userPrincipal = authentication.principal as UserDetailsImpl
-        return Jwts.builder().setSubject(userPrincipal.username).setIssuedAt(Date())
+    fun generateJwtToken(authentication: Authentication,id:Int,username:String): String {
+        return Jwts.builder().setSubject("client_authentication")
+            .claim("id", id)
+            .claim("username", username)
+            .setIssuedAt(Date())
             .setExpiration(Date(Date().time + jwtExpirationMs))
-            .signWith(getSecretKey(), SignatureAlgorithm.HS256).compact()
+            .signWith(getSecretKey(), SignatureAlgorithm.HS256)
+            .compact()
     }
 
     fun getUserNameFromJwtToken(token: String): String {
-        return Jwts.parserBuilder().setSigningKey(getSecretKey()).build().parseClaimsJws(token).body.subject
+        return decodeFBSToken(token).username
     }
 
     fun validateJwtToken(authToken: String): Boolean {
         try {
-            Jwts.parserBuilder().setSigningKey(getSecretKey()).build().parseClaimsJws(authToken)
+           Jwts.parserBuilder().setSigningKey(getSecretKey()).build().parseClaimsJws(authToken)
             return true
         } catch (e: Exception) {
             println("Invalid JWT signature: ${e.message}")
@@ -52,8 +53,6 @@ class JwtUtils {
             return FBSTokenDecodingResult(
                 claims["id"] as Int,
                 claims["username"] as String,
-                claims["courseRoles"] as String,
-                claims["globalRole"] as String,
                 claims["exp"] as String,
                 claims["iat"] as String
             )
@@ -63,8 +62,6 @@ class JwtUtils {
         class FBSTokenDecodingResult(
             val userID: Int,
             val username: String,
-            val courseRoles: String,
-            val globalRole: String,
             val exp: String,
             val iat: String
         )

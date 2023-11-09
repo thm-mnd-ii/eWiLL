@@ -13,5 +13,10 @@ interface UserRepository : JpaRepository<User, Long> {
 
     fun existsByEmail(email: String): Boolean
 
+    fun isAnyEmpty(username: String): Boolean
+    {
+        return this.findByUsername(username)!!.firstName == "" || this.findByUsername(username)!!.lastName == ""
+    }
+
 
 }
