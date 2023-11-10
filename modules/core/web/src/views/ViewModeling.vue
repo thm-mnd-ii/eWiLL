@@ -1,4 +1,5 @@
 <template>
+  <DialogInactivityVue ref="dialogInactivity"></DialogInactivityVue>
   <v-snackbar v-model="snackbarSuccess" :timeout="2500"> Diagramm erfolgreich eingereicht </v-snackbar>
   
   <div class="container">
@@ -54,7 +55,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 
 import ModelingTool from "@/components/ModelingTool.vue";
 import FileExplorer from "@/components/FileExplorer.vue";
@@ -66,6 +67,7 @@ import { useToolManagementStore } from "@/stores/toolManagementStore";
 import { useRouter, onBeforeRouteLeave } from "vue-router";
 
 import diagramService from "@/services/diagram.service";
+import DialogInactivityVue from "@/dialog/DialogInactivity.vue";
 
 const snackbarSuccess = ref(false);
 
@@ -76,6 +78,9 @@ const toolManagementStore = useToolManagementStore();
 const modelingToolKey = storeToRefs(diagramStore).key;
 const activeCourse = toolManagementStore.activeCourse;
 const activeTask = toolManagementStore.activeTask;
+const dialogInactivity = ref<typeof DialogInactivityVue>();
+const inactivityTimeout = ref<number | null>(null);
+const INACTIVITY_TIMEOUT = 5 * 1000; // 5 minutes in milliseconds
 
 const currentTime = ref<Date>(new Date());
 setInterval(() => {
@@ -96,8 +101,30 @@ onBeforeRouteLeave((to, from, next) => {
 });
 
 onMounted(() => {
+  if (diagramStore.diagram == null) {
+    _resetInactivityTimer();
+  }
+  window.addEventListener('click', _resetInactivityTimer);
   window.addEventListener("beforeunload", handleBeforeUnload);
 });
+
+onUnmounted(() => {
+  _clearInactivityTimer();
+  window.removeEventListener('click', _resetInactivityTimer);
+});
+
+const _resetInactivityTimer = () => {
+  _clearInactivityTimer();
+  inactivityTimeout.value = setTimeout(() => {
+    dialogInactivity.value?.openDialog();
+  }, INACTIVITY_TIMEOUT) as unknown as number;
+};
+
+const _clearInactivityTimer = () => {
+  if (inactivityTimeout.value) {
+    clearTimeout(inactivityTimeout.value);
+  }
+};
 
 const handleBeforeUnload = (event: BeforeUnloadEvent) => {
   event.preventDefault();
