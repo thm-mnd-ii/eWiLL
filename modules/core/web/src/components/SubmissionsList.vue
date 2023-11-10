@@ -13,7 +13,7 @@
         <v-btn append-icon="mdi-presentation" @click="openDiagram(item.value.submission.diagram)">Preview</v-btn>
       </template>
       <template #item.result.score="{ item }">
-        <v-chip v-b-tooltip.hover title="Zeige komplettes Feedback"  :style="{ background: colors(item), color: 'black' }" @click="openFeedback(item.value.result.comments)"> {{ item.value.result.score }}</v-chip>
+        <v-chip class="fixed-size-chip" v-b-tooltip.hover title="Zeige komplettes Feedback"  :style="{ background: colors(item), color: 'black' }" @click="openFeedback(item.value.result.comments ,item.value.submission.attempt)"> {{ parseFloat(item.value.result.score).toFixed(2) }}</v-chip>
       </template>
       <template #item.result.correct="{ item }">
         <v-icon v-if="item.value.result.correct == true" icon="mdi-check-circle" color="success"></v-icon>
@@ -87,12 +87,12 @@ const loadLatestSubmissions = () => {
 const colors = (item:any) => {
   const score = item.value.result.score;
 
-  if (score < 50) {
-    return "red";
+  if ( isNaN(score) ||score < 50) {
+    return "#FF6666";
   } else if (score >= 50 && score < 100) {
-    return "orange";
+    return "#FFA500";
   } else {
-    return "green";
+    return "#B2FF66";
   }
 };
 
@@ -130,7 +130,7 @@ const openDiagram = (diagram: Diagram) => {
   diagramStore.loadDiagram(diagram);
   dialogShowFullDiagram.value?.openDialog("");
 };
-const openFeedback = (comments: any) => {
+const openFeedback = (comments: any , versuch:  Number) => {
   var message: string[] = [];
   const comms = JSON.stringify(comments);
   const obj = JSON.parse(comms);
@@ -148,8 +148,7 @@ const openFeedback = (comments: any) => {
     );
   }
   const dialogContent = `${message.join('')}`;
-  dialogShowFeedback.value?.openDialog("Feedback", dialogContent);
-  console.log("content ", comms);
+  dialogShowFeedback.value?.openDialog("Feedback", dialogContent,versuch);
 };
 
 defineExpose({
@@ -159,10 +158,23 @@ defineExpose({
 
 <style scoped lang="scss">
 .container {
-  position: flex;
+
 
   cursor: pointer;
 }
+.fixed-size-chip {
+  width: 75px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 
 .search-bar {
   margin-bottom: 20px;
