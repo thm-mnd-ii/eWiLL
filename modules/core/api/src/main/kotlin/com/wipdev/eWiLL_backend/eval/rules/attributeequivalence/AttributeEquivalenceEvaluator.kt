@@ -100,8 +100,15 @@ class AttributeEquivalenceEvaluator : IRuleEvaluator {
                     )
                     errors++
                 } else {
-                    //Check for type
-                    if (attribute.type != foundAttribute!!.type) {
+                    var type: String = ""
+                    if (attribute.pkey != foundAttribute!!.pkey || attribute.fkey != foundAttribute!!.fkey) {
+                        if (foundAttribute!!.pkey && foundAttribute!!.fkey) {
+                            type = "PrimaryKey/ForeignKey"
+                        } else if (foundAttribute!!.pkey && !foundAttribute!!.fkey) {
+                            type = "PrimaryKey"
+                        } else if (!foundAttribute!!.pkey && foundAttribute!!.fkey) {
+                            type = "ForeignKey"
+                        }
                         messages.add(
                             ResultMessage(
                                 FeedbackLevel.BASIC,
@@ -116,7 +123,7 @@ class AttributeEquivalenceEvaluator : IRuleEvaluator {
                         messages.add(
                             ResultMessage(
                                 FeedbackLevel.DEBUG,
-                                "Correct type is ${foundAttribute.type}",
+                                "Correct type is ${type}",
                                 entity.entity!!.id!!,
                                 entity.getEntityName()!!,
                                 attribute.name!!,

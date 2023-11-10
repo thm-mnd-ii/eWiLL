@@ -13,6 +13,7 @@ import com.wipdev.eWiLL_backend.eval.rules.ResultMessage
 import com.wipdev.eWiLL_backend.eval.rules.ResultMessageType
 import com.wipdev.eWiLL_backend.repository.*
 import com.wipdev.eWiLL_backend.services.DiagramService
+import com.wipdev.eWiLL_backend.utils.TimeUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.PostMapping
@@ -66,7 +67,7 @@ class PythonEvaluationService {
         val diagram = diagramRepository.getReferenceById(submissionRequestPL.diagramId)
         val submission = Submission()
 
-        submission.date = getDateTimeString()
+        submission.date = TimeUtils.getDateTimeString()
         submission.setDiagram(diagram)
         submission.taskId = submissionRequestPL.taskId
         submission.userId = submissionRequestPL.userId
@@ -130,10 +131,6 @@ class PythonEvaluationService {
     }
 
 
-    private fun getDateTimeString(): String? {
-        val currentDateTime = LocalDateTime.now()
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-        return currentDateTime.format(formatter)
-    }
+
 
 }
