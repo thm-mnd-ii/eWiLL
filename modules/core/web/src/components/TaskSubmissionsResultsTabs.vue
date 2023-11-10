@@ -85,12 +85,12 @@ watch(
   }
 );
 
-const load = (task: Task,  selectedSubmissionIndex?: number) => {
+const load = (task: Task, selectedSubmissionIndex?: number) => {
   currentTask.value = task;
 
   submissionService.getSubmissionIdsByUserAndTask(userId.value, task.id).then((response) => {
     submissions.value = response.data;
-    
+
     //select last tab
     selectedResultTab.value = selectedSubmissionIndex !== undefined ? selectedSubmissionIndex : submissions.value.length;
 
