@@ -4,11 +4,15 @@ package com.wipdev.eWiLL_backend.security.auth
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
+import io.jsonwebtoken.security.Keys
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Component
 import java.security.Key
 import java.util.*
+import javax.crypto.KeyGenerator
+import javax.crypto.SecretKey
+import javax.crypto.spec.SecretKeySpec
 
 
 @Component
@@ -49,7 +53,7 @@ class JwtUtils {
 
     companion object {
         fun decodeFBSToken(token: String?): FBSTokenDecodingResult {
-            val claims:Claims = Jwts.parserBuilder().setSigningKey(getSecretKey()).build().parseClaimsJws(token).body
+            val claims:Claims = Jwts.parserBuilder().setSigningKey("getSecretKey()").build().parseClaimsJws(token).body
             return FBSTokenDecodingResult(
                 claims["id"] as Int,
                 claims["username"] as String,
@@ -69,9 +73,10 @@ class JwtUtils {
         fun getSecretKey(): Key {
             val keyString = System.getenv("JWT_SECRET")
             return if(keyString==null){
-                io.jsonwebtoken.security.Keys.secretKeyFor(SignatureAlgorithm.HS256)
+                KeyGenerator.getInstance("HmacSHA256").generateKey()
             }else{
-                keyString.toByteArray().let { io.jsonwebtoken.security.Keys.hmacShaKeyFor(it) }
+                val decodedKey: ByteArray = Base64.getDecoder().decode(keyString)
+                SecretKeySpec(decodedKey, 0, decodedKey.size, "HmacSHA256")
             }
         }
 

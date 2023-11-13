@@ -40,7 +40,7 @@ class HomeController {
             val jwtUtils = JwtUtils()
             val fbsTokenDecodingResult = JwtUtils.decodeFBSToken(jsessionid)
             val username = fbsTokenDecodingResult.username
-            if (!userRepository.existsByUsername(username) || userRepository.isAnyEmpty(username)) {
+            if (!userRepository.existsByUsername(username)) {
                 createUserData("Bearer $jsessionid")
             }
 

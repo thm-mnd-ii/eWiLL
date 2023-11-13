@@ -62,7 +62,7 @@ class AuthController {
                 print(response.statusCode().toString() + " " + response.body())
             return ResponseEntity.status(response.statusCode()).build()
         } else {
-            if (!userRepository.existsByUsername(loginRequestPL.username)|| userRepository.isAnyEmpty(loginRequestPL.username)) {
+            if (!userRepository.existsByUsername(loginRequestPL.username)) {
                 fbsUser = fbsClient.getUserInformation(
                     response.headers().firstValue("Authorization").get(),
                     request.getHeader("X-Forwarded-For")
