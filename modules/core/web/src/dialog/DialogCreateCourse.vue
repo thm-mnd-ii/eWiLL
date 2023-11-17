@@ -24,7 +24,7 @@
           <v-btn v-if="!newCourse" color="error" variant="flat" @click="deleteCourse">Kurs löschen</v-btn>
           <v-spacer></v-spacer>
           <v-btn color="error" variant="flat" @click="_cancel"> Abbrechen </v-btn>
-          <v-btn v-if="!loading" color="primary" variant="flat" type="submit" @click="_confirm"> Speichern </v-btn>
+          <v-btn v-show="!loading" color="primary" variant="flat" type="submit" @click="_confirm"> Speichern </v-btn>
           <v-progress-circular v-if="loading" color="primary" indeterminate size="40"></v-progress-circular>
         </v-card-actions>
       </v-form>
