@@ -1,5 +1,5 @@
 import FeedbackLevel from "@/enums/FeedbackLevel";
-
+import TaskLevel from "@/enums/TaskLevel";
 interface Task {
   id: number;
   name: string;
@@ -12,7 +12,7 @@ interface Task {
   eliability: string;
   maxSubmissions: number;
   showLevel: FeedbackLevel;
-  level: string;
+  taskLevel: TaskLevel;
 }
 
 export default Task;

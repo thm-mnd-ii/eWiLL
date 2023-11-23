@@ -10,9 +10,11 @@ import org.springframework.stereotype.Service
 @Service
 class TaskService : ITaskService {
 
-    @Autowired lateinit var taskRepository: TaskRepository
+    @Autowired
+    lateinit var taskRepository: TaskRepository
 
-    @Autowired lateinit var diagramService: DiagramService
+    @Autowired
+    lateinit var diagramService: DiagramService
 
     override fun getAll(courseId: Long): List<Task> {
         return taskRepository.findAllByCourseId(courseId)
@@ -59,16 +61,16 @@ class TaskService : ITaskService {
     fun convert(task: Task): TaskPL {
 
         return TaskPL(
-                task.name,
-                task.description,
-                task.dueDate,
-                task.mediaType,
-                task.courseId,
-                diagramService.getById(task.solutionModelId!!),
-                task.rulesetId,
-                task.eLiability,
-                task.showLevel,
-                task.level,
+            task.name,
+            task.description,
+            task.dueDate,
+            task.mediaType,
+            task.courseId,
+            diagramService.getById(task.solutionModelId!!),
+            task.rulesetId,
+            task.eLiability,
+            task.showLevel,
+            task.taskLevel,
         )
     }
 
@@ -83,7 +85,7 @@ class TaskService : ITaskService {
         task.courseId = taskPL.courseId
         task.eLiability = taskPL.ELiability
         task.showLevel = taskPL.showLevel
-        task.level = taskPL.level
+        task.taskLevel = taskPL.taskLevel
 
         return task
     }
