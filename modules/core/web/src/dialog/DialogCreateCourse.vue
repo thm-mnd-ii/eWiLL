@@ -9,13 +9,13 @@
         <v-card-text>
           <v-row>
             <v-col>
-              <v-text-field v-model="course.name" color="primary" variant="underlined" label="Name" :rules="[(v) => !!v || 'Item is required']" required></v-text-field>
-              <v-text-field v-model="course.description" color="primary" variant="underlined" label="Beschreibung" :rules="[(v) => !!v || 'Item is required']" required></v-text-field>
-              <v-text-field v-model="course.keyPassword" color="primary" variant="underlined" label="Passwort" :rules="[(v) => !!v || 'Item is required']" required></v-text-field>
+              <v-text-field v-model="course.name" color="primary" variant="underlined" label="Name" :rules="[(v: any) => !!v || 'Item is required']" required></v-text-field>
+              <v-text-field v-model="course.description" color="primary" variant="underlined" label="Beschreibung" :rules="[(v: any) => !!v || 'Item is required']" required></v-text-field>
+              <v-text-field v-model="course.keyPassword" color="primary" variant="underlined" label="Passwort" :rules="[(v: any) => !!v || 'Item is required']" required></v-text-field>
             </v-col>
             <v-col>
-              <v-select v-model="course.semester" color="primary" variant="underlined" label="Semester" :rules="[(v) => !!v || 'Item is required']" required :items="semesters" item-title="name" return-object></v-select>
-              <v-select v-model="course.location" color="primary" variant="underlined" label="Standort" :items="['Friedberg', 'Gießen']" :rules="[(v) => !!v || 'Item is required']" required></v-select>
+              <v-select v-model="course.semester" color="primary" variant="underlined" label="Semester" :rules="[(v: any) => !!v || 'Item is required']" required :items="semesters" item-title="name" return-object></v-select>
+              <v-select v-model="course.location" color="primary" variant="underlined" label="Standort" :items="['Friedberg', 'Gießen']" :rules="[(v: any) => !!v || 'Item is required']" required></v-select>
             </v-col>
           </v-row>
         </v-card-text>
@@ -200,5 +200,4 @@ defineExpose({
 .card-actions {
   padding: 1rem;
 }
-
 </style>
