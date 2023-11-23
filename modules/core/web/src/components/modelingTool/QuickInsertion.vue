@@ -109,7 +109,7 @@ const addElement = (type: EntityType) => {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .context-menu {
   position: fixed;
   z-index: 1000;
@@ -117,8 +117,6 @@ const addElement = (type: EntityType) => {
 }
 
 .custom-list-item {
-  padding: 10px 0 0 0;
-
   &:hover {
     background-color: #f6f6f6;
     transition: background-color 0.2s ease-in-out;

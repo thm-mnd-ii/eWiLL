@@ -1,14 +1,14 @@
 <template>
-   <div class="container" :class="{ 'not-clickable': !props.isEditable }" @click.right="showContextMenu">
+  <div class="container" :class="{ 'not-clickable': !props.isEditable }" @click.right="showContextMenu">
     <ModalAddAttributes />
-    <div ref="modelingContainer" class="modelingContainer" @click.self="unselectAll" >
+    <div ref="modelingContainer" class="modelingContainer" @click.self="unselectAll">
       <EntityMain v-for="entity in entities.diagram.value.entities" :key="entity.id" class="entity" :entity="entity" :is-editable="props.isEditable" />
       <LineMain v-for="line in lineList" :key="line.id" :line="line" />
       <!-- Definiert global das aussehen der Pfeile -->
       <ArrowDefinitionVue class="svgMarker"></ArrowDefinitionVue>
 
       <!-- Context menu -->
-      <QuickInsertion  :is-visible="isContextMenuVisible" :position="contextMenuPosition" :modeling-container="modelingContainer" @close-menu="isContextMenuVisible = false" />
+      <QuickInsertion :is-visible="isContextMenuVisible" :position="contextMenuPosition" :modeling-container="modelingContainer" @close-menu="isContextMenuVisible = false" />
     </div>
   </div>
 </template>
@@ -18,15 +18,14 @@ import EntityMain from "./modelingTool/EntityMain.vue";
 import LineMain from "./modelingTool/LineMain.vue";
 import ArrowDefinitionVue from "./modelingTool/ArrowDefinition.vue";
 import ModalAddAttributes from "../dialog/DialogAddAttributes.vue";
-import { ref,onMounted, reactive } from "vue";
+import QuickInsertion from "./modelingTool/QuickInsertion.vue";
+import { ref, onMounted, reactive } from "vue";
 import { useDiagramStore } from "../stores/diagramStore";
 import { useToolManagementStore } from "../stores/toolManagementStore";
 import Connection from "../model/diagram/Connection";
 import Line from "../model/diagram/Line";
 import { defineProps } from "vue";
 import { storeToRefs } from "pinia";
-import EntityType from "@/enums/EntityType";
-import QuickInsertion from "./modelingTool/QuickInsertion.vue";
 
 const diagramStore = useDiagramStore();
 const toolManagementStore = useToolManagementStore();
@@ -77,7 +76,6 @@ const unselectAll = () => {
   toolManagementStore.selectedLine = null;
   toolManagementStore.resetConnection();
 };
-
 
 const updateArea = () => {
   if (modelingContainer.value == null) return;
@@ -282,17 +280,12 @@ const showContextMenu = (event: MouseEvent) => {
   if (toolManagementStore.$state.selectedEntity === null) {
     isContextMenuVisible.value = true;
     rightClickPosition.x = event.clientX;
-  rightClickPosition.y = event.clientY;
-  contextMenuPosition.value = { x: `${event.clientX}px`, y: `${event.clientY}px` };
+    rightClickPosition.y = event.clientY;
+    contextMenuPosition.value = { x: `${event.clientX}px`, y: `${event.clientY}px` };
   }
- 
-
-  
 
   event.preventDefault(); // Prevent the default context menu
 };
-
-
 
 // Close the context menu when clicking anywhere else
 const closeContextMenu = (event: MouseEvent) => {
@@ -336,34 +329,5 @@ const closeContextMenu = (event: MouseEvent) => {
   pointer-events: none;
   cursor: default;
   z-index: 10;
-}
-
-.context-menu {
-  position: fixed;
-  z-index: 1000;
-  cursor: pointer;
-}
-
-.custom-list-item {
-  padding: 10px 0 0 0;
-
-  &:hover {
-    background-color: #f6f6f6;
-    transition: background-color 0.2s ease-in-out;
-  }
-
-  svg {
-    width: 100px;
-  }
-}
-
-.v-enter-active,
-.v-leave-active {
-  transition: opacity 0.5s ease;
-}
-
-.v-enter-from,
-.v-leave-to {
-  opacity: 0;
 }
 </style>
