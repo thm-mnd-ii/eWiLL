@@ -23,22 +23,15 @@ class FbsClient {
         val passwordBytes = password.toByteArray(StandardCharsets.UTF_8)
         val requestBody =
             "{\"username\":\"$username\",\"password\":\"${String(passwordBytes, StandardCharsets.UTF_8)}\"}"
-        if (servletRequest.getHeader("X-Forwarded-For").isNullOrEmpty()) {
-            val request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-                .build()
-            return client.send(request, HttpResponse.BodyHandlers.ofString())
-        } else {
-            val request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
-                .header("Content-Type", "application/json")
-                .header("X-Forwarded-For", servletRequest.getHeader("X-Forwarded-For"))
-                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-                .build()
-            return client.send(request, HttpResponse.BodyHandlers.ofString())
-        }
+
+
+        val request = HttpRequest.newBuilder()
+            .uri(URI.create(url))
+            .header("Content-Type", "application/json")
+            .header("X-Forwarded-For", servletRequest.remoteAddr)
+            .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+            .build()
+        return client.send(request, HttpResponse.BodyHandlers.ofString())
 
 
     }
@@ -51,23 +44,15 @@ class FbsClient {
         val id = decodingResult.userID
         val url = "$baseUrl/users/${id}"
         val client = HttpClient.newBuilder().build()
-        val request = if (servletRequest.getHeader("X-Forwarded-For").isNullOrEmpty()) {
+        val request =
             HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .header("Authorization", headers.firstValue("Authorization").get())
-                .GET()
-                .build()
-        } else {
-             HttpRequest.newBuilder()
-                .uri(URI.create(url))
-                .header("Authorization", headers.firstValue("Authorization").get())
-                .header("X-Forwarded-For", servletRequest.getHeader("X-Forwarded-For"))
+                .header("X-Forwarded-For", servletRequest.remoteAddr)
                 .GET()
                 .build()
 
-        }
         val response = client.send(request, HttpResponse.BodyHandlers.ofString())
-        println(response.body() + " " + response.statusCode())
         return if (response.statusCode() != 200) {
             FbsUser()
         } else {

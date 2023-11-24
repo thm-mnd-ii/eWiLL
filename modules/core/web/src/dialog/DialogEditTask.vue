@@ -18,14 +18,19 @@
               <v-btn :disabled="isDisabled" variant="plain"> Automatisch erkennen</v-btn>
             </div>
             <v-slider v-model="sliderPosition" :min="0" :max="2" :step="1" thumb-label label="Feedback Level" color="primary" hint="0 = Kein Feedback, 1 = Hinweis auf Fehler, 2 = Lösungsvorschläge" persistent-hint @update:model-value="updateShowLevel"></v-slider>
+           
           </div>
         </v-form>
       </v-card-text>
       <v-card-actions class="card-actions">
+        
+    
         <v-btn v-if="!newTask" color="error" variant="flat" @click="deleteTask">Aufgabe löschen</v-btn>
         <v-spacer></v-spacer>
-        <v-btn color="error" variant="flat" @click="_cancel"> Abbrechen</v-btn>
-        <v-btn color="success" variant="flat" @click="_confirm"> Speichern</v-btn>
+        
+        <v-btn color="error" variant="flat" @click="_cancel"> Abbrechen </v-btn>
+        <v-btn v-if="!loading" color="success" variant="flat" @click="_confirm"> Speichern </v-btn>
+        <v-progress-circular v-if="loading" color="primary" indeterminate size="40"></v-progress-circular>
       </v-card-actions>
     </v-card>
     <v-snackbar v-model="snackbarFail" :timeout="3000"> Ein Fehler ist aufgetreten, bitte versuchen Sie es erneut </v-snackbar>
@@ -59,7 +64,7 @@ const snackbarFail = ref(false);
 const editTitle = ref<string>("");
 const newTask = ref(false);
 const currentTask = ref<Task>({} as Task);
-
+const loading = ref(false);
 const maxSubmissions = ref();
 const categories = ref<Category[]>([]);
 const diagrams = ref<Diagram[]>([]);
@@ -124,11 +129,12 @@ const updateDiagramsIncludingSolutionModel = () => {
 };
 
 // #############################
-// Promis
+// Promise
 const resolvePromise: any = ref(undefined);
 const rejectPromise: any = ref(undefined);
 
 const openDialog = (task?: Task) => {
+  loading.value = false; 
   diagrams.value = [];
   editTaskDialog.value = true;
   let userId = authUserStore.auth.user?.id!;
@@ -158,6 +164,8 @@ const openDialog = (task?: Task) => {
 };
 
 const _confirm = () => {
+  loading.value = true; 
+  
   taskForm.value.validate().then(() => {
     if (valid.value) {
       currentTask.value.mediaType = currentTask.value.mediaType.toUpperCase();
@@ -169,7 +177,14 @@ const _confirm = () => {
             resolvePromise.value(true);
           })
           .catch((error) => {
-            console.log(error);
+            console.error(error);
+            snackbarFail.value = true;
+            loading.value = false; 
+          })
+          .finally(() => {        
+            setTimeout(() => {
+              loading.value = false; 
+            }, 2000);
           });
       } else {
         taskService
@@ -178,11 +193,23 @@ const _confirm = () => {
             editTaskDialog.value = false;
             resolvePromise.value(true);
           })
-          .catch(() => {
+          .catch((error) => {
+            console.error(error);
             snackbarFail.value = true;
+            loading.value = false; // Set loading to false here in case of error
+          })
+          .finally(() => {
+            
+            setTimeout(() => {
+              loading.value = false; 
+            }, 2000);
           });
       }
+    } else {
+      loading.value = false; 
     }
+  }).catch(() => {
+    loading.value = false; 
   });
 };
 

@@ -11,6 +11,7 @@ import com.wipdev.eWiLL_backend.eval.rules.ResultMessageType
 import com.wipdev.eWiLL_backend.eval.rules.SubmissionResultWithResultMessages
 import com.wipdev.eWiLL_backend.repository.*
 import com.wipdev.eWiLL_backend.services.serviceInterfaces.IEvaluationService
+import com.wipdev.eWiLL_backend.utils.TimeUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -43,7 +44,7 @@ class EvaluationService : IEvaluationService {
         val diagram = diagramRepository.getReferenceById(submissionRequestPL.diagramId)
         val submission = Submission()
 
-        submission.date = getDateTimeString()
+        submission.date = TimeUtils.getDateTimeString()
         submission.setDiagram(diagram)
         submission.taskId = submissionRequestPL.taskId
         submission.userId = submissionRequestPL.userId
@@ -148,11 +149,7 @@ class EvaluationService : IEvaluationService {
 
     }
 
-    private fun getDateTimeString(): String? {
-        val currentDateTime = LocalDateTime.now()
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-        return currentDateTime.format(formatter)
-    }
+
 
     override fun getNewestSubmission(userId: Long, taskId: Long): SubmissionWithDiagram {
         return getAsSubmissionWithDiagram(
