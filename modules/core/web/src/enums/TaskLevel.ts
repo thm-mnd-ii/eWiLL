@@ -1,7 +1,7 @@
 export enum TaskLevel {
-  EASY = "Einfach",
-  MODERATE = "Mittel",
-  HARD = "Schwer",
+  "EASY" = "EASY",
+  "MODERATE" = "MODERATE",
+  "HARD" = "HARD",
 }
 
 export default TaskLevel;

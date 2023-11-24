@@ -14,20 +14,17 @@
             <v-select v-model="currentTask.eliability" :rules="liabilityRules" :items="liabilities" label="Verpflichtung" variant="underlined" color="primary" item-title="name" item-value="enum"></v-select>
             <v-select v-model="maxSubmissions" :items="arrayMaxSubmissions" label="Versuche" variant="underlined" color="primary" hint="0 = unbegrenzt" placeholder="0 = unbegrenzt" @update:model-value="updateMaxSubmissionsOnCurrentTask"></v-select>
             <div class="task-form-grid align-grid-elements">
-              <v-select v-model="currentTask.taskLevel" :rules="levelrules" label="Level" variant="underlined" :items="levelOptions" color="primary" @update:model-value="levelReckognition"></v-select>
+              <v-select v-model="currentTask.taskLevel" :rules="levelrules" label="Level" variant="underlined" :items="levelOptions" color="primary" item-title="name" item-value="enum" @update:model-value="levelReckognition"></v-select>
               <v-btn :disabled="isDisabled" variant="plain"> Automatisch erkennen</v-btn>
             </div>
             <v-slider v-model="sliderPosition" :min="0" :max="2" :step="1" thumb-label label="Feedback Level" color="primary" hint="0 = Kein Feedback, 1 = Hinweis auf Fehler, 2 = Lösungsvorschläge" persistent-hint @update:model-value="updateShowLevel"></v-slider>
-           
           </div>
         </v-form>
       </v-card-text>
       <v-card-actions class="card-actions">
-        
-    
         <v-btn v-if="!newTask" color="error" variant="flat" @click="deleteTask">Aufgabe löschen</v-btn>
         <v-spacer></v-spacer>
-        
+
         <v-btn color="error" variant="flat" @click="_cancel"> Abbrechen </v-btn>
         <v-btn v-if="!loading" color="success" variant="flat" @click="_confirm"> Speichern </v-btn>
         <v-progress-circular v-if="loading" color="primary" indeterminate size="40"></v-progress-circular>
@@ -68,13 +65,21 @@ const loading = ref(false);
 const maxSubmissions = ref();
 const categories = ref<Category[]>([]);
 const diagrams = ref<Diagram[]>([]);
-const levelOptions = Object.values(TaskLevel);
+
+// map enum to german names
+const levelOptions = ref<any[]>([
+  { name: "Leicht", enum: TaskLevel.EASY },
+  { name: "Mittel", enum: TaskLevel.MODERATE },
+  { name: "Schwer", enum: TaskLevel.HARD },
+]);
+
 const selectedLevel = ref("levelOptions");
 const liabilities = ref<any[]>([
   { name: "Verpflichtend", enum: "MANDATORY" },
   { name: "Bonus", enum: "BONUS" },
   { name: "Optional", enum: "OPTIONAL" },
 ]);
+
 const feedbackLevel = new Map<number, FeedbackLevel>([
   [0, FeedbackLevel.NOTHING],
   [1, FeedbackLevel.BASIC],
@@ -134,7 +139,7 @@ const resolvePromise: any = ref(undefined);
 const rejectPromise: any = ref(undefined);
 
 const openDialog = (task?: Task) => {
-  loading.value = false; 
+  loading.value = false;
   diagrams.value = [];
   editTaskDialog.value = true;
   let userId = authUserStore.auth.user?.id!;
@@ -164,53 +169,55 @@ const openDialog = (task?: Task) => {
 };
 
 const _confirm = () => {
-  loading.value = true; 
-  
-  taskForm.value.validate().then(() => {
-    if (valid.value) {
-      currentTask.value.mediaType = currentTask.value.mediaType.toUpperCase();
-      if (newTask.value) {
-        taskService
-          .postTask(currentTask.value)
-          .then(() => {
-            editTaskDialog.value = false;
-            resolvePromise.value(true);
-          })
-          .catch((error) => {
-            console.error(error);
-            snackbarFail.value = true;
-            loading.value = false; 
-          })
-          .finally(() => {        
-            setTimeout(() => {
-              loading.value = false; 
-            }, 2000);
-          });
+  loading.value = true;
+
+  taskForm.value
+    .validate()
+    .then(() => {
+      if (valid.value) {
+        currentTask.value.mediaType = currentTask.value.mediaType.toUpperCase();
+        if (newTask.value) {
+          taskService
+            .postTask(currentTask.value)
+            .then(() => {
+              editTaskDialog.value = false;
+              resolvePromise.value(true);
+            })
+            .catch((error) => {
+              console.error(error);
+              snackbarFail.value = true;
+              loading.value = false;
+            })
+            .finally(() => {
+              setTimeout(() => {
+                loading.value = false;
+              }, 2000);
+            });
+        } else {
+          taskService
+            .putTask(currentTask.value.id, currentTask.value)
+            .then(() => {
+              editTaskDialog.value = false;
+              resolvePromise.value(true);
+            })
+            .catch((error) => {
+              console.error(error);
+              snackbarFail.value = true;
+              loading.value = false; // Set loading to false here in case of error
+            })
+            .finally(() => {
+              setTimeout(() => {
+                loading.value = false;
+              }, 2000);
+            });
+        }
       } else {
-        taskService
-          .putTask(currentTask.value.id, currentTask.value)
-          .then(() => {
-            editTaskDialog.value = false;
-            resolvePromise.value(true);
-          })
-          .catch((error) => {
-            console.error(error);
-            snackbarFail.value = true;
-            loading.value = false; // Set loading to false here in case of error
-          })
-          .finally(() => {
-            
-            setTimeout(() => {
-              loading.value = false; 
-            }, 2000);
-          });
+        loading.value = false;
       }
-    } else {
-      loading.value = false; 
-    }
-  }).catch(() => {
-    loading.value = false; 
-  });
+    })
+    .catch(() => {
+      loading.value = false;
+    });
 };
 
 const _cancel = () => {

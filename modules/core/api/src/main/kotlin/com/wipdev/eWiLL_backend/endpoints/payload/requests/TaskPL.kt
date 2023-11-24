@@ -15,5 +15,5 @@ data class TaskPL(
     val rulesetId: Long?,
     var ELiability: ELiability?,
     var showLevel: FeedbackLevel? = FeedbackLevel.BASIC,
-    var taskLevel: TaskLevel? = TaskLevel.EINFACH,
+    var taskLevel: TaskLevel?,
 )

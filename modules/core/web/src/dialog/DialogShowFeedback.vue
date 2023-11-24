@@ -21,8 +21,6 @@ import { useRoute } from "vue-router";
 import Task from "../model/task/Task";
 import taskService from "../services/task.service";
 
-import Submission from "@/model/submission/Submission";
-
 const task = ref<Task>({} as Task);
 const route = useRoute();
 const taskId = ref(Number(route.params.taskId));
@@ -32,12 +30,10 @@ const userId = ref(authUserStore.auth.user?.id!);
 const deleteDialog = ref<boolean>(false);
 const Title = ref<string>("");
 const Message = ref<string | undefined>(undefined);
-const currentTask = ref<Task>({} as Task);
 // Promises
 const resolvePromise: any = ref(undefined);
 const rejectPromise: any = ref(undefined);
 const submissionCount = ref(1);
-const submissions = ref<Submission[]>([] as Submission[]);
 
 onMounted(() => {
   init();
