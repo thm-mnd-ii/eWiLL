@@ -66,12 +66,12 @@ services:
   django:
     build: .
     volumes:
-      - ./modules/core/checker2:/django #Alternativ ./meinOrdner:/derOrdnerausDerDockerfile
+      - ./modules/core/checker:/django #Alternativ ./meinOrdner:/derOrdnerausDerDockerfile
     ports:
       - 8000:8000
     image: django:django
     container_name: django_container
-#command: python manage.py runserver 0.0.0.0:8000
+    command: python manage.py runserver 0.0.0.0:8000
 
 
 volumes:
