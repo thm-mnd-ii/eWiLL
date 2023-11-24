@@ -2,44 +2,22 @@
   <v-dialog v-model="editTaskDialog" width="70vw">
     <v-card :title="editTitle">
       <v-card-text>
-        <v-form ref="taskForm" v-model="valid" class="taskForm">
+        <v-form ref="taskForm" v-model="valid" class="task-form-grid">
           <div>
-            <v-text-field v-model="currentTask.name" label="Name" :rules="nameRules" variant="underlined"
-                          color="primary"></v-text-field>
-            <v-textarea v-model="currentTask.description" label="Beschreibung" :rules="descriptionRules"
-                        variant="underlined" color="primary"></v-textarea>
-            <v-select v-model="selectedCategoryId" label="Ordner" :rules="modelRules" variant="underlined"
-                      :items="categories" item-title="name" item-value="id" color="primary"
-                      @update:model-value="updateDiagrams"></v-select>
-            <v-select v-model="currentTask.solutionModelId" label="Musterdiagram" :rules="modelRules"
-                      variant="underlined" :items="diagrams" item-title="name" item-value="id"
-                      color="primary"></v-select>
+            <v-text-field v-model="currentTask.name" label="Name" :rules="nameRules" variant="underlined" color="primary"></v-text-field>
+            <v-textarea v-model="currentTask.description" label="Beschreibung" :rules="descriptionRules" variant="underlined" color="primary"></v-textarea>
+            <v-select v-model="selectedCategoryId" label="Ordner" :rules="modelRules" variant="underlined" :items="categories" item-title="name" item-value="id" color="primary" @update:model-value="updateDiagrams"></v-select>
+            <v-select v-model="currentTask.solutionModelId" label="Musterdiagram" :rules="modelRules" variant="underlined" :items="diagrams" item-title="name" item-value="id" color="primary"></v-select>
           </div>
           <div>
-            <v-text-field v-model="currentTask.dueDate" :rules="dueDateRules" label="Deadline" variant="underlined"
-                          color="primary" hint="DD.MM.YYYY HH:MM"></v-text-field>
-            <v-select v-model="currentTask.eliability" :rules="liabilityRules" :items="liabilities"
-                      label="Verpflichtung" variant="underlined" color="primary" item-title="name"
-                      item-value="enum"></v-select>
-            <v-select v-model="maxSubmissions" :items="arrayMaxSubmissions" label="Versuche" variant="underlined"
-                      color="primary" hint="0 = unbegrenzt" placeholder="0 = unbegrenzt"
-                      @update:model-value="updateMaxSubmissionsOnCurrentTask"></v-select>
-            <v-slider v-model="sliderPosition" :min="0" :max="2" :step="1" thumb-label label="Feedback Level"
-                      color="primary" hint="0 = Kein Feedback, 1 = Hinweis auf Fehler, 2 = Lösungsvorschläge"
-                      persistent-hint @update:model-value="updateShowLevel"></v-slider>
-
-            <v-container>
-              <v-row>
-                <v-col cols="12" md="6" class="level-col">
-                  <v-select v-model="currentTask.taskLevel" :rules="levelrules" label="Level" variant="underlined"
-                            :items="levelOptions" color="primary" @update:model-value="levelReckognition"></v-select>
-
-                </v-col>
-                <v-col cols="10" md="4" class="automatic-col">
-                  <v-btn :disabled="isDisabled" class="automatic-btn" variant="plain"> Automatisch erkennen</v-btn>
-                </v-col>
-              </v-row>
-            </v-container>
+            <v-text-field v-model="currentTask.dueDate" :rules="dueDateRules" label="Deadline" variant="underlined" color="primary" hint="DD.MM.YYYY HH:MM"></v-text-field>
+            <v-select v-model="currentTask.eliability" :rules="liabilityRules" :items="liabilities" label="Verpflichtung" variant="underlined" color="primary" item-title="name" item-value="enum"></v-select>
+            <v-select v-model="maxSubmissions" :items="arrayMaxSubmissions" label="Versuche" variant="underlined" color="primary" hint="0 = unbegrenzt" placeholder="0 = unbegrenzt" @update:model-value="updateMaxSubmissionsOnCurrentTask"></v-select>
+            <div class="task-form-grid align-grid-elements">
+              <v-select v-model="currentTask.taskLevel" :rules="levelrules" label="Level" variant="underlined" :items="levelOptions" color="primary" @update:model-value="levelReckognition"></v-select>
+              <v-btn :disabled="isDisabled" variant="plain"> Automatisch erkennen</v-btn>
+            </div>
+            <v-slider v-model="sliderPosition" :min="0" :max="2" :step="1" thumb-label label="Feedback Level" color="primary" hint="0 = Kein Feedback, 1 = Hinweis auf Fehler, 2 = Lösungsvorschläge" persistent-hint @update:model-value="updateShowLevel"></v-slider>
           </div>
         </v-form>
       </v-card-text>
@@ -50,21 +28,19 @@
         <v-btn color="success" variant="flat" @click="_confirm"> Speichern</v-btn>
       </v-card-actions>
     </v-card>
-    <v-snackbar v-model="snackbarFail" :timeout="3000"> Ein Fehler ist aufgetreten, bitte versuchen Sie es erneut
-    </v-snackbar>
+    <v-snackbar v-model="snackbarFail" :timeout="3000"> Ein Fehler ist aufgetreten, bitte versuchen Sie es erneut </v-snackbar>
   </v-dialog>
   <DialogConfirmVue ref="dialogConfirm"></DialogConfirmVue>
 </template>
-
 
 <script setup lang="ts">
 import Task from "@/model/task/Task";
 import Category from "@/model/diagram/Category";
 import Diagram from "@/model/diagram/Diagram";
 import diagramService from "@/services/diagram.service";
-import {ref} from "vue";
-import {useAuthUserStore} from "@/stores/authUserStore";
-import {useRoute} from "vue-router";
+import { ref } from "vue";
+import { useAuthUserStore } from "@/stores/authUserStore";
+import { useRoute } from "vue-router";
 import taskService from "@/services/task.service";
 import router from "@/router";
 import DialogConfirmVue from "../dialog/DialogConfirm.vue";
@@ -90,9 +66,9 @@ const diagrams = ref<Diagram[]>([]);
 const levelOptions = Object.values(TaskLevel);
 const selectedLevel = ref("levelOptions");
 const liabilities = ref<any[]>([
-  {name: "Verpflichtend", enum: "MANDATORY"},
-  {name: "Bonus", enum: "BONUS"},
-  {name: "Optional", enum: "OPTIONAL"},
+  { name: "Verpflichtend", enum: "MANDATORY" },
+  { name: "Bonus", enum: "BONUS" },
+  { name: "Optional", enum: "OPTIONAL" },
 ]);
 const feedbackLevel = new Map<number, FeedbackLevel>([
   [0, FeedbackLevel.NOTHING],
@@ -187,24 +163,24 @@ const _confirm = () => {
       currentTask.value.mediaType = currentTask.value.mediaType.toUpperCase();
       if (newTask.value) {
         taskService
-            .postTask(currentTask.value)
-            .then(() => {
-              editTaskDialog.value = false;
-              resolvePromise.value(true);
-            })
-            .catch((error) => {
-              console.log(error);
-            });
+          .postTask(currentTask.value)
+          .then(() => {
+            editTaskDialog.value = false;
+            resolvePromise.value(true);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
       } else {
         taskService
-            .putTask(currentTask.value.id, currentTask.value)
-            .then(() => {
-              editTaskDialog.value = false;
-              resolvePromise.value(true);
-            })
-            .catch(() => {
-              snackbarFail.value = true;
-            });
+          .putTask(currentTask.value.id, currentTask.value)
+          .then(() => {
+            editTaskDialog.value = false;
+            resolvePromise.value(true);
+          })
+          .catch(() => {
+            snackbarFail.value = true;
+          });
       }
     }
   });
@@ -245,20 +221,16 @@ const loadShowLevel = (level: string) => {
 const levelReckognition = (value: TaskLevel) => {
   switch (value) {
     case TaskLevel.EASY:
-      sliderPosition.value = 0;
       selectedLevel.value = TaskLevel.EASY;
       break;
     case TaskLevel.MODERATE:
-      sliderPosition.value = 1;
       selectedLevel.value = TaskLevel.MODERATE;
       break;
     case TaskLevel.HARD:
-      sliderPosition.value = 2;
       selectedLevel.value = TaskLevel.HARD;
       break;
   }
 };
-
 
 // define expose
 defineExpose({
@@ -267,45 +239,23 @@ defineExpose({
 </script>
 
 <style scoped>
-.taskForm {
+.task-form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-gap: 10px;
+}
+
+.align-grid-elements {
+  align-items: center;
 }
 
 .card-actions {
   padding: 1rem;
 }
 
-.float-container {
-  display: inline-flex;
-
-  padding: 20px;
-}
-
-.dropdown-item {
-  cursor: pointer;
-  padding: 10px;
-  transition: background-color 0.2s;
-}
-
-.dropdown-item:hover {
-  background-color: #eee;
-}
-
-.lvl-btn {
-  width: 500px;
-}
-
 .automatic-btn {
   width: 100%;
   white-space: normal;
-}
-
-@media screen and (min-width: 768px) {
-  .automatisch-btn {
-    max-width: 150px;
-  }
 }
 
 .level-col {
