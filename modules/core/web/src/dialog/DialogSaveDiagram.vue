@@ -130,10 +130,9 @@ const openCategoryDialog = () => {
 const resolvePromise: any = ref(undefined);
 const rejectPromise: any = ref(undefined);
 
-const openDialog = (selectedDiagramId: number | null) => {
+const openDialog = (selectedDiagramId: number) => {
   updateCategories();
-  
-  if (selectedDiagramId == diagramStore.diagram.id) {
+  if (selectedDiagramId != 0 && selectedDiagramId == diagramStore.diagram.id) {
     isNewDiagram.value = false;
     diagramName.value = diagramStore.diagram.name;
     diagramCategory.value = diagramStore.diagram.categoryId;

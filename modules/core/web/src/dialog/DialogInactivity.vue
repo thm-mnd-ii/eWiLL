@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="AutoSaveDialog" persistent width="42%">
+  <v-dialog v-model="InactivityDialog" persistent width="42%">
     <v-card class="dialog-card">
       <v-card-title>
         <span class="text-h5">Automatische Speicherung</span>
@@ -28,19 +28,15 @@ import diagramService from "../services/diagram.service";
 const diagramStore = useDiagramStore();
 const authUserStore = useAuthUserStore();
 
-const AutoSaveDialog = ref<boolean>(false);
+const InactivityDialog = ref<boolean>(false);
 
 const saveDiagram = (saveType: DiagramSaveType) => {
   // set user id of diagram owner
   if (authUserStore.auth.user != null) {
-    diagramStore.diagram.ownerId = authUserStore.auth.user?.id;
-    console.log("BEFORE ", diagramStore.diagram.diagramSaveType, diagramStore.diagram.id);
+    diagramStore.diagram.ownerId = authUserStore.auth.user?.id; //Add to auto save?
     diagramStore.diagram.diagramSaveType = saveType;
-    console.log("AFTER ", diagramStore.diagram.diagramSaveType);
 
-    diagramService.postDiagram(diagramStore.diagram).then((result) => {
-          diagramStore.diagram.id = result.data;
-          console.log(result.config.data, diagramStore.diagram.id);
+    diagramService.putDiagram(diagramStore.diagram).then(() => {
           _close();
         })
         .catch((error) => {
@@ -57,7 +53,7 @@ const resolvePromise: any = ref(undefined);
 const rejectPromise: any = ref(undefined);
 
 const openDialog = () => {
-  AutoSaveDialog.value = true;
+  InactivityDialog.value = true;
   return new Promise((resolve, reject) => {
     resolvePromise.value = resolve;
     rejectPromise.value = reject;
@@ -65,7 +61,7 @@ const openDialog = () => {
 };
 
 const _close = () => {
-  AutoSaveDialog.value = false;
+  InactivityDialog.value = false;
   resolvePromise.value(false);
 };
 
