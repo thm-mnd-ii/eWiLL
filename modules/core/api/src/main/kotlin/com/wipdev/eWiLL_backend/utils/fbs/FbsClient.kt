@@ -48,8 +48,8 @@ class FbsClient {
         val request =
             HttpRequest.newBuilder()
                 .uri(URI.create(url))
-                .header("Authorization", headers.firstValue("Authorization").get())
-                .header("X-Forwarded-For", servletRequest.remoteAddr)
+                .header("Authorization", authHeader)
+                .header("X-Forwarded-For", xForwardedForHeader)
                 .GET()
                 .build()
 
