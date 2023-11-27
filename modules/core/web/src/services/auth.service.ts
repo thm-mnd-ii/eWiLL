@@ -42,7 +42,7 @@ class AuthService {
     });
   }
 
-  tokenLogin(this_token: string) {
+  tokenLogin(this_jsessionid: string) {
     return this.getUserIpAdress().then((ip) => {
       const config = {
         headers: {
@@ -54,7 +54,7 @@ class AuthService {
         .post(
           "/api/auth/tokenLogin",
           {
-            token: this_token,
+            jsessionid: this_jsessionid,
           },
           config
         )

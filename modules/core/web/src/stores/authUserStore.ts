@@ -44,8 +44,8 @@ export const useAuthUserStore = defineStore("auth", {
         }
       );
     },
-    async tokenLogin(token: string) {
-      return AuthService.tokenLogin(token).then(
+    async tokenLogin(jsessionid: string) {
+      return AuthService.tokenLogin(jsessionid).then(
         (user) => {
           this.auth.status.loggedIn = true;
           this.auth.user = user;

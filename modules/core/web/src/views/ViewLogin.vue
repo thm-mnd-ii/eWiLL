@@ -47,15 +47,15 @@ let passwordRules = [(v: string) => !!v || "Password is required"];
 
 onMounted(() => {
   // log token parameter
-  const token = router.currentRoute.value.query.token?.toString();
-  if (token) {
-    localLogin(token);
+  const jsessionid = router.currentRoute.value.query.jsessionid?.toString();
+  if (jsessionid) {
+    localLogin(jsessionid);
   }
 });
 
-const localLogin = (token?: string) => {
-  if (token) {
-    authUserStore.tokenLogin(token).catch((error) => {
+const localLogin = (jsessionid?: string) => {
+  if (jsessionid) {
+    authUserStore.tokenLogin(jsessionid).catch((error) => {
       loading.value = false;
       console.log(error);
       errorMessage.value = "Token Login fehlgeschlagen";
