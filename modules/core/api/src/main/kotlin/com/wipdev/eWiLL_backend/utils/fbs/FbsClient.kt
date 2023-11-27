@@ -43,9 +43,9 @@ class FbsClient {
 
     }
 
-    fun getUserInformation(authHeader: String, xForwardedForHeader : String?): FbsUser {
+    fun getUserInformation(authHeader: String?, xForwardedForHeader : String?): FbsUser {
         val decodingResult = decodeFBSToken(
-            authHeader.subSequence("Bearer ".length, authHeader.length).toString()
+            authHeader?.subSequence("Bearer ".length, authHeader.length).toString()
         )
         val id = decodingResult.userID
         val url = "$baseUrl/users/${id}"
