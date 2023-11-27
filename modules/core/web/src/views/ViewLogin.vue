@@ -55,11 +55,16 @@ onMounted(() => {
 
 const localLogin = (jsessionid?: string) => {
   if (jsessionid) {
-    authUserStore.tokenLogin(jsessionid).catch((error) => {
-      loading.value = false;
-      console.log(error);
-      errorMessage.value = "Token Login fehlgeschlagen";
-    });
+    authUserStore
+      .tokenLogin(jsessionid)
+      .then(() => {
+        router.push("/");
+      })
+      .catch((error) => {
+        loading.value = false;
+        console.log(error);
+        errorMessage.value = "Token Login fehlgeschlagen";
+      });
   }
 
   errorMessage.value = "";
