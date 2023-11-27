@@ -34,7 +34,7 @@ class FbsClient {
             val request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .header("Content-Type", "application/json")
-                .header("X-Forwarded-For", servletRequest.getHeader("X-Forwarded-For"))
+                .header("X-Forwarded-For", servletRequest.remoteAddr)
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                 .build()
             return client.send(request, HttpResponse.BodyHandlers.ofString())

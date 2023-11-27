@@ -61,7 +61,7 @@ class AuthController {
                 print(response.statusCode().toString() + " " + response.body())
             ResponseEntity.status(response.statusCode()).build()
         } else {
-            val user = checkUserData(loginRequestPL.username,response.headers().firstValue("Authorization").get(),request.getHeader("X-Forwarded-For"))
+            val user = checkUserData(loginRequestPL.username,response.headers().firstValue("Authorization").get(),request.remoteAddr)
             val authentication = authentificationManager.authenticate(
                 UsernamePasswordAuthenticationToken(loginRequestPL.username, "")
             )
@@ -81,7 +81,7 @@ class AuthController {
         val fbsTokenDecodingResult = JwtUtils.decodeFBSToken(tokenLoginPayload.jsessionid)
         val username = fbsTokenDecodingResult.username
 
-        checkUserData(username,"Bearer $tokenLoginPayload.jsessionid",request.getHeader("X-Forwarded-For"))
+        checkUserData(username,"Bearer $tokenLoginPayload.jsessionid",request.remoteAddr)
 
 
         val authentication = authentificationManager.authenticate(
