@@ -1,6 +1,7 @@
 package com.wipdev.eWiLL_backend.security.auth
 
 
+import com.auth0.jwt.JWT
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
@@ -13,6 +14,7 @@ import java.util.*
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.spec.SecretKeySpec
+import javax.xml.bind.DatatypeConverter
 
 
 @Component
@@ -53,12 +55,12 @@ class JwtUtils {
 
     companion object {
         fun decodeFBSToken(token: String?): FBSTokenDecodingResult {
-            val claims:Claims = Jwts.parserBuilder().setSigningKey("getSecretKey()").build().parseClaimsJws(token).body
+            val decodedJWT = JWT.decode(token)
             return FBSTokenDecodingResult(
-                claims["id"] as Int,
-                claims["username"] as String,
-                claims["exp"] as String,
-                claims["iat"] as String
+                decodedJWT.getClaim("id").asInt(),
+                decodedJWT.getClaim("username").asString(),
+                "",
+                ""
             )
         }
 
@@ -70,15 +72,8 @@ class JwtUtils {
             val iat: String
         )
 
-        fun getSecretKey(): Key {
-            val keyString = System.getenv("JWT_SECRET")
-            return if(keyString==null){
-                KeyGenerator.getInstance("HmacSHA256").generateKey()
-            }else{
-                val decodedKey: ByteArray = Base64.getDecoder().decode(keyString)
-                SecretKeySpec(decodedKey, 0, decodedKey.size, "HmacSHA256")
-            }
-        }
+        fun getSecretKey(): Key =KeyGenerator.getInstance("HmacSHA256").generateKey()
+
 
     }
 
