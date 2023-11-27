@@ -10,11 +10,11 @@
     </v-row>
     <v-data-table :headers="headers" :items="displayedCourses" item-value="name" class="elevation-1" :search="search" density="default" height="480px" @click:row="openCourseOrSignUp">
       <template #item.course.active="{ item }">
-        <v-icon v-if="item.raw.course.active == false" icon="mdi-close-circle" color="error"></v-icon>
-        <v-icon v-if="item.raw.course.active == true" icon="mdi-check-circle" color="success"></v-icon>
+        <v-icon v-if="item.course.active == false" icon="mdi-close-circle" color="error"></v-icon>
+        <v-icon v-if="item.course.active == true" icon="mdi-check-circle" color="success"></v-icon>
       </template>
       <template #item.member="{ item }">
-        <v-icon v-if="item.raw.member == true" icon="mdi-check-bold" color="success"></v-icon>
+        <v-icon v-if="item.member == true" icon="mdi-check-bold" color="success"></v-icon>
       </template>
     </v-data-table>
   </div>
@@ -76,8 +76,8 @@ const filterCourseList = () => {
 };
 
 const openCourseOrSignUp = (row: any, item: any) => {
-  if (item.item.raw.member == false) router.push("/course/" + item.item.raw.course.id + "/signup");
-  else router.push("/course/" + item.item.raw.course.id);
+  if (item.item.member == false) router.push("/course/" + item.item.course.id + "/signup");
+  else router.push("/course/" + item.item.course.id);
 };
 
 defineExpose({

@@ -1,12 +1,25 @@
 import axios from "axios";
 
 class AuthService {
-  private getUserIpAdress() {
+  
+  login(user: { username: string; password: string }) {
     return axios
-      .get("https://api.ipify.org?format=json")
-      .then((response) => response.data.ip)
+      .post(
+        "/api/auth/signin",
+        {
+          username: user.username,
+          password: user.password,
+        }
+      )
+      .then((response) => {
+        if (response.data.token) {
+          localStorage.setItem("user", JSON.stringify(response.data));
+          localStorage.setItem("role", response.data["roles"]);
+          console.log("login successful");
+        }
+        return response.data;
+      })
       .catch((error) => {
-        console.error("Fehler beim Abrufen der IP-Adresse:", error);
         throw error;
       });
   }

@@ -7,7 +7,7 @@
       </v-card-subtitle>
 
       <v-card-text class="card-text">
-        <v-form class="imput-form">
+        <v-form class="imput-form" @submit.prevent>
           <v-text-field v-model="newAttributeName" label="Attribut Name" variant="solo" required :hide-details="true" @keydown.enter="addAttribute" />
           <v-btn class="btn" color="success" @click="addAttribute">Hinzufügen</v-btn>
         </v-form>
@@ -17,8 +17,8 @@
             <v-card :elevation="2" class="attributes">
               <v-icon size="large" icon="mdi-arrow-up-down" color=""></v-icon>
 
-              <v-checkbox v-model="element.pkey" >PK</v-checkbox>
-              <v-checkbox v-model="element.fkey" >FK</v-checkbox>
+              <v-checkbox v-model="element.pkey">PK</v-checkbox>
+              <v-checkbox v-model="element.fkey">FK</v-checkbox>
               <v-text-field v-model="element.name" label="Attribut Name" variant="filled" class="input" required :hide-details="true" />
 
               <v-icon size="large" icon="mdi-delete" color="error" @click="deleteAttribute(element)"></v-icon>
@@ -74,10 +74,10 @@ const addAttribute = () => {
 
   if (toolManagementStore.selectedEntity != undefined) {
     toolManagementStore.selectedEntity.attributes.push({
-    name: newAttributeName.value,
-    pkey: false,
-    fkey: false
-}); 
+      name: newAttributeName.value,
+      pkey: false,
+      fkey: false,
+    });
     newAttributeName.value = "";
     diagramStore.saveHistory();
   }
@@ -138,7 +138,6 @@ const closeModal = () => {
     padding: 20px 0 0 10px;
     justify-items: center;
   }
-
 }
 
 .ghost {
