@@ -24,65 +24,26 @@ class AuthService {
       });
   }
 
-  login(user: { username: string; password: string }) {
-    return this.getUserIpAdress().then((ip) => {
-      const config = {
-        headers: {
-          "X-Forwarded-For": ip,
-        },
-      };
-
-      return axios
-        .post(
-          "/api/auth/signin",
-          {
-            username: user.username,
-            password: user.password,
-          },
-          config
-        )
-        .then((response) => {
-          if (response.data.token) {
-            localStorage.setItem("user", JSON.stringify(response.data));
-            localStorage.setItem("role", response.data["roles"]);
-            console.log("login successful");
-          }
-          return response.data;
-        })
-        .catch((error) => {
-          throw error;
-        });
-    });
-  }
 
   tokenLogin(this_jsessionid: string) {
-    return this.getUserIpAdress().then((ip) => {
-      const config = {
-        headers: {
-          "X-Forwarded-For": ip,
-        },
-      };
-
-      return axios
-        .post(
-          "/api/auth/tokenLogin",
-          {
-            jsessionid: this_jsessionid,
-          },
-          config
-        )
-        .then((response) => {
-          if (response.data.token) {
-            localStorage.setItem("user", JSON.stringify(response.data));
-            localStorage.setItem("role", response.data["roles"]);
-            console.log("login successful");
-          }
-          return response.data;
-        })
-        .catch((error) => {
-          throw error;
-        });
-    });
+    return axios
+      .post(
+        "/api/auth/tokenLogin",
+        {
+          jsessionid: this_jsessionid,
+        }
+      )
+      .then((response) => {
+        if (response.data.token) {
+          localStorage.setItem("user", JSON.stringify(response.data));
+          localStorage.setItem("role", response.data["roles"]);
+          console.log("login successful");
+        }
+        return response.data;
+      })
+      .catch((error) => {
+        throw error;
+      });
   }
 
   logout() {
