@@ -26,59 +26,13 @@ import javax.servlet.http.HttpServletResponse
 @Controller
 @Tag(name = "Routing Controller", description = "This controller is responsible for routing request to return index.html")
 class HomeController {
-    @Autowired
-    lateinit var userRepository: UserRepository
 
-    @Autowired
-    lateinit var roleRepository: RoleRepository
-
-    @Autowired
-    lateinit var authentificationManager: AuthenticationManager
-
-    /**
-     * This method is responsible for routing request to return index.html from a Cross Origin Request to build into the IFrame
-     */
     @GetMapping("/")
-    fun home(response:HttpServletResponse): String? {
+    fun home(): String? {
         return "index.html"
     }
 
-    @PostMapping("/tokenLogin")
-    fun tokenLogin(@RequestParam("jsessionid") jsessionid: String?,request: HttpServletRequest,response: HttpServletResponse):ResponseEntity<JwtResponse>{
-        if(jsessionid!=null){
-            val jwtUtils = JwtUtils()
-            val fbsTokenDecodingResult = JwtUtils.decodeFBSToken(jsessionid)
-            val username = fbsTokenDecodingResult.username
 
-            if (!userRepository.existsByUsername(username)) {
-                createUserData("Bearer $jsessionid")
-            }
-
-
-            val authentication = authentificationManager.authenticate(
-                UsernamePasswordAuthenticationToken(username, "")
-            )
-            SecurityContextHolder.getContext().authentication = authentication
-            val jwt = jwtUtils.generateJwtToken(authentication, fbsTokenDecodingResult.userID, username)
-            val userDetails = authentication.principal as UserDetailsImpl
-            val roles = userDetails.authorities.map { it.authority }
-            return ResponseEntity.ok(JwtResponse(jwt, userDetails.id, userDetails.username, userDetails.email, roles))
-        }else{
-            return ResponseEntity.badRequest().build()
-        }
-    }
-
-
-    private fun createUserData(authHeader : String) {
-        val role = roleRepository.getReferenceById(ERole.ROLE_USER.ordinal.toLong())
-        val fbsClient = FbsClient()
-        val fbsUser = fbsClient.getUserInformation(
-            authHeader,
-            null//TODO: X-Forwarded-For Header is missing
-        )
-        val user = User(null, fbsUser.username!!,fbsUser.email!!,fbsUser.prename!!,fbsUser.surname!!, setOf(role))
-        userRepository.save(user)
-    }
 
     @GetMapping("{_:^(?!index\\.html|api).*\$}")
     fun index(): String = "index.html"

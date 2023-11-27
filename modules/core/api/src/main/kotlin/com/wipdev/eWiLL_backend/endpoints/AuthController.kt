@@ -20,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.bind.annotation.*
 import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 
 @RestController
 @RequestMapping("/api/auth")
@@ -68,7 +69,7 @@ class AuthController {
                     request.getHeader("X-Forwarded-For")
                 )
                 println(fbsUser)
-                createUserData(fbsUser)
+                createUserDataFromAuthHeader(fbsUser)
             }
         }
 
@@ -83,12 +84,48 @@ class AuthController {
         return ResponseEntity.ok(JwtResponse(jwt, userDetails.id, userDetails.username, userDetails.email, roles))
     }
 
-    private fun createUserData(fbsUser: FbsClient.FbsUser) {
+    private fun createUserDataFromAuthHeader(fbsUser: FbsClient.FbsUser) {
         val role = roleRepository.getReferenceById(ERole.ROLE_USER.ordinal.toLong())
         val user = User(null, fbsUser.username!!, fbsUser.email!!, fbsUser.prename!!, fbsUser.surname!!, setOf(role))
         userRepository.save(user)
     }
 
+    @PostMapping("/tokenLogin")
+    fun tokenLogin(@RequestParam("jsessionid") jsessionid: String?,request: HttpServletRequest,response: HttpServletResponse):ResponseEntity<JwtResponse>{
+        if(jsessionid!=null){
+            val jwtUtils = JwtUtils()
+            val fbsTokenDecodingResult = JwtUtils.decodeFBSToken(jsessionid)
+            val username = fbsTokenDecodingResult.username
+
+            if (!userRepository.existsByUsername(username)) {
+                createUserDataFromAuthHeader("Bearer $jsessionid")
+            }
+
+
+            val authentication = authentificationManager.authenticate(
+                UsernamePasswordAuthenticationToken(username, "")
+            )
+            SecurityContextHolder.getContext().authentication = authentication
+            val jwt = jwtUtils.generateJwtToken(authentication, fbsTokenDecodingResult.userID, username)
+            val userDetails = authentication.principal as UserDetailsImpl
+            val roles = userDetails.authorities.map { it.authority }
+            return ResponseEntity.ok(JwtResponse(jwt, userDetails.id, userDetails.username, userDetails.email, roles))
+        }else{
+            return ResponseEntity.badRequest().build()
+        }
+    }
+
+
+    private fun createUserDataFromAuthHeader(authHeader : String) {
+        val role = roleRepository.getReferenceById(ERole.ROLE_USER.ordinal.toLong())
+        val fbsClient = FbsClient()
+        val fbsUser = fbsClient.getUserInformation(
+            authHeader,
+            null//TODO: X-Forwarded-For Header is missing
+        )
+        val user = User(null, fbsUser.username!!,fbsUser.email!!,fbsUser.prename!!,fbsUser.surname!!, setOf(role))
+        userRepository.save(user)
+    }
 
     @GetMapping("/isValid")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
