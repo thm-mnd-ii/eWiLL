@@ -2,7 +2,6 @@ package com.wipdev.eWiLL_backend.security.auth
 
 
 import com.auth0.jwt.JWT
-import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.security.Keys
@@ -12,9 +11,7 @@ import org.springframework.stereotype.Component
 import java.security.Key
 import java.util.*
 import javax.crypto.KeyGenerator
-import javax.crypto.SecretKey
 import javax.crypto.spec.SecretKeySpec
-import javax.xml.bind.DatatypeConverter
 
 
 @Component
@@ -41,9 +38,10 @@ class JwtUtils {
         return decodeFBSToken(token).username
     }
 
-    fun validateJwtToken(authToken: String): Boolean {
+
+    fun validateJwtToken(jwtToken: String): Boolean {
         try {
-           Jwts.parserBuilder().setSigningKey(getSecretKey()).build().parseClaimsJws(authToken)
+           Jwts.parserBuilder().setSigningKey(getSecretKey()).build().parseClaimsJws(jwtToken)
             return true
         } catch (e: Exception) {
             println("Invalid JWT signature: ${e.message}")
@@ -54,6 +52,8 @@ class JwtUtils {
 
 
     companion object {
+
+
         fun decodeFBSToken(token: String?): FBSTokenDecodingResult {
             val decodedJWT = JWT.decode(token)
             return FBSTokenDecodingResult(
@@ -72,7 +72,14 @@ class JwtUtils {
             val iat: String
         )
 
-        fun getSecretKey(): Key =KeyGenerator.getInstance("HmacSHA256").generateKey()
+        fun getSecretKey(): Key {
+            val keyString = System.getenv("JWT_SECRET")
+            return if(keyString==null || keyString.isEmpty()){
+                KeyGenerator.getInstance("HmacSHA256").generateKey()
+            }else{
+                Keys.hmacShaKeyFor(keyString.toByteArray())
+            }
+        }
 
 
     }

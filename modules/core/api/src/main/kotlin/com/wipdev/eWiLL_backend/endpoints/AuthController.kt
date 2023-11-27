@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Description
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.authentication.AuthenticationManager
@@ -76,8 +77,11 @@ class AuthController {
     }
 
     @PostMapping("/tokenLogin")
-    fun tokenLogin(@RequestBody tokenLoginPayload: TokenLoginPayload,request: HttpServletRequest,response: HttpServletResponse):ResponseEntity<JwtResponse>{
+    fun tokenLogin(@RequestBody tokenLoginPayload: TokenLoginPayload,request: HttpServletRequest,response: HttpServletResponse):ResponseEntity<Any>{
         val jwtUtils = JwtUtils()
+        if(!jwtUtils.validateJwtToken(tokenLoginPayload.jsessionid))
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token is either expired, or signed by a different key.")
+
         val fbsTokenDecodingResult = JwtUtils.decodeFBSToken(tokenLoginPayload.jsessionid)
         val username = fbsTokenDecodingResult.username
 
