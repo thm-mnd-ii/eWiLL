@@ -25,6 +25,7 @@ class FbsClient {
             "{\"username\":\"$username\",\"password\":\"${String(passwordBytes, StandardCharsets.UTF_8)}\"}"
 
 
+
         val request = HttpRequest.newBuilder()
             .uri(URI.create(url))
             .header("Content-Type", "application/json")
@@ -36,19 +37,19 @@ class FbsClient {
 
     }
 
-    fun getUserInformation(headers: HttpHeaders, servletRequest: HttpServletRequest): FbsUser {
+    fun getUserInformation(authHeader: String?, xForwardedForHeader : String?): FbsUser {
         val decodingResult = decodeFBSToken(
-            headers.firstValue("Authorization").get()
-                .subSequence("Bearer ".length, headers.firstValue("Authorization").get().length).toString()
+            authHeader?.subSequence("Bearer ".length, authHeader.length).toString()
         )
         val id = decodingResult.userID
         val url = "$baseUrl/users/${id}"
         val client = HttpClient.newBuilder().build()
+
         val request =
             HttpRequest.newBuilder()
                 .uri(URI.create(url))
-                .header("Authorization", headers.firstValue("Authorization").get())
-                .header("X-Forwarded-For", servletRequest.remoteAddr)
+                .header("Authorization", authHeader)
+                .header("X-Forwarded-For", xForwardedForHeader)
                 .GET()
                 .build()
 
@@ -67,8 +68,6 @@ class FbsClient {
         return FBSTokenDecodingResult(
             decodedJWT.getClaim("id").asInt(),
             decodedJWT.getClaim("username").asString(),
-            decodedJWT.getClaim("courseRoles").asString(),
-            decodedJWT.getClaim("globalRole").asString(),
             "",
             ""
         )
@@ -86,7 +85,7 @@ class FbsClient {
         var name: String? = ""
 
         override fun toString(): String {
-            return "FbsUser(id=$id, prename='$prename', surname='$surname', email='$email', username='$username', password='$password', alias='$alias', globalRole='$globalRole', name='$name')"
+            return "FbsUser(id=$id, prename='$prename', surname='$surname', email='$email', username='$username', alias='$alias', globalRole='$globalRole', name='$name')"
         }
     }
 }

@@ -24,6 +24,28 @@ class AuthService {
       });
   }
 
+
+  tokenLogin(this_jsessionid: string) {
+    return axios
+      .post(
+        "/api/auth/tokenLogin",
+        {
+          jsessionid: this_jsessionid,
+        }
+      )
+      .then((response) => {
+        if (response.data.token) {
+          localStorage.setItem("user", JSON.stringify(response.data));
+          localStorage.setItem("role", response.data["roles"]);
+          console.log("login successful");
+        }
+        return response.data;
+      })
+      .catch((error) => {
+        throw error;
+      });
+  }
+
   logout() {
     localStorage.removeItem("user");
     console.log("logout successful");

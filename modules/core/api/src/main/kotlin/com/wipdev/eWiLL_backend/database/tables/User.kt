@@ -7,16 +7,21 @@ import javax.persistence.*
 @Entity
 @Table(name = "users", uniqueConstraints = [UniqueConstraint(columnNames = ["email"])])
 data class User(
-    @Id @GeneratedValue(strategy = GenerationType.SEQUENCE) val id: Long? = 0,
+    @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    val id: Long? = 0,
 
-    @Column(name = "username", nullable = false) val username: String = "",
+    @Column(name = "username", nullable = false)
+    val username: String = "",
 
 
-    @Column(name = "email", nullable = false) val email: String = "",
+    @Column(name = "email", nullable = false)
+    val email: String = "",
 
-    @Column(name = "firstName", nullable = true) val firstName: String = "",
+    @Column(name = "firstName", nullable = true)
+    val firstName: String = "",
 
-    @Column(name = "lastName", nullable = true) val lastName: String = "",
+    @Column(name = "lastName", nullable = true)
+    val lastName: String = "",
 
     @ManyToMany(fetch = FetchType.EAGER) @JoinTable(
         name = "user_roles",
