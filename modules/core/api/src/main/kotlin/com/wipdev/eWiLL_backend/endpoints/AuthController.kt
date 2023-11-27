@@ -1,6 +1,7 @@
 package com.wipdev.eWiLL_backend.endpoints
 
 import com.wipdev.eWiLL_backend.database.tables.User
+import com.wipdev.eWiLL_backend.endpoints.payload.TokenLoginPayload
 import com.wipdev.eWiLL_backend.endpoints.payload.requests.LoginRequestPL
 import com.wipdev.eWiLL_backend.endpoints.payload.responses.JwtResponse
 import com.wipdev.eWiLL_backend.repository.RoleRepository
@@ -74,27 +75,23 @@ class AuthController {
 
     }
 
-    @PostMapping("/tokenLogin/{jsessionid}")
-    fun tokenLogin(@PathVariable("jsessionid") jsessionid: String?,request: HttpServletRequest,response: HttpServletResponse):ResponseEntity<JwtResponse>{
-        if(jsessionid!=null){
-            val jwtUtils = JwtUtils()
-            val fbsTokenDecodingResult = JwtUtils.decodeFBSToken(jsessionid)
-            val username = fbsTokenDecodingResult.username
+    @PostMapping("/tokenLogin")
+    fun tokenLogin(@RequestBody tokenLoginPayload: TokenLoginPayload,request: HttpServletRequest,response: HttpServletResponse):ResponseEntity<JwtResponse>{
+        val jwtUtils = JwtUtils()
+        val fbsTokenDecodingResult = JwtUtils.decodeFBSToken(tokenLoginPayload.jsessionid)
+        val username = fbsTokenDecodingResult.username
 
-            checkUserData(username,"Bearer $jsessionid",request.getHeader("X-Forwarded-For"))
+        checkUserData(username,"Bearer $tokenLoginPayload.jsessionid",request.getHeader("X-Forwarded-For"))
 
 
-            val authentication = authentificationManager.authenticate(
-                UsernamePasswordAuthenticationToken(username, "")
-            )
-            SecurityContextHolder.getContext().authentication = authentication
-            val jwt = jwtUtils.generateJwtToken(authentication, fbsTokenDecodingResult.userID, username)
-            val userDetails = authentication.principal as UserDetailsImpl
-            val roles = userDetails.authorities.map { it.authority }
-            return ResponseEntity.ok(JwtResponse(jwt, userDetails.id, userDetails.username, userDetails.email, roles))
-        }else{
-            return ResponseEntity.badRequest().build()
-        }
+        val authentication = authentificationManager.authenticate(
+            UsernamePasswordAuthenticationToken(username, "")
+        )
+        SecurityContextHolder.getContext().authentication = authentication
+        val jwt = jwtUtils.generateJwtToken(authentication, fbsTokenDecodingResult.userID, username)
+        val userDetails = authentication.principal as UserDetailsImpl
+        val roles = userDetails.authorities.map { it.authority }
+        return ResponseEntity.ok(JwtResponse(jwt, userDetails.id, userDetails.username, userDetails.email, roles))
     }
 
     private fun checkUserData(username:String, authHeader: String?,xForewaredForHeader:String?):User{
