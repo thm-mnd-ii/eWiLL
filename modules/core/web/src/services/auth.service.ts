@@ -42,6 +42,36 @@ class AuthService {
     });
   }
 
+  tokenLogin(this_token: string) {
+    return this.getUserIpAdress().then((ip) => {
+      const config = {
+        headers: {
+          "X-Forwarded-For": ip,
+        },
+      };
+
+      return axios
+        .post(
+          "/api/auth/tokenLogin",
+          {
+            token: this_token,
+          },
+          config
+        )
+        .then((response) => {
+          if (response.data.token) {
+            localStorage.setItem("user", JSON.stringify(response.data));
+            localStorage.setItem("role", response.data["roles"]);
+            console.log("login successful");
+          }
+          return response.data;
+        })
+        .catch((error) => {
+          throw error;
+        });
+    });
+  }
+
   logout() {
     localStorage.removeItem("user");
     console.log("logout successful");

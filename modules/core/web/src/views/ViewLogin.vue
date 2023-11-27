@@ -26,11 +26,12 @@
 </template>
 
 <script setup lang="ts">
-import BasicBackground from '@/components/BasicBackground.vue';
+import BasicBackground from "@/components/BasicBackground.vue";
 
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthUserStore } from "../stores/authUserStore";
+import { onMounted } from "vue";
 
 const router = useRouter();
 const authUserStore = useAuthUserStore();
@@ -44,7 +45,23 @@ const loading = ref(false);
 let userRules = [(v: string) => !!v || "Benutzername is required"];
 let passwordRules = [(v: string) => !!v || "Password is required"];
 
-const localLogin = () => {
+onMounted(() => {
+  // log token parameter
+  const token = router.currentRoute.value.query.token?.toString();
+  if (token) {
+    localLogin(token);
+  }
+});
+
+const localLogin = (token?: string) => {
+  if (token) {
+    authUserStore.tokenLogin(token).catch((error) => {
+      loading.value = false;
+      console.log(error);
+      errorMessage.value = "Token Login fehlgeschlagen";
+    });
+  }
+
   errorMessage.value = "";
   loading.value = true;
 
