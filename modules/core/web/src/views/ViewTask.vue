@@ -161,10 +161,12 @@ const loadElements = async (role: CourseRoles) => {
     selectedDiagramId.value = undefined;
     diagrams.value = [];
     categories.value = [];
-
+    localStorage.setItem("usertype", "STUDENT");
+   // courseService.changeUserRole(courseId.value, userId.value!, CourseRoles.STUDENT,userId.value! as any)
     await loadDiagramIfExists();
     await loadSubmissions();
   } else if (courseRole.value == CourseRoles.OWNER || courseRole.value == CourseRoles.TUTOR) {
+    localStorage.setItem("usertype", "OWNER")
     await loadNumberSubmissions();
   }
 };
@@ -180,6 +182,7 @@ const loadSubmissions = () => {
   evaluationService.getSubmissionIdsByUserAndTask(userId.value, taskId.value).then((response) => {
     const submissionIds = response.data;
     submissionCount.value = submissionIds.length;
+    console.log("check result tabs: " + JSON.stringify(taskSubmissionsResultsTabs.value));
     if (submissionCount.value > 0) taskSubmissionsResultsTabs.value!.load(task.value);
   });
 };
