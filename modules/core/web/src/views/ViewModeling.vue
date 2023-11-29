@@ -139,8 +139,9 @@ onMounted(() => {
   
 });
 const triggerfeedback = () => {
+  const submissionsleft = (activeTask?.maxSubmissions || 0)-submissionCount.value;
   console.log("triggerfeedback entered")
-  dialogConfirm.value?.openDialog("Abgabe: ", "Möchten Sie das Diagram wirklich einreichen?", "Einreichen").then((result: boolean) => {
+  dialogConfirm.value?.openDialog("Abgaben übrig: "+submissionsleft, 'Möchten Sie das Diagram wirklich einreichen? :', "Einreichen").then((result: boolean) => {
   if (result) {
     console.log("true triggered")
     showAdvancedFeedback.value = true;
