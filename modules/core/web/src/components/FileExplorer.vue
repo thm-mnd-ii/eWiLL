@@ -228,6 +228,7 @@ const deleteCurrentDiagram = () => {
   dialogConfirm.value?.openDialog("Diagramm zurücksetzen", 'Willst du deinen bisherigen Fortschritt löschen? Wenn du auf "Zurücksetzen" klickst, wird das gesamte Diagramm zurückgesetzt und du kannst von Grund auf neu anfangen.', "Zurücksetzen").then((result: boolean) => {
     if (result) {
       diagramStore.createNewDiagram();
+      localStorage.removeItem("diagram");
     }
   });
 };
