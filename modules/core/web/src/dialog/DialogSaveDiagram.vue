@@ -13,16 +13,18 @@
       </v-card-title>
       <v-card-text>
         <v-form ref="form" v-model="valid" class="save-diagram-form">
-          <v-text-field v-model="diagramName" :rules="[(v) => !!v || 'Item is required']" label="Name*" required></v-text-field>
-          <v-select v-model="diagramCategory" :rules="[(v) => !!v || 'Item is required']" :items="categoryNames" item-title="name" item-value="id" label="Ordner*" required></v-select>
+          <v-text-field v-model="diagramName" :rules="[(v: any) => !!v || 'Item is required']" label="Name*" required></v-text-field>
+          <v-select v-model="diagramCategory" :rules="[(v: any) => !!v || 'Item is required']" :items="categoryNames" item-title="name" item-value="id" label="Ordner*" required></v-select>
           <v-btn cols="12" sm="6" md="4" icon="mdi-folder-plus" @click="openCategoryDialog"></v-btn>
         </v-form>
         <small>*indicates required field</small>
       </v-card-text>
       <v-card-actions>
+        
         <v-spacer></v-spacer>
         <v-btn variant="text" @click="_close"> Close </v-btn>
-        <v-btn variant="text" @click="saveDiagram"> Save </v-btn>
+        <v-progress-circular v-if="loading" color="primary" indeterminate size="40"></v-progress-circular>
+        <v-btn v-if="!loading" variant="text" @click="saveDiagram"> Save </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -45,7 +47,7 @@ const valid = ref<boolean>(false);
 const form = ref();
 const diagramName = ref<string>("");
 const diagramCategory = ref<number>();
-
+const loading = ref<boolean>(false);
 const categoryNames = ref<Category[]>([]);
 
 const saveDialog = ref<boolean>(false);
@@ -67,6 +69,7 @@ const updateCategories = () => {
 };
 
 const saveDiagram = () => {
+  loading.value = true;
   // set user id of diagram owner
   if (authUserStore.auth.user != null) {
     diagramStore.diagram.ownerId = authUserStore.auth.user?.id;
@@ -93,9 +96,16 @@ const saveDiagram = () => {
           .catch((error) => {
             console.log(error);
             alert("Diagramm konnte nicht gespeichert werden");
-          });
+            loading.value = false;
+          }) .finally(() => {
+      
+      setTimeout(() => {
+        loading.value = false;
+      }, 1000);
+    });
           localStorage.removeItem("diagram");
       } else {
+        loading.value = false;
         alert("Form is not valid");
       }
     });
@@ -113,6 +123,7 @@ const saveDiagram = () => {
           })
           .catch(() => {
             alert("Diagramm konnte nicht gespeichert werden");
+            loading.value = false;
           });
       }
     });
@@ -132,8 +143,9 @@ const resolvePromise: any = ref(undefined);
 const rejectPromise: any = ref(undefined);
 
 const openDialog = (selectedDiagramId: number | null) => {
+  loading.value = false; 
   updateCategories();
-  
+
   if (selectedDiagramId == diagramStore.diagram.id) {
     isNewDiagram.value = false;
     diagramName.value = diagramStore.diagram.name;

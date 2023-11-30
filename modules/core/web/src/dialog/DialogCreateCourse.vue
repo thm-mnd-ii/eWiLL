@@ -9,21 +9,23 @@
         <v-card-text>
           <v-row>
             <v-col>
-              <v-text-field v-model="course.name" color="primary" variant="underlined" label="Name" :rules="[(v) => !!v || 'Item is required']" required></v-text-field>
-              <v-text-field v-model="course.description" color="primary" variant="underlined" label="Beschreibung" :rules="[(v) => !!v || 'Item is required']" required></v-text-field>
-              <v-text-field v-model="course.keyPassword" color="primary" variant="underlined" label="Passwort" :rules="[(v) => !!v || 'Item is required']" required></v-text-field>
+              <v-text-field v-model="course.name" color="primary" variant="underlined" label="Name" :rules="[(v: any) => !!v || 'Item is required']" required></v-text-field>
+              <v-text-field v-model="course.description" color="primary" variant="underlined" label="Beschreibung" :rules="[(v: any) => !!v || 'Item is required']" required></v-text-field>
+              <v-text-field v-model="course.keyPassword" color="primary" variant="underlined" label="Passwort" :rules="[(v: any) => !!v || 'Item is required']" required></v-text-field>
             </v-col>
             <v-col>
-              <v-select v-model="course.semester" color="primary" variant="underlined" label="Semester" :rules="[(v) => !!v || 'Item is required']" required :items="semesters" item-title="name" return-object></v-select>
-              <v-select v-model="course.location" color="primary" variant="underlined" label="Standort" :items="['Friedberg', 'Gießen']" :rules="[(v) => !!v || 'Item is required']" required></v-select>
+              <v-select v-model="course.semester" color="primary" variant="underlined" label="Semester" :rules="[(v: any) => !!v || 'Item is required']" required :items="semesters" item-title="name" return-object></v-select>
+              <v-select v-model="course.location" color="primary" variant="underlined" label="Standort" :items="['Friedberg', 'Gießen']" :rules="[(v: any) => !!v || 'Item is required']" required></v-select>
             </v-col>
           </v-row>
         </v-card-text>
         <v-card-actions class="card-actions">
+   
           <v-btn v-if="!newCourse" color="error" variant="flat" @click="deleteCourse">Kurs löschen</v-btn>
           <v-spacer></v-spacer>
           <v-btn color="error" variant="flat" @click="_cancel"> Abbrechen </v-btn>
-          <v-btn color="primary" variant="flat" type="submit" @click="_confirm"> Speichern </v-btn>
+          <v-btn v-show="!loading" color="primary" variant="flat" type="submit" @click="_confirm"> Speichern </v-btn>
+          <v-progress-circular v-if="loading" color="primary" indeterminate size="40"></v-progress-circular>
         </v-card-actions>
       </v-form>
     </v-card>
@@ -33,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import {watch, ref } from "vue";
 import { useAuthUserStore } from "../stores/authUserStore";
 import courseService from "../services/course.service";
 import CoursePL from "../model/course/CoursePL";
@@ -56,7 +58,7 @@ const newCourse = ref(true);
 const course = ref<CoursePL>({} as CoursePL);
 
 const snackbarFail = ref(false);
-
+const loading = ref(false);
 // Form
 const valid = ref();
 const courseSemester = ref("");
@@ -65,6 +67,7 @@ const resolvePromise: any = ref(undefined);
 const rejectPromise: any = ref(undefined);
 
 const openDialog = (courseId: number | undefined) => {
+  loading.value = false; 
   initializeSemesters();
   if (courseId == undefined) {
     newCourse.value = true;
@@ -79,6 +82,25 @@ const openDialog = (courseId: number | undefined) => {
     resolvePromise.value = resolve;
     rejectPromise.value = reject;
   });
+};
+
+//the watcher  is used to reset the form when opening/closing the dialog. 
+watch(courseDialog, (newVal) => {
+  if (newVal) {
+    // Dialog opened, fetch course data if editing
+    if (!newCourse.value && course.value.id) {
+      initializeDialogForEditingCourse(course.value.id);
+    }
+  } else {
+    // Dialog closed, reset course data
+    resetDialog();
+  }
+});
+
+const resetDialog = () => {
+  course.value = {}as CoursePL; 
+  valid.value = false; 
+
 };
 
 const initializeDialogForNewCourse = () => {
@@ -98,37 +120,45 @@ const refreshTextFields = () => {
 };
 
 // TODO
-const _confirm = () => {
-  if (valid.value) {
-    // course.active has to be handled by the backend. Needs to be removed because it tempers with the put.
-    course.value.active = true;
-    let userId = authUserStore.auth.user?.id;
-    if (userId != undefined) course.value.owner = userId;
-    if (newCourse.value == true) {
-      courseService
-        .postCourse(course.value)
-        .then((response) => {
-          courseDialog.value = false;
-          resolvePromise.value(response.data.id);
-        })
-        .catch((error) => {
-          snackbarFail.value = true;
-          console.log(error);
-        });
-    } else {
-      console.log(course);
-      courseService
-        .putCourse(course.value)
-        .then((response) => {
-          courseDialog.value = false;
-          resolvePromise.value(response.data.id);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+const _confirm = async () => {
+  loading.value = true;
+  
+  
+    if (valid.value) {
+      course.value.active = true;
+      let userId = authUserStore.auth.user?.id;
+      if (userId != undefined) course.value.owner = userId;
+      if (newCourse.value == true) {
+        courseService
+          .postCourse(course.value)
+          .then((response) => {
+            courseDialog.value = false;
+            resolvePromise.value(response.data.id);
+          })
+          .catch((error) => {
+            snackbarFail.value = true;
+            console.log(error);
+          });
+      } else {
+        console.log(course);
+        courseService
+          .putCourse(course.value)
+          .then((response) => {
+            courseDialog.value = false;
+            resolvePromise.value(response.data.id);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
     }
-  }
+    setTimeout(() => {
+      loading.value = false;
+    }, 1000);
+    
+  
 };
+
 
 const _cancel = () => {
   courseDialog.value = false;
@@ -170,5 +200,4 @@ defineExpose({
 .card-actions {
   padding: 1rem;
 }
-
 </style>
