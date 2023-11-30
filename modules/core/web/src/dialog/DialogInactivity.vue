@@ -1,15 +1,9 @@
 <template>
-  <v-dialog v-model="InactivityDialog" persistent width="42%">
+  <v-dialog v-model="InactivityDialog" persistent width="680px">
     <v-card class="dialog-card">
-      <v-card-title>
-        <span class="text-h5">Automatische Speicherung</span>
-      </v-card-title>
-      <v-card-text class="prompt-text">
-        Dein Modell wurde automatisch gespeichert. 
-        Bitte teile uns mit, was du gerade machst, damit wir deinen Lernweg besser verstehen und unterstützen können.
-      </v-card-text>
+      <v-card-title> Automatische Speicherung </v-card-title>
+      <v-card-text class="prompt-text"> Dein Modell wurde automatisch gespeichert. Bitte teile uns mit, was du gerade machst, damit wir deinen Lernweg besser verstehen und dich unterstützen können. </v-card-text>
       <v-card-actions>
-        <v-spacer></v-spacer>
         <v-btn variant="text" @click="saveDiagram(DiagramSaveType.THINKING)"> Ich überlege gerade </v-btn>
         <v-btn variant="text" @click="saveDiagram(DiagramSaveType.BREAK)"> Ich mache einer Lernpause </v-btn>
         <v-btn variant="text" @click="saveDiagram(DiagramSaveType.DISTRACTED)"> Ich war abgelenkt </v-btn>
@@ -17,7 +11,7 @@
     </v-card>
   </v-dialog>
 </template>
-  
+
 <script setup lang="ts">
 import { ref } from "vue";
 import { useDiagramStore } from "../stores/diagramStore";
@@ -36,13 +30,15 @@ const saveDiagram = (saveType: DiagramSaveType) => {
     diagramStore.diagram.ownerId = authUserStore.auth.user?.id; //Add to auto save?
     diagramStore.diagram.diagramSaveType = saveType;
 
-    diagramService.putDiagram(diagramStore.diagram).then(() => {
-          _close();
-        })
-        .catch((error) => {
-          console.log(error);
-          alert("Diagramm konnte nicht gespeichert werden");
-        });
+    diagramService
+      .putDiagram(diagramStore.diagram)
+      .then(() => {
+        _close();
+      })
+      .catch((error) => {
+        console.log(error);
+        alert("Diagramm konnte nicht gespeichert werden");
+      });
   } else {
     throw new Error("User is not logged in");
   }
@@ -71,14 +67,4 @@ defineExpose({
 });
 </script>
 
-<style scoped lang="scss">
-.dialog-card{
-    height: 250px;
-    .prompt-text {
-        margin-top: 35px;
-        line-height: 1.6; 
-        white-space: normal;
-    }
-}
-</style>
-  
+<style scoped lang="scss"></style>
