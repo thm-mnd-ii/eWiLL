@@ -20,7 +20,6 @@
         <small>*indicates required field</small>
       </v-card-text>
       <v-card-actions>
-        
         <v-spacer></v-spacer>
         <v-btn variant="text" @click="_close"> Close </v-btn>
         <v-progress-circular v-if="loading" color="primary" indeterminate size="40"></v-progress-circular>
@@ -91,19 +90,19 @@ const saveDiagram = () => {
           .then((result) => {
             // result.data == diagram.id
             diagramStore.diagram.id = result.data;
+            localStorage.removeItem("diagram");
             _promiseNewDiagram();
           })
           .catch((error) => {
             console.log(error);
             alert("Diagramm konnte nicht gespeichert werden");
             loading.value = false;
-          }) .finally(() => {
-      
-      setTimeout(() => {
-        loading.value = false;
-      }, 1000);
-    });
-          localStorage.removeItem("diagram");
+          })
+          .finally(() => {
+            setTimeout(() => {
+              loading.value = false;
+            }, 1000);
+          });
       } else {
         loading.value = false;
         alert("Form is not valid");
@@ -119,6 +118,7 @@ const saveDiagram = () => {
         diagramService
           .putDiagram(diagramStore.diagram)
           .then(() => {
+            localStorage.removeItem("diagram");
             _promiseNewDiagram();
           })
           .catch(() => {
@@ -143,7 +143,7 @@ const resolvePromise: any = ref(undefined);
 const rejectPromise: any = ref(undefined);
 
 const openDialog = (selectedDiagramId: number | null) => {
-  loading.value = false; 
+  loading.value = false;
   updateCategories();
 
   if (selectedDiagramId == diagramStore.diagram.id) {
