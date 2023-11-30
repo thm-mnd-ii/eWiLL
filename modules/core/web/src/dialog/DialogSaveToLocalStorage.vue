@@ -20,7 +20,7 @@
         </v-card>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn variant="text" @click="_newDiagram"> Neu anlegen </v-btn>
+        <v-btn variant="text" @click="_newDiagram"> Modell verwerfen </v-btn>
         <v-btn variant="text" @click="_loadDiagram"> Übernehmen </v-btn>
       </v-card-actions>
     </v-card>
