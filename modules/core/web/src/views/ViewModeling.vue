@@ -1,29 +1,17 @@
 <template>
   <DialogInactivityVue ref="dialogInactivity"></DialogInactivityVue>
   <DialogSaveDiagramVue ref="dialogSave"></DialogSaveDiagramVue>
+  <DialogSaveToLocalStorageVue ref="dialogSaveToLocal"></DialogSaveToLocalStorageVue>
   <v-snackbar v-model="snackbarSuccess" :timeout="2500"> Diagramm erfolgreich eingereicht </v-snackbar>
-  <v-snackbar
-      v-model="snackbarSave"
-      vertical
-      location="right bottom"
-      color="#b03333"
-      :timeout="-1"
-    >
-      <div class="text-subtitle-1 pb-2">Achtung.. Dein Modell ist noch nicht gespeichert!</div>
-      <p>Bitte speichere deine Arbeit, damit keine Änderungen verloren gehen.</p>
+  <v-snackbar v-model="snackbarSave" vertical location="right bottom" color="#b03333" :timeout="-1">
+    <div class="text-subtitle-1 pb-2">Achtung.. Dein Modell ist noch nicht gespeichert!</div>
+    <p>Bitte speichere deine Arbeit, damit keine Änderungen verloren gehen.</p>
 
-      <template #actions>
-        <v-btn
-          color="white"
-          variant="text"
-          @click="_openSaveDialog"
-        >
-          Zum Speichern
-        </v-btn>
-      </template>
-    </v-snackbar>
+    <template #actions>
+      <v-btn color="white" variant="text" @click="_openSaveDialog"> Zum Speichern </v-btn>
+    </template>
+  </v-snackbar>
 
-  
   <div class="container">
     <v-card v-if="activeTask != undefined" class="task-floater" elevation="3">
       <v-card-title>Abgabe</v-card-title>
@@ -51,7 +39,9 @@
         </span>
 
         <span v-if="autosave">
-          <span>Dein Diagramm <b>{{ diagramStore.diagram.name }}</b> wurde automatisch um {{ lastAutosaveTime }} gespeichert</span>
+          <span
+            >Dein Diagramm <b>{{ diagramStore.diagram.name }}</b> wurde automatisch um {{ lastAutosaveTime }} gespeichert</span
+          >
         </span>
 
         <v-spacer></v-spacer>
@@ -81,7 +71,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch  } from "vue";
+import { ref, computed, onMounted, onUnmounted, watch } from "vue";
 
 import ModelingTool from "@/components/ModelingTool.vue";
 import FileExplorer from "@/components/FileExplorer.vue";
@@ -93,6 +83,8 @@ import { useToolManagementStore } from "@/stores/toolManagementStore";
 import { useRouter, onBeforeRouteLeave } from "vue-router";
 
 import diagramService from "@/services/diagram.service";
+
+import DialogSaveToLocalStorageVue from "@/dialog/DialogSaveToLocalStorage.vue";
 import DialogInactivityVue from "@/dialog/DialogInactivity.vue";
 import DialogSaveDiagramVue from "@/dialog/DialogSaveDiagram.vue";
 import DiagramSaveType from "@/enums/DiagramSaveType";
@@ -121,7 +113,12 @@ const snackbarSave = ref(false);
 const autosave = ref(false);
 const lastAutosaveTime = ref<string>("");
 
+const dialogSaveToLocal = ref<typeof DialogSaveToLocalStorageVue>();
+const getLocalDiagram = localStorage.getItem("diagram");
 
+if (getLocalDiagram) {
+  diagramStore.diagram = JSON.parse(getLocalDiagram);
+}
 
 const currentTime = ref<Date>(new Date());
 setInterval(() => {
@@ -146,47 +143,58 @@ onMounted(() => {
   _setAutosaveTimer();
   _setInactivityTimer();
 
-  window.addEventListener('click', _setInactivityTimer);
+  if (getLocalDiagram != null) {
+    dialogSaveToLocal.value?.openDialog();
+  }
+
+  window.addEventListener("click", _setInactivityTimer);
   window.addEventListener("beforeunload", handleBeforeUnload);
 });
 
 // watches over id and entity changes
-watch(() => [diagramStore.diagram.id, diagramStore.diagram.entities.length], ([id, entities]) => {
-  if (id === 0 && entities === 1) {
-    // start the snackbar upon adding the first entity to the diagram
+watch(
+  () => [diagramStore.diagram.id, diagramStore.diagram.entities.length],
+  ([id, entities]) => {
+    if (id === 0 && entities === 1) {
+      // start the snackbar upon adding the first entity to the diagram
       _setSnackbarTimer();
-  } else if (id === 0 && entities === 0) {
-    // close snackbar if diagram is emptied
-    _clearTimer(snackbarTimer);
-  } else {
-    // close snackbar if diagram is saved
-    snackbarSave.value = false;
-  }
-}, { deep: true });
+    } else if (id === 0 && entities === 0) {
+      // close snackbar if diagram is emptied
+      _clearTimer(snackbarTimer);
+    } else {
+      // close snackbar if diagram is saved
+      snackbarSave.value = false;
+    }
+  },
+  { deep: true }
+);
 
 // check if diagram is saved to activate the autosave and inactivity timer
-watch(() => diagramStore.diagram.id, (id) => {
-  if (id !== 0) {
-    _setAutosaveTimer();
-    _clearTimer(snackbarTimer);
-  } else if (id === 0) {
-    //clear timers when diagram is not saved
-    _clearTimer(inactivityTimer);
-    _clearTimer(autosaveTimer);
-    autosave.value = false;
+watch(
+  () => diagramStore.diagram.id,
+  (id) => {
+    if (id !== 0) {
+      _setAutosaveTimer();
+      _clearTimer(snackbarTimer);
+    } else if (id === 0) {
+      //clear timers when diagram is not saved
+      _clearTimer(inactivityTimer);
+      _clearTimer(autosaveTimer);
+      autosave.value = false;
+    }
   }
-});
+);
 
 onUnmounted(() => {
   _clearTimer(snackbarTimer);
   _clearTimer(autosaveTimer);
   _clearTimer(inactivityTimer);
-  window.removeEventListener('click', _setInactivityTimer);
+  window.removeEventListener("click", _setInactivityTimer);
 });
 
 const _setSnackbarTimer = () => {
   _clearTimer(snackbarTimer);
-    if (diagramStore.diagram.id === 0) {
+  if (diagramStore.diagram.id === 0) {
     snackbarTimer.value = setTimeout(() => {
       snackbarSave.value = true;
     }, TIMEOUT) as unknown as number;
@@ -201,13 +209,13 @@ const _setAutosaveTimer = () => {
       diagramStore.diagram.diagramSaveType = DiagramSaveType.AUTO;
       diagramService.putDiagram(diagramStore.diagram).then(() => {
         const actualTime = new Date();
-        const hours = String(actualTime.getHours()).padStart(2, '0');
-        const minutes = String(actualTime.getMinutes()).padStart(2, '0');
+        const hours = String(actualTime.getHours()).padStart(2, "0");
+        const minutes = String(actualTime.getMinutes()).padStart(2, "0");
         lastAutosaveTime.value = `${hours}:${minutes}`;
         autosave.value = true;
       });
     }, TIMEOUT) as unknown as number;
-  }  
+  }
 };
 
 const _setInactivityTimer = () => {
