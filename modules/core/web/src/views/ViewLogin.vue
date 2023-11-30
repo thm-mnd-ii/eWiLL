@@ -55,11 +55,11 @@ const minHeight = 400;
 
 onMounted(() => {
   _checkCompability();
-  window.addEventListener('resize', _checkCompability);
+  window.addEventListener("resize", _checkCompability);
 });
 
 onUnmounted(() => {
-  window.removeEventListener('resize', _checkCompability);
+  window.removeEventListener("resize", _checkCompability);
 });
 
 const _checkCompability = () => {
@@ -73,23 +73,24 @@ const _checkCompability = () => {
 
   // Screen Size
   if (window.innerWidth < minWidth || window.innerHeight < minHeight) {
-      supportedScreenSize.value = false;
-    } else {
-      supportedScreenSize.value = true;
-    }
-}
+    supportedScreenSize.value = false;
+  } else {
+    supportedScreenSize.value = true;
+  }
+};
 
 onMounted(() => {
   // log token parameter
   const jsessionid = router.currentRoute.value.query.jsessionid?.toString();
   if (jsessionid) {
-    localLogin(jsessionid);
+    tokenLogin(jsessionid);
   }
 });
 
-const localLogin = (jsessionid?: string) => {
-
-  if (jsessionid) {
+const tokenLogin = (jsessionid: string) => {
+  if (!supportedOS.value || !supportedBrowser.value || !supportedScreenSize.value) {
+    dialogCompatibility.value?.openDialog();
+  } else if (jsessionid) {
     authUserStore
       .tokenLogin(jsessionid)
       .then(() => {
@@ -101,7 +102,9 @@ const localLogin = (jsessionid?: string) => {
         errorMessage.value = "Token Login fehlgeschlagen";
       });
   }
+};
 
+const localLogin = () => {
   if (!supportedOS.value || !supportedBrowser.value || !supportedScreenSize.value) {
     dialogCompatibility.value?.openDialog();
   } else {
