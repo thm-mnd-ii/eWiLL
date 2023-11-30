@@ -107,7 +107,7 @@ const snackbarTimer = ref<number | null>(null);
 const autosaveTimer = ref<number | null>(null);
 const inactivityTimer = ref<number | null>(null);
 
-const TIMEOUT = 0.1 * 60 * 1000; //5 minutes timeout
+const TIMEOUT = 5 * 60 * 1000; //5 minutes timeout
 
 const snackbarSave = ref(false);
 const autosave = ref(false);
