@@ -99,6 +99,7 @@ export const useDiagramStore = defineStore("diagram", {
 
       this.historyIndex = this.history.length;
 
+      localStorage.setItem("diagram", JSON.stringify(this.diagram));
       // console.log("current Index", this.historyIndex);
     },
     undo() {
@@ -111,6 +112,7 @@ export const useDiagramStore = defineStore("diagram", {
         this.diagram = this.history[this.historyIndex - 1];
         this.key++;
       }
+      localStorage.setItem("diagram", JSON.stringify(this.diagram));
     },
     redo() {
       if (this.historyIndex < this.history.length) {
@@ -121,6 +123,7 @@ export const useDiagramStore = defineStore("diagram", {
         this.diagram = this.history[this.historyIndex - 1];
         this.key++;
       }
+      localStorage.setItem("diagram", JSON.stringify(this.diagram));
     },
   },
 });

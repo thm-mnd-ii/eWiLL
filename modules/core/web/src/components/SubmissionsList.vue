@@ -1,5 +1,6 @@
 <!-- eslint-disable vue/valid-v-slot -->
 <template>
+  <DialogShowFeedback ref="dialogShowFeedback" />
   <DialogShowFullDiagram ref="dialogShowFullDiagram" />
 
   <div class="container">
@@ -9,14 +10,14 @@
     </v-row>
     <v-data-table :headers="headers" :items="listItems" class="elevation-1" density="default" height="480px" :search="search">
       <template #item.submission.diagram="{ item }">
-        <v-btn append-icon="mdi-presentation" @click="openDiagram(item.value.submission.diagram)">Preview</v-btn>
+        <v-btn append-icon="mdi-presentation" @click="openDiagram(item.submission.diagram)">Preview</v-btn>
       </template>
       <template #item.result.score="{ item }">
-        <v-chip>{{ item.value.result.score }}</v-chip>
+        <v-chip b-tooltip.hover class="fixed-size-chip" title="Zeige komplettes Feedback" :style="{ background: colors(item), color: 'black' }" @click="openFeedback(item.result.comments, item.submission.attempt)"> {{ parseFloat(item.result.score).toFixed(2) }}</v-chip>
       </template>
       <template #item.result.correct="{ item }">
-        <v-icon v-if="item.value.result.correct == true" icon="mdi-check-circle" color="success"></v-icon>
-        <v-icon v-if="item.value.result.correct == false" icon="mdi-close-circle" color="red"></v-icon>
+        <v-icon v-if="item.result.correct == true" icon="mdi-check-circle" color="success"></v-icon>
+        <v-icon v-if="item.result.correct == false" icon="mdi-close-circle" color="red"></v-icon>
       </template>
     </v-data-table>
   </div>
@@ -37,9 +38,10 @@ import Diagram from "@/model/diagram/Diagram";
 import Submission from "@/model/submission/Submission";
 
 import DialogShowFullDiagram from "@/dialog/DialogShowFullDiagram.vue";
+import DialogShowFeedback from "@/dialog/DialogShowFeedback.vue";
 
 const dialogShowFullDiagram = ref<typeof DialogShowFullDiagram>();
-
+const dialogShowFeedback = ref<typeof DialogShowFeedback>();
 const diagramStore = useDiagramStore();
 
 const search = ref("");
@@ -82,6 +84,18 @@ const loadLatestSubmissions = () => {
   });
 };
 
+const colors = (item: any) => {
+  const score = item.result.score;
+
+  if (isNaN(score) || score < 50) {
+    return "#FF6666";
+  } else if (score >= 50 && score < 100) {
+    return "#FFA500";
+  } else {
+    return "#B2FF66";
+  }
+};
+
 const loadUsers = () => {
   courseService.getCourseMembersAsMap(task.value!.courseId).then((map) => {
     students.value = map;
@@ -116,6 +130,26 @@ const openDiagram = (diagram: Diagram) => {
   diagramStore.loadDiagram(diagram);
   dialogShowFullDiagram.value?.openDialog("");
 };
+const openFeedback = (comments: any, versuch: Number) => {
+  var message: string[] = [];
+  const comms = JSON.stringify(comments);
+  const obj = JSON.parse(comms);
+  for (const [index, item] of obj.entries()) {
+    message.push(
+      `Hinweis (${index + 1}) : <br>` +
+        `+ feedbackLevel: ${item.feedbackLevel}<br>` +
+        `+ message: ${item.message}<br>` +
+        `+ resultMessageType: ${item.resultMessageType}<br>` +
+        `+ affectedEntityId: ${item.affectedEntityId}<br>` +
+        `+ affectedEntityName: ${item.affectedEntityName}<br>` +
+        `+ affectedAttributeName: ${item.affectedAttributeName}<br>` +
+        `+ connectedToId: ${item.connectedToId}<br>` +
+        `+ statusLevel: ${item.statusLevel} <br> <br>`
+    );
+  }
+  const dialogContent = `${message.join("")}`;
+  dialogShowFeedback.value?.openDialog("Feedback", dialogContent, versuch);
+};
 
 defineExpose({
   loadSubmissions,
@@ -124,9 +158,19 @@ defineExpose({
 
 <style scoped lang="scss">
 .container {
-  position: flex;
-
   cursor: pointer;
+}
+.fixed-size-chip {
+  width: 75px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .search-bar {
