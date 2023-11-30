@@ -8,7 +8,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted,defineEmits   } from "vue";
+import { ref, computed, onMounted,defineEmits, defineExpose  } from "vue";
 import SubmitPL from "../../model/SubmitPL";
 
 
@@ -25,15 +25,12 @@ import TaskSubmissionsResultsTabs from "@/components/TaskSubmissionsResultsTabs.
 import Task from "@/model/task/Task";
 import taskService from "@/services/task.service";
 
-import Category from "@/model/diagram/Category";
-import CourseRoles from "@/enums/CourseRoles";
-import submissionService from "@/services/submission.service";
 
 
 const authUserStore = useAuthUserStore();
 const userId = ref(authUserStore.auth.user?.id!);
 
-const route = useRoute();
+
 
 
 const diagramStore = useDiagramStore();
@@ -45,7 +42,6 @@ const selectedDiagramId = ref<number>();
 
 const selectedDiagram = ref<Diagram>();
 const currentTime = ref<Date>(new Date());
-const diagrams = ref<Diagram[]>([] as Diagram[]);
 const subBtnProgress = ref<boolean>(false);
 const submissionCount = ref(0);
 const taskSubmissionsResultsTabs = ref<typeof TaskSubmissionsResultsTabs>();
@@ -58,33 +54,23 @@ const props = defineProps({
   check: Boolean,
 });
 
-const emits = defineEmits(["onComplete"]);
-onMounted(async () => {
-    
-    activeTaskId.value=activeTask?.id || 0;
-    console.log("activeTaskId.value in onmount: " + activeTaskId.value);
-    
-    await  loadTask();
-    await loadSubmissions();
+const emits = defineEmits(["onComplete","triggerCheck"]);
 
-
- 
-    
-
-
-    
-
-  await   saveandcheckdiag();
-     console.log("emit reached in advancedfeedback");
-
-
- console.log("emits passed in advancedfeedback");
-});
+const refreshData = async () => {
+  // Place your onMounted logic here
+  await loadTask();
+  await loadSubmissions();
+  await saveandcheckdiag();
+};
+// Call the method on component mount
+onMounted(refreshData);
 
 // Fetch submissions data
 
 
-
+defineExpose<AdvancedFeedbackMethods>({
+  refreshData,
+});
 
 const currentDateTime = computed(() => {
   const date = currentTime.value;
@@ -227,5 +213,7 @@ const dueDateObj = convertDueDate(date);
 emits('onComplete');
 finished.value=true;
 };
-
+interface AdvancedFeedbackMethods {
+  refreshData: () => void;
+}
 </script>

@@ -17,7 +17,7 @@
             <v-btn @click="submitDiagram(true)">Zurück zur Abgabe</v-btn>
           </v-col>
           <v-col cols="10">
- <v-btn v-if="isStudent && !subBtnProgress" @click="triggerfeedback">Prüfen</v-btn>
+ <v-btn v-if="isStudent && !subBtnProgress" @click="triggerfeedback()">Prüfen</v-btn>
     <v-progress-circular v-if="subBtnProgress" indeterminate></v-progress-circular>
 
 
@@ -25,10 +25,11 @@
         </v-row>
       </v-card-actions>
     </v-card>
+
     
-<AdvancedFeedback v-if="showAdvancedFeedback" :check="checked.valueOf()"  @on-complete="handleFeedbackComplete" />
-      
-      
+    <TaskSubmissionsResultsTabs v-if="showAdvancedFeedback"   ref="taskSubmissionsResultsTabs"></TaskSubmissionsResultsTabs>
+
+   <!-- <AdvancedFeedback v-if="showAdvancedFeedback"  ref="advancedFeedbackRef" :check="checked.valueOf()"  @on-complete="handleFeedbackComplete" @triggerCheck="onMounted"  />-->
     <div class="navigation">
       <v-system-bar color="white" elevation="1" window>
         <span v-if="diagramStore.diagram.name != ''">
@@ -68,8 +69,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted,watch,defineProps } from "vue";
-import SubmitPL from "../model/SubmitPL";
+import { ref, computed, onMounted,Ref } from "vue";
 import ModelingTool from "@/components/ModelingTool.vue";
 import FileExplorer from "@/components/FileExplorer.vue";
 import ToolBox from "@/components/modelingTool/ToolBox.vue";
@@ -77,26 +77,24 @@ import DialogConfirm from "@/dialog/DialogConfirm.vue";
 import { useDiagramStore } from "../stores/diagramStore";
 import { storeToRefs } from "pinia";
 import { useToolManagementStore } from "@/stores/toolManagementStore";
-import { useRoute,useRouter, onBeforeRouteLeave } from "vue-router";
+import { useRouter, onBeforeRouteLeave } from "vue-router";
 import diagramService from "@/services/diagram.service";
 import Diagram from "@/model/diagram/Diagram";
 import { useAuthUserStore } from "../stores/authUserStore";
 import evaluationService from "@/services/evaluation.service";
-import FeedbackLevel from "@/enums/FeedbackLevel";
-
-import Task from "@/model/task/Task";
-import taskService from "../services/task.service";
 import courseService from "../services/course.service";
-
-import Category from "@/model/diagram/Category";
-
-import AdvancedFeedback from "@/components/modelingTool/AdvancedFeedback.vue";
+import taskService from "@/services/task.service";
+import TaskSubmissionsResultsTabs from "@/components/TaskSubmissionsResultsTabs.vue";
+import Task from "@/model/task/Task";
+import FeedbackLevel from "@/enums/FeedbackLevel";
+import SubmitPL from "../model/SubmitPL";
 
 const authUserStore = useAuthUserStore();
 const userId = ref(authUserStore.auth.user?.id!);
-
+const selectedDiagramId = ref<number>();
+  const selectedDiagram = ref<Diagram>();
 const snackbarSuccess = ref(false);
-
+const task = ref<Task>({} as Task);
 const router = useRouter();
 const diagramStore = useDiagramStore();
 const toolManagementStore = useToolManagementStore();
@@ -104,17 +102,15 @@ const toolManagementStore = useToolManagementStore();
 const modelingToolKey = storeToRefs(diagramStore).key;
 const activeCourse = toolManagementStore.activeCourse;
 const activeTask = toolManagementStore.activeTask;
-const selectedDiagramId = ref<number>();
-  const dialogConfirm = ref<typeof DialogConfirm>();
-    const selectedDiagram = ref<Diagram>();
-const currentTime = ref<Date>(new Date());
-const diagrams = ref<Diagram[]>([] as Diagram[]);
-  const subBtnProgress = ref<boolean>(false);
 
+  const dialogConfirm = ref<typeof DialogConfirm>();
+const currentTime = ref<Date>(new Date());
+  const subBtnProgress = ref<boolean>(false);
+    const taskSubmissionsResultsTabs = ref<typeof TaskSubmissionsResultsTabs>();
 
     const submissionCount = ref(0);
     const checked = ref<boolean>(false)
-      const task = ref<Task>({} as Task);
+      
         const courseRole = ref("");
       
         const showAdvancedFeedback = ref(false);     
@@ -143,15 +139,16 @@ const triggerfeedback = () => {
   console.log("triggerfeedback entered")
   dialogConfirm.value?.openDialog("Abgaben übrig: "+submissionsleft, 'Möchten Sie das Diagram wirklich einreichen? :', "Einreichen").then((result: boolean) => {
   if (result) {
+    saveandcheckdiag();
     console.log("true triggered")
     showAdvancedFeedback.value = true;
-    checked.value=true;
+    //checked.value=true;
 subBtnProgress.value = true;
   }
   else{
     showAdvancedFeedback.value = false;
     subBtnProgress.value = false;
-  checked.value=false;
+ // checked.value=false;
   }
   });
   
@@ -159,14 +156,14 @@ subBtnProgress.value = true;
 }
 
 
-
+/** 
 const handleFeedbackComplete = () => {
   console.log('handleFeedbackComplete triggered');
   subBtnProgress.value = false;
   checked.value = false;
   // Handle completion logic here
 };
-
+*/
 setInterval(() => {
   currentTime.value = new Date();
 }, 1000);
@@ -244,6 +241,113 @@ const loadSubmissions = () => {
   });
 };
 */
+
+function removeWeekday(dateTimeStr:any) {
+  return dateTimeStr.split(', ').slice(1).join(', ');
+}
+
+// Function to convert dueDate string into a Date object
+function convertDueDate(dueDateStr:any) {
+  const [day, month, year, time] = dueDateStr.split(/\.|\s/);
+  return new Date(`${year}-${month}-${day} ${time}`);
+}
+
+
+const saveandcheckdiag = async () => {
+  try {
+    await submitDiagram(false).then((response) => {
+      const val= response as Diagram;
+      selectedDiagramId.value = val.id;
+      selectedDiagram.value = val;
+      console.log("saveandcheckdiag method called", selectedDiagramId.value);
+      console.log("response: " + JSON.stringify(response));
+
+    })
+ await  checkdiagramm();
+  } catch (error) {
+    console.error("Error in submitDiagram:", error);
+    // Handle any errors that occurred in submitDiagram
+  }
+subBtnProgress.value = false;
+};
+
+
+const loadTask =  () => {
+  taskService.getTask(activeTask?.id || 0).then((response) => {
+    task.value = response;
+    
+  });
+};
+
+const loadSubmissions =   (selectedTaskIndex?: Number) => {
+    
+    evaluationService.getSubmissionIdsByUserAndTask(userId.value, activeTask?.id || 0 ).then((response) => {
+    const submissionIds = response.data;
+    submissionCount.value = submissionIds.length;
+    console.log("submissionCount.value: " + submissionCount.value)
+    console.log("taskId.value: in loadsubmissions " + activeTask?.id || 0);
+    console.log("the task value inside loadsubmissions: " + task.value);
+    taskSubmissionsResultsTabs.value?.load(task.value, selectedTaskIndex);
+    console.log("end reached loadSubmissions");
+ 
+});
+};
+const waitUntilSubmissionIsEvaluated = (submissionId: number) => {
+  return new Promise((resolve) => {
+    const interval = setInterval(() => {
+      evaluationService.getSubmissionById(submissionId, FeedbackLevel.NOTHING).then((response) => {
+        if (response.status == 200) {
+          clearInterval(interval);
+          resolve(response.data);
+       console.log("waitUntilSubmissionIsEvaluated reached :",response.data);
+        }
+      });
+    }, 1000);
+  });
+};
+
+const checkdiagramm = () => {
+  loadTask();
+  const date = (activeTask?.dueDate) as string;
+  const currentDateTimeObj = new Date(removeWeekday(currentDateTime.value));
+const dueDateObj = convertDueDate(date);
+
+  console.log("checkdiagramm method called", selectedDiagramId.value);
+  if (selectedDiagramId.value == undefined) {
+   console.log("diagramm is not saved yet")
+  } else {
+  
+    if (activeTask?.maxSubmissions as number > submissionCount.value && ( currentDateTimeObj < dueDateObj ) ) {
+      console.log("currenttime ",new Date(currentTime.value));
+      console.log("Condition Result:", (activeTask?.dueDate));
+      
+    console.log("diagramm is saved");
+        const submitPL = {} as SubmitPL;
+        submitPL.diagramId = selectedDiagramId.value!;
+        console.log("selectedDiagramId: " + selectedDiagramId.value);
+        submitPL.taskId = activeTask?.id || 0;
+        console.log("taskId in checkdiagramm: " + activeTask?.id || 0);
+        submitPL.userId = userId.value;
+        console.log("userId: " + userId.value);
+        evaluationService.submitDiagram(submitPL).then((submissionId) => {
+          
+          waitUntilSubmissionIsEvaluated(submissionId.data).then(() => {
+            
+        
+            loadSubmissions();
+          });
+        });
+      
+    console.log("reached end");
+      
+ 
+  }
+  else{
+    alert("Maximale Anzahl an Abgaben erreicht");
+  }
+}
+
+};
 </script>
 
 <style scoped lang="scss">
@@ -292,6 +396,16 @@ const loadSubmissions = () => {
   z-index: 10;
 }
 
+
+/**
+::v-deep .collapsible-container {
+  width: 100%; // This will make the container take the full width available
+  position: relative;
+  z-index: 5; // Adjust z-index as needed
+  margin-top: 10px; // Space between the v-card and the collapsible container
+}
+
+ */
 // .file-explorer {
 //   position: absolute;
 //   top: 80px;

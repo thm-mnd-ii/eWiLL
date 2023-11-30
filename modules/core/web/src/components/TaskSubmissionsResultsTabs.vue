@@ -17,8 +17,8 @@
             <br />
             <br />
             <!-- <p v-for="comment in selectedResult.comments" :key="comment.message">{{ comment.message }}</p> -->
-            <v-data-table :group-by="groupBy" :headers="headers" :items="selectedResult.comments" :sort-by="sortBy" class="elevation-1" item-value="name">
-              <template #item.highlightLevel="{ item }">
+            <v-data-table :group-by="groupBy" :headers="headers" :items="selectedResult.comments" :sort-by="sortBy" class="elevation-1" item-value="name"  @click:row="onRowClick($event,selectedResult.comments)">
+              <template #item.highlightLevel="{ item }" >
                 <!-- <v-chip :color="getHighlightLevelColor(item.value.highlightLevel)"> -->
                 <v-icon v-if="item.value.highlightLevel == 'SUGGESTION'" size="large" :color="getHighlightLevelColor(item.value.highlightLevel)">mdi-information</v-icon>
                 <v-icon v-if="item.value.highlightLevel == 'INCORRECT'" size="large" :color="getHighlightLevelColor(item.value.highlightLevel)">mdi-close-circle</v-icon>
@@ -52,6 +52,7 @@ import submissionService from "@/services/submission.service";
 //Dialogs
 import DialogShowFullDiagram from "@/dialog/DialogShowFullDiagram.vue";
 import Result from "@/model/submission/Result";
+import Entity from "@/model/diagram/Entity";
 
 const authUserStore = useAuthUserStore();
 const diagramStore = useDiagramStore();
@@ -86,10 +87,14 @@ watch(
 );
 
 const load = (task: Task, selectedSubmissionIndex?: number) => {
+  console.log("load called ");
+
   currentTask.value = task;
 
   submissionService.getSubmissionIdsByUserAndTask(userId.value, task.id).then((response) => {
     submissions.value = response.data;
+    console.log("selectedResult.value.comments" + JSON.stringify(selectedResult.value.comments));
+    console.log("load called ");
 
     //select last tab
     selectedResultTab.value = selectedSubmissionIndex !== undefined ? selectedSubmissionIndex : submissions.value.length;
@@ -103,8 +108,29 @@ const load = (task: Task, selectedSubmissionIndex?: number) => {
   });
 };
 
+const loadLatestSubmissions = (task: Task) => {
+    console.log("loadLatest called");
+currentTask.value = task;
+    submissionService.getLatestSubmissionsByTask(currentTask.value.id).then((response) => {
+        const latestSubmissions = response.data;
+        if (latestSubmissions && latestSubmissions.length > 0) {
+            submissions.value = [latestSubmissions[0]];
+            selectedResultTab.value = 1; // Since there's only one submission, the tab index is 1
+
+            submissionService.getResultBySubmissionIdAndLevel(latestSubmissions[0].id, currentTask.value.showLevel).then((response) => {
+                selectedResult.value = response.data;
+            });
+        } else {
+            console.log("No submissions found for the latest task");
+            // Handle scenario where no submissions are found
+        }
+    });
+};
+
+
 const showDiagramWithMistakes = () => {
   diagramStore.loadDiagram(submissions.value[selectedResultTab.value - 1].diagram as Diagram);
+  console.log("showDiagramWithMistakes called ",diagramStore.loadDiagram(submissions.value[selectedResultTab.value - 1].diagram as Diagram));
   dialogShowFullDiagram.value?.openDialog("");
 };
 
@@ -119,6 +145,25 @@ const getHighlightLevelColor = (highlightLevel: string) => {
     return "gray";
   }
 };
+const onRowClick = (event:any,comment:any) => {
+diagramStore.loadDiagram(submissions.value[selectedResultTab.value - 1].diagram as Diagram);
+let rowIndex = event.target.closest('tr').sectionRowIndex;
+  console.log("Row index: " + rowIndex);
+
+ const diagramEntities = diagramStore.diagram.entities;
+ console.log("the diagram:= " + JSON.stringify(diagramStore.diagram));
+console.log("the entities in the diagram: " + JSON.stringify(diagramEntities));
+console.log("the comment: " + JSON.stringify(comment[rowIndex]));
+console.log("the comment id: " + JSON.stringify(comment[rowIndex].affectedEntityId));
+  const matchingEntity = diagramEntities.find(entity => entity.id === comment[rowIndex].affectedEntityId);
+console.log("the matching entity: " + JSON.stringify(matchingEntity));
+  if (matchingEntity) {
+    dialogShowFullDiagram.value?.openDialog(matchingEntity);
+  } else {
+    alert('No matching entity found');
+  }
+};
+
 
 defineExpose({
   load,
