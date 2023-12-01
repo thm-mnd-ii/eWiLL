@@ -216,6 +216,7 @@ const diagramSingleClick = (diagram: Diagram) => {
 };
 
 const saveDialogButtonClick = () => {
+  activeDiagramId.value = diagramStore.diagram.id;
   dialogSave.value?.openDialog(activeDiagramId.value).then((result: boolean) => {
     if (result) {
       updateFiles();
@@ -228,6 +229,7 @@ const deleteCurrentDiagram = () => {
   dialogConfirm.value?.openDialog("Diagramm zurücksetzen", 'Willst du deinen bisherigen Fortschritt löschen? Wenn du auf "Zurücksetzen" klickst, wird das gesamte Diagramm zurückgesetzt und du kannst von Grund auf neu anfangen.', "Zurücksetzen").then((result: boolean) => {
     if (result) {
       diagramStore.createNewDiagram();
+      localStorage.removeItem("diagram");
     }
   });
 };
@@ -235,6 +237,10 @@ const deleteCurrentDiagram = () => {
 const openExportDialog = () => {
   dialogExport.value?.openDialog();
 };
+
+defineExpose({
+  updateFiles,
+});
 </script>
 
 <style scoped lang="scss">

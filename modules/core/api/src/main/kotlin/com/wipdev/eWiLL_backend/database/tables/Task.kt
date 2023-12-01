@@ -2,13 +2,13 @@ package com.wipdev.eWiLL_backend.database.tables
 
 import com.wipdev.eWiLL_backend.MediaType
 import com.wipdev.eWiLL_backend.eval.FeedbackLevel
-import org.hibernate.Hibernate
+import com.wipdev.eWiLL_backend.eval.TaskLevel
 import javax.persistence.*
+import org.hibernate.Hibernate
 
 @Entity
 @Table(name = "Task")
 data class Task(
-
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", nullable = false)
@@ -46,8 +46,11 @@ data class Task(
     @Column(name = "showLevel")
     @Enumerated(EnumType.STRING)
     var showLevel: FeedbackLevel? = FeedbackLevel.BASIC,
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "level", nullable = true)
+    var taskLevel: TaskLevel? = null,
 ) {
-
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -61,6 +64,7 @@ data class Task(
 
     @Override
     override fun toString(): String {
-        return this::class.simpleName + "(id = $id , name = $name , description = $description , dueDate = $dueDate , mediaType = $mediaType , liability = $eLiability , courseId = $courseId , solutionModelId = $solutionModelId , rulesetId = $rulesetId )"
+        return this::class.simpleName +
+                "(id = $id , name = $name , description = $description , dueDate = $dueDate , mediaType = $mediaType , liability = $eLiability , courseId = $courseId , solutionModelId = $solutionModelId , rulesetId = $rulesetId , level = $taskLevel )"
     }
 }

@@ -44,6 +44,20 @@ export const useAuthUserStore = defineStore("auth", {
         }
       );
     },
+    async tokenLogin(jsessionid: string) {
+      return AuthService.tokenLogin(jsessionid).then(
+        (user) => {
+          this.auth.status.loggedIn = true;
+          this.auth.user = user;
+          return Promise.resolve(user);
+        },
+        (error) => {
+          this.auth.status.loggedIn = false;
+          this.auth.user = null;
+          return Promise.reject(error);
+        }
+      );
+    },
     logout() {
       AuthService.logout();
       this.auth.status.loggedIn = false;
