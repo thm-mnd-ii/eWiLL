@@ -161,12 +161,9 @@ const loadElements = async (role: CourseRoles) => {
     selectedDiagramId.value = undefined;
     diagrams.value = [];
     categories.value = [];
-    localStorage.setItem("usertype", "STUDENT");
-   // courseService.changeUserRole(courseId.value, userId.value!, CourseRoles.STUDENT,userId.value! as any)
     await loadDiagramIfExists();
     await loadSubmissions();
   } else if (courseRole.value == CourseRoles.OWNER || courseRole.value == CourseRoles.TUTOR) {
-    localStorage.setItem("usertype", "OWNER")
     await loadNumberSubmissions();
   }
 };

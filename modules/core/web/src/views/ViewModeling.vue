@@ -17,19 +17,17 @@
             <v-btn @click="submitDiagram(true)">Zurück zur Abgabe</v-btn>
           </v-col>
           <v-col cols="10">
- <v-btn v-if="isStudent && !subBtnProgress" @click="triggerfeedback()">Prüfen</v-btn>
-    <v-progress-circular v-if="subBtnProgress" indeterminate></v-progress-circular>
-
-
+            <v-btn v-if="isStudent && !subBtnProgress" @click="triggerfeedback()">Prüfen</v-btn>
+            <v-progress-circular v-if="subBtnProgress" indeterminate></v-progress-circular>
           </v-col>
         </v-row>
       </v-card-actions>
+      <v-card class="submissions-results">
+        <TaskSubmissionsResultsTabs v-if="showAdvancedFeedback" ref="taskSubmissionsResultsTabs"></TaskSubmissionsResultsTabs>
+      </v-card>
     </v-card>
 
-    
-    <TaskSubmissionsResultsTabs v-if="showAdvancedFeedback"   ref="taskSubmissionsResultsTabs"></TaskSubmissionsResultsTabs>
-
-   <!-- <AdvancedFeedback v-if="showAdvancedFeedback"  ref="advancedFeedbackRef" :check="checked.valueOf()"  @on-complete="handleFeedbackComplete" @triggerCheck="onMounted"  />-->
+    <!-- <AdvancedFeedback v-if="showAdvancedFeedback"  ref="advancedFeedbackRef" :check="checked.valueOf()"  @on-complete="handleFeedbackComplete" @triggerCheck="onMounted"  />-->
     <div class="navigation">
       <v-system-bar color="white" elevation="1" window>
         <span v-if="diagramStore.diagram.name != ''">
@@ -116,7 +114,7 @@ const currentTime = ref<Date>(new Date());
         const showAdvancedFeedback = ref(false);     
 
         const isStudent = computed(() => {
-  return localStorage.getItem("usertype") === "STUDENT";
+  return localStorage.getItem("role") === "ROLE_ADMIN";
 });
 
 
@@ -242,12 +240,8 @@ const loadSubmissions = () => {
 };
 */
 
-function removeWeekday(dateTimeStr:any) {
-  return dateTimeStr.split(', ').slice(1).join(', ');
-}
-
-// Function to convert dueDate string into a Date object
-function convertDueDate(dueDateStr:any) {
+// Function to convert Date string into a Date object
+function convertDate(dueDateStr:any) {
   const [day, month, year, time] = dueDateStr.split(/\.|\s/);
   return new Date(`${year}-${month}-${day} ${time}`);
 }
@@ -308,45 +302,32 @@ const waitUntilSubmissionIsEvaluated = (submissionId: number) => {
 
 const checkdiagramm = () => {
   loadTask();
-  const date = (activeTask?.dueDate) as string;
-  const currentDateTimeObj = new Date(removeWeekday(currentDateTime.value));
-const dueDateObj = convertDueDate(date);
+  const date = convertDate(activeTask?.dueDate);
+  const actual_time = convertDate(new Date().toString());
 
-  console.log("checkdiagramm method called", selectedDiagramId.value);
+  console.log("checkdiagramm method called", activeTask?.maxSubmissions);
   if (selectedDiagramId.value == undefined) {
    console.log("diagramm is not saved yet")
-  } else {
-  
-    if (activeTask?.maxSubmissions as number > submissionCount.value && ( currentDateTimeObj < dueDateObj ) ) {
-      console.log("currenttime ",new Date(currentTime.value));
-      console.log("Condition Result:", (activeTask?.dueDate));
-      
+  } else if ((activeTask?.maxSubmissions as number > submissionCount.value) && ( actual_time < date ) ) {
+    console.log("currenttime ",new Date(currentTime.value));
+    console.log("Condition Result:", (activeTask?.dueDate)); 
     console.log("diagramm is saved");
-        const submitPL = {} as SubmitPL;
-        submitPL.diagramId = selectedDiagramId.value!;
-        console.log("selectedDiagramId: " + selectedDiagramId.value);
-        submitPL.taskId = activeTask?.id || 0;
-        console.log("taskId in checkdiagramm: " + activeTask?.id || 0);
-        submitPL.userId = userId.value;
-        console.log("userId: " + userId.value);
-        evaluationService.submitDiagram(submitPL).then((submissionId) => {
-          
-          waitUntilSubmissionIsEvaluated(submissionId.data).then(() => {
-            
-        
-            loadSubmissions();
-          });
-        });
-      
+    const submitPL = {} as SubmitPL;
+    submitPL.diagramId = selectedDiagramId.value!;
+    console.log("selectedDiagramId: " + selectedDiagramId.value);
+    submitPL.taskId = activeTask?.id || 0;
+    console.log("taskId in checkdiagramm: " + activeTask?.id || 0);
+    submitPL.userId = userId.value;
+    console.log("userId: " + userId.value);
+    evaluationService.submitDiagram(submitPL).then((submissionId) => {
+      waitUntilSubmissionIsEvaluated(submissionId.data).then(() => {
+        loadSubmissions();
+      });
+    });
     console.log("reached end");
-      
- 
-  }
-  else{
+  } else {
     alert("Maximale Anzahl an Abgaben erreicht");
   }
-}
-
 };
 </script>
 
@@ -395,6 +376,13 @@ const dueDateObj = convertDueDate(date);
   right: 25px;
   z-index: 10;
 }
+
+.submissions-results {
+  overflow-y: auto; /* Makes vertical scrollbar appear if content overflows */
+  max-height: 280px; /* Example height, adjust as needed */
+  max-width: 400px;
+}
+
 
 
 /**
