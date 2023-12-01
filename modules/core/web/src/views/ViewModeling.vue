@@ -30,7 +30,9 @@
           <v-icon v-if="showAdvancedFeedback && !isCollapsed" class="widget" icon="mdi-arrow-expand-up" size="x-small" @click="collapseFeedback()"></v-icon>
         </div>
       </div>
+      <div class="feedback">
         <TaskSubmissionsResultsTabs v-if="showAdvancedFeedback && !isCollapsed" ref="taskSubmissionsResultsTabs"></TaskSubmissionsResultsTabs>
+      </div>
     </div>
     </v-card>
 
@@ -397,10 +399,7 @@ const openFeedback = () => {
 }
 
 .submissions-results {
-  margin-top: -5px;
-  overflow-y: auto;
-  max-height: 350px;
-  max-width: 500px;
+  margin-top: -10px;
 }
 
 .widget-bar {
@@ -415,6 +414,12 @@ const openFeedback = () => {
   padding: 2px;
   margin: 2px;
   cursor: pointer;
+}
+
+.feedback {
+  overflow-y: auto;
+  max-height: 300px;
+  max-width: 500px;
 }
 
 // .file-explorer {
