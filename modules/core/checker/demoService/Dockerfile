@@ -10,5 +10,5 @@ RUN pip install -r requirements.txt
 
 COPY modules/core/checker/demoService/demoservice .
 
-CMD ["gunicorn", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "demoservice.main:app", "--bind", "0.0.0.0:80"]
+CMD ["gunicorn", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "main:app", "--bind", "0.0.0.0:80"]
 # CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]

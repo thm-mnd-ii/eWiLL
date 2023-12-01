@@ -12,3 +12,4 @@ async def get_items():
     """Test service for checker"""
     items = list_serializer(collection.find())
     return items
+
