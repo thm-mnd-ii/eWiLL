@@ -1,5 +1,6 @@
 <template>
   <DialogConfirm ref="dialogConfirm" />
+  <DialogShowFeedbackVue ref="dialogFeedback"></DialogShowFeedbackVue>
   <v-snackbar v-model="snackbarSuccess" :timeout="2500"> Diagramm erfolgreich eingereicht </v-snackbar>
   
   <div class="container" >
@@ -13,18 +14,24 @@
       </v-card-subtitle>
       <v-card-actions>
         <v-row>
-          <v-col cols="10">
+          <v-col>
             <v-btn @click="submitDiagram(true)">Zurück zur Abgabe</v-btn>
-          </v-col>
-          <v-col cols="10">
             <v-btn v-if="isStudent && !subBtnProgress" @click="triggerfeedback()">Prüfen</v-btn>
             <v-progress-circular v-if="subBtnProgress" indeterminate></v-progress-circular>
           </v-col>
         </v-row>
       </v-card-actions>
-      <v-card class="submissions-results">
-        <TaskSubmissionsResultsTabs v-if="showAdvancedFeedback" ref="taskSubmissionsResultsTabs"></TaskSubmissionsResultsTabs>
-      </v-card>
+      <div class="submissions-results"> 
+        <div class="widget-bar">      
+        <v-card-title v-if="showAdvancedFeedback">Feedback</v-card-title>
+        <div>
+          <v-icon v-if="showAdvancedFeedback" class="widget" icon="mdi-arrow-expand" size="x-small" @click="openFeedback()"></v-icon>
+          <v-icon v-if="showAdvancedFeedback && isCollapsed" class="widget" icon="mdi-arrow-collapse-down" size="x-small" @click="collapseFeedback()"></v-icon>
+          <v-icon v-if="showAdvancedFeedback && !isCollapsed" class="widget" icon="mdi-arrow-expand-up" size="x-small" @click="collapseFeedback()"></v-icon>
+        </div>
+      </div>
+        <TaskSubmissionsResultsTabs v-if="showAdvancedFeedback && !isCollapsed" ref="taskSubmissionsResultsTabs"></TaskSubmissionsResultsTabs>
+    </div>
     </v-card>
 
     <!-- <AdvancedFeedback v-if="showAdvancedFeedback"  ref="advancedFeedbackRef" :check="checked.valueOf()"  @on-complete="handleFeedbackComplete" @triggerCheck="onMounted"  />-->
@@ -86,11 +93,12 @@ import TaskSubmissionsResultsTabs from "@/components/TaskSubmissionsResultsTabs.
 import Task from "@/model/task/Task";
 import FeedbackLevel from "@/enums/FeedbackLevel";
 import SubmitPL from "../model/SubmitPL";
+import DialogShowFeedbackVue from "@/dialog/DialogShowFeedback.vue";
 
 const authUserStore = useAuthUserStore();
 const userId = ref(authUserStore.auth.user?.id!);
 const selectedDiagramId = ref<number>();
-  const selectedDiagram = ref<Diagram>();
+const selectedDiagram = ref<Diagram>();
 const snackbarSuccess = ref(false);
 const task = ref<Task>({} as Task);
 const router = useRouter();
@@ -99,21 +107,19 @@ const toolManagementStore = useToolManagementStore();
 
 const modelingToolKey = storeToRefs(diagramStore).key;
 const activeCourse = toolManagementStore.activeCourse;
-const activeTask = toolManagementStore.activeTask;
-
-  const dialogConfirm = ref<typeof DialogConfirm>();
+const activeTask = toolManagementStore.activeTask
+const dialogConfirm = ref<typeof DialogConfirm>();
 const currentTime = ref<Date>(new Date());
-  const subBtnProgress = ref<boolean>(false);
-    const taskSubmissionsResultsTabs = ref<typeof TaskSubmissionsResultsTabs>();
-
-    const submissionCount = ref(0);
-    const checked = ref<boolean>(false)
+const subBtnProgress = ref<boolean>(false);
+const taskSubmissionsResultsTabs = ref<typeof TaskSubmissionsResultsTabs>();
+const submissionCount = ref(0);
       
-        const courseRole = ref("");
-      
-        const showAdvancedFeedback = ref(false);     
+const courseRole = ref("");
+const showAdvancedFeedback = ref(false);
+const dialogFeedback = ref<typeof DialogShowFeedbackVue>();
+const isCollapsed = ref<boolean>(false);
 
-        const isStudent = computed(() => {
+const isStudent = computed(() => {
   return localStorage.getItem("role") === "ROLE_ADMIN";
 });
 
@@ -209,8 +215,6 @@ const submitDiagram = (returntosubmission:boolean) => {
   return new Promise((resolve, reject) => {
     diagramService.putDiagram(diagramStore.diagram)
       .then(() => {
-        toolManagementStore.activeCourse = null;
-        toolManagementStore.activeTask = null;
         diagramStore.saved = true;
         console.log("diagramStore.saved: " + diagramStore.saved);
         if (returntosubmission) {
@@ -329,6 +333,20 @@ const checkdiagramm = () => {
     alert("Maximale Anzahl an Abgaben erreicht");
   }
 };
+
+const collapseFeedback = () => {
+  if (isCollapsed.value) {
+    isCollapsed.value = false;
+    loadSubmissions();
+  } else {
+    isCollapsed.value = true;
+  }
+};
+
+const openFeedback = () => {
+  dialogFeedback.value?.openDialog("", "", submissionCount.value);
+};
+
 </script>
 
 <style scoped lang="scss">
@@ -367,33 +385,38 @@ const checkdiagramm = () => {
 
 .right-bar {
   grid-area: right;
+  max-width: 500px;
   // background-color: #d1aaaa;
 }
 
 .task-floater {
   position: absolute;
-  top: 20px;
+  top: 10px;
   right: 25px;
   z-index: 10;
 }
 
 .submissions-results {
-  overflow-y: auto; /* Makes vertical scrollbar appear if content overflows */
-  max-height: 280px; /* Example height, adjust as needed */
-  max-width: 400px;
+  margin-top: -5px;
+  overflow-y: auto;
+  max-height: 350px;
+  max-width: 500px;
 }
 
-
-
-/**
-::v-deep .collapsible-container {
-  width: 100%; // This will make the container take the full width available
-  position: relative;
-  z-index: 5; // Adjust z-index as needed
-  margin-top: 10px; // Space between the v-card and the collapsible container
+.widget-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
- */
+.widget {
+  width: 30px;
+  height: 22px;
+  padding: 2px;
+  margin: 2px;
+  cursor: pointer;
+}
+
 // .file-explorer {
 //   position: absolute;
 //   top: 80px;

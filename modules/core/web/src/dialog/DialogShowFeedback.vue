@@ -13,39 +13,26 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick } from "vue";
+import { ref, nextTick } from "vue";
 import TaskSubmissionsResultsTabs from "@/components/TaskSubmissionsResultsTabs.vue";
 import { useAuthUserStore } from "../stores/authUserStore";
 import evaluationService from "@/services/evaluation.service";
-import { useRoute } from "vue-router";
 import Task from "../model/task/Task";
 import taskService from "../services/task.service";
 
-import Submission from "@/model/submission/Submission";
+import { useToolManagementStore } from "@/stores/toolManagementStore";
 
 const task = ref<Task>({} as Task);
-const route = useRoute();
-const taskId = ref(Number(route.params.taskId));
 const taskSubmissionsResultsTabs = ref<typeof TaskSubmissionsResultsTabs>();
 const authUserStore = useAuthUserStore();
 const userId = ref(authUserStore.auth.user?.id!);
 const deleteDialog = ref<boolean>(false);
 const Title = ref<string>("");
 const Message = ref<string | undefined>(undefined);
-const currentTask = ref<Task>({} as Task);
-// Promises
 const resolvePromise: any = ref(undefined);
 const rejectPromise: any = ref(undefined);
 const submissionCount = ref(1);
-const submissions = ref<Submission[]>([] as Submission[]);
-
-onMounted(() => {
-  init();
-});
-
-const init = () => {
-  loadElements();
-};
+const toolManagementStore = useToolManagementStore();
 
 const loadElements = async () => {
   await loadTask();
@@ -53,18 +40,23 @@ const loadElements = async () => {
 };
 
 const loadTask = () => {
-  taskService.getTask(taskId.value).then((response) => {
+  console.log(toolManagementStore.activeTask?.id);
+  if(toolManagementStore.activeTask){
+    taskService.getTask(toolManagementStore.activeTask.id).then((response) => {
     task.value = response;
     console;
-  });
+    });
+  }
 };
 
 const loadSubmissions = (selectedTaskIndex?: Number) => {
-  evaluationService.getSubmissionIdsByUserAndTask(userId.value, taskId.value).then((response) => {
+  if(toolManagementStore.activeTask){
+    evaluationService.getSubmissionIdsByUserAndTask(userId.value, toolManagementStore.activeTask.id).then((response) => {
     const submissionIds = response.data;
     submissionCount.value = submissionIds.length;
     taskSubmissionsResultsTabs.value?.load(task.value, selectedTaskIndex);
-  });
+    });
+  }
 };
 const openDialog = async (title: string, message: string, selectedTaskIndex?: number) => {
   try {
