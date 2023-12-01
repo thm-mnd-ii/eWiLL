@@ -20,7 +20,7 @@ services:
 
   demoservice:
     container_name: demoservice
-    restart: unless-stopped
+    # restart: unless-stopped
     build:
       context: .
       dockerfile: modules/core/checker/demoService/Dockerfile
@@ -45,6 +45,25 @@ services:
       - data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mongodb:
+    container_name: mongodb
+    image: mongo:7.0.0
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=mongoadmin
+      - MONGO_INITDB_ROOT_PASSWORD=mongoadmin
+      - MONGO_INITDB_DATABASE=AssessmentDatabase
+    ports:
+      # TODO remove for production
+      - "27018:27017"
+    volumes:
+      - data:/data/db
+    healthcheck:
+      test: ["CMD-SHELL", 'mongo --eval "printjson(db.serverStatus())"']
       interval: 10s
       timeout: 5s
       retries: 5

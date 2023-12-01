@@ -6,16 +6,21 @@ Install Poetry locally -> pip install poetry
 
 Allow virtualenvs -> poetry config virtualenvs.in-project true
 
-Create new Projekt -> poetry new demoService
+Create new Projekt ->mkdir demoService
 
 Navigate to first folder -> cd ../demoService
+
+init Poetry -> poetry init
 
 Starte ein virtuelles enviroment -> poetry shell
 Stoppe das virtuelles enviroment -> exit
 Bei Problemen mit der PowerShell die CommandPrompt verwenden!
 
-Add Dependency -> poetry add fastapi
+Add Dependency ->
+poetry add fastapi
 poetry add "uvicorn[standard]"
+demoService>poetry add gunicorn
+
 Add files in ../demoService/demoservice/main.py
 
 Füge den code hinzu um den server über "poetry run dev" zu starten
@@ -43,7 +48,8 @@ Bei Problemen mit der PowerShell die CommandPrompt verwenden!
 
 Installiere alle Dependencies -> poetry install
 
-Starte FastAPI -> poetry run dev
+Starte FastAPI -> cd ./demoservice
+-> uvicorn demoservice.main:app --reload
 
 Zugriff -> http://127.0.0.1:8000
 Doku -> http://127.0.0.1:8000/docs

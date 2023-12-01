@@ -1,9 +1,7 @@
-"""Module for REST API"""
+"""Import Modules"""
 from fastapi import FastAPI
+from routes.route import router
 
 app = FastAPI()
 
-@app.get("/")
-async def read_root():
-    """Demo service for checker"""
-    return {"Hello": "World"}
+app.include_router(router) #, prefix="/api/v1"
