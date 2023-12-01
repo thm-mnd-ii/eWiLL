@@ -28,6 +28,9 @@ services:
       - .:/app
     ports:
       - "80:80"
+    depends_on:
+      - core
+      - mongodb
 
   postgres:
     container_name: postgres

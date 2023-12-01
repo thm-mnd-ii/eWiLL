@@ -1,7 +1,7 @@
 """Import Modules"""
 from pymongo.mongo_client import MongoClient
 
-client = MongoClient("mongodb://localhost:27017")
+client = MongoClient("mongodb://mongoadmin:mongoadmin@localhost:27018")
 
 try:
     client.admin.command("ping")
