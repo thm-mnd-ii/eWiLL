@@ -49,7 +49,7 @@ Bei Problemen mit der PowerShell die CommandPrompt verwenden!
 Installiere alle Dependencies -> poetry install
 
 Starte FastAPI -> cd ./demoservice
--> uvicorn demoservice.main:app --reload
+-> uvicorn main:app --reload
 
 Zugriff -> http://127.0.0.1:8000
 Doku -> http://127.0.0.1:8000/docs
@@ -59,3 +59,4 @@ Doku -> http://127.0.0.1:8000/docs
 Pylint 10/10 -> pylint demoservice
 
 FastAPI Tutorial -> https://www.youtube.com/watch?v=KXCvIV3yr7c
+FastAPI MongoDB Tutorial ->https://www.youtube.com/watch?v=QkGqjPFIGCA

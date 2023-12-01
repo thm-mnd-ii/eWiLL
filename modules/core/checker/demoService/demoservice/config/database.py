@@ -1,6 +1,8 @@
 """Import Modules"""
 from pymongo.mongo_client import MongoClient
 
+# adjust for dev and build environments
+# client = MongoClient("mongodb://mongoadmin:mongoadmin@0.0.0.0:27017")
 client = MongoClient("mongodb://mongoadmin:mongoadmin@localhost:27018")
 
 try:

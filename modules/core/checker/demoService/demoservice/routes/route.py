@@ -17,3 +17,7 @@ async def get_items():
 async def add_item(item: Item):
     """Test service for checker"""
     collection.insert_one(dict(item))
+
+# put
+# delete
+# find()
