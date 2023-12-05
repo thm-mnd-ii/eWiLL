@@ -31,7 +31,7 @@
         </div>
       </div>
       <div class="feedback">
-        <TaskSubmissionsResultsTabs v-if="showAdvancedFeedback && !isCollapsed" ref="taskSubmissionsResultsTabs"></TaskSubmissionsResultsTabs>
+        <TaskSubmissionsResultsTabs v-if="showAdvancedFeedback && !isCollapsed" ref="taskSubmissionsResultsTabs" @highlight-entity="handleHighlightEntity"></TaskSubmissionsResultsTabs>
       </div>
     </div>
     </v-card>
@@ -76,7 +76,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted,Ref } from "vue";
+import { ref, computed, onMounted } from "vue";
 import ModelingTool from "@/components/ModelingTool.vue";
 import FileExplorer from "@/components/FileExplorer.vue";
 import ToolBox from "@/components/modelingTool/ToolBox.vue";
@@ -125,6 +125,18 @@ const isStudent = computed(() => {
   return localStorage.getItem("role") === "ROLE_ADMIN";
 });
 
+const handleHighlightEntity = (entityId: number) => {
+  console.log("enter highlight handle");
+  console.log("Store:", toolManagementStore);
+  console.log("highlightEntity function type:", typeof toolManagementStore.highlightEntity);
+
+  try {
+    toolManagementStore.highlightEntity(entityId);
+  } catch (error) {
+    console.error("Error in handleHighlightEntity:", error);
+  }
+};
+
 
 onMounted(() => {
   
@@ -148,13 +160,11 @@ const triggerfeedback = () => {
     saveandcheckdiag();
     console.log("true triggered")
     showAdvancedFeedback.value = true;
-    //checked.value=true;
-subBtnProgress.value = true;
+    subBtnProgress.value = true;
   }
   else{
     showAdvancedFeedback.value = false;
     subBtnProgress.value = false;
- // checked.value=false;
   }
   });
   
@@ -346,7 +356,7 @@ const collapseFeedback = () => {
 };
 
 const openFeedback = () => {
-  dialogFeedback.value?.openDialog("", "", submissionCount.value);
+  dialogFeedback.value?.openDialog(submissionCount.value);
 };
 
 </script>
@@ -419,7 +429,7 @@ const openFeedback = () => {
 .feedback {
   overflow-y: auto;
   max-height: 300px;
-  max-width: 500px;
+  max-width: 630px;
 }
 
 // .file-explorer {

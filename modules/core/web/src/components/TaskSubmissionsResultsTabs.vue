@@ -52,7 +52,8 @@ import submissionService from "@/services/submission.service";
 //Dialogs
 import DialogShowFullDiagram from "@/dialog/DialogShowFullDiagram.vue";
 import Result from "@/model/submission/Result";
-import Entity from "@/model/diagram/Entity";
+import { defineEmits } from 'vue';
+import FeedbackLevel from "@/enums/FeedbackLevel";
 
 const authUserStore = useAuthUserStore();
 const diagramStore = useDiagramStore();
@@ -76,6 +77,8 @@ const headers = ref([
   { title: "Level", key: "statusLevel", groupable: true },
   { title: "Info Type", key: "resultMessageType", groupable: true },
 ]);
+
+const emit = defineEmits(['highlight-entity']);
 
 watch(
   () => selectedResultTab.value,
@@ -145,23 +148,36 @@ const getHighlightLevelColor = (highlightLevel: string) => {
     return "gray";
   }
 };
-const onRowClick = (event:any,comment:any) => {
-diagramStore.loadDiagram(submissions.value[selectedResultTab.value - 1].diagram as Diagram);
-let rowIndex = event.target.closest('tr').sectionRowIndex;
-  console.log("Row index: " + rowIndex);
 
- const diagramEntities = diagramStore.diagram.entities;
+const onRowClick = (event:any, comments:any) => {
+  diagramStore.loadDiagram(submissions.value[selectedResultTab.value - 1].diagram as Diagram);
+  let rowIndex = event.target.closest('tr').sectionRowIndex;
+  console.log("Row index: " + rowIndex);
+  console.log("selected Comment ", JSON.stringify(comments[rowIndex]));
+  const entityId = Number(comments[rowIndex].affectedEntityId);
+  const feedbackLevel = JSON.stringify(comments[rowIndex].feedbackLevel);
+  if (entityId == null || feedbackLevel == FeedbackLevel.BASIC) { // add case for -1, feedbackLevel are all info ?
+    console.error("Entity ID is null or undefined");
+    return;
+  } else {
+    console.log("affected bezbez", entityId);
+    emit('highlight-entity', entityId);
+  }
+
+
+ /**const diagramEntities = diagramStore.diagram.entities;
  console.log("the diagram:= " + JSON.stringify(diagramStore.diagram));
 console.log("the entities in the diagram: " + JSON.stringify(diagramEntities));
-console.log("the comment: " + JSON.stringify(comment[rowIndex]));
-console.log("the comment id: " + JSON.stringify(comment[rowIndex].affectedEntityId));
-  const matchingEntity = diagramEntities.find(entity => entity.id === comment[rowIndex].affectedEntityId);
+console.log("the comment: " + JSON.stringify(comments[rowIndex]));
+console.log("the comment id: " + JSON.stringify(comments[rowIndex].affectedEntityId));
+  const matchingEntity = diagramEntities.find(entity => entity.id === comments[rowIndex].affectedEntityId);
 console.log("the matching entity: " + JSON.stringify(matchingEntity));
   if (matchingEntity) {
-    dialogShowFullDiagram.value?.openDialog(matchingEntity);
+    console.log("matching", matchingEntity, "affected", entityId);
+    //dialogShowFullDiagram.value?.openDialog(matchingEntity);
   } else {
     alert('No matching entity found');
-  }
+  }*/
 };
 
 

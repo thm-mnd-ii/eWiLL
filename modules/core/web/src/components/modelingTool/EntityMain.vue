@@ -1,5 +1,5 @@
 <template>
-  <div ref="root" class="objectContainer" :class="{ active: isActive }" @mouseover="props.isEditable ? (hover = true) : null" @mouseleave="hover = false">
+  <div ref="root" class="objectContainer" :class="{ active: isActive, highlighted: isEntityHighlighted }" @mouseover="props.isEditable ? (hover = true) : null" @mouseleave="hover = false">
     <div v-if="hover" class="click-area"></div>
     <span v-if="!isEditable" class="text unselectable" @dblclick="makeTextEditable"> {{ entity.entityName }}</span>
     <textarea v-if="isEditable" v-model="entity.entityName" class="textedit" rows="1" @dblclick="makeTextEditable" @keyup.enter="handleEnter"></textarea>
@@ -67,6 +67,11 @@ const toolManagementStore = useToolManagementStore();
 const diagramStore = useDiagramStore();
 let entity = diagramStore.diagram.entities.find((entity) => entity.id == props.entity.id);
 const root = ref<HTMLInputElement | null>(null);
+
+const isEntityHighlighted = computed(() => {
+  console.log("entered entity main vue method for highlighting");
+  return toolManagementStore.highlightedEntityId === props.entity.id;
+});
 
 const isActive = computed(() => {
   return toolManagementStore.newConnection.startEntity == props.entity.id;
@@ -413,5 +418,9 @@ const resizer = (e: any) => {
 
   top: v-bind("cssVarAttributesDistanceTop");
   cursor: default;
+}
+
+.highlighted {
+  border: 2px solid red; /* Example highlighting style */
 }
 </style>

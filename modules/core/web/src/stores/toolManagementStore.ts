@@ -20,6 +20,7 @@ interface State {
   diagramDiv: HTMLElement | null;
   activeTask: Task | null;
   activeCourse: CoursePL | null;
+  highlightedEntityId: number | null;
 }
 
 export const useToolManagementStore = defineStore("tool-management", {
@@ -33,6 +34,7 @@ export const useToolManagementStore = defineStore("tool-management", {
     diagramDiv: null,
     activeTask: null,
     activeCourse: null,
+    highlightedEntityId: null,
   }),
   getters: {},
   actions: {
@@ -63,6 +65,10 @@ export const useToolManagementStore = defineStore("tool-management", {
     resetConnection() {
       this.showIncomingAnkerPoints = false;
       this.newConnection = {} as Connection;
+    },
+    highlightEntity(entityId: number) {
+      console.log("useToolManagementStore method activated");
+      this.highlightedEntityId = entityId;
     },
   },
 });
