@@ -5,7 +5,7 @@
   <v-snackbar v-model="snackbarSuccess" :timeout="2500"> Diagramm erfolgreich eingereicht </v-snackbar>
   
   <div class="container" >
-    <v-card v-if="activeTask != undefined" class="task-floater" elevation="3">
+    <v-card v-if="activeTask != null" class="task-floater" elevation="3">
       <v-card-title>Abgabe</v-card-title>
       <v-card-subtitle>
         <span>Aktuelle Aufgabe: {{ activeTask?.name }}</span
@@ -76,7 +76,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import ModelingTool from "@/components/ModelingTool.vue";
 import FileExplorer from "@/components/FileExplorer.vue";
 import ToolBox from "@/components/modelingTool/ToolBox.vue";
@@ -97,6 +97,7 @@ import SubmitPL from "../model/SubmitPL";
 import DialogShowFeedbackVue from "@/dialog/DialogShowFeedback.vue";
 import { onUnmounted } from "vue";
 import DialogAlertVue from "@/dialog/DialogAlert.vue";
+import CoursePL from "@/model/course/CoursePL";
 
 const authUserStore = useAuthUserStore();
 const userId = ref(authUserStore.auth.user?.id!);
@@ -109,8 +110,8 @@ const diagramStore = useDiagramStore();
 const toolManagementStore = useToolManagementStore();
 
 const modelingToolKey = storeToRefs(diagramStore).key;
-const activeCourse = toolManagementStore.activeCourse;
-const activeTask = toolManagementStore.activeTask
+const activeCourse = ref<CoursePL | null>(toolManagementStore.activeCourse);
+const activeTask = ref<Task | null>(toolManagementStore.activeTask);
 const dialogConfirm = ref<typeof DialogConfirm>();
 const currentTime = ref<Date>(new Date());
 const subBtnProgress = ref<boolean>(false);
@@ -126,19 +127,26 @@ const isStudent = computed(() => {
   return localStorage.getItem("role") === "ROLE_ADMIN";
 });
 
+watch(toolManagementStore, (toolStore) => {
+  activeTask.value = toolStore.activeTask;
+  activeCourse.value = toolStore.activeCourse;
+})
+
 const triggerfeedback = () => {
-  const submissionsleft = (activeTask?.maxSubmissions || 0) - submissionCount.value;
-  dialogConfirm.value?.openDialog("Abgaben übrig: "+submissionsleft, 'Möchten Sie das Diagram wirklich einreichen? :', "Einreichen").then((result: boolean) => {
-  if (result) {
-    saveandcheckdiag();
-    showFeedback.value = true;
-    subBtnProgress.value = true;
+  if (activeTask.value) {
+    const submissionsleft = (activeTask?.value.maxSubmissions || 0) - submissionCount.value;
+    dialogConfirm.value?.openDialog("Abgaben übrig: "+submissionsleft, 'Möchten Sie das Diagram wirklich einreichen? :', "Einreichen").then((result: boolean) => {
+    if (result) {
+      saveandcheckdiag();
+      showFeedback.value = true;
+      subBtnProgress.value = true;
+    }
+    else{
+      showFeedback.value = false;
+      subBtnProgress.value = false;
+    }
+    });
   }
-  else{
-    showFeedback.value = false;
-    subBtnProgress.value = false;
-  }
-  });
 }
 
 setInterval(() => {
@@ -157,12 +165,13 @@ onBeforeRouteLeave((to, from, next) => {
     }
   }
 });
-  
 
 onMounted(() => {
-  evaluationService.getSubmissionIdsByUserAndTask(userId.value, activeTask?.id || 0).then((response) => {
+  if (activeTask.value) {
+    evaluationService.getSubmissionIdsByUserAndTask(userId.value, activeTask?.value.id || 0).then((response) => {
     submissionCount.value = response.data.length;
-  });
+    });
+  }
   window.addEventListener("beforeunload", handleBeforeUnload);
 });
 
@@ -201,8 +210,8 @@ const submitDiagram = (returntosubmission:boolean) => {
     diagramService.putDiagram(diagramStore.diagram)
       .then(() => {
         diagramStore.saved = true;
-        if (returntosubmission) {
-          router.push({ name: "ViewTask", params: { courseId: activeCourse?.id, taskId: activeTask?.id } });
+        if (returntosubmission && activeTask.value && activeCourse.value) {
+          router.push({ name: "ViewTask", params: { courseId: activeCourse?.value.id, taskId: activeTask?.value.id } });
         }
         resolve(diagramStore.diagram); // Resolve the promise when the diagram is successfully put
       })
@@ -236,19 +245,21 @@ subBtnProgress.value = false;
 
 
 const loadTask =  () => {
-  taskService.getTask(activeTask?.id || 0).then((response) => {
+  if (activeTask.value) {
+    taskService.getTask(activeTask?.value.id || 0).then((response) => {
     task.value = response;
-    
-  });
+    });
+  }
 };
     
-const loadSubmissions =   (selectedTaskIndex?: Number) => { 
-    
-    evaluationService.getSubmissionIdsByUserAndTask(userId.value, activeTask?.id || 0 ).then((response) => {
-    const submissionIds = response.data;
-    submissionCount.value = submissionIds.length;
-    taskSubmissionsResultsTabs.value?.load(task.value, selectedTaskIndex);
-});
+const loadSubmissions = (selectedTaskIndex?: Number) => { 
+    if (activeTask.value) {
+      evaluationService.getSubmissionIdsByUserAndTask(userId.value, activeTask?.value.id || 0 ).then((response) => {
+      const submissionIds = response.data;
+      submissionCount.value = submissionIds.length;
+      taskSubmissionsResultsTabs.value?.load(task.value, selectedTaskIndex);
+    });
+  }
 };
 
 const waitUntilSubmissionIsEvaluated = (submissionId: number) => {
@@ -266,21 +277,23 @@ const waitUntilSubmissionIsEvaluated = (submissionId: number) => {
 
 const checkdiagramm = () => {
   loadTask();
-  const date = convertDate(activeTask?.dueDate);
-  const actual_time = convertDate(new Date().toString());
+  if (activeTask.value) {
+    const date = convertDate(activeTask?.value.dueDate);
+    const actual_time = convertDate(new Date().toString());
 
-  if (selectedDiagramId.value && (activeTask?.maxSubmissions as number > submissionCount.value) && ( actual_time < date ) ) {
-    const submitPL = {} as SubmitPL;
-    submitPL.diagramId = selectedDiagramId.value!;
-    submitPL.taskId = activeTask?.id || 0;
-    submitPL.userId = userId.value;
-    evaluationService.submitDiagram(submitPL).then((submissionId) => {
-      waitUntilSubmissionIsEvaluated(submissionId.data).then(() => {
-        loadSubmissions();
+    if (selectedDiagramId.value && (activeTask?.value.maxSubmissions as number > submissionCount.value) && ( actual_time < date ) ) {
+      const submitPL = {} as SubmitPL;
+      submitPL.diagramId = selectedDiagramId.value!;
+      submitPL.taskId = activeTask?.value.id || 0;
+      submitPL.userId = userId.value;
+      evaluationService.submitDiagram(submitPL).then((submissionId) => {
+        waitUntilSubmissionIsEvaluated(submissionId.data).then(() => {
+          loadSubmissions();
+        });
       });
-    });
-  } else {
-    alertDialog.value?.openDialog("Warnung", "Leider scheint es, dass du die maximale Anzahl der erlaubten Versuche erreicht hast.");
+    } else {
+      alertDialog.value?.openDialog("Warnung", "Leider scheint es, dass du die maximale Anzahl der erlaubten Versuche erreicht hast.");
+    }
   }
 };
 

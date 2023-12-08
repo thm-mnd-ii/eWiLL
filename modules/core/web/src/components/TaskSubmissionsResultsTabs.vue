@@ -17,7 +17,7 @@
             <br />
             <br />
             <!-- <p v-for="comment in selectedResult.comments" :key="comment.message">{{ comment.message }}</p> -->
-            <v-data-table :group-by="groupBy" :headers="headers" :items="selectedResult.comments" :sort-by="sortBy" class="elevation-1" item-value="name" @click:row="onRowClick($event)">
+            <v-data-table :group-by="groupBy" :headers="headers" :items="selectedResult.comments" :sort-by="sortBy" class="elevation-1" item-value="name" @click:row="(event: any, item: any) => onRowClick(item)">
               <template #item.highlightLevel="{ item }" >
                 <!-- <v-chip :color="getHighlightLevelColor(item.value.highlightLevel)"> -->
                 <v-icon v-if="item.value.highlightLevel == 'SUGGESTION'" size="large" :color="getHighlightLevelColor(item.value.highlightLevel)">mdi-information</v-icon>
@@ -53,6 +53,8 @@ import submissionService from "@/services/submission.service";
 import DialogShowFullDiagram from "@/dialog/DialogShowFullDiagram.vue";
 import Result from "@/model/submission/Result";
 import { useToolManagementStore } from "@/stores/toolManagementStore";
+import { toRaw } from "vue";
+import FeedbackLevel from "@/enums/FeedbackLevel";
 
 const toolManagementStore = useToolManagementStore();
 const authUserStore = useAuthUserStore();
@@ -122,11 +124,15 @@ const getHighlightLevelColor = (highlightLevel: string) => {
   }
 };
 
-const onRowClick = (event: any) => {
-  diagramStore.loadDiagram(submissions.value[selectedResultTab.value - 1].diagram as Diagram);
-  let rowIndex = event.target.closest('tr').sectionRowIndex;
-  const entityId = Number(selectedResult.value.comments[rowIndex].affectedEntityId);
-  if (entityId == null || entityId == -1) {
+const onRowClick = (item: any) => {
+  /** 
+   * Workaround to retrieve the data contained inside the row
+   * this method should be changed if a better alternative is found
+   */
+  const comment = toRaw(item.item.raw);
+  const entityId = Number(comment.affectedEntityId);
+  // problem remains with -1 on multiple entities missing or not required !
+  if (entityId == null || entityId == -1 || comment.feedbackLevel == FeedbackLevel.BASIC) {
     toolManagementStore.highlightedEntityId = null;
     return;
   } else {

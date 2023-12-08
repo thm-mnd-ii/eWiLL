@@ -192,6 +192,8 @@ const loadDiagramIntoStore = (diagram: Diagram) => {
   if (!deleteActive.value) {
     activeDiagramId.value = diagram.id;
     diagramStore.loadDiagram(diagram);
+    toolManagementStore.activeCourse = null;
+    toolManagementStore.activeTask = null;
   }
 };
 
