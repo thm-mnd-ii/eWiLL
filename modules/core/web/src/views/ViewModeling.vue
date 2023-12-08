@@ -1,6 +1,7 @@
 <template>
   <DialogConfirm ref="dialogConfirm" />
   <DialogShowFeedbackVue ref="dialogFeedback"></DialogShowFeedbackVue>
+  <DialogAlertVue ref="alertDialog"></DialogAlertVue>
   <v-snackbar v-model="snackbarSuccess" :timeout="2500"> Diagramm erfolgreich eingereicht </v-snackbar>
   
   <div class="container" >
@@ -95,6 +96,7 @@ import FeedbackLevel from "@/enums/FeedbackLevel";
 import SubmitPL from "../model/SubmitPL";
 import DialogShowFeedbackVue from "@/dialog/DialogShowFeedback.vue";
 import { onUnmounted } from "vue";
+import DialogAlertVue from "@/dialog/DialogAlert.vue";
 
 const authUserStore = useAuthUserStore();
 const userId = ref(authUserStore.auth.user?.id!);
@@ -118,6 +120,7 @@ const submissionCount = ref(0);
 const showFeedback = ref(false);
 const dialogFeedback = ref<typeof DialogShowFeedbackVue>();
 const isCollapsed = ref<boolean>(false);
+const alertDialog = ref<typeof DialogAlertVue>();
 
 const isStudent = computed(() => {
   return localStorage.getItem("role") === "ROLE_ADMIN";
@@ -277,7 +280,7 @@ const checkdiagramm = () => {
       });
     });
   } else {
-    alert("Maximale Anzahl an Abgaben erreicht");
+    alertDialog.value?.openDialog("Warnung", "Leider scheint es, dass du die maximale Anzahl der erlaubten Versuche erreicht hast.");
   }
 };
 
