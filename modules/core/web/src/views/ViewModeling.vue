@@ -23,20 +23,19 @@
       </v-card-actions>
       <div class="submissions-results"> 
         <div class="widget-bar">      
-        <v-card-title v-if="showAdvancedFeedback">Feedback</v-card-title>
+        <v-card-title v-if="showFeedback">Feedback</v-card-title>
         <div>
-          <v-icon v-if="showAdvancedFeedback" class="widget" icon="mdi-arrow-expand" size="x-small" @click="openFeedback()"></v-icon>
-          <v-icon v-if="showAdvancedFeedback && isCollapsed" class="widget" icon="mdi-arrow-collapse-down" size="x-small" @click="collapseFeedback()"></v-icon>
-          <v-icon v-if="showAdvancedFeedback && !isCollapsed" class="widget" icon="mdi-arrow-expand-up" size="x-small" @click="collapseFeedback()"></v-icon>
+          <v-icon v-if="showFeedback" class="widget" icon="mdi-arrow-expand" size="x-small" @click="openFeedback()"></v-icon>
+          <v-icon v-if="showFeedback && isCollapsed" class="widget" icon="mdi-arrow-collapse-down" size="x-small" @click="collapseFeedback()"></v-icon>
+          <v-icon v-if="showFeedback && !isCollapsed" class="widget" icon="mdi-arrow-expand-up" size="x-small" @click="collapseFeedback()"></v-icon>
         </div>
       </div>
-      <div class="feedback">
-        <TaskSubmissionsResultsTabs v-if="showAdvancedFeedback && !isCollapsed" ref="taskSubmissionsResultsTabs" @highlight-entity="handleHighlightEntity"></TaskSubmissionsResultsTabs>
-      </div>
+
+        <TaskSubmissionsResultsTabs v-if="showFeedback && !isCollapsed" ref="taskSubmissionsResultsTabs"></TaskSubmissionsResultsTabs>
+
     </div>
     </v-card>
 
-    <!-- <AdvancedFeedback v-if="showAdvancedFeedback"  ref="advancedFeedbackRef" :check="checked.valueOf()"  @on-complete="handleFeedbackComplete" @triggerCheck="onMounted"  />-->
     <div class="navigation">
       <v-system-bar color="white" elevation="1" window>
         <span v-if="diagramStore.diagram.name != ''">
@@ -89,13 +88,13 @@ import diagramService from "@/services/diagram.service";
 import Diagram from "@/model/diagram/Diagram";
 import { useAuthUserStore } from "../stores/authUserStore";
 import evaluationService from "@/services/evaluation.service";
-import courseService from "../services/course.service";
 import taskService from "@/services/task.service";
 import TaskSubmissionsResultsTabs from "@/components/TaskSubmissionsResultsTabs.vue";
 import Task from "@/model/task/Task";
 import FeedbackLevel from "@/enums/FeedbackLevel";
 import SubmitPL from "../model/SubmitPL";
 import DialogShowFeedbackVue from "@/dialog/DialogShowFeedback.vue";
+import { onUnmounted } from "vue";
 
 const authUserStore = useAuthUserStore();
 const userId = ref(authUserStore.auth.user?.id!);
@@ -116,8 +115,7 @@ const subBtnProgress = ref<boolean>(false);
 const taskSubmissionsResultsTabs = ref<typeof TaskSubmissionsResultsTabs>();
 const submissionCount = ref(0);
       
-const courseRole = ref("");
-const showAdvancedFeedback = ref(false);
+const showFeedback = ref(false);
 const dialogFeedback = ref<typeof DialogShowFeedbackVue>();
 const isCollapsed = ref<boolean>(false);
 
@@ -125,61 +123,21 @@ const isStudent = computed(() => {
   return localStorage.getItem("role") === "ROLE_ADMIN";
 });
 
-const handleHighlightEntity = (entityId: number) => {
-  console.log("enter highlight handle");
-  console.log("Store:", toolManagementStore);
-  console.log("highlightEntity function type:", typeof toolManagementStore.highlightEntity);
-
-  try {
-    toolManagementStore.highlightEntity(entityId);
-  } catch (error) {
-    console.error("Error in handleHighlightEntity:", error);
-  }
-};
-
-
-onMounted(() => {
-  
-  courseService.getUserRoleInCourse(userId.value!, activeCourse?.id||0).then((role) => {
-    courseRole.value = role;
-    console.log("courseRole.value: " + courseRole.value); 
-  });
-  evaluationService.getSubmissionIdsByUserAndTask(userId.value, activeTask?.id || 0).then((response) => {
-    
-    submissionCount.value = response.data.length;
-   console.log("submissionCount.value: " + submissionCount.value);
-  
-  });
-  
-});
 const triggerfeedback = () => {
-  const submissionsleft = (activeTask?.maxSubmissions || 0)-submissionCount.value;
-  console.log("triggerfeedback entered")
+  const submissionsleft = (activeTask?.maxSubmissions || 0) - submissionCount.value;
   dialogConfirm.value?.openDialog("Abgaben übrig: "+submissionsleft, 'Möchten Sie das Diagram wirklich einreichen? :', "Einreichen").then((result: boolean) => {
   if (result) {
     saveandcheckdiag();
-    console.log("true triggered")
-    showAdvancedFeedback.value = true;
+    showFeedback.value = true;
     subBtnProgress.value = true;
   }
   else{
-    showAdvancedFeedback.value = false;
+    showFeedback.value = false;
     subBtnProgress.value = false;
   }
   });
-  
-
 }
 
-
-/** 
-const handleFeedbackComplete = () => {
-  console.log('handleFeedbackComplete triggered');
-  subBtnProgress.value = false;
-  checked.value = false;
-  // Handle completion logic here
-};
-*/
 setInterval(() => {
   currentTime.value = new Date();
 }, 1000);
@@ -196,15 +154,27 @@ onBeforeRouteLeave((to, from, next) => {
     }
   }
 });
+  
 
 onMounted(() => {
+  evaluationService.getSubmissionIdsByUserAndTask(userId.value, activeTask?.id || 0).then((response) => {
+    submissionCount.value = response.data.length;
+  });
   window.addEventListener("beforeunload", handleBeforeUnload);
 });
+
+onUnmounted(() => {
+  if (toolManagementStore.highlightedEntityId != null) {
+      toolManagementStore.highlightedEntityId = null;
+    }
+});
+
 
 const handleBeforeUnload = (event: BeforeUnloadEvent) => {
   event.preventDefault();
   event.returnValue = "";
 };
+
 
 // current weekday day date year time seconds in european format
 const currentDateTime = computed(() => {
@@ -228,7 +198,6 @@ const submitDiagram = (returntosubmission:boolean) => {
     diagramService.putDiagram(diagramStore.diagram)
       .then(() => {
         diagramStore.saved = true;
-        console.log("diagramStore.saved: " + diagramStore.saved);
         if (returntosubmission) {
           router.push({ name: "ViewTask", params: { courseId: activeCourse?.id, taskId: activeTask?.id } });
         }
@@ -240,21 +209,6 @@ const submitDiagram = (returntosubmission:boolean) => {
       });
   });
 };
-
-/** 
-const loadSubmissions = () => {
-  evaluationService.getSubmissionIdsByUserAndTask(userId.value, activeTask?.id || 0).then((response) => {
-    console.log("userId.value, taskId.value: " + userId.value, activeTask?.id);
-    
-    const submissionIds = response.data;
-    console.log("submissionIds: " + submissionIds);
-    submissionCount.value = submissionIds.length;
-    console.log("submissionCount.value: " + submissionCount.value);
-    console.log("taskSubmissionsResultsTabs.value: " + taskSubmissionsResultsTabs.value);
-    if (submissionCount.value > 0) taskSubmissionsResultsTabs.value!.load(task.value);
-  });
-};
-*/
 
 // Function to convert Date string into a Date object
 function convertDate(dueDateStr:any) {
@@ -269,14 +223,10 @@ const saveandcheckdiag = async () => {
       const val= response as Diagram;
       selectedDiagramId.value = val.id;
       selectedDiagram.value = val;
-      console.log("saveandcheckdiag method called", selectedDiagramId.value);
-      console.log("response: " + JSON.stringify(response));
-
     })
  await  checkdiagramm();
   } catch (error) {
     console.error("Error in submitDiagram:", error);
-    // Handle any errors that occurred in submitDiagram
   }
 subBtnProgress.value = false;
 };
@@ -288,20 +238,16 @@ const loadTask =  () => {
     
   });
 };
-
-const loadSubmissions =   (selectedTaskIndex?: Number) => {
+    
+const loadSubmissions =   (selectedTaskIndex?: Number) => { 
     
     evaluationService.getSubmissionIdsByUserAndTask(userId.value, activeTask?.id || 0 ).then((response) => {
     const submissionIds = response.data;
     submissionCount.value = submissionIds.length;
-    console.log("submissionCount.value: " + submissionCount.value)
-    console.log("taskId.value: in loadsubmissions " + activeTask?.id || 0);
-    console.log("the task value inside loadsubmissions: " + task.value);
     taskSubmissionsResultsTabs.value?.load(task.value, selectedTaskIndex);
-    console.log("end reached loadSubmissions");
- 
 });
 };
+
 const waitUntilSubmissionIsEvaluated = (submissionId: number) => {
   return new Promise((resolve) => {
     const interval = setInterval(() => {
@@ -309,7 +255,6 @@ const waitUntilSubmissionIsEvaluated = (submissionId: number) => {
         if (response.status == 200) {
           clearInterval(interval);
           resolve(response.data);
-       console.log("waitUntilSubmissionIsEvaluated reached :",response.data);
         }
       });
     }, 1000);
@@ -321,26 +266,16 @@ const checkdiagramm = () => {
   const date = convertDate(activeTask?.dueDate);
   const actual_time = convertDate(new Date().toString());
 
-  console.log("checkdiagramm method called", activeTask?.maxSubmissions);
-  if (selectedDiagramId.value == undefined) {
-   console.log("diagramm is not saved yet")
-  } else if ((activeTask?.maxSubmissions as number > submissionCount.value) && ( actual_time < date ) ) {
-    console.log("currenttime ",new Date(currentTime.value));
-    console.log("Condition Result:", (activeTask?.dueDate)); 
-    console.log("diagramm is saved");
+  if (selectedDiagramId.value && (activeTask?.maxSubmissions as number > submissionCount.value) && ( actual_time < date ) ) {
     const submitPL = {} as SubmitPL;
     submitPL.diagramId = selectedDiagramId.value!;
-    console.log("selectedDiagramId: " + selectedDiagramId.value);
     submitPL.taskId = activeTask?.id || 0;
-    console.log("taskId in checkdiagramm: " + activeTask?.id || 0);
     submitPL.userId = userId.value;
-    console.log("userId: " + userId.value);
     evaluationService.submitDiagram(submitPL).then((submissionId) => {
       waitUntilSubmissionIsEvaluated(submissionId.data).then(() => {
         loadSubmissions();
       });
     });
-    console.log("reached end");
   } else {
     alert("Maximale Anzahl an Abgaben erreicht");
   }
@@ -356,7 +291,7 @@ const collapseFeedback = () => {
 };
 
 const openFeedback = () => {
-  dialogFeedback.value?.openDialog(submissionCount.value);
+  dialogFeedback.value?.openDialog();
 };
 
 </script>
@@ -365,7 +300,7 @@ const openFeedback = () => {
 .container {
   position: relative;
   width: 100%;
-  height: 100%;
+  height: 100vh;
 }
 
 .container {
@@ -406,6 +341,9 @@ const openFeedback = () => {
   top: 10px;
   right: 25px;
   z-index: 10;
+  max-height: calc(100vh - 20px);
+  max-width: 70vh;
+  overflow-y: auto;
 }
 
 .submissions-results {
@@ -424,12 +362,6 @@ const openFeedback = () => {
   padding: 2px;
   margin: 2px;
   cursor: pointer;
-}
-
-.feedback {
-  overflow-y: auto;
-  max-height: 300px;
-  max-width: 630px;
 }
 
 // .file-explorer {

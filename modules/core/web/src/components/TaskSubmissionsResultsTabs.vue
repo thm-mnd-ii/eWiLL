@@ -17,7 +17,7 @@
             <br />
             <br />
             <!-- <p v-for="comment in selectedResult.comments" :key="comment.message">{{ comment.message }}</p> -->
-            <v-data-table :group-by="groupBy" :headers="headers" :items="selectedResult.comments" :sort-by="sortBy" class="elevation-1" item-value="name"  @click:row="onRowClick($event,selectedResult.comments)">
+            <v-data-table :group-by="groupBy" :headers="headers" :items="selectedResult.comments" :sort-by="sortBy" class="elevation-1" item-value="name" @click:row="onRowClick($event)">
               <template #item.highlightLevel="{ item }" >
                 <!-- <v-chip :color="getHighlightLevelColor(item.value.highlightLevel)"> -->
                 <v-icon v-if="item.value.highlightLevel == 'SUGGESTION'" size="large" :color="getHighlightLevelColor(item.value.highlightLevel)">mdi-information</v-icon>
@@ -52,9 +52,9 @@ import submissionService from "@/services/submission.service";
 //Dialogs
 import DialogShowFullDiagram from "@/dialog/DialogShowFullDiagram.vue";
 import Result from "@/model/submission/Result";
-import { defineEmits } from 'vue';
-import FeedbackLevel from "@/enums/FeedbackLevel";
+import { useToolManagementStore } from "@/stores/toolManagementStore";
 
+const toolManagementStore = useToolManagementStore();
 const authUserStore = useAuthUserStore();
 const diagramStore = useDiagramStore();
 const userId = ref(authUserStore.auth.user?.id!);
@@ -78,8 +78,6 @@ const headers = ref([
   { title: "Info Type", key: "resultMessageType", groupable: true },
 ]);
 
-const emit = defineEmits(['highlight-entity']);
-
 watch(
   () => selectedResultTab.value,
   (newValue) => {
@@ -90,14 +88,9 @@ watch(
 );
 
 const load = (task: Task, selectedSubmissionIndex?: number) => {
-  console.log("load called ");
-
   currentTask.value = task;
-
   submissionService.getSubmissionIdsByUserAndTask(userId.value, task.id).then((response) => {
     submissions.value = response.data;
-    console.log("selectedResult.value.comments" + JSON.stringify(selectedResult.value.comments));
-    console.log("load called ");
 
     //select last tab
     selectedResultTab.value = selectedSubmissionIndex !== undefined ? selectedSubmissionIndex : submissions.value.length;
@@ -111,29 +104,9 @@ const load = (task: Task, selectedSubmissionIndex?: number) => {
   });
 };
 
-const loadLatestSubmissions = (task: Task) => {
-    console.log("loadLatest called");
-currentTask.value = task;
-    submissionService.getLatestSubmissionsByTask(currentTask.value.id).then((response) => {
-        const latestSubmissions = response.data;
-        if (latestSubmissions && latestSubmissions.length > 0) {
-            submissions.value = [latestSubmissions[0]];
-            selectedResultTab.value = 1; // Since there's only one submission, the tab index is 1
-
-            submissionService.getResultBySubmissionIdAndLevel(latestSubmissions[0].id, currentTask.value.showLevel).then((response) => {
-                selectedResult.value = response.data;
-            });
-        } else {
-            console.log("No submissions found for the latest task");
-            // Handle scenario where no submissions are found
-        }
-    });
-};
-
 
 const showDiagramWithMistakes = () => {
   diagramStore.loadDiagram(submissions.value[selectedResultTab.value - 1].diagram as Diagram);
-  console.log("showDiagramWithMistakes called ",diagramStore.loadDiagram(submissions.value[selectedResultTab.value - 1].diagram as Diagram));
   dialogShowFullDiagram.value?.openDialog("");
 };
 
@@ -149,35 +122,16 @@ const getHighlightLevelColor = (highlightLevel: string) => {
   }
 };
 
-const onRowClick = (event:any, comments:any) => {
+const onRowClick = (event: any) => {
   diagramStore.loadDiagram(submissions.value[selectedResultTab.value - 1].diagram as Diagram);
   let rowIndex = event.target.closest('tr').sectionRowIndex;
-  console.log("Row index: " + rowIndex);
-  console.log("selected Comment ", JSON.stringify(comments[rowIndex]));
-  const entityId = Number(comments[rowIndex].affectedEntityId);
-  const feedbackLevel = JSON.stringify(comments[rowIndex].feedbackLevel);
-  if (entityId == null || feedbackLevel == FeedbackLevel.BASIC) { // add case for -1, feedbackLevel are all info ?
-    console.error("Entity ID is null or undefined");
+  const entityId = Number(selectedResult.value.comments[rowIndex].affectedEntityId);
+  if (entityId == null || entityId == -1) {
+    toolManagementStore.highlightedEntityId = null;
     return;
   } else {
-    console.log("affected bezbez", entityId);
-    emit('highlight-entity', entityId);
+    toolManagementStore.highlightedEntityId = entityId;
   }
-
-
- /**const diagramEntities = diagramStore.diagram.entities;
- console.log("the diagram:= " + JSON.stringify(diagramStore.diagram));
-console.log("the entities in the diagram: " + JSON.stringify(diagramEntities));
-console.log("the comment: " + JSON.stringify(comments[rowIndex]));
-console.log("the comment id: " + JSON.stringify(comments[rowIndex].affectedEntityId));
-  const matchingEntity = diagramEntities.find(entity => entity.id === comments[rowIndex].affectedEntityId);
-console.log("the matching entity: " + JSON.stringify(matchingEntity));
-  if (matchingEntity) {
-    console.log("matching", matchingEntity, "affected", entityId);
-    //dialogShowFullDiagram.value?.openDialog(matchingEntity);
-  } else {
-    alert('No matching entity found');
-  }*/
 };
 
 

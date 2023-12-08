@@ -69,7 +69,6 @@ let entity = diagramStore.diagram.entities.find((entity) => entity.id == props.e
 const root = ref<HTMLInputElement | null>(null);
 
 const isEntityHighlighted = computed(() => {
-  console.log("entered entity main vue method for highlighting");
   return toolManagementStore.highlightedEntityId === props.entity.id;
 });
 
@@ -421,6 +420,6 @@ const resizer = (e: any) => {
 }
 
 .highlighted {
-  border: 2px solid red; /* Example highlighting style */
+  border: 2px solid red;
 }
 </style>

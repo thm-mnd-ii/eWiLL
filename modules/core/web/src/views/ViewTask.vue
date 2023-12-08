@@ -179,7 +179,6 @@ const loadSubmissions = () => {
   evaluationService.getSubmissionIdsByUserAndTask(userId.value, taskId.value).then((response) => {
     const submissionIds = response.data;
     submissionCount.value = submissionIds.length;
-    console.log("check result tabs: " + JSON.stringify(taskSubmissionsResultsTabs.value));
     if (submissionCount.value > 0) taskSubmissionsResultsTabs.value!.load(task.value);
   });
 };

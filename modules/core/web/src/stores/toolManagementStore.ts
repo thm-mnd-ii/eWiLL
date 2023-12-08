@@ -66,9 +66,5 @@ export const useToolManagementStore = defineStore("tool-management", {
       this.showIncomingAnkerPoints = false;
       this.newConnection = {} as Connection;
     },
-    highlightEntity(entityId: number) {
-      console.log("useToolManagementStore method activated");
-      this.highlightedEntityId = entityId;
-    },
   },
 });

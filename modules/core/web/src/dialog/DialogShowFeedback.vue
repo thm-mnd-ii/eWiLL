@@ -40,11 +40,9 @@ const loadElements = async () => {
 };
 
 const loadTask = () => {
-  console.log(toolManagementStore.activeTask?.id);
   if(toolManagementStore.activeTask){
     taskService.getTask(toolManagementStore.activeTask.id).then((response) => {
     task.value = response;
-    console;
     });
   }
 };
