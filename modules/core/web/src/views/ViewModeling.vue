@@ -15,7 +15,7 @@
     </template>
   </v-snackbar>
 
-  <div class="container" >
+  <div class="container">
     <v-card v-if="activeTask != null" class="task-floater" elevation="3">
       <v-card-title>Abgabe</v-card-title>
       <v-card-subtitle>
@@ -33,19 +33,18 @@
           </v-col>
         </v-row>
       </v-card-actions>
-      <div class="submissions-results"> 
-        <div class="widget-bar">      
-        <v-card-title v-if="showFeedback">Feedback</v-card-title>
-        <div>
-          <v-icon v-if="showFeedback" class="widget" icon="mdi-arrow-expand" size="x-small" @click="openFeedback()"></v-icon>
-          <v-icon v-if="showFeedback && isCollapsed" class="widget" icon="mdi-arrow-collapse-down" size="x-small" @click="collapseFeedback()"></v-icon>
-          <v-icon v-if="showFeedback && !isCollapsed" class="widget" icon="mdi-arrow-expand-up" size="x-small" @click="collapseFeedback()"></v-icon>
+      <div class="submissions-results">
+        <div class="widget-bar">
+          <v-card-title v-if="showFeedback">Feedback</v-card-title>
+          <div>
+            <v-icon v-if="showFeedback" class="widget" icon="mdi-arrow-expand" size="x-small" @click="openFeedback()"></v-icon>
+            <v-icon v-if="showFeedback && isCollapsed" class="widget" icon="mdi-arrow-collapse-down" size="x-small" @click="collapseFeedback()"></v-icon>
+            <v-icon v-if="showFeedback && !isCollapsed" class="widget" icon="mdi-arrow-expand-up" size="x-small" @click="collapseFeedback()"></v-icon>
+          </div>
         </div>
-      </div>
 
         <TaskSubmissionsResultsTabs v-if="showFeedback && !isCollapsed" ref="taskSubmissionsResultsTabs"></TaskSubmissionsResultsTabs>
-
-    </div>
+      </div>
     </v-card>
 
     <div class="navigation">
@@ -113,7 +112,6 @@ import Task from "@/model/task/Task";
 import FeedbackLevel from "@/enums/FeedbackLevel";
 import SubmitPL from "../model/SubmitPL";
 import DialogShowFeedbackVue from "@/dialog/DialogShowFeedback.vue";
-import { onUnmounted } from "vue";
 import DialogAlertVue from "@/dialog/DialogAlert.vue";
 import CoursePL from "@/model/course/CoursePL";
 import DialogSaveToLocalStorageVue from "@/dialog/DialogSaveToLocalStorage.vue";
@@ -136,7 +134,8 @@ const toolManagementStore = useToolManagementStore();
 const modelingToolKey = storeToRefs(diagramStore).key;
 const activeCourse = ref<CoursePL | null>(toolManagementStore.activeCourse);
 const activeTask = ref<Task | null>(toolManagementStore.activeTask);
-const dialogConfirm = ref<typeof DialogConfirm>();const dialogInactivity = ref<typeof DialogInactivityVue>();
+const dialogConfirm = ref<typeof DialogConfirm>();
+const dialogInactivity = ref<typeof DialogInactivityVue>();
 const dialogSave = ref<typeof DialogSaveDiagramVue>();
 
 const snackbarTimer = ref<number | null>(null);
@@ -160,7 +159,7 @@ const currentTime = ref<Date>(new Date());
 const subBtnProgress = ref<boolean>(false);
 const taskSubmissionsResultsTabs = ref<typeof TaskSubmissionsResultsTabs>();
 const submissionCount = ref(0);
-      
+
 const showFeedback = ref(false);
 const dialogFeedback = ref<typeof DialogShowFeedbackVue>();
 const isCollapsed = ref<boolean>(false);
@@ -173,24 +172,23 @@ const isStudent = computed(() => {
 watch(toolManagementStore, (toolStore) => {
   activeTask.value = toolStore.activeTask;
   activeCourse.value = toolStore.activeCourse;
-})
+});
 
 const triggerfeedback = () => {
   if (activeTask.value) {
     const submissionsleft = (activeTask?.value.maxSubmissions || 0) - submissionCount.value;
-    dialogConfirm.value?.openDialog("Abgaben übrig: "+submissionsleft, 'Möchten Sie das Diagram wirklich einreichen? :', "Einreichen").then((result: boolean) => {
-    if (result) {
-      saveandcheckdiag();
-      showFeedback.value = true;
-      subBtnProgress.value = true;
-    }
-    else{
-      showFeedback.value = false;
-      subBtnProgress.value = false;
-    }
+    dialogConfirm.value?.openDialog("Abgaben übrig: " + submissionsleft, "Möchten Sie das Diagram wirklich einreichen? :", "Einreichen").then((result: boolean) => {
+      if (result) {
+        saveandcheckdiag();
+        showFeedback.value = true;
+        subBtnProgress.value = true;
+      } else {
+        showFeedback.value = false;
+        subBtnProgress.value = false;
+      }
     });
   }
-}
+};
 
 setInterval(() => {
   currentTime.value = new Date();
@@ -198,7 +196,8 @@ setInterval(() => {
 
 onBeforeRouteLeave((to, from, next) => {
   if (diagramStore.saved) {
-    next();diagramStore
+    next();
+    diagramStore;
   } else {
     const message = "Dein Modell wurde noch nicht gespeichert. Willst du die Seite wirklich verlassen?";
     if (window.confirm(message)) {
@@ -212,7 +211,7 @@ onBeforeRouteLeave((to, from, next) => {
 onMounted(() => {
   if (activeTask.value) {
     evaluationService.getSubmissionIdsByUserAndTask(userId.value, activeTask?.value.id || 0).then((response) => {
-    submissionCount.value = response.data.length;
+      submissionCount.value = response.data.length;
     });
   }
   _setSnackbarTimer();
@@ -229,10 +228,9 @@ onMounted(() => {
 
 onUnmounted(() => {
   if (toolManagementStore.highlightedEntityId != null) {
-      toolManagementStore.highlightedEntityId = null;
-    }
+    toolManagementStore.highlightedEntityId = null;
+  }
 });
-
 
 // watches over id and entity changes
 watch(
@@ -332,7 +330,6 @@ const handleBeforeUnload = (event: BeforeUnloadEvent) => {
   event.returnValue = "";
 };
 
-
 // current weekday day date year time seconds in european format
 const currentDateTime = computed(() => {
   const date = currentTime.value;
@@ -348,11 +345,10 @@ const currentDateTime = computed(() => {
   return `${weekday}, ${day}. ${month} ${year} ${time}`;
 });
 
-
-
-const submitDiagram = (returntosubmission:boolean) => {
+const submitDiagram = (returntosubmission: boolean) => {
   return new Promise((resolve, reject) => {
-    diagramService.putDiagram(diagramStore.diagram)
+    diagramService
+      .putDiagram(diagramStore.diagram)
       .then(() => {
         diagramStore.saved = true;
         if (returntosubmission && activeTask.value && activeCourse.value) {
@@ -368,38 +364,36 @@ const submitDiagram = (returntosubmission:boolean) => {
 };
 
 // Function to convert Date string into a Date object
-function convertDate(dueDateStr:any) {
+function convertDate(dueDateStr: any) {
   const [day, month, year, time] = dueDateStr.split(/\.|\s/);
   return new Date(`${year}-${month}-${day} ${time}`);
 }
 
-
 const saveandcheckdiag = async () => {
   try {
     await submitDiagram(false).then((response) => {
-      const val= response as Diagram;
+      const val = response as Diagram;
       selectedDiagramId.value = val.id;
       selectedDiagram.value = val;
-    })
- await  checkdiagramm();
+    });
+    await checkdiagramm();
   } catch (error) {
     console.error("Error in submitDiagram:", error);
   }
-subBtnProgress.value = false;
+  subBtnProgress.value = false;
 };
 
-
-const loadTask =  () => {
+const loadTask = () => {
   if (activeTask.value) {
     taskService.getTask(activeTask?.value.id || 0).then((response) => {
-    task.value = response;
+      task.value = response;
     });
   }
 };
-    
-const loadSubmissions = (selectedTaskIndex?: Number) => { 
-    if (activeTask.value) {
-      evaluationService.getSubmissionIdsByUserAndTask(userId.value, activeTask?.value.id || 0 ).then((response) => {
+
+const loadSubmissions = (selectedTaskIndex?: Number) => {
+  if (activeTask.value) {
+    evaluationService.getSubmissionIdsByUserAndTask(userId.value, activeTask?.value.id || 0).then((response) => {
       const submissionIds = response.data;
       submissionCount.value = submissionIds.length;
       taskSubmissionsResultsTabs.value?.load(task.value, selectedTaskIndex);
@@ -426,7 +420,7 @@ const checkdiagramm = () => {
     const date = convertDate(activeTask?.value.dueDate);
     const actual_time = convertDate(new Date().toString());
 
-    if (selectedDiagramId.value && (activeTask?.value.maxSubmissions as number > submissionCount.value) && ( actual_time < date ) ) {
+    if (selectedDiagramId.value && (activeTask?.value.maxSubmissions as number) > submissionCount.value && actual_time < date) {
       const submitPL = {} as SubmitPL;
       submitPL.diagramId = selectedDiagramId.value!;
       submitPL.taskId = activeTask?.value.id || 0;
@@ -454,7 +448,6 @@ const collapseFeedback = () => {
 const openFeedback = () => {
   dialogFeedback.value?.openDialog();
 };
-
 </script>
 
 <style scoped lang="scss">

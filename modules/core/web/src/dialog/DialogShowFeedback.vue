@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick } from "vue";
+import { ref, nextTick, onMounted } from "vue";
 import TaskSubmissionsResultsTabs from "@/components/TaskSubmissionsResultsTabs.vue";
 import { useAuthUserStore } from "../stores/authUserStore";
 import evaluationService from "@/services/evaluation.service";
@@ -25,6 +25,7 @@ import { useToolManagementStore } from "@/stores/toolManagementStore";
 const task = ref<Task>({} as Task);
 const taskSubmissionsResultsTabs = ref<typeof TaskSubmissionsResultsTabs>();
 const authUserStore = useAuthUserStore();
+const toolManagementStore = useToolManagementStore();
 const userId = ref(authUserStore.auth.user?.id!);
 const deleteDialog = ref<boolean>(false);
 const Title = ref<string>("");
@@ -41,7 +42,7 @@ onMounted(() => {
 const init = () => {
   loadElements();
 };
-const toolManagementStore = useToolManagementStore();
+
 
 const loadElements = async () => {
   await loadTask();
