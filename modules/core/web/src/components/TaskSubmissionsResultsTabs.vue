@@ -18,7 +18,7 @@
             <br />
             <!-- <p v-for="comment in selectedResult.comments" :key="comment.message">{{ comment.message }}</p> -->
             <v-data-table :group-by="groupBy" :headers="headers" :items="selectedResult.comments" :sort-by="sortBy" class="elevation-1" item-value="name" @click:row="(event: any, item: any) => onRowClick(item)">
-              <template #item.highlightLevel="{ item }" >
+              <template #item.highlightLevel="{ item }">
                 <!-- <v-chip :color="getHighlightLevelColor(item.value.highlightLevel)"> -->
                 <v-icon v-if="item.value.highlightLevel == 'SUGGESTION'" size="large" :color="getHighlightLevelColor(item.value.highlightLevel)">mdi-information</v-icon>
                 <v-icon v-if="item.value.highlightLevel == 'INCORRECT'" size="large" :color="getHighlightLevelColor(item.value.highlightLevel)">mdi-close-circle</v-icon>
@@ -91,6 +91,7 @@ watch(
 
 const load = (task: Task, selectedSubmissionIndex?: number) => {
   currentTask.value = task;
+
   submissionService.getSubmissionIdsByUserAndTask(userId.value, task.id).then((response) => {
     submissions.value = response.data;
 
@@ -105,7 +106,6 @@ const load = (task: Task, selectedSubmissionIndex?: number) => {
     }
   });
 };
-
 
 const showDiagramWithMistakes = () => {
   diagramStore.loadDiagram(submissions.value[selectedResultTab.value - 1].diagram as Diagram);
@@ -125,7 +125,7 @@ const getHighlightLevelColor = (highlightLevel: string) => {
 };
 
 const onRowClick = (item: any) => {
-  /** 
+  /**
    * Workaround to retrieve the data contained inside the row
    * this method should be changed if a better alternative is found
    */
@@ -139,7 +139,6 @@ const onRowClick = (item: any) => {
     toolManagementStore.highlightedEntityId = entityId;
   }
 };
-
 
 defineExpose({
   load,

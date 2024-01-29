@@ -28,22 +28,22 @@
         <v-row>
           <v-col>
             <v-btn @click="submitDiagram(true)">Zurück zur Abgabe</v-btn>
-            <v-btn v-if="isStudent && !subBtnProgress" @click="triggerfeedback()">Prüfen</v-btn>
+            <v-btn v-if="!subBtnProgress" @click="triggerfeedback()">Prüfen</v-btn>
             <v-progress-circular v-if="subBtnProgress" indeterminate></v-progress-circular>
           </v-col>
         </v-row>
       </v-card-actions>
       <div class="submissions-results">
         <div class="widget-bar">
-          <v-card-title v-if="showFeedback">Feedback</v-card-title>
+          <v-card-title>Feedback</v-card-title>
           <div>
-            <v-icon v-if="showFeedback" class="widget" icon="mdi-arrow-expand" size="x-small" @click="openFeedback()"></v-icon>
-            <v-icon v-if="showFeedback && isCollapsed" class="widget" icon="mdi-arrow-collapse-down" size="x-small" @click="collapseFeedback()"></v-icon>
-            <v-icon v-if="showFeedback && !isCollapsed" class="widget" icon="mdi-arrow-expand-up" size="x-small" @click="collapseFeedback()"></v-icon>
+            <v-icon class="widget" icon="mdi-arrow-expand" size="x-small" @click="openFeedback()"></v-icon>
+            <v-icon v-if="isCollapsed" class="widget" icon="mdi-arrow-collapse-down" size="x-small" @click="collapseFeedback()"></v-icon>
+            <v-icon v-if="!isCollapsed" class="widget" icon="mdi-arrow-expand-up" size="x-small" @click="collapseFeedback()"></v-icon>
           </div>
         </div>
 
-        <TaskSubmissionsResultsTabs v-if="showFeedback && !isCollapsed" ref="taskSubmissionsResultsTabs"></TaskSubmissionsResultsTabs>
+        <TaskSubmissionsResultsTabs v-if="!isCollapsed" ref="taskSubmissionsResultsTabs"></TaskSubmissionsResultsTabs>
       </div>
     </v-card>
 
@@ -160,14 +160,15 @@ const subBtnProgress = ref<boolean>(false);
 const taskSubmissionsResultsTabs = ref<typeof TaskSubmissionsResultsTabs>();
 const submissionCount = ref(0);
 
-const showFeedback = ref(false);
 const dialogFeedback = ref<typeof DialogShowFeedbackVue>();
-const isCollapsed = ref<boolean>(false);
+const isCollapsed = ref<boolean>(true);
 const alertDialog = ref<typeof DialogAlertVue>();
 
-const isStudent = computed(() => {
-  return localStorage.getItem("role") === "ROLE_ADMIN";
-});
+// const isStudent = computed(() => {
+//   console.log(localStorage.getItem("role"));
+
+//   return localStorage.getItem("role") === "ROLE_ADMIN";
+// });
 
 watch(toolManagementStore, (toolStore) => {
   activeTask.value = toolStore.activeTask;
@@ -177,13 +178,11 @@ watch(toolManagementStore, (toolStore) => {
 const triggerfeedback = () => {
   if (activeTask.value) {
     const submissionsleft = (activeTask?.value.maxSubmissions || 0) - submissionCount.value;
-    dialogConfirm.value?.openDialog("Abgaben übrig: " + submissionsleft, "Möchten Sie das Diagram wirklich einreichen? :", "Einreichen").then((result: boolean) => {
+    dialogConfirm.value?.openDialog("Abgaben übrig: " + submissionsleft, "Möchten Sie das Diagram wirklich einreichen?", "Einreichen").then((result: boolean) => {
       if (result) {
         saveandcheckdiag();
-        showFeedback.value = true;
         subBtnProgress.value = true;
       } else {
-        showFeedback.value = false;
         subBtnProgress.value = false;
       }
     });
@@ -364,10 +363,10 @@ const submitDiagram = (returntosubmission: boolean) => {
 };
 
 // Function to convert Date string into a Date object
-function convertDate(dueDateStr: any) {
+const convertDate = (dueDateStr: any) => {
   const [day, month, year, time] = dueDateStr.split(/\.|\s/);
   return new Date(`${year}-${month}-${day} ${time}`);
-}
+};
 
 const saveandcheckdiag = async () => {
   try {
@@ -417,10 +416,7 @@ const waitUntilSubmissionIsEvaluated = (submissionId: number) => {
 const checkdiagramm = () => {
   loadTask();
   if (activeTask.value) {
-    const date = convertDate(activeTask?.value.dueDate);
-    const actual_time = convertDate(new Date().toString());
-
-    if (selectedDiagramId.value && (activeTask?.value.maxSubmissions as number) > submissionCount.value && actual_time < date) {
+    if (submissionIsValid()) {
       const submitPL = {} as SubmitPL;
       submitPL.diagramId = selectedDiagramId.value!;
       submitPL.taskId = activeTask?.value.id || 0;
@@ -433,6 +429,16 @@ const checkdiagramm = () => {
     } else {
       alertDialog.value?.openDialog("Warnung", "Leider scheint es, dass du die maximale Anzahl der erlaubten Versuche erreicht hast.");
     }
+  }
+};
+
+const submissionIsValid = () => {
+  if (activeTask.value) {
+    const date = convertDate(activeTask.value.dueDate);
+    const actual_date = new Date();
+    return selectedDiagramId.value && (activeTask?.value.maxSubmissions as number) > submissionCount.value && actual_date < date;
+  } else {
+    return false;
   }
 };
 
@@ -454,7 +460,7 @@ const openFeedback = () => {
 .container {
   position: relative;
   width: 100%;
-  height: 100vh;
+  height: 120vh;
 }
 
 .container {
