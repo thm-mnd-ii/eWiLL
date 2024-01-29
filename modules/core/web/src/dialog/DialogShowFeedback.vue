@@ -29,9 +29,18 @@ const userId = ref(authUserStore.auth.user?.id!);
 const deleteDialog = ref<boolean>(false);
 const Title = ref<string>("");
 const Message = ref<string | undefined>(undefined);
+// Promises
 const resolvePromise: any = ref(undefined);
 const rejectPromise: any = ref(undefined);
 const submissionCount = ref(1);
+
+onMounted(() => {
+  init();
+});
+
+const init = () => {
+  loadElements();
+};
 const toolManagementStore = useToolManagementStore();
 
 const loadElements = async () => {

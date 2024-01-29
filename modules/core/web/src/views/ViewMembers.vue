@@ -23,10 +23,10 @@
       <v-text-field v-model="search" label="Search" density="compact" prepend-icon="mdi-magnify" variant="underlined" hide-details class="search-field"></v-text-field>
       <v-data-table :headers="headers" :items="members" item-value="name" class="elevation-1" :search="search" density="default" height="480px">
         <template #item.role="{ item }">
-          <v-select v-model="item.raw.role" item variant="plain" :items="['STUDENT', 'TUTOR', 'OWNER']" class="select" :disabled="courseRole == 'STUDENT'" @update:model-value="changeRole(item.raw)"></v-select>
+          <v-select v-model="item.role" item variant="plain" :items="['STUDENT', 'TUTOR', 'OWNER']" class="select" :disabled="courseRole == 'STUDENT'" @update:model-value="changeRole(item)"></v-select>
         </template>
         <template #item.actions="{ item }">
-          <v-btn icon="mdi-delete" color="red" variant="text" :disabled="courseRole == 'STUDENT'" @click="kickUser(item.raw.user)"></v-btn>
+          <v-btn icon="mdi-delete" color="red" variant="text" :disabled="courseRole == 'STUDENT'" @click="kickUser(item.user)"></v-btn>
         </template>
       </v-data-table>
     </div>

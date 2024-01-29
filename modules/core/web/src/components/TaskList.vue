@@ -4,16 +4,16 @@
     <v-text-field v-model="search" class="search-bar" label="Search" density="compact" prepend-icon="mdi-magnify" variant="underlined" hide-details></v-text-field>
     <v-data-table :headers="headers" :items="listItems" item-value="name" class="elevation-1" density="default" height="480px" :search="search" @click:row="openTask">
       <template #item.passed="{ item }">
-        <v-icon v-if="item.raw.passed == false" icon="mdi-close-circle" color="error"></v-icon>
-        <v-icon v-if="item.raw.passed == true" icon="mdi-check-circle" color="success"></v-icon>
+        <v-icon v-if="item.passed == false" icon="mdi-close-circle" color="error"></v-icon>
+        <v-icon v-if="item.passed == true" icon="mdi-check-circle" color="success"></v-icon>
       </template>
       <template #item.task.eliability="{ item }">
-        <v-chip v-if="item.raw.task.eliability == 'MANDATORY'" color="red">Verpflichtend</v-chip>
-        <v-chip v-if="item.raw.task.eliability == 'OPTIONAL'" color="yellow">Optional</v-chip>
-        <v-chip v-if="item.raw.task.eliability == 'BONUS'" color="green">Bonus</v-chip>
+        <v-chip v-if="item.task.eliability == 'MANDATORY'" color="red">Verpflichtend</v-chip>
+        <v-chip v-if="item.task.eliability == 'OPTIONAL'" color="yellow">Optional</v-chip>
+        <v-chip v-if="item.task.eliability == 'BONUS'" color="green">Bonus</v-chip>
       </template>
       <template #item.task.dueDate="{ item }">
-        <TaskDateVChip :due-date-prop="item.raw.task.dueDate"></TaskDateVChip>
+        <TaskDateVChip :due-date-prop="item.task.dueDate"></TaskDateVChip>
       </template>
     </v-data-table>
   </div>
@@ -66,7 +66,7 @@ const loadTasks = (courseId: number) => {
 };
 
 const openTask = (row: any, item: any) => {
-  router.push("/course/" + saveCourseId.value + "/task/" + item.item.raw.task.id);
+  router.push("/course/" + saveCourseId.value + "/task/" + item.item.task.id);
 };
 
 defineExpose({

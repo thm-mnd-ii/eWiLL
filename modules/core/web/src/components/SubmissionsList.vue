@@ -10,14 +10,14 @@
     </v-row>
     <v-data-table :headers="headers" :items="listItems" class="elevation-1" density="default" height="480px" :search="search">
       <template #item.submission.diagram="{ item }">
-        <v-btn append-icon="mdi-presentation" @click="openDiagram(item.value.submission.diagram)">Preview</v-btn>
+        <v-btn append-icon="mdi-presentation" @click="openDiagram(item.submission.diagram)">Preview</v-btn>
       </template>
       <template #item.result.score="{ item }">
-        <v-chip v-b-tooltip.hover class="fixed-size-chip" title="Zeige komplettes Feedback" :style="{ background: colors(item), color: 'black' }" @click="openFeedback(item.value.result.comments, item.value.submission.attempt)"> {{ parseFloat(item.value.result.score).toFixed(2) }}</v-chip>
+        <v-chip b-tooltip.hover class="fixed-size-chip" title="Zeige komplettes Feedback" :style="{ background: colors(item), color: 'black' }" @click="openFeedback(item.result.comments, item.submission.attempt)"> {{ parseFloat(item.result.score).toFixed(2) }}</v-chip>
       </template>
       <template #item.result.correct="{ item }">
-        <v-icon v-if="item.value.result.correct == true" icon="mdi-check-circle" color="success"></v-icon>
-        <v-icon v-if="item.value.result.correct == false" icon="mdi-close-circle" color="red"></v-icon>
+        <v-icon v-if="item.result.correct == true" icon="mdi-check-circle" color="success"></v-icon>
+        <v-icon v-if="item.result.correct == false" icon="mdi-close-circle" color="red"></v-icon>
       </template>
     </v-data-table>
   </div>
@@ -85,7 +85,7 @@ const loadLatestSubmissions = () => {
 };
 
 const colors = (item: any) => {
-  const score = item.value.result.score;
+  const score = item.result.score;
 
   if (isNaN(score) || score < 50) {
     return "#FF6666";

@@ -1,0 +1,525 @@
+{
+	"connections": [
+	{
+		"startEntity": 1,
+		"endEntity": 3,
+		"style": 1,
+		"startEntityPosition": "right",
+		"endEntityPosition": "left"
+	},
+	{
+		"startEntity": 2,
+		"endEntity": 3,
+		"style": 1,
+		"startEntityPosition": "right",
+		"endEntityPosition": "left"
+	},
+	{
+		"startEntity": 1,
+		"endEntity": 5,
+		"style": 1,
+		"startEntityPosition": "right",
+		"endEntityPosition": "left"
+	},
+	{
+		"startEntity": 2,
+		"endEntity": 5,
+		"style": 1,
+		"startEntityPosition": "right",
+		"endEntityPosition": "left"
+	},
+	{
+		"startEntity": 6,
+		"endEntity": 7,
+		"style": 1,
+		"startEntityPosition": "right",
+		"endEntityPosition": "left"
+	},
+	{
+		"startEntity": 2,
+		"endEntity": 6,
+		"style": 2,
+		"startEntityPosition": "right",
+		"endEntityPosition": "left"
+	},
+	{
+		"startEntity": 7,
+		"endEntity": 9,
+		"style": 1,
+		"startEntityPosition": "right",
+		"endEntityPosition": "left"
+	},
+	{
+		"startEntity": 12,
+		"endEntity": 13,
+		"style": 2,
+		"startEntityPosition": "right",
+		"endEntityPosition": "left"
+	},
+	{
+		"startEntity": 14,
+		"endEntity": 7,
+		"style": 0,
+		"startEntityPosition": "right",
+		"endEntityPosition": "left"
+	},
+	{
+		"startEntity": 7,
+		"endEntity": 13,
+		"style": 1,
+		"startEntityPosition": "right",
+		"endEntityPosition": "left"
+	},
+	{
+		"startEntity": 14,
+		"endEntity": 15,
+		"style": 1,
+		"startEntityPosition": "right",
+		"endEntityPosition": "left"
+	},
+	{
+		"startEntity": 9,
+		"endEntity": 15,
+		"style": 1,
+		"startEntityPosition": "right",
+		"endEntityPosition": "left"
+	},
+	{
+		"startEntity": 2,
+		"endEntity": 14,
+		"style": 1,
+		"startEntityPosition": "right",
+		"endEntityPosition": "left"
+	},
+	{
+		"startEntity": 4,
+		"endEntity": 12,
+		"style": 1,
+		"startEntityPosition": "right",
+		"endEntityPosition": "left"
+	},
+	{
+		"startEntity": 10,
+		"endEntity": 4,
+		"style": 1,
+		"startEntityPosition": "right",
+		"endEntityPosition": "left"
+	},
+	{
+		"startEntity": 7,
+		"endEntity": 15,
+		"style": 1,
+		"startEntityPosition": "right",
+		"endEntityPosition": "left"
+	},
+	{
+		"startEntity": 11,
+		"endEntity": 12,
+		"style": 1,
+		"startEntityPosition": "right",
+		"endEntityPosition": "left"
+	}
+],
+
+	"entities": [
+	{
+		"id": 1,
+		"type": 0,
+		"entityName": "Landwirt",
+		"top": 216,
+		"left": 49,
+		"width": 100,
+		"attributes": [
+			{
+				"name": "ID",
+				"pkey": true,
+				"fkey": false
+			},
+			{
+				"name": "Hofname",
+				"pkey": false,
+				"fkey": false
+			},
+			{
+				"name": "Straße",
+				"pkey": false,
+				"fkey": false
+			},
+			{
+				"name": "Hausnummer",
+				"pkey": false,
+				"fkey": false
+			},
+			{
+				"name": "PLZ",
+				"pkey": false,
+				"fkey": false
+			},
+			{
+				"name": "Stadt",
+				"pkey": false,
+				"fkey": false
+			}
+		]
+	},
+	{
+		"id": 2,
+		"type": 0,
+		"entityName": "Getreideart",
+		"top": 336,
+		"left": 51,
+		"width": 100,
+		"attributes": [
+			{
+				"name": "ID",
+				"pkey": true,
+				"fkey": false
+			},
+			{
+				"name": "Bezeichnung",
+				"pkey": false,
+				"fkey": false
+			}
+		]
+	},
+	{
+		"id": 3,
+		"type": 2,
+		"entityName": "Angebaute Arten",
+		"top": 344,
+		"left": 311,
+		"width": 100,
+		"attributes": [
+			{
+				"name": "Landwirt",
+				"pkey": true,
+				"fkey": false
+			},
+			{
+				"name": "Getreide",
+				"pkey": true,
+				"fkey": false
+			}
+		]
+	},
+	{
+		"id": 4,
+		"type": 1,
+		"entityName": "Kunde",
+		"top": 643,
+		"left": 297,
+		"width": 100,
+		"attributes": [
+			{
+				"name": "ID",
+				"pkey": true,
+				"fkey": false
+			},
+			{
+				"name": "Kundenart",
+				"pkey": false,
+				"fkey": true
+			},
+			{
+				"name": "Vorname",
+				"pkey": false,
+				"fkey": false
+			},
+			{
+				"name": "Name",
+				"pkey": false,
+				"fkey": false
+			},
+			{
+				"name": "Straße",
+				"pkey": false,
+				"fkey": false
+			},
+			{
+				"name": "Hausnummer",
+				"pkey": false,
+				"fkey": false
+			},
+			{
+				"name": "PLZ",
+				"pkey": false,
+				"fkey": false
+			},
+			{
+				"name": "Stadt",
+				"pkey": false,
+				"fkey": false
+			}
+		]
+	},
+	{
+		"id": 5,
+		"type": 2,
+		"entityName": "Lieferung",
+		"top": 215,
+		"left": 308,
+		"width": 100,
+		"attributes": [
+			{
+				"name": "ID",
+				"pkey": true,
+				"fkey": false
+			},
+			{
+				"name": "Landwirt",
+				"pkey": true,
+				"fkey": false
+			},
+			{
+				"name": "Getreide",
+				"pkey": true,
+				"fkey": false
+			},
+			{
+				"name": "Menge",
+				"pkey": false,
+				"fkey": false
+			},
+			{
+				"name": "Datum",
+				"pkey": false,
+				"fkey": false
+			}
+		]
+	},
+	{
+		"id": 6,
+		"type": 1,
+		"entityName": "Produkttyp",
+		"top": 410,
+		"left": 315,
+		"width": 100,
+		"attributes": [
+			{
+				"name": "ID",
+				"pkey": true,
+				"fkey": false
+			},
+			{
+				"name": "Rohstoff",
+				"pkey": false,
+				"fkey": true
+			},
+			{
+				"name": "Bezeichnung",
+				"pkey": false,
+				"fkey": false
+			},
+			{
+				"name": "Getreide",
+				"pkey": false,
+				"fkey": true
+			}
+		]
+	},
+	{
+		"id": 7,
+		"type": 1,
+		"entityName": "Produkt",
+		"top": 429,
+		"left": 614,
+		"width": 100,
+		"attributes": [
+			{
+				"name": "Chargennummer",
+				"pkey": true,
+				"fkey": false
+			},
+			{
+				"name": "Produktart",
+				"pkey": false,
+				"fkey": true
+			},
+			{
+				"name": "Haltbarkeitsdatum",
+				"pkey": false,
+				"fkey": false
+			},
+			{
+				"name": "Roh_Menge",
+				"pkey": false,
+				"fkey": false
+			},
+			{
+				"name": "End_Menge",
+				"pkey": false,
+				"fkey": false
+			}
+		]
+	},
+	{
+		"id": 9,
+		"type": 1,
+		"entityName": "Lager",
+		"top": 437,
+		"left": 802,
+		"width": 100,
+		"attributes": [
+			{
+				"name": "ID",
+				"pkey": true,
+				"fkey": false
+			},
+			{
+				"name": "Name",
+				"pkey": false,
+				"fkey": false
+			}
+		]
+	},
+	{
+		"id": 10,
+		"type": 0,
+		"entityName": "Kundenart",
+		"top": 637,
+		"left": 62,
+		"width": 100,
+		"attributes": [
+			{
+				"name": "ID",
+				"pkey": true,
+				"fkey": false
+			},
+			{
+				"name": "Bezeichnung",
+				"pkey": false,
+				"fkey": false
+			}
+		]
+	},
+	{
+		"id": 11,
+		"type": 0,
+		"entityName": "Versandart",
+		"top": 771,
+		"left": 65,
+		"width": 100,
+		"attributes": [
+			{
+				"name": "ID",
+				"pkey": true,
+				"fkey": false
+			},
+			{
+				"name": "Bezeichnung",
+				"pkey": false,
+				"fkey": false
+			}
+		]
+	},
+	{
+		"id": 12,
+		"type": 1,
+		"entityName": "Rechnung",
+		"top": 705,
+		"left": 447,
+		"width": 100,
+		"attributes": [
+			{
+				"name": "ID",
+				"pkey": true,
+				"fkey": false
+			},
+			{
+				"name": "Versandart",
+				"pkey": false,
+				"fkey": true
+			},
+			{
+				"name": "Datum",
+				"pkey": false,
+				"fkey": false
+			}
+		]
+	},
+	{
+		"id": 13,
+		"type": 2,
+		"entityName": "Position",
+		"top": 675,
+		"left": 751,
+		"width": 100,
+		"attributes": [
+			{
+				"name": "Rechnung",
+				"pkey": true,
+				"fkey": false
+			},
+			{
+				"name": "Position",
+				"pkey": true,
+				"fkey": false
+			},
+			{
+				"name": "Produkt",
+				"pkey": false,
+				"fkey": true
+			},
+			{
+				"name": "Menge",
+				"pkey": false,
+				"fkey": false
+			}
+		]
+	},
+	{
+		"id": 14,
+		"type": 1,
+		"entityName": "Silo",
+		"top": 506,
+		"left": 313,
+		"width": 100,
+		"attributes": [
+			{
+				"name": "ID",
+				"pkey": true,
+				"fkey": false
+			},
+			{
+				"name": "Getreideart",
+				"pkey": false,
+				"fkey": true
+			},
+			{
+				"name": "Mahldatum",
+				"pkey": false,
+				"fkey": false
+			},
+			{
+				"name": "Menge",
+				"pkey": false,
+				"fkey": false
+			}
+		]
+	},
+	{
+		"id": 15,
+		"type": 2,
+		"entityName": "Bestand",
+		"top": 528,
+		"left": 935,
+		"width": 100,
+		"attributes": [
+			{
+				"name": "Chargennummer",
+				"pkey": true,
+				"fkey": false
+			},
+			{
+				"name": "Lager",
+				"pkey": true,
+				"fkey": false
+			},
+			{
+				"name": "Menge",
+				"pkey": false,
+				"fkey": false
+			}
+		]
+	}
+]}
