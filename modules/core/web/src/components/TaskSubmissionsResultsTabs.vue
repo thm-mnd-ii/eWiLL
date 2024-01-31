@@ -85,14 +85,14 @@ watch(
   }
 );
 
-const load = (task: Task) => {
+const load = (task: Task, selectedSubmissionIndex?: number) => {
   currentTask.value = task;
 
   submissionService.getSubmissionIdsByUserAndTask(userId.value, task.id).then((response) => {
     submissions.value = response.data;
 
     //select last tab
-    selectedResultTab.value = submissions.value.length;
+    selectedResultTab.value = selectedSubmissionIndex !== undefined ? selectedSubmissionIndex : submissions.value.length;
 
     //if first submission, load result for first submission
     if (submissions.value.length == 1) {
@@ -127,8 +127,9 @@ defineExpose({
 
 <style scoped>
 .task-trials-tabs {
-  margin: 20px 0;
+  margin: 0;
   width: 100%;
+  height: 100%;
 }
 
 .task-trials-text {

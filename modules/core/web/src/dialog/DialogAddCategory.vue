@@ -6,7 +6,9 @@
       </v-card-title>
       <v-card-text>
         <v-form ref="form" v-model="valid">
-          <v-text-field v-model="newCategoryName" label="Name*" :rules="[(v) => !!v || 'Item is required']" required></v-text-field>
+
+          <v-text-field v-model="newCategoryName" label="Name*" :rules="[(v: any) => !!v || 'Item is required']" required></v-text-field>
+
         </v-form>
       </v-card-text>
       <v-card-actions>

@@ -4,9 +4,10 @@ import com.wipdev.eWiLL_backend.database.tables.Diagram
 import com.wipdev.eWiLL_backend.database.tables.Task
 import com.wipdev.eWiLL_backend.database.tables.course.Submission
 import com.wipdev.eWiLL_backend.database.tables.course.SubmissionResult
+import com.wipdev.eWiLL_backend.endpoints.payload.requests.Attribute
 import com.wipdev.eWiLL_backend.endpoints.payload.requests.DiagramPL
+import com.wipdev.eWiLL_backend.endpoints.payload.requests.Entity
 import com.wipdev.eWiLL_backend.endpoints.payload.requests.SubmissionRequestPL
-import com.wipdev.eWiLL_backend.eval.DiagramEvalResult
 import com.wipdev.eWiLL_backend.eval.FeedbackLevel
 import com.wipdev.eWiLL_backend.eval.StatusLevel
 import com.wipdev.eWiLL_backend.eval.rules.ResultMessage
@@ -14,13 +15,10 @@ import com.wipdev.eWiLL_backend.eval.rules.ResultMessageType
 import com.wipdev.eWiLL_backend.repository.*
 import com.wipdev.eWiLL_backend.services.DiagramService
 import com.wipdev.eWiLL_backend.utils.TimeUtils
+import com.wipdev.eWiLL_backend.utils.stringsimmilarity.StringFinderUtils
+import com.wipdev.eWiLL_backend.utils.translate.Dictionary
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.ResponseBody
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.stream.Collectors
@@ -44,9 +42,10 @@ class PythonEvaluationService {
     lateinit var submissionRepository: SubmissionRepository
 
     //Executor for async evaluation
-    val executor: ExecutorService = Executors.newSingleThreadExecutor()
+    private val executor: ExecutorService = Executors.newSingleThreadExecutor()
 
-
+    private val matchingValue = 0.8
+    private val ignoreCase = true
 
     private fun runPythonEval(diagramPayload: DiagramPL, task: Task, solutionDiagrams: List<DiagramPL>): SubmissionResult {
         val result = SubmissionResult() // Creation of the "Result" which contains information about the evaluation result like score and mistakes
@@ -123,6 +122,7 @@ class PythonEvaluationService {
             listOf(diagramRepository.getReferenceById(task.solutionModelId!!))
                 .stream().map { DiagramService.convert(it, configRepository) }.collect(Collectors.toList())
 
+        prepareEntityAndAttributeNames(diagramPayload,solutionDiagrams)
         //Run python evaluation
         val result = runPythonEval(diagramPayload, task, solutionDiagrams)
         result.submissionId = submission.id
@@ -130,7 +130,47 @@ class PythonEvaluationService {
         resultRepository.save(result)
     }
 
+    private fun prepareEntityAndAttributeNames(diagramPayload: DiagramPL, solutionDiagrams: List<DiagramPL>) {
+        for(entity in diagramPayload.entities!!){
+            val possibleNames = Dictionary.getPossibleNames(entity.entityName!!)
+            for(solutionDiagram in solutionDiagrams){
 
+                val solutionEntity = getEntityByPossibleNames(solutionDiagram,possibleNames,matchingValue,ignoreCase)
+                if(solutionEntity != null){
+                    solutionEntity.entityName = entity.entityName
+                    for(attribute in entity.attributes!!){
+                        val possibleAttributeNames = Dictionary.getPossibleNames(attribute.name!!)
+                        val solutionAttribute = getAttributeByPossibleNames(solutionEntity.attributes,possibleAttributeNames,matchingValue,ignoreCase)
+                        if(solutionAttribute != null){
+                            solutionAttribute.name = attribute.name
+                        }
+                    }
+                }
+            }
+        }
 
+    }
+
+    private fun getAttributeByPossibleNames(attributes: Array<Attribute>?, possibleAttributeNames: Array<String>, matchingValue: Double, ignoreCase: Boolean): Attribute? {
+        return attributes!!.firstOrNull {
+            StringFinderUtils.isPresent(
+                it.name!!,
+                possibleAttributeNames,
+                matchingValue,
+                ignoreCase
+            )
+        }
+    }
+
+    private fun getEntityByPossibleNames(solutionDiagram: DiagramPL, possibleNames: Array<String>, matchingValue: Double, ignoreCase: Boolean): Entity? {
+        return solutionDiagram.entities!!.firstOrNull {
+            StringFinderUtils.isPresent(
+                it.entityName!!,
+                possibleNames,
+                matchingValue,
+                ignoreCase
+            )
+        }
+    }
 
 }

@@ -1,3 +1,4 @@
+import DiagramSaveType from "@/enums/DiagramSaveType";
 import Config from "./Config";
 import Connection from "./Connection";
 import Entity from "./Entity";
@@ -10,6 +11,7 @@ interface Diagram {
   entities: Entity[];
   connections: Connection[];
   categoryId: number;
+  diagramSaveType: DiagramSaveType;
 }
 
 export default Diagram;
