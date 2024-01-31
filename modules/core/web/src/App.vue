@@ -22,7 +22,8 @@
         <v-list-item to="/home" active-class="active" prepend-icon="mdi-home-variant" title="Startseite" value="home" />
         <v-list-item to="/course" active-class="active" prepend-icon="mdi-file-multiple" title="Alle Kurse"
           value="course" />
-        <v-list-item to="/oralExam" active-class="active" prepend-icon="mdi-bug" title="Oral Examinator" value="/" />
+        <v-list-item to="/oralExam.........." active-class="active" prepend-icon="mdi-bug" title="Oral Examinator"
+          value="/" />
         <v-list-item to="/modeling" active-class="active" prepend-icon="mdi-pencil-ruler" title="Modellierung"
           value="modeling" />
         <v-list-item to="/feedbackReport" active-class="active" prepend-icon="mdi-bug" title="Feedback" value="report" />
