@@ -29,7 +29,7 @@
         <v-list-item to="/feedbackReport" active-class="active" prepend-icon="mdi-bug" title="Feedback" value="report" />
         <v-list-item v-if="admin" to="/feedbackOverview" active-class="active"
           prepend-icon="mdi-view-dashboard-variant-outline" title="Feedback Overview" value="report" />
-        <v-list-item to="/oralExaminator" active-class="active" prepend-icon="mdi-bug" title="Oral Examinator" value="examinator" />
+
       </v-list>
     </v-navigation-drawer>
 
