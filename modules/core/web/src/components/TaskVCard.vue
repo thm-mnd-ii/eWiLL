@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/valid-v-slot -->
 <template>
   <DialogEditTask ref="dialogEditTask" />
 
@@ -30,8 +29,8 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
-import Task from "../model/task/Task";
-import taskService from "../services/task.service";
+import taskService from "@/services/task.service";
+import type Task from "@/model/task/Task";
 import DialogEditTask from "@/dialog/DialogEditTask.vue";
 import TaskDateVChip from "@/components/TaskDateVChip.vue";
 

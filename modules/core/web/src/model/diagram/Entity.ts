@@ -1,7 +1,7 @@
-import EntityTyp from "../../enums/EntityType";
-import Attribute from "./Attribute";
+import type EntityTyp from "@/enums/EntityType";
+import type Attribute from "./Attribute";
 
-interface Entity {
+export default interface Entity {
   id: number;
   type: EntityTyp;
   entityName: string;
@@ -10,5 +10,3 @@ interface Entity {
   width: number;
   attributes: Attribute[];
 }
-
-export default Entity;

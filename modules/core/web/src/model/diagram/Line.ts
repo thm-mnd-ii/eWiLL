@@ -1,6 +1,6 @@
-import CardinalityType from "../../enums/CardinalityType";
+import type CardinalityType from "@/enums/CardinalityType";
 
-interface Line {
+export default interface Line {
   id?: number;
   x1?: number;
   y1?: number;
@@ -8,5 +8,3 @@ interface Line {
   y2?: number;
   style?: CardinalityType;
 }
-
-export default Line;

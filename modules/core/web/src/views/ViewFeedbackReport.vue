@@ -18,8 +18,8 @@
 </template>
 
 <script setup lang="ts">
-import Feedback from "@/model/Feedback";
-import User from "../model/User";
+import type Feedback from "@/model/Feedback";
+import type User from "../model/User";
 import feedbackService from "../services/feedback.service";
 import BasicBackground from "@/components/BasicBackground.vue";
 import { useAuthUserStore } from "@/stores/authUserStore";

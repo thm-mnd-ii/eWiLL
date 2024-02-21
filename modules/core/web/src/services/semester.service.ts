@@ -1,4 +1,4 @@
-import Semester from "../model/Semester"
+import type Semester from "@/model/Semester"
 import axios from "axios";
 
 class SemesterService {

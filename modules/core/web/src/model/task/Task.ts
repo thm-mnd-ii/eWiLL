@@ -1,6 +1,7 @@
-import FeedbackLevel from "@/enums/FeedbackLevel";
-import TaskLevel from "@/enums/TaskLevel";
-interface Task {
+import type FeedbackLevel from "@/enums/FeedbackLevel";
+import type TaskLevel from "@/enums/TaskLevel";
+
+export default interface Task {
   id: number;
   name: string;
   description: string;
@@ -14,5 +15,3 @@ interface Task {
   showLevel: FeedbackLevel;
   taskLevel: TaskLevel;
 }
-
-export default Task;

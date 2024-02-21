@@ -1,8 +1,8 @@
-import StatusLevel from "@/enums/StatusLevel";
-import FeedbackLevel from "@/enums/FeedbackLevel";
-import MessageType from "@/enums/MessageType";
+import type StatusLevel from "@/enums/StatusLevel";
+import type FeedbackLevel from "@/enums/FeedbackLevel";
+import type MessageType from "@/enums/MessageType";
 
-interface Comment {
+export default interface Comment {
   feedbackLevel: FeedbackLevel;
   message: string;
   resultMessageType: MessageType;
@@ -12,5 +12,3 @@ interface Comment {
   connectedToId: number;
   statusLevel: StatusLevel;
 }
-
-export default Comment;

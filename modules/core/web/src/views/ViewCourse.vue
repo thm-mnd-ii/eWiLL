@@ -43,14 +43,14 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
-import { useAuthUserStore } from "../stores/authUserStore";
+import { useAuthUserStore } from "@/stores/authUserStore";
 import { useRouter } from "vue-router";
 
-import TaskList from "../components/TaskList.vue";
-import CoursePL from "../model/course/CoursePL";
-import courseService from "../services/course.service";
+import TaskList from "@/components/TaskList.vue";
+import type CoursePL from "@/model/course/CoursePL";
+import courseService from "@/services/course.service";
 
-import DialogConfirmVue from "../dialog/DialogConfirm.vue";
+import DialogConfirmVue from "@/dialog/DialogConfirm.vue";
 import DialogCreateCourse from "@/dialog/DialogCreateCourse.vue";
 import DialogEditTask from "@/dialog/DialogEditTask.vue";
 
