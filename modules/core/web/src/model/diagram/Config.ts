@@ -1,8 +1,6 @@
-import DiagramType from "../../enums/DiagramType";
+import type DiagramType from "@/enums/DiagramType";
 
-interface Config {
+export default interface Config {
   id: number;
   diagramType: DiagramType;
 }
-
-export default Config;

@@ -1,4 +1,4 @@
-import Category from "../model/diagram/Category"
+import type Category from "@/model/diagram/Category"
 import axios from "axios";
 
 class CategoryService{

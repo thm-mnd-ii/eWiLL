@@ -38,9 +38,9 @@
 import {watch, ref } from "vue";
 import { useAuthUserStore } from "../stores/authUserStore";
 import courseService from "../services/course.service";
-import CoursePL from "../model/course/CoursePL";
+import type CoursePL from "../model/course/CoursePL";
 import semesterService from "../services/semester.service";
-import Semester from "../model/Semester";
+import type Semester from "../model/Semester";
 import DialogConfirmVue from "../dialog/DialogConfirm.vue";
 import { useRouter } from "vue-router";
 

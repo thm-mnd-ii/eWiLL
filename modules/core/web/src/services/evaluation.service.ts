@@ -1,7 +1,8 @@
-import axios, { AxiosResponse } from "axios";
-import SubmitPL from "@/model/SubmitPL";
+import axios from "axios";
+import type { AxiosResponse } from "axios";
+import type SubmitPL from "@/model/SubmitPL";
 import FeedbackLevel from "@/enums/FeedbackLevel";
-import Result from "@/model/submission/Result";
+import type Result from "@/model/submission/Result";
 
 class EvaluationService {
   submitDiagram(submitPL: SubmitPL): Promise<AxiosResponse<number>> {

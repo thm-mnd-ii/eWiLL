@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/valid-v-slot -->
 <template>
   <TaskDateVChip ref="taskDateVChip" class="hide" :due-date-prop="task.dueDate"></TaskDateVChip>
 
@@ -41,7 +40,7 @@
       <div v-if="courseRole == 'STUDENT'" class="grid-right">
         <v-btn class="submit-btn" color="dark-gray" variant="flat" :disabled="submissionCount >= task.maxSubmissions || isDue" @click="submitDiagram">
           <div v-if="!subBtnProgress">
-            <span>prüfen</span>
+            <span>Einreichen</span>
           </div>
           <div v-if="subBtnProgress">
             <v-progress-circular indeterminate></v-progress-circular>
@@ -70,13 +69,13 @@ import { useAuthUserStore } from "../stores/authUserStore";
 import courseService from "../services/course.service";
 import taskService from "../services/task.service";
 import categoryService from "../services/category.service";
-import Task from "../model/task/Task";
-import SubmitPL from "../model/SubmitPL";
+import type Task from "../model/task/Task";
+import type SubmitPL from "../model/SubmitPL";
 import DialogEditTask from "@/dialog/DialogEditTask.vue";
 import DialogConfirm from "@/dialog/DialogConfirm.vue";
 
-import Category from "@/model/diagram/Category";
-import Diagram from "@/model/diagram/Diagram";
+import type Category from "@/model/diagram/Category";
+import type Diagram from "@/model/diagram/Diagram";
 import DialogShowFullDiagram from "@/dialog/DialogShowFullDiagram.vue";
 import diagramService from "@/services/diagram.service";
 import evaluationService from "@/services/evaluation.service";
@@ -161,7 +160,6 @@ const loadElements = async (role: CourseRoles) => {
     selectedDiagramId.value = undefined;
     diagrams.value = [];
     categories.value = [];
-
     await loadDiagramIfExists();
     await loadSubmissions();
   } else if (courseRole.value == CourseRoles.OWNER || courseRole.value == CourseRoles.TUTOR) {
@@ -325,6 +323,7 @@ const createDiagram = (category: Category) => {
       diagramStore.diagram.ownerId = userId.value;
 
       diagramService.postDiagram(diagramStore.diagram).then((diagramId) => {
+        localStorage.removeItem("diagram");
         diagramService.getDiagramById(diagramId.data).then((diagram) => {
           diagramStore.loadDiagram(diagram.data);
           loadViewModellingWithDiagram();

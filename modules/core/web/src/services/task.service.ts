@@ -1,4 +1,4 @@
-import Task from "../model/task/Task";
+import type Task from "@/model/task/Task";
 import axios from "axios";
 
 class TaskService {

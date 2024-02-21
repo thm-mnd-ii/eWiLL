@@ -15,13 +15,13 @@
         <draggable v-model="toolManagementStore.selectedEntity.attributes" class="draggable" ghost-class="ghost" group="people" item-key="id" @start="drag = true" @end="drag = false">
           <template #item="{ element }">
             <v-card :elevation="2" class="attributes">
-              <v-icon size="large" icon="mdi-arrow-up-down" color=""></v-icon>
-
-              <v-checkbox v-model="element.pkey">PK</v-checkbox>
-              <v-checkbox v-model="element.fkey">FK</v-checkbox>
-              <v-text-field v-model="element.name" label="Attribut Name" variant="filled" class="input" required :hide-details="true" />
-
-              <v-icon size="large" icon="mdi-delete" color="error" @click="deleteAttribute(element)"></v-icon>
+              <div class="container-grid">
+                <v-icon size="large" icon="mdi-arrow-up-down"></v-icon>
+                <v-checkbox v-model="element.pkey" class="checkbox">PK</v-checkbox>
+                <v-checkbox v-model="element.fkey" class="checkbox">FK</v-checkbox>
+              </div>
+              <v-text-field v-model="element.name" variant="outlined" required :hide-details="true" class="mr-4" />
+              <v-icon size="large" icon="mdi-delete" color="error" class="mr-4" @click="deleteAttribute(element)"></v-icon>
             </v-card>
           </template>
         </draggable>
@@ -35,57 +35,57 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import draggable from "vuedraggable";
-import { useToolManagementStore } from "../stores/toolManagementStore";
-import { useDiagramStore } from "@/stores/diagramStore";
+import { ref } from 'vue'
+import draggable from 'vuedraggable'
+import { useToolManagementStore } from '../stores/toolManagementStore'
+import { useDiagramStore } from '@/stores/diagramStore'
 
-import Attribute from "../model/diagram/Attribute";
+import type Attribute from '../model/diagram/Attribute'
 
-const toolManagementStore = useToolManagementStore();
-const diagramStore = useDiagramStore();
+const toolManagementStore = useToolManagementStore()
+const diagramStore = useDiagramStore()
 
-const drag: any = ref();
-const dialog = ref<boolean>(false);
-const newAttributeName = ref<string>("");
+const drag: any = ref()
+const dialog = ref<boolean>(false)
+const newAttributeName = ref<string>('')
 
 toolManagementStore.$subscribe((mutation, state) => {
   if (state.showModalAddAttributes != undefined) {
-    dialog.value = state.showModalAddAttributes;
+    dialog.value = state.showModalAddAttributes
   }
-});
+})
 
 const deleteAttribute = (attribute: Attribute) => {
   //console.log(props.entity.attributes)
   if (toolManagementStore.selectedEntity != undefined) {
-    let index = toolManagementStore.selectedEntity.attributes.indexOf(attribute);
-    toolManagementStore.selectedEntity.attributes.splice(index, 1);
+    let index = toolManagementStore.selectedEntity.attributes.indexOf(attribute)
+    toolManagementStore.selectedEntity.attributes.splice(index, 1)
 
-    diagramStore.saveHistory();
+    diagramStore.saveHistory()
   }
-};
+}
 
 const addAttribute = () => {
   //validate input
-  if (newAttributeName.value == "") {
+  if (newAttributeName.value == '') {
     //TODO: show error message
-    return;
+    return
   }
 
   if (toolManagementStore.selectedEntity != undefined) {
     toolManagementStore.selectedEntity.attributes.push({
       name: newAttributeName.value,
       pkey: false,
-      fkey: false,
-    });
-    newAttributeName.value = "";
-    diagramStore.saveHistory();
+      fkey: false
+    })
+    newAttributeName.value = ''
+    diagramStore.saveHistory()
   }
-};
+}
 
 const closeModal = () => {
-  toolManagementStore.showModalAddAttributes = false;
-};
+  toolManagementStore.showModalAddAttributes = false
+}
 </script>
 
 <style scoped lang="scss">
@@ -129,14 +129,22 @@ const closeModal = () => {
   align-items: center;
   justify-items: center;
 
-  .v-text-field {
-    width: 50%;
-    margin: 5px;
-  }
-  .v-checkbox {
-    margin: -20px;
-    padding: 20px 0 0 10px;
+  .container-grid {
+    // verteile in einer reihe die elemente
+    display: grid;
+    grid-template-columns: 50px 50px 60px;
+    align-items: center;
     justify-items: center;
+    grid-gap: 10px;
+    margin-right: 15px;
+
+    .checkbox {
+      margin-top: 22px;
+    }
+
+    .v-icon {
+      cursor: pointer;
+    }
   }
 }
 
