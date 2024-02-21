@@ -17,7 +17,7 @@
             <br />
             <br />
             <!-- <p v-for="comment in selectedResult.comments" :key="comment.message">{{ comment.message }}</p> -->
-            <v-data-table :group-by="groupBy" :headers="headers" :items="selectedResult.comments" :sort-by="sortBy" class="elevation-1" item-value="name" @click:row="(event: any, item: any) => onRowClick(item)">
+            <v-data-table :group-by="groupBy" :headers="headers" :items="selectedResult.comments" :sort-by="sortBy" class="elevation-1" item-value="name" :single-select="true" @click:row="(event:any, item:any) => onRowClick(item)">
               <template #item.highlightLevel="{ item }">
                 <!-- <v-chip :color="getHighlightLevelColor(item.value.highlightLevel)"> -->
                 <v-icon v-if="item.value.highlightLevel == 'SUGGESTION'" size="large" :color="getHighlightLevelColor(item.value.highlightLevel)">mdi-information</v-icon>
@@ -28,10 +28,10 @@
               </template>
             </v-data-table>
           </v-card-text>
-          <v-card-actions>
+          <!-- <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn class="" append-icon="mdi-open-in-new" color="dark-gray" variant="text" @click="showDiagramWithMistakes"> Zeige Fehler im Diagram </v-btn>
-          </v-card-actions>
+          </v-card-actions> -->
         </v-card>
       </v-window-item>
     </v-window>
@@ -129,7 +129,7 @@ const onRowClick = (item: any) => {
    * Workaround to retrieve the data contained inside the row
    * this method should be changed if a better alternative is found
    */
-  const comment = toRaw(item.item.raw);
+  const comment = toRaw(item.item);
   const entityId = Number(comment.affectedEntityId);
   // problem remains with -1 on multiple entities missing or not required !
   if (entityId == null || entityId == -1 || comment.feedbackLevel == FeedbackLevel.BASIC) {

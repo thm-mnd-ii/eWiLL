@@ -28,7 +28,7 @@
         <v-row>
           <v-col>
             <v-btn @click="saveDiagram(true)">Zurück zur Abgabe</v-btn>
-            <v-btn v-if="!subBtnProgress" @click="triggerfeedback()">Einreichen</v-btn>
+            <v-btn v-if="!subBtnProgress" @click="submitDiagram()">Einreichen</v-btn>
             <v-progress-circular v-if="subBtnProgress" indeterminate></v-progress-circular>
           </v-col>
         </v-row>
@@ -177,7 +177,7 @@ watch(toolManagementStore, (toolStore) => {
   activeCourse.value = toolStore.activeCourse;
 });
 
-const triggerfeedback = () => {
+const submitDiagram = () => {
   if (activeTask.value) {
     const submissionsleft = (activeTask?.value.maxSubmissions || 0) - submissionCount.value;
     dialogConfirm.value?.openDialog("Abgaben übrig: " + submissionsleft, "Möchten Sie das Diagram wirklich einreichen?", "Einreichen").then((result: boolean) => {
@@ -197,6 +197,7 @@ const triggerfeedback = () => {
                 evaluationService.submitDiagram(submitPL).then((submissionId) => {
                   waitUntilSubmissionIsEvaluated(submissionId.data).then(() => {
                     loadSubmissions();
+                    subBtnProgress.value = false;
                   });
                 });
               } else {
@@ -205,11 +206,9 @@ const triggerfeedback = () => {
             }
           });
         } catch (error) {
-          console.error("Error in saveDiagram:", error);
+          console.error("Error:", error);
+          subBtnProgress.value = false;
         }
-        subBtnProgress.value = false;
-
-        subBtnProgress.value = true;
       } else {
         subBtnProgress.value = false;
       }
