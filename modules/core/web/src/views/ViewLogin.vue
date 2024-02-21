@@ -1,4 +1,5 @@
 <template>
+  <DialogCompatibilityIssueVue ref="dialogCompatibility"></DialogCompatibilityIssueVue>
   <BasicBackground>
     <v-card class="login-container">
       <v-tooltip
@@ -26,11 +27,12 @@
 </template>
 
 <script setup lang="ts">
-import BasicBackground from '@/components/BasicBackground.vue';
+import BasicBackground from "@/components/BasicBackground.vue";
 
-import { ref } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthUserStore } from "../stores/authUserStore";
+import DialogCompatibilityIssueVue from "@/dialog/DialogCompatibilityIssue.vue";
 
 const router = useRouter();
 const authUserStore = useAuthUserStore();
@@ -44,41 +46,103 @@ const loading = ref(false);
 let userRules = [(v: string) => !!v || "Benutzername is required"];
 let passwordRules = [(v: string) => !!v || "Password is required"];
 
-const localLogin = () => {
-  errorMessage.value = "";
-  loading.value = true;
+const supportedBrowser = ref(false);
+const supportedOS = ref(false);
+const supportedScreenSize = ref(false);
+const dialogCompatibility = ref<typeof DialogCompatibilityIssueVue>();
+const minWidth = 800;
+const minHeight = 400;
 
-  if (valid.value && userInput.value && passwordInput.value) {
-    const user: { username: string; password: string } = {
-      username: userInput.value,
-      password: passwordInput.value,
-    };
+onMounted(() => {
+  _checkCompability();
+  window.addEventListener("resize", _checkCompability);
+});
 
+onUnmounted(() => {
+  window.removeEventListener("resize", _checkCompability);
+});
+
+const _checkCompability = () => {
+  // Browser Check
+  const browserRegex = /Firefox|Chrome|Chromium|Edg\//;
+  supportedBrowser.value = browserRegex.test(navigator.userAgent);
+
+  // OS Check
+  const osRegex = /Windows NT|Macintosh|Linux/;
+  supportedOS.value = osRegex.test(navigator.userAgent);
+
+  // Screen Size
+  if (window.innerWidth < minWidth || window.innerHeight < minHeight) {
+    supportedScreenSize.value = false;
+  } else {
+    supportedScreenSize.value = true;
+  }
+};
+
+onMounted(() => {
+  // log token parameter
+  const jsessionid = router.currentRoute.value.query.jsessionid?.toString();
+  if (jsessionid) {
+    tokenLogin(jsessionid);
+  }
+});
+
+const tokenLogin = (jsessionid: string) => {
+  if (!supportedOS.value || !supportedBrowser.value || !supportedScreenSize.value) {
+    dialogCompatibility.value?.openDialog();
+  } else if (jsessionid) {
     authUserStore
-      .login(user)
+      .tokenLogin(jsessionid)
       .then(() => {
-        setTimeout(() => {
-          router.push("/");
-        }, 1000);
+        router.push("/");
       })
       .catch((error) => {
         loading.value = false;
         console.log(error);
-        if (error.response && error.response.status === 401) {
-          errorMessage.value = "Benutzername oder Passwort ist falsch";
-        } else if (error.response && error.response.status === 500) {
-          errorMessage.value = "Server Error";
-        } else if (error.response && error.response.status === 404) {
-          errorMessage.value = "Server nicht erreichbar";
-        } else if (error.response && error.response.status === 429) {
-          errorMessage.value = "Zu viele Anfragen";
-        } else {
-          errorMessage.value = "Unbekannter Fehler";
-        }
+        errorMessage.value = "Token Login fehlgeschlagen";
       });
+  }
+};
+
+const localLogin = () => {
+  if (!supportedOS.value || !supportedBrowser.value || !supportedScreenSize.value) {
+    dialogCompatibility.value?.openDialog();
   } else {
-    loading.value = false;
-    errorMessage.value = "Bitte füllen Sie alle Felder aus";
+    errorMessage.value = "";
+    loading.value = true;
+
+    if (valid.value && userInput.value && passwordInput.value) {
+      const user: { username: string; password: string } = {
+        username: userInput.value,
+        password: passwordInput.value,
+      };
+
+      authUserStore
+        .login(user)
+        .then(() => {
+          setTimeout(() => {
+            router.push("/");
+          }, 1000);
+        })
+        .catch((error) => {
+          loading.value = false;
+          console.log(error);
+          if (error.response && error.response.status === 401) {
+            errorMessage.value = "Benutzername oder Passwort ist falsch";
+          } else if (error.response && error.response.status === 500) {
+            errorMessage.value = "Server Error";
+          } else if (error.response && error.response.status === 404) {
+            errorMessage.value = "Server nicht erreichbar";
+          } else if (error.response && error.response.status === 429) {
+            errorMessage.value = "Zu viele Anfragen";
+          } else {
+            errorMessage.value = "Unbekannter Fehler";
+          }
+        });
+    } else {
+      loading.value = false;
+      errorMessage.value = "Bitte füllen Sie alle Felder aus";
+    }
   }
 };
 </script>

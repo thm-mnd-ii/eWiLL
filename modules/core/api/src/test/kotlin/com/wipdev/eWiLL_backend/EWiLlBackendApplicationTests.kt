@@ -5,6 +5,7 @@ import com.wipdev.eWiLL_backend.endpoints.payload.requests.SubmissionRequestPL
 import com.wipdev.eWiLL_backend.repository.DiagramRepository
 import com.wipdev.eWiLL_backend.repository.ResultRepository
 import com.wipdev.eWiLL_backend.repository.SubmissionRepository
+import com.wipdev.eWiLL_backend.security.auth.JwtUtils
 import com.wipdev.eWiLL_backend.services.EvaluationService
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,7 +18,10 @@ class EWiLlBackendApplicationTests {
 
 
 
-
+    @Test
+    fun tester() {
+        JwtUtils.getSecretKey()
+    }
 
 
 

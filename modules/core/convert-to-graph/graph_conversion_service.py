@@ -97,5 +97,3 @@ def convert_to_graph(filename):
     nx.draw(G, with_labels=True)
     plt.savefig("output.png")
     return G
-
-# convert_to_graph()

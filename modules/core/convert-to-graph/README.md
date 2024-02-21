@@ -25,3 +25,4 @@ In der aktuellen Version sind die Dateipfade/-namen für die JSON-Dateien, welch
 
 Ergebnisse.txt:
 Hier sind die Ergebnisse (Terminalausgabe) von StudentSolution1 bis 4, wenn sie mit graph_covering.py mit der Referencesolution verglichen wurden.
+
