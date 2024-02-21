@@ -31,7 +31,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import Category from "../model/diagram/Category";
+import type Category from "../model/diagram/Category";
 import diagramService from "../services/diagram.service";
 import { useDiagramStore } from "../stores/diagramStore";
 import { useAuthUserStore } from "../stores/authUserStore";

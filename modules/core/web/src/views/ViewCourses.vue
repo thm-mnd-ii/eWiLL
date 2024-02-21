@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/valid-v-slot -->
 <template>
   <div class="container">
     <CoursesList ref="coursesList"></CoursesList>

@@ -1,9 +1,6 @@
-import Task from "./Task"
+import type Task from "./Task"
 
-interface TaskAndPassed {
+export default interface TaskAndPassed {
     task: Task;
     passed: boolean;
   }
-
-
-export default TaskAndPassed;

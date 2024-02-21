@@ -1,6 +1,6 @@
-import Diagram from "../diagram/Diagram"
+import type Diagram from "../diagram/Diagram"
 
-interface Submission {
+export default interface Submission {
     id: number;
     userId: number;
     taskId: number;
@@ -8,6 +8,5 @@ interface Submission {
     diagram: Diagram
     attempt: number;
   }
-  
-  export default Submission;
+
   

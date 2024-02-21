@@ -40,7 +40,7 @@ import draggable from "vuedraggable";
 import { useToolManagementStore } from "../stores/toolManagementStore";
 import { useDiagramStore } from "@/stores/diagramStore";
 
-import Attribute from "../model/diagram/Attribute";
+import type Attribute from "../model/diagram/Attribute";
 
 const toolManagementStore = useToolManagementStore();
 const diagramStore = useDiagramStore();

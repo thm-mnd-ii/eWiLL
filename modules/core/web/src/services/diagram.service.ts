@@ -1,6 +1,6 @@
-import axios, { AxiosResponse } from "axios";
-import Diagram from "../model/diagram/Diagram";
-import Category from "../model/diagram/Category";
+import axios, { type AxiosResponse } from "axios";
+import type Diagram from "@/model/diagram/Diagram";
+import type Category from "@/model/diagram/Category";
 import authHeader from "./auth-header";
 
 class DiagramService {

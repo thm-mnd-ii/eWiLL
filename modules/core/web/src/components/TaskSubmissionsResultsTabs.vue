@@ -1,9 +1,8 @@
-<!-- eslint-disable vue/valid-v-slot -->
 <template>
   <v-card class="task-trials-tabs">
     <v-tabs v-model="selectedResultTab" bg-color="teal-darken-3" slider-color="teal-lighten-3">
       <v-tab v-for="tab in submissions" :key="tab.attempt" :value="tab.attempt">
-        {{ "Ergebnis " + tab.attempt }}
+        {{ 'Ergebnis ' + tab.attempt }}
       </v-tab>
     </v-tabs>
     <v-window v-model="selectedResultTab">
@@ -17,14 +16,11 @@
             <br />
             <br />
             <!-- <p v-for="comment in selectedResult.comments" :key="comment.message">{{ comment.message }}</p> -->
-            <v-data-table :group-by="groupBy" :headers="headers" :items="selectedResult.comments" :sort-by="sortBy" class="elevation-1" item-value="name" :single-select="true" @click:row="(event:any, item:any) => onRowClick(item)">
-              <template #item.highlightLevel="{ item }">
-                <!-- <v-chip :color="getHighlightLevelColor(item.value.highlightLevel)"> -->
-                <v-icon v-if="item.value.highlightLevel == 'SUGGESTION'" size="large" :color="getHighlightLevelColor(item.value.highlightLevel)">mdi-information</v-icon>
-                <v-icon v-if="item.value.highlightLevel == 'INCORRECT'" size="large" :color="getHighlightLevelColor(item.value.highlightLevel)">mdi-close-circle</v-icon>
-                <v-icon v-if="item.value.highlightLevel == 'CORRECT'" size="large" :color="getHighlightLevelColor(item.value.highlightLevel)">mdi-check-circle</v-icon>
-                <!-- {{ item.value.highlightLevel }} -->
-                <!-- </v-chip> -->
+            <v-data-table :group-by="groupBy" :headers="headers" :items="selectedResult.comments" :sort-by="sortBy" class="elevation-1" item-value="name" :single-select="true" @click:row="(event: any, item: any) => onRowClick(item)">
+              <template #[`item.statusLevel`]="{ item }">
+                <v-icon v-if="item.statusLevel == 'SUGGESTION'" size="large" :color="getHighlightLevelColor(item.statusLevel)">mdi-information</v-icon>
+                <v-icon v-if="item.statusLevel == 'INCORRECT'" size="large" :color="getHighlightLevelColor(item.statusLevel)">mdi-close-circle</v-icon>
+                <v-icon v-if="item.statusLevel == 'CORRECT'" size="large" :color="getHighlightLevelColor(item.statusLevel)">mdi-check-circle</v-icon>
               </template>
             </v-data-table>
           </v-card-text>
@@ -40,109 +36,114 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
-import { useAuthUserStore } from "../stores/authUserStore";
-import { useDiagramStore } from "@/stores/diagramStore";
+import { ref, watch } from 'vue'
+import { useAuthUserStore } from '../stores/authUserStore'
+import { useDiagramStore } from '@/stores/diagramStore'
 // Models
-import Submission from "../model/submission/Submission";
-import Diagram from "../model/diagram/Diagram";
-import Task from "../model/task/Task";
+// Models
+import type Submission from '../model/submission/Submission'
+import type Diagram from '../model/diagram/Diagram'
+import type Task from '../model/task/Task'
 // Services
-import submissionService from "@/services/submission.service";
+import submissionService from '@/services/submission.service'
 //Dialogs
-import DialogShowFullDiagram from "@/dialog/DialogShowFullDiagram.vue";
-import Result from "@/model/submission/Result";
-import { useToolManagementStore } from "@/stores/toolManagementStore";
-import { toRaw } from "vue";
-import FeedbackLevel from "@/enums/FeedbackLevel";
+import DialogShowFullDiagram from '@/dialog/DialogShowFullDiagram.vue'
+import type Result from '@/model/submission/Result'
+import { useToolManagementStore } from '@/stores/toolManagementStore'
+import { toRaw } from 'vue'
+import FeedbackLevel from '@/enums/FeedbackLevel'
+import type { VDataTable } from 'vuetify/components'
+type ReadonlyHeaders = VDataTable['headers']
+type ReadonlyGroupBy = VDataTable['groupBy']
+type ReadonlySortBy = VDataTable['sortBy']
 
-const toolManagementStore = useToolManagementStore();
-const authUserStore = useAuthUserStore();
-const diagramStore = useDiagramStore();
-const userId = ref(authUserStore.auth.user?.id!);
+const toolManagementStore = useToolManagementStore()
+const authUserStore = useAuthUserStore()
+const diagramStore = useDiagramStore()
+const userId = ref(authUserStore.auth.user?.id!)
 
-const currentTask = ref<Task>({} as Task);
+const currentTask = ref<Task>({} as Task)
 
-const selectedResultTab = ref<number>(1);
-const dialogShowFullDiagram = ref<typeof DialogShowFullDiagram>();
+const selectedResultTab = ref<number>(1)
+const dialogShowFullDiagram = ref<typeof DialogShowFullDiagram>()
 
-const submissions = ref<Submission[]>([] as Submission[]);
-const selectedResult = ref<Result>({} as Result);
+const submissions = ref<Submission[]>([] as Submission[])
+const selectedResult = ref<Result>({} as Result)
 
-const sortBy = ref<{ key: string; order: string }[]>([{ key: "feedbackLevel", order: "asc" }]);
-const groupBy = ref<{ key: string; order: string }[]>([]);
-const headers = ref([
-  { title: "Status", key: "feedbackLevel", groupable: true },
-  { title: "Info", key: "message", groupable: true },
-  { title: "Entity", key: "affectedEntityName", groupable: true },
-  { title: "Attribut", key: "affectedAttributeName", groupable: true },
-  { title: "Level", key: "statusLevel", groupable: true },
-  { title: "Info Type", key: "resultMessageType", groupable: true },
-]);
+const sortBy = ref<ReadonlySortBy>([{ key: 'feedbackLevel', order: 'asc' }])
+const groupBy = ref<ReadonlyGroupBy>([])
+const headers = ref<ReadonlyHeaders>([
+  { title: 'Status', key: 'feedbackLevel' },
+  { title: 'Info', key: 'message' },
+  { title: 'Entity', key: 'affectedEntityName' },
+  { title: 'Attribut', key: 'affectedAttributeName' },
+  { title: 'Level', key: 'statusLevel' },
+  { title: 'Info Type', key: 'resultMessageType' }
+])
 
 watch(
   () => selectedResultTab.value,
   (newValue) => {
     submissionService.getResultBySubmissionIdAndLevel(submissions.value[newValue - 1].id, currentTask.value.showLevel).then((response) => {
-      selectedResult.value = response.data;
-    });
+      selectedResult.value = response.data
+    })
   }
-);
+)
 
 const load = (task: Task, selectedSubmissionIndex?: number) => {
-  currentTask.value = task;
+  currentTask.value = task
 
   submissionService.getSubmissionIdsByUserAndTask(userId.value, task.id).then((response) => {
-    submissions.value = response.data;
+    submissions.value = response.data
 
     //select last tab
-    selectedResultTab.value = selectedSubmissionIndex !== undefined ? selectedSubmissionIndex : submissions.value.length;
+    selectedResultTab.value = selectedSubmissionIndex !== undefined ? selectedSubmissionIndex : submissions.value.length
 
     //if first submission, load result for first submission
     if (submissions.value.length == 1) {
       submissionService.getResultBySubmissionIdAndLevel(submissions.value[submissions.value.length - 1].id, currentTask.value.showLevel).then((response) => {
-        selectedResult.value = response.data;
-      });
+        selectedResult.value = response.data
+      })
     }
-  });
-};
+  })
+}
 
 const showDiagramWithMistakes = () => {
-  diagramStore.loadDiagram(submissions.value[selectedResultTab.value - 1].diagram as Diagram);
-  dialogShowFullDiagram.value?.openDialog("");
-};
+  diagramStore.loadDiagram(submissions.value[selectedResultTab.value - 1].diagram as Diagram)
+  dialogShowFullDiagram.value?.openDialog('')
+}
 
 const getHighlightLevelColor = (highlightLevel: string) => {
-  if (highlightLevel == "INCORRECT") {
-    return "red";
-  } else if (highlightLevel == "CORRECT") {
-    return "green";
-  } else if (highlightLevel == "SUGGESTION") {
-    return "blue";
+  if (highlightLevel == 'INCORRECT') {
+    return 'red'
+  } else if (highlightLevel == 'CORRECT') {
+    return 'green'
+  } else if (highlightLevel == 'SUGGESTION') {
+    return 'blue'
   } else {
-    return "gray";
+    return 'gray'
   }
-};
+}
 
 const onRowClick = (item: any) => {
   /**
    * Workaround to retrieve the data contained inside the row
    * this method should be changed if a better alternative is found
    */
-  const comment = toRaw(item.item);
-  const entityId = Number(comment.affectedEntityId);
+  const comment = toRaw(item.item)
+  const entityId = Number(comment.affectedEntityId)
   // problem remains with -1 on multiple entities missing or not required !
   if (entityId == null || entityId == -1 || comment.feedbackLevel == FeedbackLevel.BASIC) {
-    toolManagementStore.highlightedEntityId = null;
-    return;
+    toolManagementStore.highlightedEntityId = null
+    return
   } else {
-    toolManagementStore.highlightedEntityId = entityId;
+    toolManagementStore.highlightedEntityId = entityId
   }
-};
+}
 
 defineExpose({
-  load,
-});
+  load
+})
 </script>
 
 <style scoped>

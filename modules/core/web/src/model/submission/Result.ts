@@ -1,12 +1,10 @@
-import Comment from "./Comment"
+import type Comment from "./Comment"
 
-interface Result {
+export default interface Result {
     id: number;
     correct: boolean;
     score: number;
     comments: Comment[];
     submissionId: number;
   }
-  
-  export default Result;
   

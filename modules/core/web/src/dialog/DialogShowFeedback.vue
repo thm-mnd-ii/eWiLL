@@ -17,7 +17,7 @@ import { ref, nextTick, onMounted } from "vue";
 import TaskSubmissionsResultsTabs from "@/components/TaskSubmissionsResultsTabs.vue";
 import { useAuthUserStore } from "../stores/authUserStore";
 import evaluationService from "@/services/evaluation.service";
-import Task from "../model/task/Task";
+import type Task from "@/model/task/Task";
 import taskService from "../services/task.service";
 
 import { useToolManagementStore } from "@/stores/toolManagementStore";

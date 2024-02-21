@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/valid-v-slot -->
 <template>
   <TaskDateVChip ref="taskDateVChip" class="hide" :due-date-prop="task.dueDate"></TaskDateVChip>
 
@@ -70,13 +69,13 @@ import { useAuthUserStore } from "../stores/authUserStore";
 import courseService from "../services/course.service";
 import taskService from "../services/task.service";
 import categoryService from "../services/category.service";
-import Task from "../model/task/Task";
-import SubmitPL from "../model/SubmitPL";
+import type Task from "../model/task/Task";
+import type SubmitPL from "../model/SubmitPL";
 import DialogEditTask from "@/dialog/DialogEditTask.vue";
 import DialogConfirm from "@/dialog/DialogConfirm.vue";
 
-import Category from "@/model/diagram/Category";
-import Diagram from "@/model/diagram/Diagram";
+import type Category from "@/model/diagram/Category";
+import type Diagram from "@/model/diagram/Diagram";
 import DialogShowFullDiagram from "@/dialog/DialogShowFullDiagram.vue";
 import diagramService from "@/services/diagram.service";
 import evaluationService from "@/services/evaluation.service";

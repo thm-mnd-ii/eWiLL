@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/valid-v-slot -->
 <template>
   <DialogConfirmVue ref="dialogConfirm"></DialogConfirmVue>
   <div class="task">
@@ -22,10 +21,10 @@
     <div class="container">
       <v-text-field v-model="search" label="Search" density="compact" prepend-icon="mdi-magnify" variant="underlined" hide-details class="search-field"></v-text-field>
       <v-data-table :headers="headers" :items="members" item-value="name" class="elevation-1" :search="search" density="default" height="480px">
-        <template #item.role="{ item }">
+        <template #[`item.role`]="{ item }">
           <v-select v-model="item.role" item variant="plain" :items="['STUDENT', 'TUTOR', 'OWNER']" class="select" :disabled="courseRole == 'STUDENT'" @update:model-value="changeRole(item)"></v-select>
         </template>
-        <template #item.actions="{ item }">
+        <template #[`item.actions`]="{ item }">
           <v-btn icon="mdi-delete" color="red" variant="text" :disabled="courseRole == 'STUDENT'" @click="kickUser(item.user)"></v-btn>
         </template>
       </v-data-table>
@@ -37,110 +36,110 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { useAuthUserStore } from "../stores/authUserStore";
-import courseService from "../services/course.service";
-import type CoursePL from "../model/course/CoursePL";
-import type Member from "../model/course/Member";
-import DialogConfirmVue from "../dialog/DialogConfirm.vue";
+import { onMounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useAuthUserStore } from '../stores/authUserStore'
+import courseService from '../services/course.service'
+import type CoursePL from '../model/course/CoursePL'
+import type Member from '../model/course/Member'
+import DialogConfirmVue from '../dialog/DialogConfirm.vue'
 
-const route = useRoute();
-const router = useRouter();
-const authUserStore = useAuthUserStore();
-const dialogConfirm = ref<typeof DialogConfirmVue>();
-const snackbarSuccess = ref(false);
+const route = useRoute()
+const router = useRouter()
+const authUserStore = useAuthUserStore()
+const dialogConfirm = ref<typeof DialogConfirmVue>()
+const snackbarSuccess = ref(false)
 
-const members = ref<Member[]>();
+const members = ref<Member[]>()
 
-const course = ref<CoursePL>();
-const courseName = ref("");
-const courseId = ref(Number(route.params.courseId));
-const userId = ref(authUserStore.auth.user?.id!);
-const courseRole = ref("");
+const course = ref<CoursePL>()
+const courseName = ref('')
+const courseId = ref(Number(route.params.courseId))
+const userId = ref(authUserStore.auth.user?.id!)
+const courseRole = ref('')
 
-const search = ref("");
+const search = ref('')
 const headers: any[] = [
-  { title: "Name", align: "start", key: "user.lastName" },
-  { title: "Vorname", align: "start", key: "user.firstName" },
-  { title: "E-Mail", align: "start", key: "user.email" },
-  { title: "Rolle", align: "start", key: "role" },
-  { title: "Aktion", align: "start", key: "actions", sortable: false },
-];
+  { title: 'Name', align: 'start', key: 'user.lastName' },
+  { title: 'Vorname', align: 'start', key: 'user.firstName' },
+  { title: 'E-Mail', align: 'start', key: 'user.email' },
+  { title: 'Rolle', align: 'start', key: 'role' },
+  { title: 'Aktion', align: 'start', key: 'actions', sortable: false }
+]
 
 onMounted(() => {
   courseService.getUserRoleInCourse(userId.value, courseId.value).then((response) => {
-    if (response == "NONE") {
-      router.push("/course/" + route.params.courseId + "/signup");
+    if (response == 'NONE') {
+      router.push('/course/' + route.params.courseId + '/signup')
     } else {
-      courseRole.value = response;
-      loadCourse();
-      loadCourseMembers();
+      courseRole.value = response
+      loadCourse()
+      loadCourseMembers()
     }
-  });
-});
+  })
+})
 
 const loadCourse = () => {
   courseService.getCourse(courseId.value).then((response) => {
-    course.value = response.data;
-    courseName.value = course.value.name;
-  });
-};
+    course.value = response.data
+    courseName.value = course.value.name
+  })
+}
 
 const loadCourseMembers = () => {
   courseService.getCourseMembers(courseId.value).then((response) => {
-    members.value = response.data;
-  });
-};
+    members.value = response.data
+  })
+}
 
 const kickUser = (user: any) => {
-  console.log(user);
+  console.log(user)
   if (dialogConfirm.value) {
-    dialogConfirm.value.openDialog(`Entferne Nutzer: ${user.firstName} ${user.lastName}`, "Wollen Sie den Nutzer wirklich aus dem Kurs entfernen?", "Entfernen").then((result: boolean) => {
+    dialogConfirm.value.openDialog(`Entferne Nutzer: ${user.firstName} ${user.lastName}`, 'Wollen Sie den Nutzer wirklich aus dem Kurs entfernen?', 'Entfernen').then((result: boolean) => {
       if (result) {
         courseService
           .leaveCourse(courseId.value, user.id)
           .then(() => {
-            loadCourseMembers();
+            loadCourseMembers()
           })
           .catch((error) => {
-            console.log(error);
-          });
+            console.log(error)
+          })
       }
-    });
+    })
   }
-};
+}
 
 const kickAllStudents = () => {
   if (dialogConfirm.value) {
-    dialogConfirm.value.openDialog(`Entferne alle Studenten`, "Wollen Sie wirklich alle Stundenten aus dem Kurs entfernen?", "Entfernen").then((result: boolean) => {
+    dialogConfirm.value.openDialog(`Entferne alle Studenten`, 'Wollen Sie wirklich alle Stundenten aus dem Kurs entfernen?', 'Entfernen').then((result: boolean) => {
       if (result) {
         members.value?.forEach((student) => {
-          if (student.role == "STUDENT") {
-            courseService.leaveCourse(courseId.value, student.user.id);
+          if (student.role == 'STUDENT') {
+            courseService.leaveCourse(courseId.value, student.user.id)
           }
-        });
+        })
       }
-      loadCourseMembers();
-    });
+      loadCourseMembers()
+    })
   }
-};
+}
 
 const changeRole = (member: Member) => {
   courseService
     .changeUserRole(courseId.value, member.user.id, member.role, userId.value)
     .then(() => {
-      snackbarSuccess.value = true;
-      loadCourseMembers();
+      snackbarSuccess.value = true
+      loadCourseMembers()
     })
     .catch(() => {
-      loadCourseMembers();
-    });
-};
+      loadCourseMembers()
+    })
+}
 
 const returnToCourse = () => {
-  router.back();
-};
+  router.back()
+}
 </script>
 
 <style scoped>

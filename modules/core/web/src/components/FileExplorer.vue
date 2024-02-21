@@ -66,8 +66,8 @@
 </template>
 
 <script setup lang="ts">
-import Diagram from "../model/diagram/Diagram";
-import Category from "../model/diagram/Category";
+import type Diagram from "../model/diagram/Diagram";
+import type Category from "../model/diagram/Category";
 import DialogSaveDiagramVue from "../dialog/DialogSaveDiagram.vue";
 import DialogConfirmVue from "../dialog/DialogConfirm.vue";
 import DialogExportDiagramVue from "../dialog/DialogExportDiagram.vue";

@@ -1,6 +1,4 @@
-
-
-interface Member{
+export default interface Member{
     user: {
         id: number,
         username: string,
@@ -17,5 +15,3 @@ interface Member{
     role: string;
 
 }
-
-export default Member;

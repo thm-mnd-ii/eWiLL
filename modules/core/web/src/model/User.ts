@@ -1,6 +1,6 @@
-import GlobalRoles from "../enums/GlobalRoles";
+import type GlobalRoles from "@/enums/GlobalRoles";
 
-interface User {
+export default interface User {
   token: string;
   id: number;
   username: string;
@@ -8,5 +8,3 @@ interface User {
   roles: GlobalRoles[];
   type: string;
 }
-
-export default User;

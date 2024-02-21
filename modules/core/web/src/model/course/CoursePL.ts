@@ -1,6 +1,6 @@
 import type Semester from "../Semester"
 
-interface CoursePL {
+export default interface CoursePL {
   id: number;
   name: string;
   description: string;
@@ -11,6 +11,4 @@ interface CoursePL {
   keyPassword: string;
   location: string;
 }
-  
-export default CoursePL;
   

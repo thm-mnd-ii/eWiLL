@@ -1,12 +1,11 @@
-import Submission from "./Submission"
-import Member from "../course/Member"
-import Result from "./Result"
+import type Submission from "./Submission"
+import type Member from "../course/Member"
+import type Result from "./Result"
 
-interface SubmissionListItem {
+export default interface SubmissionListItem {
     member: Member;
     submission: Submission;
     result: Result
   }
-  
-  export default SubmissionListItem;
+
   

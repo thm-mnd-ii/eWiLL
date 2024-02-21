@@ -1,4 +1,4 @@
-export interface CourseTask {
+export default interface CourseTask {
   id: number;
   name: string;
   description: string;

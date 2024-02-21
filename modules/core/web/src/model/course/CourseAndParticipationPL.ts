@@ -1,8 +1,6 @@
 import type CoursePL from "./CoursePL"
 
-interface CourseAndParticipationPL{
+export default interface CourseAndParticipationPL{
     course: CoursePL;
     member: boolean;
 }
-
-export default CourseAndParticipationPL;

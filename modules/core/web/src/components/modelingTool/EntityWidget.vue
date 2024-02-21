@@ -40,7 +40,7 @@
 import { useDiagramStore } from "../../stores/diagramStore";
 import { useToolManagementStore } from "../../stores/toolManagementStore";
 
-import Entity from "../../model/diagram/Entity";
+import type Entity from "../../model/diagram/Entity";
 import EntityType from "../../enums/EntityType";
 import { ref } from "vue";
 
