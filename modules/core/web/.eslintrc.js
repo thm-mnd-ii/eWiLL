@@ -10,6 +10,7 @@ module.exports = {
     "prettier",
     "plugin:vue/vue3-essential",
     "@vue/eslint-config-typescript",
+    '@vue/eslint-config-typescript',
   ],
   parserOptions: {
     ecmaVersion: "latest",

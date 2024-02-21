@@ -41,8 +41,8 @@ import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useAuthUserStore } from "../stores/authUserStore";
 import courseService from "../services/course.service";
-import CoursePL from "../model/course/CoursePL";
-import Member from "../model/course/Member";
+import type CoursePL from "../model/course/CoursePL";
+import type Member from "../model/course/Member";
 import DialogConfirmVue from "../dialog/DialogConfirm.vue";
 
 const route = useRoute();
@@ -60,7 +60,7 @@ const userId = ref(authUserStore.auth.user?.id!);
 const courseRole = ref("");
 
 const search = ref("");
-const headers = [
+const headers: any[] = [
   { title: "Name", align: "start", key: "user.lastName" },
   { title: "Vorname", align: "start", key: "user.firstName" },
   { title: "E-Mail", align: "start", key: "user.email" },

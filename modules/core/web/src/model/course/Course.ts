@@ -1,4 +1,4 @@
-interface Course {
+export interface Course {
   id: number;
   name: string;
   active: boolean;
@@ -6,5 +6,3 @@ interface Course {
   semester: string;
   location: string;
 }
-
-export default Course;

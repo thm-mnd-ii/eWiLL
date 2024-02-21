@@ -20,9 +20,9 @@
 
 <script setup lang="ts">
 import feedbackService from "../services/feedback.service";
-import Feedback from "../model/Feedback";
+import type Feedback from "../model/Feedback";
 import { ref, onMounted } from "vue";
-import FeedbackStatus from "@/enums/FeedbackStatus";
+import type FeedbackStatus from "@/enums/FeedbackStatus";
 import DialogConfirmVue from "@/dialog/DialogConfirm.vue";
 import BasicBackground from "@/components/BasicBackground.vue";
 

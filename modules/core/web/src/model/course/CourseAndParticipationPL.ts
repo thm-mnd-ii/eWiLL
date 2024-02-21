@@ -1,4 +1,4 @@
-import CoursePL from "./CoursePL"
+import type CoursePL from "./CoursePL"
 
 interface CourseAndParticipationPL{
     course: CoursePL;

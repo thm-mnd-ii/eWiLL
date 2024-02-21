@@ -1,8 +1,8 @@
 <template>
   <div ref="root" class="objectContainer" :class="{ active: isActive, highlighted: isEntityHighlighted }" @mouseover="props.isEditable ? (hover = true) : null" @mouseleave="hover = false">
     <div v-if="hover" class="click-area"></div>
-    <span v-if="!isEditable" class="text unselectable" @dblclick="makeTextEditable"> {{ entity.entityName }}</span>
-    <textarea v-if="isEditable" v-model="entity.entityName" class="textedit" rows="1" @dblclick="makeTextEditable" @keyup.enter="handleEnter"></textarea>
+    <span v-if="!isTextEditable" class="text unselectable" @dblclick="makeTextEditable"> {{ entity.entityName }}</span>
+    <textarea v-if="isTextEditable" v-model="entity.entityName" class="textedit" rows="1" @dblclick="makeTextEditable" @keyup.enter="handleEnter"></textarea>
 
     <!-- eslint-disable vue/no-v-html -->
     <span class="attributes unselectable" v-html="formattedAttributes"></span>
@@ -42,8 +42,8 @@ import { useDiagramStore } from "../../stores/diagramStore";
 import { useToolManagementStore } from "../../stores/toolManagementStore";
 
 import ConnectorPosition from "../../enums/ConnectorPosition";
-import Attribute from "../../model/diagram/Attribute";
-import Entity from "../../model/diagram/Entity";
+import type Attribute from "../../model/diagram/Attribute";
+import type Entity from "../../model/diagram/Entity";
 
 const props = defineProps<{
   entity: Entity;
@@ -105,13 +105,13 @@ const updateAttributes = () => {
 
 const hover = ref<boolean>(false);
 
-const isEditable = ref<boolean>(false);
+const isTextEditable = ref<boolean>(false);
 const makeTextEditable = () => {
-  if (isEditable.value) {
+  if (isTextEditable.value) {
     diagramStore.saveHistory();
   }
 
-  isEditable.value = !isEditable.value;
+  isTextEditable.value = !isTextEditable.value;
 };
 
 const handleEnter = (e: any) => {

@@ -36,9 +36,9 @@
 </template>
 
 <script setup lang="ts">
-import Task from "@/model/task/Task";
-import Category from "@/model/diagram/Category";
-import Diagram from "@/model/diagram/Diagram";
+import type Task from "@/model/task/Task";
+import type Category from "@/model/diagram/Category";
+import type Diagram from "@/model/diagram/Diagram";
 import diagramService from "@/services/diagram.service";
 import { ref } from "vue";
 import { useAuthUserStore } from "@/stores/authUserStore";

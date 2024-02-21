@@ -1,4 +1,4 @@
-import Semester from "../Semester"
+import type Semester from "../Semester"
 
 interface CoursePL {
   id: number;

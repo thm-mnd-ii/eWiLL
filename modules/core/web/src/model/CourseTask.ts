@@ -1,4 +1,4 @@
-interface CourseTask {
+export interface CourseTask {
   id: number;
   name: string;
   description: string;
@@ -8,5 +8,3 @@ interface CourseTask {
   solutionModelId: number;
   rulesetId: number;
 }
-
-export default CourseTask;

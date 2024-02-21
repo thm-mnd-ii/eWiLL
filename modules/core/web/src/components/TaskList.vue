@@ -2,7 +2,7 @@
 <template>
   <div class="container">
     <v-text-field v-model="search" class="search-bar" label="Search" density="compact" prepend-icon="mdi-magnify" variant="underlined" hide-details></v-text-field>
-    <v-data-table :headers="headers" :items="listItems" item-value="name" class="elevation-1" density="default" height="480px" :search="search" @click:row="openTask">
+    <v-data-table headers="headers" :items="listItems" item-value="name" class="elevation-1" density="default" height="480px" :search="search" @click:row="openTask">
       <template #item.passed="{ item }">
         <v-icon v-if="item.passed == false" icon="mdi-close-circle" color="error"></v-icon>
         <v-icon v-if="item.passed == true" icon="mdi-check-circle" color="success"></v-icon>
