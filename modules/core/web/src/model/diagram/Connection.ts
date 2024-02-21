@@ -1,7 +1,7 @@
-import CardinalityType from "../../enums/CardinalityType";
-import ConnectorPosition from "../../enums/ConnectorPosition";
+import type CardinalityType from "@/enums/CardinalityType";
+import type ConnectorPosition from "@/enums/ConnectorPosition";
 
-interface Connection {
+export default interface Connection {
   startEntity?: number;
   startEntityPosition?: ConnectorPosition;
   endEntity?: number;
@@ -9,5 +9,3 @@ interface Connection {
   style?: CardinalityType;
   gradient?: number;
 }
-
-export default Connection;

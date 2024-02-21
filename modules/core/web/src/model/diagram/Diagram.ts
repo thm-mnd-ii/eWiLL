@@ -1,9 +1,9 @@
-import DiagramSaveType from "@/enums/DiagramSaveType";
-import Config from "./Config";
-import Connection from "./Connection";
-import Entity from "./Entity";
+import type DiagramSaveType from "@/enums/DiagramSaveType";
+import type Config from "./Config";
+import type Connection from "./Connection";
+import type Entity from "./Entity";
 
-interface Diagram {
+export default interface Diagram {
   id: number;
   ownerId: number;
   name: string;
@@ -13,5 +13,3 @@ interface Diagram {
   categoryId: number;
   diagramSaveType: DiagramSaveType;
 }
-
-export default Diagram;

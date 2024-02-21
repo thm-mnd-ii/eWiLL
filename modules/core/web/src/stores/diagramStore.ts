@@ -1,9 +1,9 @@
 import { defineStore } from "pinia";
-import DiagramType from "../enums/DiagramType";
-import Config from "../model/diagram/Config";
-import Connection from "../model/diagram/Connection";
-import Diagram from "../model/diagram/Diagram";
-import Entity from "../model/diagram/Entity";
+import DiagramType from "@/enums/DiagramType";
+import type Config from "@/model/diagram/Config";
+import type Connection from "@/model/diagram/Connection";
+import type Diagram from "@/model/diagram/Diagram";
+import type Entity from "@/model/diagram/Entity";
 
 interface State {
   diagram: Diagram;

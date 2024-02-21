@@ -1,0 +1,187 @@
+# Result of StudentSolution1
+PS D:\eWILL\eWiLL\modules\core\convert-to-graph> & D:/Python/Python310/python.exe d:/eWILL/eWiLL/modules/core/convert-to-graph/graph_covering.py
+{1: [], 2: [], 3: [], 4: []}
+{1: [], 2: [], 3: [], 4: []}
+ID_Type Dictionary:
+{1: 'ENTITY', 2: 'ENTITYRELATIONSHIP', 3: 'ENTITY', 4: 'ENTITYRELATIONSHIP'}
+Graph with Type Attributes:
+[(1, {'type': 'ENTITY'}), (2, {'type': 'ENTITYRELATIONSHIP'}), (3, {'type': 'ENTITY'}), (4, {'type': 'ENTITYRELATIONSHIP'})]
+Node Attributes:
+Node 1: {'type': 'ENTITY'}
+Node 2: {'type': 'ENTITYRELATIONSHIP'}
+Node 3: {'type': 'ENTITY'}
+Node 4: {'type': 'ENTITYRELATIONSHIP'}
+Graph with Attributes:
+[(1, 2, {'style': 'ZERO_TO_MANY'}), (2, 4, {'style': 'ONE_TO_MANY'}), (3, 4, {'style': 'ZERO_TO_MANY'})]
+{1: [], 2: [], 3: []}
+{1: [], 2: [], 3: []}
+ID_Type Dictionary:
+{1: 'ENTITY', 2: 'ENTITYRELATIONSHIP', 3: 'ENTITY'}
+Graph with Type Attributes:
+[(1, {'type': 'ENTITY'}), (2, {'type': 'ENTITYRELATIONSHIP'}), (3, {'type': 'ENTITY'})]
+Node Attributes:
+Node 1: {'type': 'ENTITY'}
+Node 2: {'type': 'ENTITYRELATIONSHIP'}
+Node 3: {'type': 'ENTITY'}
+Graph with Attributes:
+[(1, 2, {'style': 'ZERO_TO_MANY'}), (3, 2, {'style': 'ZERO_TO_MANY'})]
+Ursprungsgraph abgabe_graph:
+Anzahl der Knoten: 4, Anzahl der Kanten: 3
+
+Ursprungsgraph musterloesung_graph:
+Anzahl der Knoten: 3, Anzahl der Kanten: 2
+
+Gematchte Teilgraphen:
+
+Teilgraph 1:
+Anzahl der gematchten Knoten: 2, Anzahl der gematchten Kanten: 1
+  - Kante: (1, 2), Bezeichnungen: 1 -> 2
+
+Nicht gematchte Teilgraphen:
+
+Gesamtsummen:
+Summe aller gematchten Knoten: 2
+Summe aller gematchten Kanten: 1
+
+
+
+
+# Result of StudentSolution2
+PS D:\eWILL\eWiLL\modules\core\convert-to-graph> & D:/Python/Python310/python.exe d:/eWILL/eWiLL/modules/core/convert-to-graph/graph_covering.py
+{1: [], 2: [], 3: [], 4: []}
+{1: [], 2: [], 3: [], 4: []}
+ID_Type Dictionary:
+{1: 'ENTITY', 2: 'ENTITYRELATIONSHIP', 3: 'ENTITY', 4: 'ENTITYRELATIONSHIP'}
+Graph with Type Attributes:
+[(1, {'type': 'ENTITY'}), (2, {'type': 'ENTITYRELATIONSHIP'}), (3, {'type': 'ENTITY'}), (4, {'type': 'ENTITYRELATIONSHIP'})]
+Node Attributes:
+Node 1: {'type': 'ENTITY'}
+Node 2: {'type': 'ENTITYRELATIONSHIP'}
+Node 3: {'type': 'ENTITY'}
+Node 4: {'type': 'ENTITYRELATIONSHIP'}
+Graph with Attributes:
+[(1, 2, {'style': 'ZERO_TO_MANY'}), (2, 4, {'style': 'ONE_TO_MANY'}), (3, 4, {'style': 'ZERO_TO_MANY'})]
+{1: [], 2: [], 3: [], 4: []}
+{1: [], 2: [], 3: [], 4: []}
+ID_Type Dictionary:
+{1: 'ENTITY', 2: 'ENTITYRELATIONSHIP', 3: 'ENTITY', 4: 'ENTITYRELATIONSHIP'}
+Graph with Type Attributes:
+[(1, {'type': 'ENTITY'}), (2, {'type': 'ENTITYRELATIONSHIP'}), (3, {'type': 'ENTITY'}), (4, {'type': 'ENTITYRELATIONSHIP'})]
+Node Attributes:
+Node 1: {'type': 'ENTITY'}
+Node 2: {'type': 'ENTITYRELATIONSHIP'}
+Node 3: {'type': 'ENTITY'}
+Node 4: {'type': 'ENTITYRELATIONSHIP'}
+Graph with Attributes:
+[(1, 2, {'style': 'ZERO_TO_MANY'}), (2, 4, {'style': 'ONE_TO_MANY'}), (3, 2, {'style': 'ZERO_TO_MANY'})]
+Ursprungsgraph abgabe_graph:
+Anzahl der Knoten: 4, Anzahl der Kanten: 3
+
+Ursprungsgraph musterloesung_graph:
+Anzahl der Knoten: 4, Anzahl der Kanten: 3
+
+Gematchte Teilgraphen:
+
+Teilgraph 1:
+Anzahl der gematchten Knoten: 3, Anzahl der gematchten Kanten: 2
+  - Kante: (1, 2), Bezeichnungen: 1 -> 2
+  - Kante: (2, 4), Bezeichnungen: 2 -> 4
+
+Nicht gematchte Teilgraphen:
+
+Gesamtsummen:
+Summe aller gematchten Knoten: 3
+Summe aller gematchten Kanten: 2
+
+
+
+
+# Result of StudentSolution3
+PS D:\eWILL\eWiLL\modules\core\convert-to-graph> & D:/Python/Python310/python.exe d:/eWILL/eWiLL/modules/core/convert-to-graph/graph_covering.py
+{1: [], 2: [], 3: [], 4: []}
+{1: [], 2: [], 3: [], 4: []}
+ID_Type Dictionary:
+{1: 'ENTITY', 2: 'ENTITYRELATIONSHIP', 3: 'ENTITY', 4: 'ENTITYRELATIONSHIP'}
+Graph with Type Attributes:
+[(1, {'type': 'ENTITY'}), (2, {'type': 'ENTITYRELATIONSHIP'}), (3, {'type': 'ENTITY'}), (4, {'type': 'ENTITYRELATIONSHIP'})]
+Node Attributes:
+Node 1: {'type': 'ENTITY'}
+Node 2: {'type': 'ENTITYRELATIONSHIP'}
+Node 3: {'type': 'ENTITY'}
+Node 4: {'type': 'ENTITYRELATIONSHIP'}
+Graph with Attributes:
+[(1, 2, {'style': 'ZERO_TO_MANY'}), (2, 4, {'style': 'ONE_TO_MANY'}), (3, 4, {'style': 'ZERO_TO_MANY'})]
+{3: [], 5: [], 6: [], 7: []}
+{3: [], 5: [], 6: [], 7: []}
+ID_Type Dictionary:
+{3: 'ENTITY', 5: 'ENTITY', 6: 'ENTITYRELATIONSHIP', 7: 'ENTITYRELATIONSHIP'}
+Graph with Type Attributes:
+[(3, {'type': 'ENTITY'}), (5, {'type': 'ENTITY'}), (6, {'type': 'ENTITYRELATIONSHIP'}), (7, {'type': 'ENTITYRELATIONSHIP'})]
+Node Attributes:
+Node 3: {'type': 'ENTITY'}
+Node 5: {'type': 'ENTITY'}
+Node 6: {'type': 'ENTITYRELATIONSHIP'}
+Node 7: {'type': 'ENTITYRELATIONSHIP'}
+Graph with Attributes:
+[(3, 7, {'style': 'ZERO_TO_ONE'}), (5, 6, {'style': 'ZERO_TO_ONE'}), (6, 7, {'style': 'ZERO_TO_ONE'})]
+Traceback (most recent call last):
+  File "D:\Python\Python310\lib\site-packages\networkx\classes\digraph.py", line 899, in successors
+    return iter(self._succ[n])
+KeyError: 1
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "d:\eWILL\eWiLL\modules\core\convert-to-graph\graph_covering.py", line 71, in <module>
+    ergebnis = finde_groessten_match(knoten, besuchte_knoten, besuchte_kanten, nx.DiGraph(), False)
+  File "d:\eWILL\eWiLL\modules\core\convert-to-graph\graph_covering.py", line 30, in finde_groessten_match
+    if is_in_musterloesung == (nachbar in musterloesung_graph.successors(startknoten)):
+  File "D:\Python\Python310\lib\site-packages\networkx\classes\digraph.py", line 901, in successors
+    raise NetworkXError(f"The node {n} is not in the digraph.") from err
+networkx.exception.NetworkXError: The node 1 is not in the digraph.
+
+
+
+
+# Result of StudentSolution4
+PS D:\eWILL\eWiLL\modules\core\convert-to-graph> & D:/Python/Python310/python.exe d:/eWILL/eWiLL/modules/core/convert-to-graph/graph_covering.py
+{1: [], 2: [], 3: [], 4: []}
+{1: [], 2: [], 3: [], 4: []}
+ID_Type Dictionary:
+{1: 'ENTITY', 2: 'ENTITYRELATIONSHIP', 3: 'ENTITY', 4: 'ENTITYRELATIONSHIP'}
+Graph with Type Attributes:
+[(1, {'type': 'ENTITY'}), (2, {'type': 'ENTITYRELATIONSHIP'}), (3, {'type': 'ENTITY'}), (4, {'type': 'ENTITYRELATIONSHIP'})]
+Node Attributes:
+Node 1: {'type': 'ENTITY'}
+Node 2: {'type': 'ENTITYRELATIONSHIP'}
+Node 3: {'type': 'ENTITY'}
+Node 4: {'type': 'ENTITYRELATIONSHIP'}
+Graph with Attributes:
+[(1, 2, {'style': 'ZERO_TO_MANY'}), (2, 4, {'style': 'ONE_TO_MANY'}), (3, 4, {'style': 'ZERO_TO_MANY'})]
+{3: [], 6: [], 7: []}
+{3: [], 6: [], 7: []}
+ID_Type Dictionary:
+{3: 'ENTITY', 6: 'ENTITYRELATIONSHIP', 7: 'ENTITYRELATIONSHIP'}
+Graph with Type Attributes:
+[(3, {'type': 'ENTITY'}), (6, {'type': 'ENTITYRELATIONSHIP'}), (7, {'type': 'ENTITYRELATIONSHIP'})]
+Node Attributes:
+Node 3: {'type': 'ENTITY'}
+Node 6: {'type': 'ENTITYRELATIONSHIP'}
+Node 7: {'type': 'ENTITYRELATIONSHIP'}
+Graph with Attributes:
+[(3, 7, {'style': 'ZERO_TO_ONE'}), (6, 7, {'style': 'ZERO_TO_ONE'})]
+Traceback (most recent call last):
+  File "D:\Python\Python310\lib\site-packages\networkx\classes\digraph.py", line 899, in successors
+    return iter(self._succ[n])
+KeyError: 1
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "d:\eWILL\eWiLL\modules\core\convert-to-graph\graph_covering.py", line 71, in <module>
+    ergebnis = finde_groessten_match(knoten, besuchte_knoten, besuchte_kanten, nx.DiGraph(), False)
+  File "d:\eWILL\eWiLL\modules\core\convert-to-graph\graph_covering.py", line 30, in finde_groessten_match
+    if is_in_musterloesung == (nachbar in musterloesung_graph.successors(startknoten)):
+  File "D:\Python\Python310\lib\site-packages\networkx\classes\digraph.py", line 901, in successors
+    raise NetworkXError(f"The node {n} is not in the digraph.") from err
+networkx.exception.NetworkXError: The node 1 is not in the digraph.

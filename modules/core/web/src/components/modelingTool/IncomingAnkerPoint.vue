@@ -3,8 +3,8 @@
 </template>
 
 <script setup lang="ts">
-import ConnectorPosition from "@/enums/ConnectorPosition";
-import Entity from "@/model/diagram/Entity";
+import type ConnectorPosition from "@/enums/ConnectorPosition";
+import type Entity from "@/model/diagram/Entity";
 import { ref, onMounted, computed } from "vue";
 import { useToolManagementStore } from "../../stores/toolManagementStore";
 

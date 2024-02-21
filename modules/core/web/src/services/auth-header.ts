@@ -1,4 +1,4 @@
-import User from "../model/User";
+import type User from "@/model/User";
 
 export default function authHeader() {
   const userStorage = localStorage.getItem("user");

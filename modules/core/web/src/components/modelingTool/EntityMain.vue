@@ -1,8 +1,8 @@
 <template>
-  <div ref="root" class="objectContainer" :class="{ active: isActive }" @mouseover="props.isEditable ? (hover = true) : null" @mouseleave="hover = false">
+  <div ref="root" class="objectContainer" :class="{ active: isActive, highlighted: isEntityHighlighted }" @mouseover="props.isEditable ? (hover = true) : null" @mouseleave="hover = false">
     <div v-if="hover" class="click-area"></div>
-    <span v-if="!isEditable" class="text unselectable" @dblclick="makeTextEditable"> {{ entity.entityName }}</span>
-    <textarea v-if="isEditable" v-model="entity.entityName" class="textedit" rows="1" @dblclick="makeTextEditable" @keyup.enter="handleEnter"></textarea>
+    <span v-if="!isTextEditable" class="text unselectable" @dblclick="makeTextEditable"> {{ entity.entityName }}</span>
+    <textarea v-if="isTextEditable" v-model="entity.entityName" class="textedit" rows="1" @dblclick="makeTextEditable" @keyup.enter="handleEnter"></textarea>
 
     <!-- eslint-disable vue/no-v-html -->
     <span class="attributes unselectable" v-html="formattedAttributes"></span>
@@ -29,246 +29,254 @@
 </template>
 
 <script setup lang="ts">
-import IconEntityRelationshiptyp from "../icons/IconEntityRelationshiptyp.vue";
-import IconEntity from "../icons/IconEntitytyp.vue";
-import IconRelationshiptyp from "../icons/IconRelationshiptyp.vue";
-import EntityTyp from "../../enums/EntityType";
-import OutgoingAnkerPoint from "./OutgoingAnkerPoint.vue";
-import IncomingAnkerPoint from "./IncomingAnkerPoint.vue";
-import EntityWidget from "./EntityWidget.vue";
+import IconEntityRelationshiptyp from '../icons/IconEntityRelationshiptyp.vue'
+import IconEntity from '../icons/IconEntitytyp.vue'
+import IconRelationshiptyp from '../icons/IconRelationshiptyp.vue'
+import EntityTyp from '../../enums/EntityType'
+import OutgoingAnkerPoint from './OutgoingAnkerPoint.vue'
+import IncomingAnkerPoint from './IncomingAnkerPoint.vue'
+import EntityWidget from './EntityWidget.vue'
 
-import { ref, onMounted, computed, watch } from "vue";
-import { useDiagramStore } from "../../stores/diagramStore";
-import { useToolManagementStore } from "../../stores/toolManagementStore";
+import { ref, onMounted, computed, watch } from 'vue'
+import { useDiagramStore } from '../../stores/diagramStore'
+import { useToolManagementStore } from '../../stores/toolManagementStore'
 
-import ConnectorPosition from "../../enums/ConnectorPosition";
-import Attribute from "../../model/diagram/Attribute";
-import Entity from "../../model/diagram/Entity";
+import ConnectorPosition from '../../enums/ConnectorPosition'
+import type Attribute from '../../model/diagram/Attribute'
+import type Entity from '../../model/diagram/Entity'
 
 const props = defineProps<{
-  entity: Entity;
-  isEditable: boolean;
-}>();
+  entity: Entity
+  isEditable: boolean
+}>()
 
 onMounted(() => {
-  setAnkerPoints();
-  setPosition(root.value, props.entity);
-  updateAttributes();
-});
+  setAnkerPoints()
+  setPosition(root.value, props.entity)
+  updateAttributes()
+})
 
 // Emit new entity to parent
 watch(props.entity, () => {
-  setAnkerPoints();
-  setPosition(root.value, props.entity);
-  updateAttributes();
-});
+  setAnkerPoints()
+  setPosition(root.value, props.entity)
+  updateAttributes()
+})
 
-const toolManagementStore = useToolManagementStore();
-const diagramStore = useDiagramStore();
-let entity = diagramStore.diagram.entities.find((entity) => entity.id == props.entity.id);
-const root = ref<HTMLInputElement | null>(null);
+const toolManagementStore = useToolManagementStore()
+const diagramStore = useDiagramStore()
+
+const entity = computed(() => {
+  return diagramStore.diagram.entities.find((entity) => entity.id == props.entity.id) ?? ({} as Entity)
+})
+
+const root = ref<HTMLInputElement | null>(null)
+
+const isEntityHighlighted = computed(() => {
+  return toolManagementStore.highlightedEntityId === props.entity.id
+})
 
 const isActive = computed(() => {
-  return toolManagementStore.newConnection.startEntity == props.entity.id;
-});
+  return toolManagementStore.newConnection.startEntity == props.entity.id
+})
 
 const cssVarAttributesDistanceTop = computed(() => {
-  return props.entity.width / 2 + "px";
-});
+  return props.entity.width / 2 + 'px'
+})
 
-const formattedAttributes = ref("");
+const formattedAttributes = ref('')
 //const attributes = ref(props.entity.attributes)
 const updateAttributes = () => {
   //clear
-  formattedAttributes.value = "";
+  formattedAttributes.value = ''
 
   props.entity.attributes.forEach((attribute: Attribute) => {
-    if (attribute.pkey && attribute.fkey){
-        formattedAttributes.value += "<b><u><i>#*" + attribute.name + "</i></u></b>, ";
-    } else if (attribute.pkey && !attribute.fkey){
-        formattedAttributes.value += "<b><u>#" + attribute.name + "</u></b>, ";
-    } else if (!attribute.pkey && attribute.fkey){
-        formattedAttributes.value += "<i>*" + attribute.name + "</i>, ";
-    } else if (!attribute.pkey && !attribute.fkey){
-        formattedAttributes.value += "<span>" + attribute.name + "</span>, ";
+    if (attribute.pkey && attribute.fkey) {
+      formattedAttributes.value += '<b><u><i>#*' + attribute.name + '</i></u></b>, '
+    } else if (attribute.pkey && !attribute.fkey) {
+      formattedAttributes.value += '<b><u>#' + attribute.name + '</u></b>, '
+    } else if (!attribute.pkey && attribute.fkey) {
+      formattedAttributes.value += '<i>*' + attribute.name + '</i>, '
+    } else if (!attribute.pkey && !attribute.fkey) {
+      formattedAttributes.value += '<span>' + attribute.name + '</span>, '
     } else {
-      throw "Not implemented Attribute Typ";
+      throw 'Not implemented Attribute Typ'
     }
-  });
+  })
   // cut off ", "
-  formattedAttributes.value = formattedAttributes.value.slice(0, -2);
-};
+  formattedAttributes.value = formattedAttributes.value.slice(0, -2)
+}
 
-const hover = ref<boolean>(false);
+const hover = ref<boolean>(false)
 
-const isEditable = ref<boolean>(false);
+const isTextEditable = ref<boolean>(false)
 const makeTextEditable = () => {
-  if (isEditable.value) {
-    diagramStore.saveHistory();
+  if (isTextEditable.value) {
+    diagramStore.saveHistory()
   }
 
-  isEditable.value = !isEditable.value;
-};
+  isTextEditable.value = !isTextEditable.value
+}
 
 const handleEnter = (e: any) => {
-  if (entity?.entityName !== undefined) {
-    const curPos = e.srcElement.selectionStart;
+  if (entity.value?.entityName !== undefined) {
+    const curPos = e.srcElement.selectionStart
 
     if (e.ctrlKey) {
-      const textarea = entity?.entityName;
+      const textarea = entity.value?.entityName
       //use return to exit methode
-      return (entity.entityName = textarea.slice(0, curPos) + "\n" + textarea.slice(curPos));
+      return (entity.value.entityName = textarea.slice(0, curPos) + '\n' + textarea.slice(curPos))
     }
-    entity.entityName = entity?.entityName.slice(0, curPos - 1) + props.entity.entityName.slice(curPos);
-    makeTextEditable();
+    entity.value.entityName = entity.value?.entityName.slice(0, curPos - 1) + props.entity.entityName.slice(curPos)
+    makeTextEditable()
   }
-};
+}
 
-const outgoingAnkerPoint = ref<ConnectorPosition[]>([]);
-const incomingAnkerPoint = ref<ConnectorPosition[]>([]);
+const outgoingAnkerPoint = ref<ConnectorPosition[]>([])
+const incomingAnkerPoint = ref<ConnectorPosition[]>([])
 
 const setAnkerPoints = () => {
-  outgoingAnkerPoint.value = [];
-  incomingAnkerPoint.value = [];
+  outgoingAnkerPoint.value = []
+  incomingAnkerPoint.value = []
 
   switch (props.entity.type) {
     case EntityTyp.ENTITY:
-      outgoingAnkerPoint.value.push(ConnectorPosition.Right);
-      break;
+      outgoingAnkerPoint.value.push(ConnectorPosition.Right)
+      break
     case EntityTyp.RELATIONSHIP:
-      incomingAnkerPoint.value.push(ConnectorPosition.Left);
-      break;
+      incomingAnkerPoint.value.push(ConnectorPosition.Left)
+      break
     case EntityTyp.ENTITYRELATIONSHIP:
-      outgoingAnkerPoint.value.push(ConnectorPosition.Right);
-      incomingAnkerPoint.value.push(ConnectorPosition.Left);
-      break;
+      outgoingAnkerPoint.value.push(ConnectorPosition.Right)
+      incomingAnkerPoint.value.push(ConnectorPosition.Left)
+      break
 
     default:
-      throw "EntityTyp not defined";
+      throw 'EntityTyp not defined'
   }
-};
+}
 
 const setPosition = (element: HTMLInputElement | null, entity: Entity) => {
   if (element != null) {
-    element.style.top = entity.top + "px";
-    element.style.left = entity.left + "px";
-    element.style.width = entity.width + "px";
+    element.style.top = entity.top + 'px'
+    element.style.left = entity.left + 'px'
+    element.style.width = entity.width + 'px'
   }
-};
+}
 
 const updateEntity = () => {
-  if (root.value != null && entity != undefined) {
-    entity.top = parseInt(root.value.style.top);
-    entity.left = parseInt(root.value.style.left);
-    entity.width = parseInt(root.value.style.width);
+  if (root.value != null && entity.value != undefined) {
+    entity.value.top = parseInt(root.value.style.top)
+    entity.value.left = parseInt(root.value.style.left)
+    entity.value.width = parseInt(root.value.style.width)
   }
-};
+}
 
 const activateEntity = () => {
   if (!props.isEditable) {
-    return;
+    return
   }
 
-  if (entity != undefined) {
-    if (toolManagementStore.selectedEntity == entity) {
-      toolManagementStore.selectedEntity = null;
-    } else toolManagementStore.selectedEntity = entity;
+  if (entity.value != undefined) {
+    if (toolManagementStore.selectedEntity == entity.value) {
+      toolManagementStore.selectedEntity = null
+    } else toolManagementStore.selectedEntity = entity.value
   }
-};
+}
 
 const isSelected = computed(() => {
-  return toolManagementStore.selectedEntity === entity;
-});
+  return toolManagementStore.selectedEntity === entity.value
+})
 
 const mousedown = (e: any) => {
   if (!props.isEditable) {
-    return;
+    return
   }
 
   //console.log(root.value.parentNode.getBoundingClientRect())
 
   // console.log("move");
-  let el = e.target.parentNode;
+  let el = e.target.parentNode
 
-  if (root.value == null || root.value.parentElement == null) return;
-  let container = root.value.parentElement;
+  if (root.value == null || root.value.parentElement == null) return
+  let container = root.value.parentElement
 
-  let prevX = e.clientX;
-  let prevY = e.clientY;
+  let prevX = e.clientX
+  let prevY = e.clientY
   //console.log(`Current mouse position: X ${prevX} | Y  ${prevX}`)
 
   const mousemove = (e: any) => {
-    let newX = prevX - e.clientX;
-    let newY = prevY - e.clientY;
+    let newX = prevX - e.clientX
+    let newY = prevY - e.clientY
     //console.log(`NEW client position: X ${newX} | Y  ${newY}`)
 
-    const rect = el.getBoundingClientRect();
-    const rectParent = container.getBoundingClientRect();
+    const rect = el.getBoundingClientRect()
+    const rectParent = container.getBoundingClientRect()
 
     //calculare position relative to container
-    let relativePos: { top?: number; right?: number; bottom?: number; left?: number } = {};
-    relativePos.top = rect.top - rectParent.top;
-    relativePos.right = rect.right - rectParent.right;
-    relativePos.bottom = rect.bottom - rectParent.bottom;
-    relativePos.left = rect.left - rectParent.left;
+    let relativePos: { top?: number; right?: number; bottom?: number; left?: number } = {}
+    relativePos.top = rect.top - rectParent.top
+    relativePos.right = rect.right - rectParent.right
+    relativePos.bottom = rect.bottom - rectParent.bottom
+    relativePos.left = rect.left - rectParent.left
 
-    let newLeft = relativePos.left - newX;
-    let newTop = relativePos.top - newY;
+    let newLeft = relativePos.left - newX
+    let newTop = relativePos.top - newY
 
     //console.log(`NEW Position: X ${newLeft} | Y  ${newTop}`)
 
     //set boundaries
     if (newLeft >= 0 && newTop >= 0 && newLeft <= rectParent.width - rect.width && newTop <= rectParent.height - rect.height) {
-      el.style.left = newLeft + "px";
-      el.style.top = newTop + "px";
+      el.style.left = newLeft + 'px'
+      el.style.top = newTop + 'px'
     }
 
     //console.log(`NEW Element position: X ${el.style.left} | Y  ${el.style.top}`)
 
-    prevX = e.clientX;
-    prevY = e.clientY;
+    prevX = e.clientX
+    prevY = e.clientY
 
-    updateEntity();
-  };
+    updateEntity()
+  }
 
   const mouseup = () => {
-    window.removeEventListener("mousemove", mousemove);
-    window.removeEventListener("mouseup", mouseup);
+    window.removeEventListener('mousemove', mousemove)
+    window.removeEventListener('mouseup', mouseup)
 
     //Update Entity to Send new coordinates to parent component
-    updateEntity();
+    updateEntity()
 
     //Save History
-    diagramStore.saveHistory();
-  };
+    diagramStore.saveHistory()
+  }
 
-  window.addEventListener("mousemove", mousemove);
-  window.addEventListener("mouseup", mouseup);
-};
+  window.addEventListener('mousemove', mousemove)
+  window.addEventListener('mouseup', mouseup)
+}
 
 const resizer = (e: any) => {
   // console.log("resize");
 
-  let currentResizer = e.target;
+  let currentResizer = e.target
 
-  let el = e.target.parentNode;
+  let el = e.target.parentNode
 
-  if (root.value == null || root.value.parentElement == null) return;
-  let container = root.value.parentElement;
+  if (root.value == null || root.value.parentElement == null) return
+  let container = root.value.parentElement
 
-  let prevX = e.clientX;
-  let prevY = e.clientY;
+  let prevX = e.clientX
+  let prevY = e.clientY
 
   const mousemove = (e: { clientX: number; clientY: number }) => {
-    const rect = el.getBoundingClientRect();
-    const rectParent = container.getBoundingClientRect();
+    const rect = el.getBoundingClientRect()
+    const rectParent = container.getBoundingClientRect()
 
     //calculare position relative to container
-    let relativePos: { top?: number; right?: number; bottom?: number; left?: number } = {};
-    relativePos.top = rect.top - rectParent.top;
-    relativePos.right = rect.right - rectParent.right;
-    relativePos.bottom = rect.bottom - rectParent.bottom;
-    relativePos.left = rect.left - rectParent.left;
+    let relativePos: { top?: number; right?: number; bottom?: number; left?: number } = {}
+    relativePos.top = rect.top - rectParent.top
+    relativePos.right = rect.right - rectParent.right
+    relativePos.bottom = rect.bottom - rectParent.bottom
+    relativePos.left = rect.left - rectParent.left
 
     // TODO: set boundaries
     // if ((newLeft>=0) && (newTop>=0) && (newLeft<=rectParent.width-rect.width) && (newTop<=rectParent.height-rect.height)) {
@@ -276,42 +284,42 @@ const resizer = (e: any) => {
     //     el.style.top = newTop + 'px'
     // }
 
-    if (currentResizer.classList.contains("nw")) {
+    if (currentResizer.classList.contains('nw')) {
       // console.log("nw");
-      el.style.width = rect.width + (prevX - e.clientX) + "px";
-      el.style.left = relativePos.left + (prevX - e.clientX) + "px";
-      el.style.top = relativePos.top - (prevY - e.clientY) + "px";
-      el.style.left = relativePos.left - (prevX - e.clientX) + "px";
+      el.style.width = rect.width + (prevX - e.clientX) + 'px'
+      el.style.left = relativePos.left + (prevX - e.clientX) + 'px'
+      el.style.top = relativePos.top - (prevY - e.clientY) + 'px'
+      el.style.left = relativePos.left - (prevX - e.clientX) + 'px'
       // TODO: Bug
-    } else if (currentResizer.classList.contains("ne")) {
+    } else if (currentResizer.classList.contains('ne')) {
       // console.log("ne");
-      el.style.width = rect.width - (prevX - e.clientX) + "px";
-      el.style.top = relativePos.top - (prevY - e.clientY) + "px";
+      el.style.width = rect.width - (prevX - e.clientX) + 'px'
+      el.style.top = relativePos.top - (prevY - e.clientY) + 'px'
       // TODO: Bug
-    } else if (currentResizer.classList.contains("sw")) {
+    } else if (currentResizer.classList.contains('sw')) {
       // console.log("sw");
-      el.style.width = rect.width + (prevX - e.clientX) + "px";
-      el.style.left = relativePos.left - (prevX - e.clientX) + "px";
-    } else if (currentResizer.classList.contains("se")) {
+      el.style.width = rect.width + (prevX - e.clientX) + 'px'
+      el.style.left = relativePos.left - (prevX - e.clientX) + 'px'
+    } else if (currentResizer.classList.contains('se')) {
       // console.log("se");
-      el.style.width = rect.width - (prevX - e.clientX) + "px";
+      el.style.width = rect.width - (prevX - e.clientX) + 'px'
     }
 
-    prevX = e.clientX;
-    prevY = e.clientY;
-  };
+    prevX = e.clientX
+    prevY = e.clientY
+  }
 
   const mouseup = () => {
-    window.removeEventListener("mousemove", mousemove);
-    window.removeEventListener("mouseup", mouseup);
+    window.removeEventListener('mousemove', mousemove)
+    window.removeEventListener('mouseup', mouseup)
 
     //Update Entity to Send new coordinates to parent component
-    updateEntity();
-  };
+    updateEntity()
+  }
 
-  window.addEventListener("mousemove", mousemove);
-  window.addEventListener("mouseup", mouseup);
-};
+  window.addEventListener('mousemove', mousemove)
+  window.addEventListener('mouseup', mouseup)
+}
 </script>
 
 <style scoped lang="scss">
@@ -411,7 +419,11 @@ const resizer = (e: any) => {
 
   position: absolute;
 
-  top: v-bind("cssVarAttributesDistanceTop");
+  top: v-bind('cssVarAttributesDistanceTop');
   cursor: default;
+}
+
+.highlighted {
+  border: 2px solid red;
 }
 </style>

@@ -22,8 +22,8 @@ import QuickInsertion from "./modelingTool/QuickInsertion.vue";
 import { ref, onMounted, reactive } from "vue";
 import { useDiagramStore } from "../stores/diagramStore";
 import { useToolManagementStore } from "../stores/toolManagementStore";
-import Connection from "../model/diagram/Connection";
-import Line from "../model/diagram/Line";
+import type Connection from "../model/diagram/Connection";
+import type Line from "../model/diagram/Line";
 import { defineProps } from "vue";
 import { storeToRefs } from "pinia";
 

@@ -18,3 +18,11 @@ Wurde zum testen kleinerer Codeschnipsel und neuer Ansätze benutzt, um die Funk
 
 code_store.py:
 Sammlung von nicht oder teilweise erfolgreichen Quellcode-Lösungsansätzen. Spiegelt teilweise die Zwischenstände im Entwicklungsverlauf wider.
+
+graph_covering.py:
+Hier werden die in "graph_conversion.py" erstellten Graphen übernommen, traversiert und miteinander verglichen. Über die Hilfsfunktion "finde_groessten_match" wird rekursiv der größte übereinstimmende Teilgraph gesucht. Am Ende werden die gematchten und nicht gematchten Teilgraphen, sowie die Summe aller gematchten und nicht gematchten Knoten ausgegeben.
+In der aktuellen Version sind die Dateipfade/-namen für die JSON-Dateien, welche an "graph_conversion.py" übergeben werden, weiterhin gehardcoded.
+
+Ergebnisse.txt:
+Hier sind die Ergebnisse (Terminalausgabe) von StudentSolution1 bis 4, wenn sie mit graph_covering.py mit der Referencesolution verglichen wurden.
+

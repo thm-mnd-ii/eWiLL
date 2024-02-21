@@ -35,7 +35,7 @@ import { useAuthUserStore } from "../stores/authUserStore";
 import { useRouter } from "vue-router";
 
 import SubmissionsList from "@/components/SubmissionsList.vue";
-import Task from "../model/task/Task";
+import type Task from "../model/task/Task";
 
 import taskService from "../services/task.service";
 import courseService from "../services/course.service";

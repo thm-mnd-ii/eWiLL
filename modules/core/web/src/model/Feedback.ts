@@ -1,6 +1,6 @@
-import FeedbackStatus from "@/enums/FeedbackStatus";
+import type FeedbackStatus from "@/enums/FeedbackStatus";
 
-interface Feedback {
+export default interface Feedback {
   id: number;
   firstName: string;
   lastName: string;
@@ -8,5 +8,3 @@ interface Feedback {
   status: FeedbackStatus;
   timeStamp: Date;
 }
-
-export default Feedback;

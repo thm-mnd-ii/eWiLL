@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/valid-v-slot -->
 <template>
   <div>
     <v-chip v-if="timeDifference <= 0" prepend-icon="mdi-clock-time-five-outline" color="red">{{ dueDate }}</v-chip>
@@ -8,62 +7,62 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
-import { onMounted } from "vue";
+import { ref, watch } from 'vue'
+import { onMounted } from 'vue'
 
-const props = defineProps({ dueDateProp: String });
+const props = defineProps({ dueDateProp: String })
 
-const dueDate = ref();
-const timeDifference = ref();
+const dueDate = ref()
+const timeDifference = ref()
 
 onMounted(() => {
-  if (props.dueDateProp != undefined) setDueDate(props.dueDateProp);
-});
+  if (props.dueDateProp != undefined) setDueDate(props.dueDateProp)
+})
 
 watch(
   () => props.dueDateProp,
   (first, second) => {
-    setDueDate(first!);
+    setDueDate(first!)
   }
-);
+)
 
 const setDueDate = (dateTime: string) => {
-  dueDate.value = dateTime;
-  let day = getDay(dateTime);
-  let month = getMonth(dateTime);
-  let year = getYear(dateTime);
-  let hour = getHour(dateTime);
-  let minutes = getMinutes(dateTime);
+  dueDate.value = dateTime
+  let day = getDay(dateTime)
+  let month = getMonth(dateTime)
+  let year = getYear(dateTime)
+  let hour = getHour(dateTime)
+  let minutes = getMinutes(dateTime)
 
-  let date = new Date(year + "-" + month + "-" + day + "T" + hour + ":" + minutes + ":00");
-  let currentDate = new Date();
+  let date = new Date(year + '-' + month + '-' + day + 'T' + hour + ':' + minutes + ':00')
+  let currentDate = new Date()
 
-  timeDifference.value = (date.getTime() - currentDate.getTime()) / (1000 * 3600 * 24);
+  timeDifference.value = (date.getTime() - currentDate.getTime()) / (1000 * 3600 * 24)
 
-  return timeDifference.value;
-};
+  return timeDifference.value
+}
 
 const getDay = (dateTime: string) => {
-  return dateTime.slice(0, 2);
-};
+  return dateTime.slice(0, 2)
+}
 
 const getMonth = (dateTime: string) => {
-  return dateTime.slice(3, 5);
-};
+  return dateTime.slice(3, 5)
+}
 
 const getYear = (dateTime: string) => {
-  return dateTime.slice(6, 10);
-};
+  return dateTime.slice(6, 10)
+}
 
 const getHour = (dateTime: string) => {
-  return dateTime.slice(11, 13);
-};
+  return dateTime.slice(11, 13)
+}
 
 const getMinutes = (dateTime: string) => {
-  return dateTime.slice(14, 16);
-};
+  return dateTime.slice(14, 16)
+}
 
-defineExpose({ setDueDate });
+defineExpose({ setDueDate })
 </script>
 
 <style scoped></style>

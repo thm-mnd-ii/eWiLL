@@ -1,5 +1,5 @@
 import axios from "axios";
-import SubmitPL from "@/model/SubmitPL";
+import type SubmitPL from "@/model/SubmitPL";
 
 class SubmissionService{
     submitDiagram(submitPL: SubmitPL){
