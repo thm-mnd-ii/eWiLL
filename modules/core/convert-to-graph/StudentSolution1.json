@@ -1,0 +1,4 @@
+{
+"connections": [{"startEntity":1,"endEntity":2,"style":1,"startEntityPosition":"right","endEntityPosition":"left"},{"startEntity":3,"endEntity":2,"style":1,"startEntityPosition":"right","endEntityPosition":"left"}],
+"entities": [{"id":1,"type":0,"entityName":"Customer","top":148,"left":135,"width":100,"attributes":[]},{"id":2,"type":1,"entityName":"Order","top":150,"left":350,"width":100,"attributes":[]},{"id":3,"type":0,"entityName":"Product","top":240,"left":136,"width":100,"attributes":[]}]
+}
