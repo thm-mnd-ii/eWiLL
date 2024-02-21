@@ -33,6 +33,7 @@ const saveDiagram = (saveType: DiagramSaveType) => {
     diagramService
       .putDiagram(diagramStore.diagram)
       .then(() => {
+        localStorage.removeItem("diagram");
         _close();
       })
       .catch((error) => {

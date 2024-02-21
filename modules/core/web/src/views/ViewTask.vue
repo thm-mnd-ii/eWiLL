@@ -41,7 +41,7 @@
       <div v-if="courseRole == 'STUDENT'" class="grid-right">
         <v-btn class="submit-btn" color="dark-gray" variant="flat" :disabled="submissionCount >= task.maxSubmissions || isDue" @click="submitDiagram">
           <div v-if="!subBtnProgress">
-            <span>prüfen</span>
+            <span>Einreichen</span>
           </div>
           <div v-if="subBtnProgress">
             <v-progress-circular indeterminate></v-progress-circular>
@@ -324,6 +324,7 @@ const createDiagram = (category: Category) => {
       diagramStore.diagram.ownerId = userId.value;
 
       diagramService.postDiagram(diagramStore.diagram).then((diagramId) => {
+        localStorage.removeItem("diagram");
         diagramService.getDiagramById(diagramId.data).then((diagram) => {
           diagramStore.loadDiagram(diagram.data);
           loadViewModellingWithDiagram();
