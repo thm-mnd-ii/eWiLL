@@ -26,7 +26,7 @@
 import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useAuthUserStore } from "../stores/authUserStore";
-import CoursePL from "../model/course/CoursePL";
+import type CoursePL from "../model/course/CoursePL";
 import courseService from "../services/course.service";
 
 const route = useRoute();

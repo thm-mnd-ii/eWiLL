@@ -1,14 +1,14 @@
 import { defineStore } from "pinia";
 
-import Entity from "../model/diagram/Entity";
-import Line from "../model/diagram/Line";
+import type Entity from "@/model/diagram/Entity";
+import type Line from "@/model/diagram/Line";
 import Mode from "../enums/Mode";
-import Connection from "@/model/diagram/Connection";
+import type Connection from "@/model/diagram/Connection";
 
 import { useDiagramStore } from "./diagramStore";
 import ConnectorPosition from "@/enums/ConnectorPosition";
-import Task from "@/model/task/Task";
-import CoursePL from "@/model/course/CoursePL";
+import type Task from "@/model/task/Task";
+import type CoursePL from "@/model/course/CoursePL";
 
 interface State {
   showModalAddAttributes: boolean;
@@ -20,6 +20,7 @@ interface State {
   diagramDiv: HTMLElement | null;
   activeTask: Task | null;
   activeCourse: CoursePL | null;
+  highlightedEntityId: number | null;
 }
 
 export const useToolManagementStore = defineStore("tool-management", {
@@ -33,6 +34,7 @@ export const useToolManagementStore = defineStore("tool-management", {
     diagramDiv: null,
     activeTask: null,
     activeCourse: null,
+    highlightedEntityId: null,
   }),
   getters: {},
   actions: {

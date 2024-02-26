@@ -13,19 +13,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick } from "vue";
+import { ref, nextTick, onMounted } from "vue";
 import TaskSubmissionsResultsTabs from "@/components/TaskSubmissionsResultsTabs.vue";
 import { useAuthUserStore } from "../stores/authUserStore";
 import evaluationService from "@/services/evaluation.service";
-import { useRoute } from "vue-router";
-import Task from "../model/task/Task";
+import type Task from "@/model/task/Task";
 import taskService from "../services/task.service";
 
+import { useToolManagementStore } from "@/stores/toolManagementStore";
+
 const task = ref<Task>({} as Task);
-const route = useRoute();
-const taskId = ref(Number(route.params.taskId));
 const taskSubmissionsResultsTabs = ref<typeof TaskSubmissionsResultsTabs>();
 const authUserStore = useAuthUserStore();
+const toolManagementStore = useToolManagementStore();
 const userId = ref(authUserStore.auth.user?.id!);
 const deleteDialog = ref<boolean>(false);
 const Title = ref<string>("");
@@ -43,24 +43,28 @@ const init = () => {
   loadElements();
 };
 
+
 const loadElements = async () => {
   await loadTask();
   await loadSubmissions();
 };
 
 const loadTask = () => {
-  taskService.getTask(taskId.value).then((response) => {
+  if(toolManagementStore.activeTask){
+    taskService.getTask(toolManagementStore.activeTask.id).then((response) => {
     task.value = response;
-    console;
-  });
+    });
+  }
 };
 
 const loadSubmissions = (selectedTaskIndex?: Number) => {
-  evaluationService.getSubmissionIdsByUserAndTask(userId.value, taskId.value).then((response) => {
+  if(toolManagementStore.activeTask){
+    evaluationService.getSubmissionIdsByUserAndTask(userId.value, toolManagementStore.activeTask.id).then((response) => {
     const submissionIds = response.data;
     submissionCount.value = submissionIds.length;
     taskSubmissionsResultsTabs.value?.load(task.value, selectedTaskIndex);
-  });
+    });
+  }
 };
 const openDialog = async (title: string, message: string, selectedTaskIndex?: number) => {
   try {

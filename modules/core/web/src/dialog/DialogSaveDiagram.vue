@@ -31,7 +31,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import Category from "../model/diagram/Category";
+import type Category from "../model/diagram/Category";
 import diagramService from "../services/diagram.service";
 import { useDiagramStore } from "../stores/diagramStore";
 import { useAuthUserStore } from "../stores/authUserStore";
@@ -142,11 +142,10 @@ const openCategoryDialog = () => {
 const resolvePromise: any = ref(undefined);
 const rejectPromise: any = ref(undefined);
 
-const openDialog = (selectedDiagramId: number | null) => {
+const openDialog = (selectedDiagramId: number) => {
   loading.value = false;
   updateCategories();
-
-  if (selectedDiagramId == diagramStore.diagram.id) {
+  if (selectedDiagramId != 0 && selectedDiagramId == diagramStore.diagram.id) {
     isNewDiagram.value = false;
     diagramName.value = diagramStore.diagram.name;
     diagramCategory.value = diagramStore.diagram.categoryId;

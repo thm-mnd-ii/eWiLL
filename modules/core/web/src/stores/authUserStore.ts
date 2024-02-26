@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import AuthService from "../services/auth.service";
-import User from "../model/User";
+import type User from "@/model/User";
 
 interface State {
   auth: {
