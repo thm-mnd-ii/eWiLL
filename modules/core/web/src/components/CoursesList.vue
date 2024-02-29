@@ -9,7 +9,7 @@
     </v-row>
     <v-data-table :headers="headers" :items="displayedCourses" item-value="name" class="elevation-1" :search="search" density="default" height="480px" @click:row="openCourseOrSignUp">
       <template #[`item.course.active`]="{ item }">
-        <v-icon v-if="!ifActiveSemester(item.course.semester as Semester)" icon="mdi-close-circle" color="gray"></v-icon>
+        <v-icon v-if="!ifActiveSemester(item.course.semester as Semester)" icon="mdi-close-circle" color="dark-gray"></v-icon>
         <v-icon v-if="ifActiveSemester(item.course.semester as Semester)" icon="mdi-check-circle" color="success"></v-icon>
       </template>
       <template #[`item.member`]="{ item }">
