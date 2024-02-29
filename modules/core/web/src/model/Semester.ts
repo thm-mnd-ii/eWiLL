@@ -1,9 +1,6 @@
 export default interface Semester {
-    id: number;
-    name: string;
-    startDate: string;
-    endDate: string;
-    
-  }
-
-  
+  id: number
+  name: string
+  startDate: string
+  endDate: string
+}

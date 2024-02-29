@@ -1,17 +1,17 @@
-version: '3.8'
+version: "3.8"
 services:
   core:
     container_name: core
     restart: unless-stopped
     depends_on:
-        - postgres
+      - postgres
     build:
-        context: .
-        dockerfile: modules/core/api/Dockerfile
+      context: .
+      dockerfile: modules/core/api/Dockerfile
     volumes:
       - .:/app
     ports:
-      - "8080:8080"
+      - "8083:8080"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/postgres
       - SPRING_DATASOURCE_USERNAME=postgres
@@ -28,12 +28,12 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_HOST=postgres
     ports:
-    # TODO remove for production
-      - '5433:5432'
-    volumes: 
+      # TODO remove for production
+      - "5433:5432"
+    volumes:
       - data:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
       timeout: 5s
       retries: 5

@@ -20,5 +20,5 @@ RUN mvn -f /build/modules/core/api/pom.xml clean package -DskipTests
 #
 FROM openjdk:17-alpine
 COPY --from=build /build/modules/core/api/target/api.jar /usr/local/api.jar
-EXPOSE 8080
+EXPOSE 8083
 ENTRYPOINT ["java","-jar","/usr/local/api.jar"]
