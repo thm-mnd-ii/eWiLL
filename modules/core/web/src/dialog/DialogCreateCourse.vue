@@ -20,7 +20,6 @@
           </v-row>
         </v-card-text>
         <v-card-actions class="card-actions">
-   
           <v-btn v-if="!newCourse" color="error" variant="flat" @click="deleteCourse">Kurs löschen</v-btn>
           <v-spacer></v-spacer>
           <v-btn color="error" variant="flat" @click="_cancel"> Abbrechen </v-btn>
@@ -35,165 +34,159 @@
 </template>
 
 <script setup lang="ts">
-import {watch, ref } from "vue";
-import { useAuthUserStore } from "../stores/authUserStore";
-import courseService from "../services/course.service";
-import type CoursePL from "../model/course/CoursePL";
-import semesterService from "../services/semester.service";
-import type Semester from "../model/Semester";
-import DialogConfirmVue from "../dialog/DialogConfirm.vue";
-import { useRouter } from "vue-router";
+import { watch, ref } from 'vue'
+import { useAuthUserStore } from '../stores/authUserStore'
+import courseService from '../services/course.service'
+import type CoursePL from '../model/course/CoursePL'
+import semesterService from '../services/semester.service'
+import type Semester from '../model/Semester'
+import DialogConfirmVue from '../dialog/DialogConfirm.vue'
+import { useRouter } from 'vue-router'
 
-const courseDialog = ref<boolean>(false);
-const dialogTitle = ref<string>("");
+const courseDialog = ref<boolean>(false)
+const dialogTitle = ref<string>('')
 
-const dialogConfirm = ref<typeof DialogConfirmVue>();
-const authUserStore = useAuthUserStore();
-const router = useRouter();
+const dialogConfirm = ref<typeof DialogConfirmVue>()
+const authUserStore = useAuthUserStore()
+const router = useRouter()
 
-const semesters = ref<Semester[]>([]);
+const semesters = ref<Semester[]>([])
 
 // New Course or editing existing course
-const newCourse = ref(true);
-const course = ref<CoursePL>({} as CoursePL);
+const newCourse = ref(true)
+const course = ref<CoursePL>({} as CoursePL)
 
-const snackbarFail = ref(false);
-const loading = ref(false);
+const snackbarFail = ref(false)
+const loading = ref(false)
 // Form
-const valid = ref();
-const courseSemester = ref("");
+const valid = ref()
+const courseSemester = ref('')
 
-const resolvePromise: any = ref(undefined);
-const rejectPromise: any = ref(undefined);
+const resolvePromise: any = ref(undefined)
+const rejectPromise: any = ref(undefined)
 
 const openDialog = (courseId: number | undefined) => {
-  loading.value = false; 
-  initializeSemesters();
+  loading.value = false
+  initializeSemesters()
   if (courseId == undefined) {
-    newCourse.value = true;
-    initializeDialogForNewCourse();
+    newCourse.value = true
+    initializeDialogForNewCourse()
   } else {
-    newCourse.value = false;
-    initializeDialogForEditingCourse(courseId);
+    newCourse.value = false
+    initializeDialogForEditingCourse(courseId)
   }
-  courseDialog.value = true;
+  courseDialog.value = true
 
   return new Promise((resolve, reject) => {
-    resolvePromise.value = resolve;
-    rejectPromise.value = reject;
-  });
-};
+    resolvePromise.value = resolve
+    rejectPromise.value = reject
+  })
+}
 
-//the watcher  is used to reset the form when opening/closing the dialog. 
+//the watcher  is used to reset the form when opening/closing the dialog.
 watch(courseDialog, (newVal) => {
   if (newVal) {
     // Dialog opened, fetch course data if editing
     if (!newCourse.value && course.value.id) {
-      initializeDialogForEditingCourse(course.value.id);
+      initializeDialogForEditingCourse(course.value.id)
     }
   } else {
     // Dialog closed, reset course data
-    resetDialog();
+    resetDialog()
   }
-});
+})
 
 const resetDialog = () => {
-  course.value = {}as CoursePL; 
-  valid.value = false; 
-
-};
+  course.value = {} as CoursePL
+  valid.value = false
+}
 
 const initializeDialogForNewCourse = () => {
-  dialogTitle.value = "Neuen Kurs erstellen";
-};
+  dialogTitle.value = 'Neuen Kurs erstellen'
+}
 
 const initializeDialogForEditingCourse = (courseId: number) => {
   courseService.getCourse(courseId).then((response) => {
-    course.value = response.data;
-    refreshTextFields();
-  });
-  dialogTitle.value = "Bearbeiten: ";
-};
+    course.value = response.data
+    refreshTextFields()
+  })
+  dialogTitle.value = 'Bearbeiten: '
+}
 
 const refreshTextFields = () => {
-  courseSemester.value = course.value.semester.name;
-};
+  courseSemester.value = course.value.semester.name
+}
 
 // TODO
 const _confirm = async () => {
-  loading.value = true;
-  
-  
-    if (valid.value) {
-      course.value.active = true;
-      let userId = authUserStore.auth.user?.id;
-      if (userId != undefined) course.value.owner = userId;
-      if (newCourse.value == true) {
-        courseService
-          .postCourse(course.value)
-          .then((response) => {
-            courseDialog.value = false;
-            resolvePromise.value(response.data.id);
-          })
-          .catch((error) => {
-            snackbarFail.value = true;
-            console.log(error);
-          });
-      } else {
-        console.log(course);
-        courseService
-          .putCourse(course.value)
-          .then((response) => {
-            courseDialog.value = false;
-            resolvePromise.value(response.data.id);
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      }
-    }
-    setTimeout(() => {
-      loading.value = false;
-    }, 1000);
-    
-  
-};
+  loading.value = true
 
+  if (valid.value) {
+    course.value.active = true
+    let userId = authUserStore.auth.user?.id
+    if (userId != undefined) course.value.owner = userId
+    if (newCourse.value == true) {
+      courseService
+        .postCourse(course.value)
+        .then((response) => {
+          courseDialog.value = false
+          resolvePromise.value(response.data.id)
+        })
+        .catch((error) => {
+          snackbarFail.value = true
+          console.log(error)
+        })
+    } else {
+      courseService
+        .putCourse(course.value)
+        .then((response) => {
+          courseDialog.value = false
+          resolvePromise.value(response.data.id)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    }
+  }
+  setTimeout(() => {
+    loading.value = false
+  }, 1000)
+}
 
 const _cancel = () => {
-  courseDialog.value = false;
-  resolvePromise.value(undefined);
-};
+  courseDialog.value = false
+  resolvePromise.value(undefined)
+}
 
 const deleteCourse = () => {
   if (dialogConfirm.value) {
-    dialogConfirm.value.openDialog(`Lösche Kurs: ${course.value.name}`, "Willst du den Kurs wirklich löschen?").then((result: boolean) => {
+    dialogConfirm.value.openDialog(`Lösche Kurs: ${course.value.name}`, 'Willst du den Kurs wirklich löschen?').then((result: boolean) => {
       if (result) {
         courseService
           .deleteCourse(course.value.id)
           .then(() => {
-            courseDialog.value = false;
-            resolvePromise.value(course.value.id);
-            router.push("/course");
+            courseDialog.value = false
+            resolvePromise.value(course.value.id)
+            router.push('/course')
           })
           .catch((error) => {
-            console.log(error);
-          });
+            console.log(error)
+          })
       }
-    });
+    })
   }
-};
+}
 
 const initializeSemesters = () => {
   semesterService.getAllSemesters().then((response) => {
-    semesters.value = response;
-  });
-};
+    semesters.value = response
+  })
+}
 
 // define expose
 defineExpose({
-  openDialog,
-});
+  openDialog
+})
 </script>
 
 <style scoped>
