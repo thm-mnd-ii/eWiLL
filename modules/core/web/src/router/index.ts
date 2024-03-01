@@ -1,155 +1,139 @@
-import { createRouter, createWebHashHistory, createWebHistory } from "vue-router";
-import HomeView from "../views/ViewHome.vue";
-import ViewModeling from "../views/ViewModeling.vue";
-import ViewImpressum from "../views/ViewImpressum.vue";
-import ViewDatenschutz from "../views/ViewDatenschutz.vue";
-import ViewLogin from "../views/ViewLogin.vue";
-import ViewProfile from "../views/ViewProfile.vue";
-import ViewCourses from "../views/ViewCourses.vue";
-import ViewCourseSignup from "../views/ViewCourseSignup.vue";
-import ViewCourse from "../views/ViewCourse.vue";
-import ViewTask from "../views/ViewTask.vue";
-import ViewIntroduction from "../views/ViewIntroduction.vue";
-import View404Page from "../views/View404Page.vue";
-import FeedbackReport from "../views/ViewFeedbackReport.vue";
-import FeedbackOverview from "../views/ViewFeedbackOverview.vue";
-import ViewMembers from "../views/ViewMembers.vue";
-import ViewTaskSubmissions from "../views/ViewTaskSubmissions.vue";
+import { createRouter, createWebHistory } from 'vue-router'
+import HomeView from '../views/ViewHome.vue'
+import ViewModeling from '../views/ViewModeling.vue'
+import ViewImpressum from '../views/ViewImpressum.vue'
+import ViewDatenschutz from '../views/ViewDatenschutz.vue'
+import ViewLogin from '../views/ViewLogin.vue'
+import ViewProfile from '../views/ViewProfile.vue'
+import ViewCourses from '../views/ViewCourses.vue'
+import ViewCourseSignup from '../views/ViewCourseSignup.vue'
+import ViewCourse from '../views/ViewCourse.vue'
+import ViewTask from '../views/ViewTask.vue'
+import ViewIntroduction from '../views/ViewIntroduction.vue'
+import View404Page from '../views/View404Page.vue'
+import FeedbackReport from '../views/ViewFeedbackReport.vue'
+import FeedbackOverview from '../views/ViewFeedbackOverview.vue'
+import ViewMembers from '../views/ViewMembers.vue'
+import ViewTaskSubmissions from '../views/ViewTaskSubmissions.vue'
 
-import authService from "@/services/auth.service";
+import authService from '@/services/auth.service'
 
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory(),
   routes: [
     {
-      path: "/home",
-      name: "Home",
-      component: HomeView,
+      path: '/home',
+      name: 'Home',
+      component: HomeView
     },
     {
-      path: "/modeling",
-      name: "Modeling",
-      component: ViewModeling,
+      path: '/modeling',
+      name: 'Modeling',
+      component: ViewModeling
     },
     {
-      path: "/impressum",
-      name: "ViewImpressum",
-      component: ViewImpressum,
+      path: '/impressum',
+      name: 'ViewImpressum',
+      component: ViewImpressum
     },
     {
-      path: "/datenschutz",
-      name: "ViewDatenschutz",
-      component: ViewDatenschutz,
+      path: '/datenschutz',
+      name: 'ViewDatenschutz',
+      component: ViewDatenschutz
     },
     {
-      path: "/login",
-      name: "ViewLogin",
-      component: ViewLogin,
+      path: '/login',
+      name: 'ViewLogin',
+      component: ViewLogin
     },
     {
-      path: "/profile",
-      name: "ViewProfile",
-      component: ViewProfile,
+      path: '/profile',
+      name: 'ViewProfile',
+      component: ViewProfile
     },
     {
-      path: "/course",
-      name: "ViewCourses",
-      component: ViewCourses,
+      path: '/course',
+      name: 'ViewCourses',
+      component: ViewCourses
     },
     {
-      path: "/course/:id/signup",
-      name: "ViewCourseSignup",
-      component: ViewCourseSignup,
+      path: '/course/:id/signup',
+      name: 'ViewCourseSignup',
+      component: ViewCourseSignup
     },
     {
-      path: "/course/:id",
-      name: "ViewCourse",
-      component: ViewCourse,
+      path: '/course/:id',
+      name: 'ViewCourse',
+      component: ViewCourse
     },
     {
-      path: "/course/:courseId/task/:taskId",
-      name: "ViewTask",
-      component: ViewTask,
+      path: '/course/:courseId/task/:taskId',
+      name: 'ViewTask',
+      component: ViewTask
     },
     {
-      path: "/",
-      name: "ViewIntroduction",
-      component: ViewIntroduction,
+      path: '/',
+      name: 'ViewIntroduction',
+      component: ViewIntroduction
     },
     {
-      path: "/:pathMatch(.*)*",
-      name: "View404Page",
-      component: View404Page,
+      path: '/:pathMatch(.*)*',
+      name: 'View404Page',
+      component: View404Page
     },
     {
-      path: "/feedbackReport",
-      name: "ViewBugReport",
-      component: FeedbackReport,
+      path: '/feedbackReport',
+      name: 'ViewBugReport',
+      component: FeedbackReport
     },
     {
-      path: "/feedbackOverview",
-      name: "ViewBugOverview",
-      component: FeedbackOverview,
+      path: '/feedbackOverview',
+      name: 'ViewBugOverview',
+      component: FeedbackOverview
     },
     {
-      path: "/course/:courseId/members",
-      name: "ViewMembers",
-      component: ViewMembers,
+      path: '/course/:courseId/members',
+      name: 'ViewMembers',
+      component: ViewMembers
     },
     {
-      path: "/course/:courseId/task/:taskId/submissions",
-      name: "ViewTaskSubmissions",
-      component: ViewTaskSubmissions,
-      
-    },
-  ],
-});
+      path: '/course/:courseId/task/:taskId/submissions',
+      name: 'ViewTaskSubmissions',
+      component: ViewTaskSubmissions
+    }
+  ]
+})
 
 router.beforeEach(async (to, from, next) => {
-  const publicPages = ["/login"];
-  const authRequired = !publicPages.includes(to.path);
-  const loggedIn = localStorage.getItem("user");
+  const publicPages = ['/login']
+  const authRequired = !publicPages.includes(to.path)
+  const loggedIn = localStorage.getItem('user')
 
-  const nonAdminPages = [
-    "Home",
-    "Modeling",
-    "ViewImpressum",
-    "ViewDatenschutz",
-    "ViewLogin",
-    "ViewCourses",
-    "ViewCourseSignup",
-    "ViewCourse",
-    "ViewTask",
-    "ViewIntroduction",
-    "View404Page",
-    "FeedbackReport",
-    "ViewMembers",
-    "ViewTaskSubmissions",
-  ];
-  const adminRequired = !nonAdminPages.includes(to.name as string);
-  const role = localStorage.getItem("role");
-  const admin = role?.includes("ADMIN");
+  const nonAdminPages = ['Home', 'Modeling', 'ViewImpressum', 'ViewDatenschutz', 'ViewLogin', 'ViewCourses', 'ViewCourseSignup', 'ViewCourse', 'ViewTask', 'ViewIntroduction', 'View404Page', 'FeedbackReport', 'ViewMembers', 'ViewTaskSubmissions']
+  const adminRequired = !nonAdminPages.includes(to.name as string)
+  const role = localStorage.getItem('role')
+  const admin = role?.includes('ADMIN')
 
   const loginValid = await authService.isValid().then((response) => {
     if (response === true) {
-      return true;
+      return true
     } else {
-      localStorage.removeItem("user");
-      return false;
+      localStorage.removeItem('user')
+      return false
     }
-  });
+  })
 
   // trying to access a restricted page + not logged in
   // redirect to login page
   if ((authRequired && !loggedIn) || (authRequired && !loginValid)) {
-    next("/login");
+    next('/login')
   } else {
     if (adminRequired && !admin) {
-      next("/404");
+      next('/404')
     } else {
-      next();
+      next()
     }
   }
-});
+})
 
-export default router;
+export default router
