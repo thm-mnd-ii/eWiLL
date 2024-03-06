@@ -11,38 +11,41 @@
         </v-list-item>
       </v-list>
     </v-menu> -->
+    <v-btn icon @click="pageSettingsStore.showHeader = !pageSettingsStore.showHeader">
+      <v-icon>{{ pageSettingsStore.showHeader ? 'mdi-eye-off' : 'mdi-eye' }}</v-icon>
+      <v-tooltip activator="parent" location="bottom"> Toggle Bar </v-tooltip>
+    </v-btn>
+
     <v-btn v-if="admin" prepend-icon="mdi-account" @click="profile">profile</v-btn>
     <v-btn prepend-icon="mdi-logout" @click="logout">logout</v-btn>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import { useAuthUserStore } from "../../stores/authUserStore";
-import { useRouter } from "vue-router";
-const router = useRouter();
-const admin = ref(localStorage.getItem("user")?.includes("ADMIN"));
+import { ref } from 'vue'
+import { useAuthUserStore } from '../../stores/authUserStore'
+import { useRouter } from 'vue-router'
+import { usePageSettingsStore } from '../../stores/pageSettingsStore'
 
-// const options = ref([
-//   { title: "Profil", icon: "mdi-account", method: "profile" },
-//   { title: "Logout", icon: "mdi-logout", method: "logout" },
-// ]);
+const router = useRouter()
+const pageSettingsStore = usePageSettingsStore()
+const admin = ref(localStorage.getItem('user')?.includes('ADMIN'))
 
 const profile = () => {
-  router.push({ path: "/profile" });
-};
+  router.push({ path: '/profile' })
+}
 
 const logout = () => {
-  const authUserStore = useAuthUserStore();
+  const authUserStore = useAuthUserStore()
   authUserStore.logout().then(
     () => {
-      router.push("/login");
+      router.push('/login')
     },
     (error) => {
-      console.log(error);
+      console.log(error)
     }
-  );
-};
+  )
+}
 </script>
 
 <style scoped>
