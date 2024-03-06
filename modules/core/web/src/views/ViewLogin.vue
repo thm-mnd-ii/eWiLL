@@ -27,124 +27,131 @@
 </template>
 
 <script setup lang="ts">
-import BasicBackground from "@/components/BasicBackground.vue";
+import BasicBackground from '@/components/BasicBackground.vue'
 
-import { ref, onMounted, onUnmounted } from "vue";
-import { useRouter } from "vue-router";
-import { useAuthUserStore } from "../stores/authUserStore";
-import DialogCompatibilityIssueVue from "@/dialog/DialogCompatibilityIssue.vue";
+import { ref, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuthUserStore } from '@/stores/authUserStore'
+import { usePageSettingsStore } from '@/stores/pageSettingsStore'
+import DialogCompatibilityIssueVue from '@/dialog/DialogCompatibilityIssue.vue'
 
-const router = useRouter();
-const authUserStore = useAuthUserStore();
+const router = useRouter()
+const authUserStore = useAuthUserStore()
+const pageSettingsStore = usePageSettingsStore()
 
-const userInput = ref(null);
-const passwordInput = ref(null);
-const errorMessage = ref("");
-const valid = ref(false);
-const loading = ref(false);
+const userInput = ref(null)
+const passwordInput = ref(null)
+const errorMessage = ref('')
+const valid = ref(false)
+const loading = ref(false)
 
-let userRules = [(v: string) => !!v || "Benutzername is required"];
-let passwordRules = [(v: string) => !!v || "Password is required"];
+let userRules = [(v: string) => !!v || 'Benutzername is required']
+let passwordRules = [(v: string) => !!v || 'Password is required']
 
-const supportedBrowser = ref(false);
-const supportedOS = ref(false);
-const supportedScreenSize = ref(false);
-const dialogCompatibility = ref<typeof DialogCompatibilityIssueVue>();
-const minWidth = 800;
-const minHeight = 400;
+const supportedBrowser = ref(false)
+const supportedOS = ref(false)
+const supportedScreenSize = ref(false)
+const dialogCompatibility = ref<typeof DialogCompatibilityIssueVue>()
+const minWidth = 800
+const minHeight = 400
 
 onMounted(() => {
-  _checkCompability();
-  window.addEventListener("resize", _checkCompability);
-});
+  _checkCompability()
+  window.addEventListener('resize', _checkCompability)
+
+  // log token parameter
+  const jsessionid = router.currentRoute.value.query.jsessionid?.toString()
+  const isIframe: boolean = router.currentRoute.value.query.iframe?.toString().toLowerCase() === 'true'
+  
+  if (jsessionid) {
+    tokenLogin(jsessionid)
+  }
+
+  if (isIframe === true) {
+    console.log('Iframe detected')
+    pageSettingsStore.showHeader = false
+  }
+})
 
 onUnmounted(() => {
-  window.removeEventListener("resize", _checkCompability);
-});
+  window.removeEventListener('resize', _checkCompability)
+})
 
 const _checkCompability = () => {
   // Browser Check
-  const browserRegex = /Firefox|Chrome|Chromium|Edg\//;
-  supportedBrowser.value = browserRegex.test(navigator.userAgent);
+  const browserRegex = /Firefox|Chrome|Chromium|Edg\//
+  supportedBrowser.value = browserRegex.test(navigator.userAgent)
 
   // OS Check
-  const osRegex = /Windows NT|Macintosh|Linux/;
-  supportedOS.value = osRegex.test(navigator.userAgent);
+  const osRegex = /Windows NT|Macintosh|Linux/
+  supportedOS.value = osRegex.test(navigator.userAgent)
 
   // Screen Size
   if (window.innerWidth < minWidth || window.innerHeight < minHeight) {
-    supportedScreenSize.value = false;
+    supportedScreenSize.value = false
   } else {
-    supportedScreenSize.value = true;
+    supportedScreenSize.value = true
   }
-};
-
-onMounted(() => {
-  // log token parameter
-  const jsessionid = router.currentRoute.value.query.jsessionid?.toString();
-  if (jsessionid) {
-    tokenLogin(jsessionid);
-  }
-});
+}
 
 const tokenLogin = (jsessionid: string) => {
   if (!supportedOS.value || !supportedBrowser.value || !supportedScreenSize.value) {
-    dialogCompatibility.value?.openDialog();
+    dialogCompatibility.value?.openDialog()
   } else if (jsessionid) {
     authUserStore
       .tokenLogin(jsessionid)
       .then(() => {
-        router.push("/");
+        router.push('/')
       })
       .catch((error) => {
-        loading.value = false;
-        console.log(error);
-        errorMessage.value = "Token Login fehlgeschlagen";
-      });
+        loading.value = false
+        console.log(error)
+        errorMessage.value = 'Token Login fehlgeschlagen'
+      })
   }
-};
+}
 
 const localLogin = () => {
   if (!supportedOS.value || !supportedBrowser.value || !supportedScreenSize.value) {
-    dialogCompatibility.value?.openDialog();
+    dialogCompatibility.value?.openDialog()
   } else {
-    errorMessage.value = "";
-    loading.value = true;
+    errorMessage.value = ''
+    loading.value = true
 
     if (valid.value && userInput.value && passwordInput.value) {
       const user: { username: string; password: string } = {
         username: userInput.value,
-        password: passwordInput.value,
-      };
+        password: passwordInput.value
+      }
 
       authUserStore
         .login(user)
         .then(() => {
           setTimeout(() => {
-            router.push("/");
-          }, 1000);
+            router.push('/')
+          }, 1000)
         })
         .catch((error) => {
-          loading.value = false;
-          console.log(error);
+          loading.value = false
+          console.log(error)
           if (error.response && error.response.status === 401) {
-            errorMessage.value = "Benutzername oder Passwort ist falsch";
+            errorMessage.value = 'Benutzername oder Passwort ist falsch'
           } else if (error.response && error.response.status === 500) {
-            errorMessage.value = "Server Error";
+            errorMessage.value = 'Server Error'
           } else if (error.response && error.response.status === 404) {
-            errorMessage.value = "Server nicht erreichbar";
+            errorMessage.value = 'Server nicht erreichbar'
           } else if (error.response && error.response.status === 429) {
-            errorMessage.value = "Zu viele Anfragen";
+            errorMessage.value = 'Zu viele Anfragen'
           } else {
-            errorMessage.value = "Unbekannter Fehler";
+            errorMessage.value = 'Unbekannter Fehler'
           }
-        });
+        })
     } else {
-      loading.value = false;
-      errorMessage.value = "Bitte füllen Sie alle Felder aus";
+      loading.value = false
+      errorMessage.value = 'Bitte füllen Sie alle Felder aus'
     }
   }
-};
+}
 </script>
 
 <style scoped lang="scss">

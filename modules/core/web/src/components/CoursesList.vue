@@ -8,9 +8,9 @@
       <v-checkbox v-model="checkboxParticipation" label="Teilnahme" @change="filterCourseList"></v-checkbox>
     </v-row>
     <v-data-table :headers="headers" :items="displayedCourses" item-value="name" class="elevation-1" :search="search" density="default" height="480px" @click:row="openCourseOrSignUp">
-      <template #[`item.course.`]="{ item }">
-        <v-icon v-if="item.course.active == false" icon="mdi-close-circle" color="error"></v-icon>
-        <v-icon v-if="item.course.active == true" icon="mdi-check-circle" color="success"></v-icon>
+      <template #[`item.course.active`]="{ item }">
+        <v-icon v-if="!ifActiveSemester(item.course.semester as Semester)" icon="mdi-close-circle" color="gray"></v-icon>
+        <v-icon v-if="ifActiveSemester(item.course.semester as Semester)" icon="mdi-check-circle" color="success"></v-icon>
       </template>
       <template #[`item.member`]="{ item }">
         <v-icon v-if="item.member == true" icon="mdi-check-bold" color="success"></v-icon>
@@ -26,6 +26,8 @@ import { useAuthUserStore } from '../stores/authUserStore'
 import type CourseAndParticipationPL from '@/model/course/CourseAndParticipationPL'
 import courseService from '../services/course.service'
 import type { VDataTable } from 'vuetify/components'
+import type Semester from '@/model/Semester'
+import type { Course } from '@/model/course/Course'
 type ReadonlyHeaders = VDataTable['headers']
 
 const router = useRouter()
@@ -80,6 +82,11 @@ const filterCourseList = () => {
 const openCourseOrSignUp = (row: any, item: any) => {
   if (item.item.member == false) router.push('/course/' + item.item.course.id + '/signup')
   else router.push('/course/' + item.item.course.id)
+}
+
+const ifActiveSemester = (semester: Semester) => {
+  if (Date.now() > Date.parse(semester.startDate) && Date.now() < Date.parse(semester.endDate)) return true
+  else return false
 }
 
 defineExpose({

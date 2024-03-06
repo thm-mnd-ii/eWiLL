@@ -3,101 +3,101 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from "vue";
-import { ref } from "vue";
+import { onMounted } from 'vue'
+import { ref } from 'vue'
 
-import courseService from "../services/course.service";
-import taskService from "../services/task.service";
-import { watch } from "vue";
+import courseService from '../services/course.service'
+import taskService from '../services/task.service'
+import { watch } from 'vue'
 
 const items = ref<Array<{ title: string; disabled: boolean; href: string }>>([
   {
-    title: "Home",
+    title: 'Home',
     disabled: false,
-    href: "/",
-  },
-]);
+    href: '/#/'
+  }
+])
 
 //define props
 const props = defineProps<{
-  link: string;
-}>();
+  link: string
+}>()
 
 watch(
   () => props.link,
   () => {
     items.value = [
       {
-        title: "Home",
+        title: 'Home',
         disabled: false,
-        href: "/",
-      },
-    ];
-    calculateBreadCrumb();
+        href: '/#/'
+      }
+    ]
+    calculateBreadCrumb()
   }
-);
+)
 
 // define word replacement
 const wordReplacement = (word: string) => {
   switch (word) {
-    case "course":
-      return "Alle Kurse";
-    case "task":
-      return "Aufgabe";
+    case 'course':
+      return 'Alle Kurse'
+    case 'task':
+      return 'Aufgabe'
     default:
-      return word;
+      return word
   }
-};
+}
 
 onMounted(() => {
-  calculateBreadCrumb();
-});
+  calculateBreadCrumb()
+})
 
 const calculateBreadCrumb = async () => {
   // add items to breadcrumb
-  const path = props.link.split("/").filter((item) => item != "");
+  const path = props.link.split('/').filter((item) => item != '')
 
-  let breadcrumbItem: { title: string; disabled: boolean; href: string };
+  let breadcrumbItem: { title: string; disabled: boolean; href: string }
 
   for (let i = 0; i < path.length; i++) {
-    const item = path[i];
-    const title = wordReplacement(item);
+    const item = path[i]
+    const title = wordReplacement(item)
     // create relative link for item
-    const link = "/" + path.slice(0, i + 1).join("/");
-    const disabled = i == path.length - 1;
+    const link = '/#/' + path.slice(0, i + 1).join('/')
+    const disabled = i == path.length - 1
 
     breadcrumbItem = {
       title: title,
       disabled: disabled,
-      href: link,
-    };
+      href: link
+    }
 
     // if last item was course, replace id with course name
-    if (i > 0 && path[i - 1] == "course") {
+    if (i > 0 && path[i - 1] == 'course') {
       let newTitle = await courseService.getCourse(Number(path[i])).then((response) => {
-        return response.data.name;
-      });
+        return response.data.name
+      })
 
-      breadcrumbItem.title = newTitle;
+      breadcrumbItem.title = newTitle
 
-      items.value.push(breadcrumbItem);
+      items.value.push(breadcrumbItem)
     }
     // if last item was course, replace id with task name
-    else if (i > 0 && path[i - 1] == "task") {
+    else if (i > 0 && path[i - 1] == 'task') {
       let newTitle = await taskService.getTask(Number(path[i])).then((response) => {
-        return response.name;
-      });
+        return response.name
+      })
 
-      breadcrumbItem.title = newTitle;
+      breadcrumbItem.title = newTitle
 
-      items.value.push(breadcrumbItem);
-    } else if (path[i] == "task") {
-      continue;
+      items.value.push(breadcrumbItem)
+    } else if (path[i] == 'task') {
+      continue
     } else {
-      items.value.push(breadcrumbItem);
+      items.value.push(breadcrumbItem)
     }
   }
-};
+}
 
 // breadcrumb items
 </script>
