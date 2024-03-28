@@ -1,15 +1,10 @@
 package com.wipdev.eWiLL_backend.endpoints
 
 import com.wipdev.eWiLL_backend.database.tables.DiagramConfig
-import com.wipdev.eWiLL_backend.services.CourseService
-import com.wipdev.eWiLL_backend.services.DiagramConfigService
+import com.wipdev.eWiLL_backend.repository.DiagramConfigRepository
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/diagramConfig")
@@ -17,11 +12,34 @@ import org.springframework.web.bind.annotation.RestController
 class DiagramConfigController {
 
     @Autowired
-    lateinit var service: DiagramConfigService
+    lateinit var repository: DiagramConfigRepository
 
-    @PostMapping("/create")
-    fun create(@RequestBody diagramConfig: DiagramConfig): DiagramConfig = service.create(diagramConfig)
+    @PostMapping("/")
+    fun create(@RequestBody diagramConfig: DiagramConfig): DiagramConfig {
+        diagramConfig.id = null
+        return repository.save(diagramConfig)
+    }
 
-    @PutMapping("/update")
-    fun update(@RequestBody diagramConfig: DiagramConfig): DiagramConfig = service.update(diagramConfig)
+    @GetMapping("/{id}")
+    fun get(@PathVariable id: Long): DiagramConfig {
+        return repository.findById(id).get()
+    }
+
+    @GetMapping("/all")
+    fun getAll(): List<DiagramConfig> {
+        return repository.findAll().toList()
+    }
+
+    @PutMapping("/{id}")
+    fun update(@PathVariable id: Long, @RequestBody diagramConfig: DiagramConfig): DiagramConfig {
+        diagramConfig.id = id
+        return repository.save(diagramConfig)
+    }
+
+    @DeleteMapping("/{id}")
+    fun delete(@PathVariable id: Long) {
+        repository.deleteById(id)
+    }
+
+
 }
