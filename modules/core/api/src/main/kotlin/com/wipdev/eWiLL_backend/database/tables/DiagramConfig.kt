@@ -13,7 +13,7 @@ data class DiagramConfig(
     @Column(name = "name", nullable = false)
     var name: String? = null,
 
-    @Column(name = "diagramType", nullable = false)
+    @Column(name = "diagramType", nullable = true)
     var diagramType: String? = null,
 
     @ManyToMany(cascade = [CascadeType.ALL])

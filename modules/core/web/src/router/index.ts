@@ -21,6 +21,11 @@ const router = createRouter({
       component: () => import('../views/ViewDiagramConfig.vue')
     },
     {
+      path: '/diagramConfig/:id',
+      name: 'DiagramConfigDetail',
+      component: () => import('../views/ViewDiagramConfigDetail.vue')
+    },
+    {
       path: '/impressum',
       name: 'ViewImpressum',
       component: () => import('../views/ViewImpressum.vue')

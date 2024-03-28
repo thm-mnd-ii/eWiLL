@@ -6,8 +6,8 @@ import type Syntax from '@/model/diagram/DiagramSyntax'
 export default interface DiagramConfig {
   id: number
   name: string
-  diagramType: DiagramType
+  diagramType?: DiagramType
   elementTypes: ElementType[]
   connectionTypes: ConnectionType[]
-  diagramSyntax: Syntax
+  diagramSyntax?: Syntax
 }
