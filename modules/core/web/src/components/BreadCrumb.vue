@@ -44,6 +44,8 @@ const wordReplacement = (word: string) => {
       return 'Alle Kurse'
     case 'task':
       return 'Aufgabe'
+    case 'diagramConfig':
+      return 'Diagramm Konfigurator'
     default:
       return word
   }
