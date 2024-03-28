@@ -3,12 +3,11 @@ package com.wipdev.eWiLL_backend.services
 import com.wipdev.eWiLL_backend.database.tables.Task
 import com.wipdev.eWiLL_backend.endpoints.payload.requests.TaskPL
 import com.wipdev.eWiLL_backend.repository.TaskRepository
-import com.wipdev.eWiLL_backend.services.serviceInterfaces.ITaskService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-class TaskService : ITaskService {
+class TaskService {
 
     @Autowired
     lateinit var taskRepository: TaskRepository
@@ -16,15 +15,15 @@ class TaskService : ITaskService {
     @Autowired
     lateinit var diagramService: DiagramService
 
-    override fun getAll(courseId: Long): List<Task> {
+    fun getAll(courseId: Long): List<Task> {
         return taskRepository.findAllByCourseId(courseId)
     }
 
-    override fun getById(id: Long): Task {
+    fun getById(id: Long): Task {
         return taskRepository.findById(id).get()
     }
 
-    override fun create(courseId: Long, task: Task): Task {
+    fun create(courseId: Long, task: Task): Task {
         task.id = null
         val model = diagramService.getById(task.solutionModelId!!)
         model.id = null
@@ -35,7 +34,7 @@ class TaskService : ITaskService {
         return taskRepository.save(task)
     }
 
-    override fun update(id: Long, task: Task): Task {
+    fun update(id: Long, task: Task): Task {
         val assignmentEntity = taskRepository.findById(id).get()
         task.id = assignmentEntity.id
         if (task.solutionModelId != null && task.solutionModelId != assignmentEntity.solutionModelId
@@ -52,7 +51,7 @@ class TaskService : ITaskService {
         return task
     }
 
-    override fun delete(id: Long): Task {
+    fun delete(id: Long): Task {
         val assignment = getById(id)
         taskRepository.deleteById(id)
         return assignment

@@ -10,19 +10,16 @@ import com.wipdev.eWiLL_backend.eval.rules.ResultMessage
 import com.wipdev.eWiLL_backend.eval.rules.ResultMessageType
 import com.wipdev.eWiLL_backend.eval.rules.SubmissionResultWithResultMessages
 import com.wipdev.eWiLL_backend.repository.*
-import com.wipdev.eWiLL_backend.services.serviceInterfaces.IEvaluationService
 import com.wipdev.eWiLL_backend.utils.TimeUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.stream.Collectors.toList
 
 
 @Service
-class EvaluationService : IEvaluationService {
+class EvaluationService {
 
     @Autowired
     lateinit var resultRepository: ResultRepository
@@ -40,7 +37,7 @@ class EvaluationService : IEvaluationService {
     lateinit var submissionRepository: SubmissionRepository
 
 
-    override fun submit(submissionRequestPL: SubmissionRequestPL): Long? {
+    fun submit(submissionRequestPL: SubmissionRequestPL): Long? {
         val diagram = diagramRepository.getReferenceById(submissionRequestPL.diagramId)
         val submission = Submission()
 
@@ -151,14 +148,14 @@ class EvaluationService : IEvaluationService {
 
 
 
-    override fun getNewestSubmission(userId: Long, taskId: Long): SubmissionWithDiagram {
+    fun getNewestSubmission(userId: Long, taskId: Long): SubmissionWithDiagram {
         return getAsSubmissionWithDiagram(
             submissionRepository.findFirstByUserIdAndTaskIdOrderByDateDesc(userId, taskId)!!
         )
     }
 
 
-    override fun getSubmissionResultBySubmissionId(id: Long?): SubmissionResult? =
+    fun getSubmissionResultBySubmissionId(id: Long?): SubmissionResult? =
         resultRepository.findBySubmissionId(id!!)
 
 

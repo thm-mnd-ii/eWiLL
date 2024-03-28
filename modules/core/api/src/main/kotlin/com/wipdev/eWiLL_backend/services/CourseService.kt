@@ -8,7 +8,6 @@ import com.wipdev.eWiLL_backend.endpoints.payload.CourseUser
 import com.wipdev.eWiLL_backend.repository.CourseRepository
 import com.wipdev.eWiLL_backend.repository.CourseRoleRepository
 import com.wipdev.eWiLL_backend.repository.UserRepository
-import com.wipdev.eWiLL_backend.services.serviceInterfaces.ICourseService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -18,7 +17,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 @Service
-class CourseService : ICourseService {
+class CourseService {
 
     @Autowired
     lateinit var repository: CourseRepository
@@ -29,18 +28,18 @@ class CourseService : ICourseService {
     @Autowired
     lateinit var userRepository: UserRepository
 
-    override fun getAll(userId: Long): List<CourseEntry> {
+    fun getAll(userId: Long): List<CourseEntry> {
         val list: MutableList<CourseEntry> = mutableListOf()
         repository.findAll()
             .forEach { list.add(CourseEntry(it, courseRoleRepository.existsByCourseIdAndUserId(it.id!!, userId))) }
         return list
     }
 
-    override fun getById(id: Long): Course {
+    fun getById(id: Long): Course {
         return repository.findById(id).get()
     }
 
-    override fun create(course: Course): Course {
+    fun create(course: Course): Course {
         val currentDateTime = LocalDateTime.now()
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
         val formattedDateTime = currentDateTime.format(formatter)
@@ -55,7 +54,7 @@ class CourseService : ICourseService {
         return savedCourse
     }
 
-    override fun update(id: Long, course: Course): Course {
+    fun update(id: Long, course: Course): Course {
         val oldCourse = repository.findById(id).get()
         oldCourse.name = course.name
         oldCourse.description = course.description
@@ -66,17 +65,17 @@ class CourseService : ICourseService {
         return repository.save(oldCourse)
     }
 
-    override fun delete(id: Long) {
+    fun delete(id: Long) {
         repository.deleteById(id)
     }
 
-    override fun getCourseByUserId(id: Long): List<Course> {
+    fun getCourseByUserId(id: Long): List<Course> {
         val list: MutableList<Course> = mutableListOf()
         repository.findAll().forEach { if (it.owner == id) list.add(it) }
         return list
     }
 
-    override fun getStudentsByCourseId(id: Long): List<CourseUser> {
+    fun getStudentsByCourseId(id: Long): List<CourseUser> {
         val list: MutableList<CourseUser> = mutableListOf()
         courseRoleRepository.findAll().forEach {
             if (it.courseId == id)
@@ -90,7 +89,7 @@ class CourseService : ICourseService {
         return list
     }
 
-    override fun joinCourse(id: Long, keyPass: String, userId: Long): CourseUserRole {
+    fun joinCourse(id: Long, keyPass: String, userId: Long): CourseUserRole {
 
         val course = repository.findById(id).get()
         if (course.keyPassword == keyPass) {
@@ -110,7 +109,7 @@ class CourseService : ICourseService {
 
     }
 
-    override fun leaveCourse(id: Long, userId: Long): Course {
+    fun leaveCourse(id: Long, userId: Long): Course {
         val course = repository.findById(id).get()
         if (courseRoleRepository.existsByCourseIdAndUserId(id, userId)) {
             courseRoleRepository.deleteByCourseIdAndUserId(id, userId)
@@ -118,11 +117,11 @@ class CourseService : ICourseService {
         return course
     }
 
-    override fun hasKeyPass(id: Long): Boolean {
+    fun hasKeyPass(id: Long): Boolean {
         return repository.findById(id).get().keyPassword != null
     }
 
-    override fun removeAllButOwner(id: Long): Course {
+    fun removeAllButOwner(id: Long): Course {
         courseRoleRepository.findAll().forEach {
             if (it.courseId == id && it.role != ECourseRole.OWNER) courseRoleRepository.delete(
                 it
@@ -131,13 +130,13 @@ class CourseService : ICourseService {
         return repository.findById(id).get()
     }
 
-    override fun archiveCourse(id: Long): Course {
+    fun archiveCourse(id: Long): Course {
         val course = repository.findById(id).get()
         course.active = false
         return repository.save(course)
     }
 
-    override fun changeUserRole(
+    fun changeUserRole(
         courseId: Long,
         userId: Long,
         role: ECourseRole,
@@ -158,7 +157,7 @@ class CourseService : ICourseService {
         }
     }
 
-    override fun getUserRoleInCourse(courseId: Long, userId: Long): ECourseRole? {
+    fun getUserRoleInCourse(courseId: Long, userId: Long): ECourseRole? {
         return try {
             courseRoleRepository.findAll().first { it.courseId == courseId && it.userId == userId }.role
         } catch (e: NoSuchElementException) {

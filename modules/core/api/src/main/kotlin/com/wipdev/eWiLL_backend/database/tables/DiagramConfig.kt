@@ -6,7 +6,7 @@ import javax.persistence.*
 @Table(name = "diagram_config")
 data class DiagramConfig(
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "diagram_config_id_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", nullable = false)
     var id: Long? = null,
 
