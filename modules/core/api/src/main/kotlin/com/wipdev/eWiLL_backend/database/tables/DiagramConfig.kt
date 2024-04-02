@@ -1,5 +1,7 @@
 package com.wipdev.eWiLL_backend.database.tables
 
+import java.sql.Date
+import java.sql.Timestamp
 import javax.persistence.*
 
 @Entity
@@ -13,8 +15,18 @@ data class DiagramConfig(
     @Column(name = "name", nullable = false)
     var name: String? = null,
 
-    @Column(name = "diagramType", nullable = true)
+    @Column(name = "diagramType")
     var diagramType: String? = null,
+
+    @Column(name = "creationDate")
+    var creationDate: Timestamp? = null,
+
+    @Column(name = "lastModified")
+    var lastModified: Timestamp? = null,
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "createdBy")
+    var createdBy: User? = null,
 
     @ManyToMany(cascade = [CascadeType.ALL])
     @JoinTable(

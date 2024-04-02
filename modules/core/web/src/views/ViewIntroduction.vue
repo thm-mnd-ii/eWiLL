@@ -1,5 +1,5 @@
 <template>
-  <BasicBackground> 
+  <BasicBackground>
     <v-card class="card">
       <v-card-title class="title">
         <span>Herzlich willkommen...</span>
@@ -17,11 +17,10 @@
 </template>
 
 <script setup lang="ts">
-import BasicBackground from '@/components/BasicBackground.vue';
+import BasicBackground from '@/components/BasicBackground.vue'
 </script>
 
 <style scoped lang="scss">
-
 .card {
   width: 700px;
   margin: auto;

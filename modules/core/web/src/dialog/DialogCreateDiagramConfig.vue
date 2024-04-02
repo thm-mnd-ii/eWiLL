@@ -27,15 +27,20 @@
 
 <script setup lang="ts">
 import type DiagramConfig from '@/model/diagram/DiagramConfig'
+import type UserPL from '@/model/UserPL'
+import { useAuthUserStore } from '../stores/authUserStore'
 import { ref } from 'vue'
 import diagramConfigService from '@/services/diagramConfig.service'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
+const authUserStore = useAuthUserStore()
 
 const createDiagramConfigDialog = ref<boolean>(false)
 
-const diagramConfig = ref<DiagramConfig>({} as DiagramConfig)
+const diagramConfig = ref<DiagramConfig>({
+  createdBy: {} as UserPL
+} as DiagramConfig)
 const ruleName = [(v: string) => !!v || 'Name is required']
 const loading = ref(false)
 const valid = ref(false)
@@ -64,7 +69,9 @@ const openDialog = () => {
 const _confirm = () => {
   loading.value = true
 
-  if (valid.value) {
+  if (valid.value && authUserStore.user != null) {
+    diagramConfig.value.createdBy.id = authUserStore.user.id
+
     diagramConfigService
       .create(diagramConfig.value)
       .then((response) => {

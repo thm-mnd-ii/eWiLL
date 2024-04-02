@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*
 @Tag(name = "Course", description = "Course API")
 class CourseController {
 
- 
+
     @Autowired
     lateinit var service: CourseService
 
