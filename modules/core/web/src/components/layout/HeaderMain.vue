@@ -18,7 +18,7 @@
       <v-list-item to="/home" active-class="active" prepend-icon="mdi-home-variant" title="Startseite" value="home" />
       <v-list-item to="/course" active-class="active" prepend-icon="mdi-file-multiple" title="Alle Kurse" value="course" />
       <v-list-item to="/modeling" active-class="active" prepend-icon="mdi-pencil-ruler" title="Modellierung" value="modeling" />
-      <v-list-item to="/diagramConfig" active-class="active" prepend-icon="mdi-cog" title="Diagramm Konfiguration" value="diagramConfig" />
+      <v-list-item v-if="admin" to="/diagramConfig" active-class="active" prepend-icon="mdi-cog" title="Diagramm Konfiguration" value="diagramConfig" />
 
       <v-list-item to="/feedbackReport" active-class="active" prepend-icon="mdi-bug" title="Feedback" value="report" />
       <v-list-item v-if="admin" to="/feedbackOverview" active-class="active" prepend-icon="mdi-view-dashboard-variant-outline" title="Feedback Overview" value="report" />
@@ -40,6 +40,10 @@
       <v-btn to="/modeling" active-class="active" prepend-icon="mdi-pencil-ruler">
         <span v-if="!smAndDown"> Modellierung </span>
         <v-tooltip v-if="smAndDown" activator="parent" location="bottom"> Modellierung </v-tooltip>
+      </v-btn>
+      <v-btn v-if="admin" to="/diagramConfig" active-class="active" prepend-icon="mdi-cog">
+        <span v-if="!smAndDown"> Diagramm Konfiguration </span>
+        <v-tooltip v-if="smAndDown" activator="parent" location="bottom"> Diagramm Konfiguration </v-tooltip>
       </v-btn>
       <v-btn to="/feedbackReport" active-class="active" prepend-icon="mdi-bug">
         <span v-if="!smAndDown"> Feedback </span>
