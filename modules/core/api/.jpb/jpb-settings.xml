@@ -3,4 +3,13 @@
   <component name="JpaPluginProjectSettings">
     <option name="lastSelectedLanguage" value="Kotlin" />
   </component>
+  <component name="PersistenceUnitSettings">
+    <persistence-units>
+      <persistence-unit name="Default">
+        <packages>
+          <package value="com.wipdev.eWiLL_backend" />
+        </packages>
+      </persistence-unit>
+    </persistence-units>
+  </component>
 </project>
