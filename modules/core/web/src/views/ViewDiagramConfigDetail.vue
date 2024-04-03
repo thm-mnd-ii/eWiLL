@@ -41,10 +41,10 @@
                   <template #[`item.1`]>
                     <v-card title="Schritt Eins" flat>
                       <!-- show svg file -->
-                      <img v-if="fileTargetResult" :src="fileTargetResult" alt="Vorschau" width="100" height="100" />
+                      <ElementWrapper :svg-object="svgObject" />
 
                       <!-- input file -->
-                      <v-file-input v-model="fileInput" :rules="fileRules" label="Icon hochladen" accept="image/svg+xml" validate-on="input" show-size earable @update:model-value="showFile"></v-file-input>
+                      <v-file-input v-model="fileInput" :rules="fileRules" label="Icon hochladen" accept="image/svg+xml" validate-on="input" show-size earable @update:model-value="updateFile"></v-file-input>
                     </v-card>
                   </template>
 
@@ -102,6 +102,7 @@ import { useRoute } from 'vue-router'
 import type DiagramConfig from '@/model/diagram/DiagramConfig'
 import diagramConfigService from '@/services/diagramConfig.service'
 import type UserPL from '@/model/UserPL'
+import ElementWrapper from '@/components/modelingTool/ElementWrapper.vue'
 
 const route = useRoute()
 
@@ -118,7 +119,8 @@ const snackbar = ref({
 const fileRules = ref([(v: File | null) => !!v || 'Datei ist erforderlich'])
 
 const fileInput = ref<File[]>()
-const fileTargetResult = ref<string>()
+
+const svgObject = ref<SVGElement>(document.createElementNS('http://www.w3.org/2000/svg', 'svg'))
 
 const tab = ref<number>(0)
 const step = ref<number>(0)
@@ -149,15 +151,19 @@ onMounted(() => {
   }
 })
 
-const showFile = (files: File[]) => {
+const updateFile = (files: File[]) => {
   if (files[0] && files[0].type === 'image/svg+xml') {
     const reader = new FileReader()
     reader.onload = (e) => {
-      fileTargetResult.value = e.target?.result as string
+      const parser = new DOMParser()
+      const htmlElement = parser.parseFromString(e.target?.result as string, 'image/svg+xml').documentElement
+      svgObject.value = htmlElement as unknown as SVGElement
     }
-    reader.readAsDataURL(files[0])
+    reader.readAsText(files[0])
   } else {
-    fileTargetResult.value = undefined
+    snackbar.value.show = true
+    snackbar.value.text = 'Bitte laden Sie ein SVG-Bild hoch.'
+    snackbar.value.color = 'error'
   }
 }
 
