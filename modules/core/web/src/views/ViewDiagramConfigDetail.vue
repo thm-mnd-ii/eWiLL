@@ -41,7 +41,7 @@
                   <template #[`item.1`]>
                     <v-card title="Schritt Eins" flat>
                       <!-- show svg file -->
-                      <ElementWrapper :svg-object="svgObject" />
+                      <ElementWrapper :svg-object="svgObject" height="100" />
 
                       <!-- input file -->
                       <v-file-input v-model="fileInput" :rules="fileRules" label="Icon hochladen" accept="image/svg+xml" validate-on="input" show-size earable @update:model-value="updateFile"></v-file-input>
