@@ -18,7 +18,7 @@ data class Task(
     var name: String? = null,
 
     @Column(name = "description", nullable = false, length = 100000)
-    var description: String? = null,
+    var description: String? = "",
 
     @Column(name = "dueDate", nullable = false)
     var dueDate: String? = null,

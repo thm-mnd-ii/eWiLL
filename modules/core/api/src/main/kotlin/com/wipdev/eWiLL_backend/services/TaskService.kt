@@ -26,12 +26,15 @@ class TaskService : ITaskService {
 
     override fun create(courseId: Long, task: Task): Task {
         task.id = null
-        val model = diagramService.getById(task.solutionModelId!!)
-        model.id = null
-        model.name = task.name + " - solution model"
-        model.ownerId = -1
-        val newDiagramId = diagramService.create(model)
-        task.solutionModelId = newDiagramId
+        if (task.solutionModelId != null) {
+            val model = diagramService.getById(task.solutionModelId!!)
+            model.id = null
+            model.name = task.name + " - solution model"
+            model.ownerId = -1
+            val newDiagramId = diagramService.create(model)
+            task.solutionModelId = newDiagramId
+        }
+
         return taskRepository.save(task)
     }
 

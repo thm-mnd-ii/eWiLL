@@ -5,9 +5,11 @@
         <v-form ref="taskForm" v-model="valid" class="task-form-grid">
           <div>
             <v-text-field v-model="currentTask.name" label="Name" :rules="nameRules" variant="underlined" color="primary"></v-text-field>
-            <v-textarea v-model="currentTask.description" label="Beschreibung" :rules="descriptionRules" variant="underlined" color="primary"></v-textarea>
-            <v-select v-model="selectedCategoryId" label="Ordner" :rules="modelRules" variant="underlined" :items="categories" item-title="name" item-value="id" color="primary" @update:model-value="updateDiagrams"></v-select>
-            <v-select v-model="currentTask.solutionModelId" label="Musterdiagram" :rules="modelRules" variant="underlined" :items="diagrams" item-title="name" item-value="id" color="primary"></v-select>
+            <v-textarea v-model="currentTask.description" label="Beschreibung" variant="underlined" color="primary"></v-textarea>
+
+            <v-select v-model="selectedCategoryId" :disabled="emptySolution" label="Ordner" :rules="modelRules" variant="underlined" :items="categories" item-title="name" item-value="id" color="primary" @update:model-value="updateDiagrams"></v-select>
+            <v-select v-model="currentTask.solutionModelId" :disabled="emptySolution" label="Musterdiagram" :rules="modelRules" variant="underlined" :items="diagrams" item-title="name" item-value="id" color="primary"></v-select>
+            <v-checkbox v-model="emptySolution" label="Leeres Musterdiagram" color="primary" :hide-details="true"></v-checkbox>
           </div>
           <div>
             <v-text-field v-model="currentTask.dueDate" :rules="dueDateRules" label="Deadline" variant="underlined" color="primary" hint="DD.MM.YYYY HH:MM"></v-text-field>
@@ -36,240 +38,248 @@
 </template>
 
 <script setup lang="ts">
-import type Task from "@/model/task/Task";
-import type Category from "@/model/diagram/Category";
-import type Diagram from "@/model/diagram/Diagram";
-import diagramService from "@/services/diagram.service";
-import { ref } from "vue";
-import { useAuthUserStore } from "@/stores/authUserStore";
-import { useRoute } from "vue-router";
-import taskService from "@/services/task.service";
-import router from "@/router";
-import DialogConfirmVue from "../dialog/DialogConfirm.vue";
-import FeedbackLevel from "@/enums/FeedbackLevel";
-import TaskLevel from "@/enums/TaskLevel";
+import type Task from '@/model/task/Task'
+import type Category from '@/model/diagram/Category'
+import type Diagram from '@/model/diagram/Diagram'
+import diagramService from '@/services/diagram.service'
+import { ref } from 'vue'
+import { useAuthUserStore } from '@/stores/authUserStore'
+import { useRoute } from 'vue-router'
+import taskService from '@/services/task.service'
+import router from '@/router'
+import DialogConfirmVue from '../dialog/DialogConfirm.vue'
+import FeedbackLevel from '@/enums/FeedbackLevel'
+import TaskLevel from '@/enums/TaskLevel'
 
-const arrayMaxSubmissions = Array.from(Array(100).keys());
+const arrayMaxSubmissions = Array.from(Array(100).keys())
 
-const authUserStore = useAuthUserStore();
-const route = useRoute();
+const authUserStore = useAuthUserStore()
+const route = useRoute()
 
-const editTaskDialog = ref<boolean>(false);
-const dialogConfirm = ref<typeof DialogConfirmVue>();
+const editTaskDialog = ref<boolean>(false)
+const dialogConfirm = ref<typeof DialogConfirmVue>()
 
-const snackbarFail = ref(false);
-const editTitle = ref<string>("");
-const newTask = ref(false);
-const currentTask = ref<Task>({} as Task);
-const loading = ref(false);
-const maxSubmissions = ref();
-const categories = ref<Category[]>([]);
-const diagrams = ref<Diagram[]>([]);
+const snackbarFail = ref(false)
+const editTitle = ref<string>('')
+const newTask = ref(false)
+const currentTask = ref<Task>({} as Task)
+const emptySolution = ref<boolean>(false)
+const loading = ref(false)
+const maxSubmissions = ref()
+const categories = ref<Category[]>([])
+const diagrams = ref<Diagram[]>([])
 
 // map enum to german names
 const levelOptions = ref<any[]>([
-  { name: "Leicht", enum: TaskLevel.EASY },
-  { name: "Mittel", enum: TaskLevel.MODERATE },
-  { name: "Schwer", enum: TaskLevel.HARD },
-]);
+  { name: 'Leicht', enum: TaskLevel.EASY },
+  { name: 'Mittel', enum: TaskLevel.MODERATE },
+  { name: 'Schwer', enum: TaskLevel.HARD }
+])
 
-const selectedLevel = ref("levelOptions");
+const selectedLevel = ref('levelOptions')
 const liabilities = ref<any[]>([
-  { name: "Verpflichtend", enum: "MANDATORY" },
-  { name: "Bonus", enum: "BONUS" },
-  { name: "Optional", enum: "OPTIONAL" },
-]);
+  { name: 'Verpflichtend', enum: 'MANDATORY' },
+  { name: 'Bonus', enum: 'BONUS' },
+  { name: 'Optional', enum: 'OPTIONAL' }
+])
 
 const feedbackLevel = new Map<number, FeedbackLevel>([
   [0, FeedbackLevel.NOTHING],
   [1, FeedbackLevel.BASIC],
   [2, FeedbackLevel.INFO],
   [3, FeedbackLevel.DEBUG],
-  [4, FeedbackLevel.ERROR],
-]);
-type ValidationRule = (value: string) => boolean | string;
+  [4, FeedbackLevel.ERROR]
+])
+type ValidationRule = (value: string) => boolean | string
 
-const isDisabled = ref<boolean>(true);
-const taskForm = ref<any>();
-const valid = ref(false);
-const selectedCategoryId = ref<number>();
-const selectedDiagramId = ref<number>();
-const sliderPosition = ref();
-const nameRules = ref<ValidationRule[]>([(v: string) => !!v || "Name ist erforderlich"]);
-const descriptionRules = ref<ValidationRule[]>([(v: string) => !!v || "Beschreibung ist erforderlich"]);
-const modelRules = ref<ValidationRule[]>([(v: string) => !!v || "Musterdiagramm ist erforderlich"]);
-const regex = /^([0-2][0-9]|3[0-1])\.(0[1-9]|1[0-2])\.\d{4} ([01][0-9]|2[0-3]):[0-5][0-9]$/;
-const dueDateRules = ref<ValidationRule[]>([(v: string) => (!!v && regex.test(v)) || "Ungültiges Datum dd.mm.yyyy hh:mm"]);
-const liabilityRules = ref<ValidationRule[]>([(v: string) => !!v || "Verpflichtung ist erforderlich"]);
-const levelrules = ref<ValidationRule[]>([(v: string) => !!v || "Level ist erforderlich"]);
+const isDisabled = ref<boolean>(true)
+const taskForm = ref<any>()
+const valid = ref(false)
+const selectedCategoryId = ref<number>()
+const selectedDiagramId = ref<number>()
+const sliderPosition = ref()
+
+const nameRules = ref<ValidationRule[]>([(v: string) => !!v || 'Name ist erforderlich'])
+const modelRules = ref<ValidationRule[]>([(v: string) => emptySolution.value || !!v || 'Musterdiagramm ist erforderlich'])
+const regex = /^([0-2][0-9]|3[0-1])\.(0[1-9]|1[0-2])\.\d{4} ([01][0-9]|2[0-3]):[0-5][0-9]$/
+const dueDateRules = ref<ValidationRule[]>([(v: string) => (!!v && regex.test(v)) || 'Ungültiges Datum dd.mm.yyyy hh:mm'])
+const liabilityRules = ref<ValidationRule[]>([(v: string) => !!v || 'Verpflichtung ist erforderlich'])
+const levelrules = ref<ValidationRule[]>([(v: string) => !!v || 'Level ist erforderlich'])
 
 // empty, or should be a valid date and in the future
 // const dueDateRules = ref<any>([(v: string) => !v || (new Date(v) > new Date() && !isNaN(new Date(v).getTime())) || "Ungültiges Datum"]);
 
 const getCategories = (uId: number) => {
   diagramService.getCategories(uId).then((response) => {
-    categories.value = response.data;
-  });
-};
+    categories.value = response.data
+  })
+}
 
 const updateDiagrams = (categoryId: number) => {
   diagramService.getDiagramsByUserId(authUserStore.auth.user?.id as number).then((response) => {
-    selectedDiagramId.value = undefined;
-    diagrams.value = response.data.filter((d) => d.categoryId == categoryId);
-  });
-};
+    selectedDiagramId.value = undefined
+    diagrams.value = response.data.filter((d) => d.categoryId == categoryId)
+  })
+}
 
 // Necessary since the solution model is not owned by the user
 const updateDiagramsIncludingSolutionModel = () => {
+  if (currentTask.value.solutionModelId == null) return
+
   diagramService.getDiagramById(currentTask.value.solutionModelId).then((response) => {
-    selectedCategoryId.value = response.data.categoryId;
-    let solutionModel = response.data;
+    selectedCategoryId.value = response.data.categoryId
+    let solutionModel = response.data
 
     diagramService.getDiagramsByUserId(authUserStore.auth.user?.id as number).then((response) => {
-      selectedDiagramId.value = undefined;
-      diagrams.value = response.data.filter((d) => d.categoryId == selectedCategoryId.value);
-      diagrams.value.push(solutionModel);
-    });
-  });
-};
+      selectedDiagramId.value = undefined
+      diagrams.value = response.data.filter((d) => d.categoryId == selectedCategoryId.value)
+      diagrams.value.push(solutionModel)
+    })
+  })
+}
 
 // #############################
 // Promise
-const resolvePromise: any = ref(undefined);
-const rejectPromise: any = ref(undefined);
+const resolvePromise: any = ref(undefined)
+const rejectPromise: any = ref(undefined)
 
 const openDialog = (task?: Task) => {
-  loading.value = false;
-  diagrams.value = [];
-  editTaskDialog.value = true;
-  let userId = authUserStore.auth.user?.id!;
-  getCategories(userId);
+  loading.value = false
+  diagrams.value = []
+  editTaskDialog.value = true
+  let userId = authUserStore.auth.user?.id!
+  getCategories(userId)
 
   if (task) {
-    editTitle.value = "Aufgabe bearbeiten";
-    currentTask.value = task;
-    newTask.value = false;
-    loadShowLevel(task.showLevel);
-    updateDiagramsIncludingSolutionModel();
+    editTitle.value = 'Aufgabe bearbeiten'
+    currentTask.value = task
+    if (currentTask.value.solutionModelId == null) emptySolution.value = true
+    else emptySolution.value = false
+
+    newTask.value = false
+    loadShowLevel(task.showLevel)
+    updateDiagramsIncludingSolutionModel()
   } else {
-    editTitle.value = "Neue Aufgabe erstellen";
-    currentTask.value = {} as Task;
-    currentTask.value.courseId = Number(route.params.id);
-    currentTask.value.mediaType = "MODEL";
-    currentTask.value.rulesetId = 0;
-    currentTask.value.showLevel = FeedbackLevel.NOTHING;
-    currentTask.value.taskLevel = TaskLevel.EASY;
-    newTask.value = true;
+    editTitle.value = 'Neue Aufgabe erstellen'
+    currentTask.value = {} as Task
+    currentTask.value.courseId = Number(route.params.id)
+    currentTask.value.mediaType = 'MODEL'
+    currentTask.value.rulesetId = 0
+    currentTask.value.showLevel = FeedbackLevel.NOTHING
+    currentTask.value.taskLevel = TaskLevel.EASY
+    newTask.value = true
   }
 
   return new Promise((resolve, reject) => {
-    resolvePromise.value = resolve;
-    rejectPromise.value = reject;
-  });
-};
+    resolvePromise.value = resolve
+    rejectPromise.value = reject
+  })
+}
 
 const _confirm = () => {
-  loading.value = true;
+  loading.value = true
+
+  if (emptySolution.value) currentTask.value.solutionModelId = null
 
   taskForm.value
     .validate()
     .then(() => {
       if (valid.value) {
-        currentTask.value.mediaType = currentTask.value.mediaType.toUpperCase();
+        currentTask.value.mediaType = currentTask.value.mediaType.toUpperCase()
         if (newTask.value) {
           taskService
             .postTask(currentTask.value)
             .then(() => {
-              editTaskDialog.value = false;
-              resolvePromise.value(true);
+              editTaskDialog.value = false
+              resolvePromise.value(true)
             })
             .catch((error) => {
-              console.error(error);
-              snackbarFail.value = true;
-              loading.value = false;
+              console.error(error)
+              snackbarFail.value = true
+              loading.value = false
             })
             .finally(() => {
               setTimeout(() => {
-                loading.value = false;
-              }, 2000);
-            });
+                loading.value = false
+              }, 2000)
+            })
         } else {
           taskService
             .putTask(currentTask.value.id, currentTask.value)
             .then(() => {
-              editTaskDialog.value = false;
-              resolvePromise.value(true);
+              editTaskDialog.value = false
+              resolvePromise.value(true)
             })
             .catch((error) => {
-              console.error(error);
-              snackbarFail.value = true;
-              loading.value = false; // Set loading to false here in case of error
+              console.error(error)
+              snackbarFail.value = true
+              loading.value = false // Set loading to false here in case of error
             })
             .finally(() => {
               setTimeout(() => {
-                loading.value = false;
-              }, 2000);
-            });
+                loading.value = false
+              }, 2000)
+            })
         }
       } else {
-        loading.value = false;
+        loading.value = false
       }
     })
     .catch(() => {
-      loading.value = false;
-    });
-};
+      loading.value = false
+    })
+}
 
 const _cancel = () => {
-  categories.value = [];
-  selectedCategoryId.value = undefined;
-  editTaskDialog.value = false;
-  resolvePromise.value(false);
-};
+  categories.value = []
+  selectedCategoryId.value = undefined
+  editTaskDialog.value = false
+  resolvePromise.value(false)
+}
 
 const deleteTask = () => {
-  dialogConfirm.value?.openDialog(`Lösche Aufgabe`, "Willst du die Aufgabe wirklich löschen?").then((result: boolean) => {
+  dialogConfirm.value?.openDialog(`Lösche Aufgabe`, 'Willst du die Aufgabe wirklich löschen?').then((result: boolean) => {
     if (result) {
       taskService.deleteTask(currentTask.value.id).then(() => {
-        router.push("/course/" + currentTask.value.courseId);
-      });
+        router.push('/course/' + currentTask.value.courseId)
+      })
     }
-  });
-};
+  })
+}
 
 const updateMaxSubmissionsOnCurrentTask = (submissions: any) => {
-  if (submissions == 0) currentTask.value.maxSubmissions = 999;
-  else currentTask.value.maxSubmissions = submissions;
-};
+  if (submissions == 0) currentTask.value.maxSubmissions = 999
+  else currentTask.value.maxSubmissions = submissions
+}
 
 const updateShowLevel = (value: any) => {
-  currentTask.value.showLevel = feedbackLevel.get(value)!;
-};
+  currentTask.value.showLevel = feedbackLevel.get(value)!
+}
 
 const loadShowLevel = (level: string) => {
   feedbackLevel.forEach((value, key) => {
-    if (value == level) sliderPosition.value = key;
-  });
-};
+    if (value == level) sliderPosition.value = key
+  })
+}
 /*place holder for the level-Reckognition Function*/
 const levelReckognition = (value: TaskLevel) => {
   switch (value) {
     case TaskLevel.EASY:
-      selectedLevel.value = TaskLevel.EASY;
-      break;
+      selectedLevel.value = TaskLevel.EASY
+      break
     case TaskLevel.MODERATE:
-      selectedLevel.value = TaskLevel.MODERATE;
-      break;
+      selectedLevel.value = TaskLevel.MODERATE
+      break
     case TaskLevel.HARD:
-      selectedLevel.value = TaskLevel.HARD;
-      break;
+      selectedLevel.value = TaskLevel.HARD
+      break
   }
-};
+}
 
 // define expose
 defineExpose({
-  openDialog,
-});
+  openDialog
+})
 </script>
 
 <style scoped>

@@ -8,7 +8,7 @@ export default interface Task {
   dueDate: string;
   mediaType: string;
   courseId: number;
-  solutionModelId: number;
+  solutionModelId: number | null;
   rulesetId: number;
   eliability: string;
   maxSubmissions: number;

@@ -9,13 +9,13 @@
         <v-card-text>
           <v-row>
             <v-col>
-              <v-text-field v-model="course.name" color="primary" variant="underlined" label="Name" :rules="[(v: any) => !!v || 'Item is required']" required></v-text-field>
-              <v-text-field v-model="course.description" color="primary" variant="underlined" label="Beschreibung" :rules="[(v: any) => !!v || 'Item is required']" required></v-text-field>
-              <v-text-field v-model="course.keyPassword" color="primary" variant="underlined" label="Passwort" :rules="[(v: any) => !!v || 'Item is required']" required></v-text-field>
+              <v-text-field v-model="course.name" color="primary" variant="underlined" label="Name" :rules="[(v: any) => !!v || 'Name is required']" required></v-text-field>
+              <v-text-field v-model="course.description" color="primary" variant="underlined" label="Beschreibung"></v-text-field>
+              <v-text-field v-model="course.keyPassword" color="primary" variant="underlined" label="Passwort (Keep empty for public course)"></v-text-field>
             </v-col>
             <v-col>
-              <v-select v-model="course.semester" color="primary" variant="underlined" label="Semester" :rules="[(v: any) => !!v || 'Item is required']" required :items="semesters" item-title="name" return-object></v-select>
-              <v-select v-model="course.location" color="primary" variant="underlined" label="Standort" :items="['Friedberg', 'Gießen']" :rules="[(v: any) => !!v || 'Item is required']" required></v-select>
+              <v-select v-model="course.semester" color="primary" variant="underlined" label="Semester" :rules="[(v: any) => !!v || 'Semester is required']" required :items="semesters" item-title="name" return-object></v-select>
+              <v-select v-model="course.location" color="primary" variant="underlined" label="Standort" :items="['Friedberg', 'Gießen']" :rules="[(v: any) => !!v || 'Standort is required']" required></v-select>
             </v-col>
           </v-row>
         </v-card-text>
@@ -54,7 +54,12 @@ const semesters = ref<Semester[]>([])
 
 // New Course or editing existing course
 const newCourse = ref(true)
-const course = ref<CoursePL>({} as CoursePL)
+const course = ref<CoursePL>({
+  name: '',
+  description: '',
+  keyPassword: '',
+  location: ''
+} as CoursePL)
 
 const snackbarFail = ref(false)
 const loading = ref(false)
