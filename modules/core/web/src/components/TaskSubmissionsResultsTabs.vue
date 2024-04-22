@@ -2,21 +2,24 @@
   <v-card class="task-trials-tabs">
     <v-tabs v-model="selectedResultTab" bg-color="teal-darken-3" slider-color="teal-lighten-3">
       <v-tab v-for="tab in submissions" :key="tab.attempt" :value="tab.attempt">
-        {{ 'Ergebnis ' + tab.attempt }}
+        {{ 'Einreichung ' + tab.attempt }}
       </v-tab>
     </v-tabs>
     <v-window v-model="selectedResultTab">
       <v-window-item v-for="tab in submissions" :key="tab.attempt" :value="tab.attempt">
         <v-card flat>
           <v-card-text class="task-trials-text">
-            <v-chip v-if="selectedResult.correct" color="green" append-icon="mdi-check-circle" class="margin-right-5px">Korrekt: </v-chip>
-            <v-chip v-if="!selectedResult.correct" color="red" append-icon="mdi-close-circle" class="margin-right-5px">Fehlerhaft: </v-chip>
-            <v-chip v-if="selectedResult.correct" color="green">Score: {{ selectedResult.score }}</v-chip>
-            <v-chip v-if="!selectedResult.correct" color="red">Score: {{ selectedResult.score }}</v-chip>
-            <br />
-            <br />
+            <v-chip v-if="!currentTask.solutionModelId" color="green" append-icon="mdi-check-circle" class="margin-right-5px">Abgabe erfolgreich</v-chip>
+
+            <div v-if="currentTask.solutionModelId">
+              <v-chip v-if="selectedResult.correct" color="green" append-icon="mdi-check-circle" class="margin-right-5px">Korrekt: </v-chip>
+              <v-chip v-if="!selectedResult.correct" color="red" append-icon="mdi-close-circle" class="margin-right-5px">Fehlerhaft: </v-chip>
+              <v-chip v-if="selectedResult.correct" color="green">Score: {{ selectedResult.score }}</v-chip>
+              <v-chip v-if="!selectedResult.correct" color="red">Score: {{ selectedResult.score }}</v-chip>
+            </div>
+
             <!-- <p v-for="comment in selectedResult.comments" :key="comment.message">{{ comment.message }}</p> -->
-            <v-data-table :group-by="groupBy" :headers="headers" :items="selectedResult.comments" :sort-by="sortBy" class="elevation-1" item-value="name" :single-select="true" @click:row="(event: any, item: any) => onRowClick(item)">
+            <v-data-table v-if="currentTask.solutionModelId" :group-by="groupBy" :headers="headers" :items="selectedResult.comments" :sort-by="sortBy" class="elevation-1 mt-5" item-value="name" :single-select="true" @click:row="(event: any, item: any) => onRowClick(item)">
               <template #[`item.statusLevel`]="{ item }">
                 <v-icon v-if="item.statusLevel == 'SUGGESTION'" size="large" :color="getHighlightLevelColor(item.statusLevel)">mdi-information</v-icon>
                 <v-icon v-if="item.statusLevel == 'INCORRECT'" size="large" :color="getHighlightLevelColor(item.statusLevel)">mdi-close-circle</v-icon>
@@ -24,10 +27,10 @@
               </template>
             </v-data-table>
           </v-card-text>
-          <!-- <v-card-actions>
+          <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn class="" append-icon="mdi-open-in-new" color="dark-gray" variant="text" @click="showDiagramWithMistakes"> Zeige Fehler im Diagram </v-btn>
-          </v-card-actions> -->
+            <v-btn class="" append-icon="mdi-open-in-new" color="dark-gray" variant="text" @click="showDiagram"> Zeige abgegebenes Diagram </v-btn>
+          </v-card-actions>
         </v-card>
       </v-window-item>
     </v-window>
@@ -108,7 +111,7 @@ const load = (task: Task, selectedSubmissionIndex?: number) => {
   })
 }
 
-const showDiagramWithMistakes = () => {
+const showDiagram = () => {
   diagramStore.loadDiagram(submissions.value[selectedResultTab.value - 1].diagram as Diagram)
   dialogShowFullDiagram.value?.openDialog('')
 }
@@ -150,7 +153,7 @@ defineExpose({
 .task-trials-tabs {
   margin: 0;
   width: 100%;
-  height: 100%;
+  /* height: 100%; */
 }
 
 .task-trials-text {

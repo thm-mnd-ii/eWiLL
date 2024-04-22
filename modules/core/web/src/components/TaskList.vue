@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <v-text-field v-model="search" class="search-bar" label="Search" density="compact" prepend-icon="mdi-magnify" variant="underlined" hide-details></v-text-field>
-    <v-data-table :headers="headers" :items="listItems" item-value="name" class="elevation-1" density="default" height="480px" :search="search" @click:row="openTask">
+    <v-data-table :headers="headers" :items="listItems" :sort-by="sortBy" item-value="name" class="elevation-1" density="default" height="480px" :search="search" @click:row="openTask">
       <template #[`item.passed`]="{ item }">
         <v-icon v-if="item.passed == false" icon="mdi-close-circle" color="error"></v-icon>
         <v-icon v-if="item.passed == true" icon="mdi-check-circle" color="success"></v-icon>
@@ -29,6 +29,7 @@ import TaskDateVChip from './TaskDateVChip.vue'
 import submissionService from '@/services/submission.service'
 import type { VDataTable } from 'vuetify/components'
 type ReadonlyHeaders = VDataTable['headers']
+type ReadonlySortBy = VDataTable['sortBy']
 
 const authUserStore = useAuthUserStore()
 const userId = ref(authUserStore.auth.user?.id)
@@ -41,8 +42,10 @@ const headers = ref<ReadonlyHeaders>([
   { title: 'Name', align: 'start', key: 'task.name' },
   { title: 'Abgabeart', align: 'start', key: 'task.eliability' },
   { title: 'Abgabeende', align: 'start', key: 'task.dueDate' },
-  { title: 'Bestanden', align: 'start', key: 'passed' }
+  { title: 'Status', align: 'start', key: 'passed' }
 ])
+
+const sortBy = ref<ReadonlySortBy>([{ key: 'task.name', order: 'asc' }])
 
 const listItems = ref<TaskAndPassed[]>([])
 

@@ -11,7 +11,7 @@
         </v-list-item>
       </v-list>
     </v-menu> -->
-    <v-btn icon @click="pageSettingsStore.showHeader = !pageSettingsStore.showHeader">
+    <v-btn v-if="admin" icon @click="pageSettingsStore.showHeader = !pageSettingsStore.showHeader">
       <v-icon>{{ pageSettingsStore.showHeader ? 'mdi-eye-off' : 'mdi-eye' }}</v-icon>
       <v-tooltip activator="parent" location="bottom"> Toggle Bar </v-tooltip>
     </v-btn>
