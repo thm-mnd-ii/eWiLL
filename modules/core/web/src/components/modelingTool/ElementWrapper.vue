@@ -1,15 +1,12 @@
 <template>
-  <div id="element-wrapper" v-html="finalSVG?.outerHTML"></div>
+  <div v-html="finalSVG?.outerHTML"></div>
 </template>
 
 <script setup lang="ts">
-import { computed, defineProps, onMounted, watch, ref } from 'vue'
+import { defineProps, onMounted, watch, ref } from 'vue'
 import type { PropType } from 'vue'
-import { SVG } from '@svgdotjs/svg.js'
 
 const finalSVG = ref<SVGElement>()
-
-const paths = ref<SVGPathElement[]>([])
 
 onMounted(() => {})
 
