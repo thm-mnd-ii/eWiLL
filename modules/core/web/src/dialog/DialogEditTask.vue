@@ -124,6 +124,8 @@ const updateDiagrams = (categoryId: number) => {
 
 // Necessary since the solution model is not owned by the user
 const updateDiagramsIncludingSolutionModel = () => {
+  if (currentTask.value.solutionModelId == null) return
+
   diagramService.getDiagramById(currentTask.value.solutionModelId).then((response) => {
     selectedCategoryId.value = response.data.categoryId
     let solutionModel = response.data
