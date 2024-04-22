@@ -72,10 +72,6 @@ const showSideBar = ref(true)
 const admin = ref(localStorage.getItem('user')?.includes('ADMIN'))
 
 const pageSettingsStore = usePageSettingsStore()
-
-onMounted(() => {
-  console.log(pageSettingsStore.showHeader)
-})
 </script>
 
 <style scoped lang="scss">

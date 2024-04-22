@@ -114,6 +114,12 @@ const combineSubmissionsWithStudents = () => {
 
     submissionService.getResultBySubmissionIdAndLevel(submission.id, 'INFO').then((response) => {
       item.result = response.data
+
+      // if item.result.score is not a number, set it to 0
+      if (isNaN(item.result.score)) {
+        item.result.score = 0
+      }
+
       listItems.value.push(item)
     })
   })

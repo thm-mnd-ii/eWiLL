@@ -7,7 +7,7 @@
       <v-checkbox v-model="checkboxGießen" label="Gießen" @change="filterCourseList" @click="checkboxFriedberg = false"></v-checkbox>
       <v-checkbox v-model="checkboxParticipation" label="Teilnahme" @change="filterCourseList"></v-checkbox>
     </v-row>
-    <v-data-table :headers="headers" :items="displayedCourses" item-value="name" class="elevation-1" :search="search" density="default" height="480px" @click:row="openCourseOrSignUp">
+    <v-data-table :headers="headers" :items="displayedCourses" :sort-by="sortBy" item-value="name" class="elevation-1" :search="search" density="default" height="480px" @click:row="openCourseOrSignUp">
       <template #[`item.course.active`]="{ item }">
         <v-icon v-if="!ifActiveSemester(item.course.semester as Semester)" icon="mdi-close-circle" color="gray"></v-icon>
         <v-icon v-if="ifActiveSemester(item.course.semester as Semester)" icon="mdi-check-circle" color="success"></v-icon>
@@ -27,8 +27,8 @@ import type CourseAndParticipationPL from '@/model/course/CourseAndParticipation
 import courseService from '../services/course.service'
 import type { VDataTable } from 'vuetify/components'
 import type Semester from '@/model/Semester'
-import type { Course } from '@/model/course/Course'
 type ReadonlyHeaders = VDataTable['headers']
+type ReadonlySortBy = VDataTable['sortBy']
 
 const router = useRouter()
 const authUserStore = useAuthUserStore()
@@ -43,12 +43,15 @@ const headers = ref<ReadonlyHeaders>([
   { title: 'Teilnahme', align: 'start', key: 'member' }
 ])
 
+// sort by semester.name and standort
+const sortBy = ref<ReadonlySortBy>([{ key: 'course.name', order: 'asc' }])
+
 // Courses lists
 const displayedCourses = ref<CourseAndParticipationPL[]>([])
 const allCourses = ref<CourseAndParticipationPL[]>([])
 
 // Checkboxes
-const checkboxActive = ref(false)
+const checkboxActive = ref(true)
 const checkboxFriedberg = ref(false)
 const checkboxGießen = ref(false)
 const checkboxParticipation = ref(false)
@@ -61,6 +64,8 @@ const loadCourses = () => {
       .then((data) => {
         allCourses.value = data
         displayedCourses.value = allCourses.value
+
+        filterCourseList()
       })
       .catch((error) => {
         console.log(error)
@@ -72,7 +77,7 @@ const loadCourses = () => {
 
 const filterCourseList = () => {
   let filteredList: CourseAndParticipationPL[] = allCourses.value
-  if (checkboxActive.value) filteredList = filteredList.filter((item) => item.course.active == true)
+  if (checkboxActive.value) filteredList = filteredList.filter((item) => ifActiveSemester(item.course.semester as Semester)) 
   if (checkboxFriedberg.value) filteredList = filteredList.filter((item) => item.course.location == 'Friedberg')
   if (checkboxGießen.value) filteredList = filteredList.filter((item) => item.course.location == 'Gießen')
   if (checkboxParticipation.value) filteredList = filteredList.filter((item) => item.member == true)

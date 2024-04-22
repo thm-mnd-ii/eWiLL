@@ -150,7 +150,6 @@ class EvaluationService : IEvaluationService {
     }
 
 
-
     override fun getNewestSubmission(userId: Long, taskId: Long): SubmissionWithDiagram {
         return getAsSubmissionWithDiagram(
             submissionRepository.findFirstByUserIdAndTaskIdOrderByDateDesc(userId, taskId)!!
@@ -203,8 +202,15 @@ class EvaluationService : IEvaluationService {
     }
 
     fun hasPassed(userId: Long, taskId: Long): Boolean {
+        val task = taskRepository.findById(taskId).get()
+
         val submissionsByUser = submissionRepository.findAllByUserIdAndTaskId(userId, taskId)
-        return submissionsByUser.stream().anyMatch { resultRepository.findBySubmissionId(it.id!!)!!.correct!! }
+
+        if (task.solutionModelId == null) {
+            return submissionsByUser.isNotEmpty()
+        } else {
+            return submissionsByUser.stream().anyMatch { resultRepository.findBySubmissionId(it.id!!)!!.correct!! }
+        }
     }
 
 

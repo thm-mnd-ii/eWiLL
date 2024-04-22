@@ -145,5 +145,12 @@
         "translatedText" : "Pupils"
       }
     }
+  },
+  "New Entity" : {
+    "data" : {
+      "translations" : {
+        "translatedText" : "New Entity"
+      }
+    }
   }
 }
