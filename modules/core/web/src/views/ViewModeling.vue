@@ -82,7 +82,7 @@
 
     <div class="left-bar">
       <FileExplorer ref="fileExplorer" class="file-explorer"></FileExplorer>
-      <ToolBox class="tool-box"></ToolBox>
+      <!-- <ToolBox class="tool-box"></ToolBox> -->
     </div>
 
     <div class="middle">
